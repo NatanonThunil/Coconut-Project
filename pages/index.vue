@@ -1,8 +1,6 @@
 <template>
-    <Navbar />
-    <div>
-      <h1>Welcome to the homepage Niggas</h1>
-    </div>
+    <Navbar selecto="home" />
+    <TagLine />
     <Footer />
   </template>
   <style scoped>

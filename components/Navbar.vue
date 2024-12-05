@@ -4,9 +4,9 @@
             <img class="btn-icons" src="~/assets/logo/CKH.png" alt="Logo" loading="lazy" />
         </a>
         <ul class="main-menu">
-            <li class="Selected">
+            <li :class="{ Selected: selecto === 'aboutus' }">
                 <nuxt-link to="/AboutUs">
-                    <img class="btn-icons" src="~/assets/icon/people.svg" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
+                    <img class="btn-icons" :src="selecto === 'aboutus' ? '_nuxt/assets/icon/w/people.svg':'_nuxt/assets/icon/people.svg'" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
                 </nuxt-link>
             </li>
             <li class="first-has-submenu">
@@ -131,14 +131,14 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li :class="{ Selected: selecto === 'expert' }">
                 <nuxt-link to="/Expert">
-                    <img class="btn-icons" src="~/assets/icon/expert.svg" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
+                    <img class="btn-icons" :src="selecto === 'expert' ? '_nuxt/assets/icon/w/expert.svg':'_nuxt/assets/icon/expert.svg'" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
                 </nuxt-link>
             </li>
-            <li>
+            <li :class="{ Selected: selecto === 'faqs' }">
                 <nuxt-link to="/faqs">
-                    <img class="btn-icons" src="~/assets/icon/questions.svg" alt="FAQs" />FAQs
+                    <img class="btn-icons" :src="selecto === 'faqs' ? '_nuxt/assets/icon/w/questions.svg':'_nuxt/assets/icon/questions.svg'" alt="FAQs" />FAQs
                 </nuxt-link>
             </li>
         </ul>
@@ -310,13 +310,19 @@ export default {
             MobileOldDownsteam: false,
         };
 
+    }, props: {
+        selecto: {
+            type: String,
+            required: true,
+        }
     },
     methods: {
         YT() {
             this.MobileYoung = !this.MobileYoung
 
         },
-        OT() { this.MobileYoung = !this.MobileYoung
+        OT() {
+            this.MobileYoung = !this.MobileYoung
         },
         YTU() { this.MobileYoungUpsteam = !this.MobileYoungUpsteam },
         YTM() { this.MobileYoungMidsteam = !this.MobileYoungMidsteam },
@@ -330,20 +336,9 @@ export default {
         toggleMenu() {
             this.isMenuOpen = !this.isMenuOpen;
         },
-        setAllFalsebutNot(whatisthat) {
-            const properties = [
-                "MobileYoung",
-                "MobileOld",
-                "MobileYoungUpsteam",
-                "MobileYoungMidsteam",
-                "MobileYoungDownsteam",
-                "MobileOldUpsteam",
-                "MobileOldMidsteam",
-                "MobileOldDownsteam"
-            ]; properties.forEach(property => {
-                this[property] = property === whatisthat ? true : false;
-            });
-        }
+
     },
 };
+
+
 </script>
