@@ -12,8 +12,8 @@ nuxt-link:hover {
 }
 
 .navbar {
-    top: 1.5rem;
-    margin: 1rem 1rem;
+    margin: 1rem 1rem; 
+    width: 95%;
     background-color: #dbdbdb;
     color: rgb(0, 0, 0);
     display: flex;
@@ -21,11 +21,16 @@ nuxt-link:hover {
     align-items: center;
     padding: 0 2rem;
     height: 60px;
-    position: sticky;
+    position: fixed ;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
     outline: solid 3px #4E6D16;
+    box-shadow: rgba(0, 0, 0, 0.2) 0rem 1rem 2rem;
+}
+.navbar.scrolled {
+    margin: 0;
+    background-color: #bfbfbf;
 }
 
 .logo {
