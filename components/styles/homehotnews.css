@@ -1,0 +1,118 @@
+.hotnews-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: auto;
+    margin-left: 4%;
+    margin-right: 4%;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: #4e6d16;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.hotnews-container img {
+    max-height: 300px;
+    max-width: 750px;
+    width: 100%;
+    object-fit: cover;
+
+}
+
+.hotnews-container p {
+    justify-content: center;
+    display: -webkit-box; /* Flexbox for multi-line ellipsis */
+    -webkit-line-clamp: 4; /* Limit text to 4 lines */
+    -webkit-box-orient: vertical;
+    color: white;
+    overflow: hidden;
+    font-size: large;
+    max-width: 40%;
+    text-align: justify; /* Align text for better readability */
+    line-height: 1.6; /* Increase line spacing for readability */
+    margin: 0.5rem auto; /* Add some spacing around the text */
+    padding: 0.5rem; /* Add padding for better visual spacing */
+    border-radius: 10px; /* Optional: Rounded corners */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .hotnews-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .hotnews-container img {
+        max-height: 200px;
+    }
+
+    .hotnews-container p {
+        max-width: 100%;
+        font-size: medium;
+        /* Adjust font size */
+    }
+}
+
+@media screen and (max-width: 1450px) {
+    .hotnews-container {
+        margin: 2%;
+        padding: 1rem;
+        width: 65%;
+        justify-content: center;
+    }
+
+    .hotnews-container img {
+        max-height: 400px;
+    }
+
+    .hotnews-container p {
+        max-width: 80%;
+        font-size: small;
+
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .hotnews-container {
+        margin: 2%;
+        padding: 1rem;
+        justify-content: center;
+    }
+
+    .hotnews-container img {
+        max-height: 150px;
+        /* Further adjust image height */
+    }
+
+    .hotnews-container p {
+        font-size: small;
+        /* Smaller font size for smaller screens */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .hotnews-container {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .hotnews-container img {
+        max-height: 100px;
+    }
+
+    .hotnews-container p {
+        font-size: small;
+        text-align: left;
+        margin-left: 2%;
+        margin-right: 2%;
+        /* Adjust text alignment for very small screens */
+    }
+}
+
+.hotnews-container:hover {
+    transform: scale(1.01);
+}
