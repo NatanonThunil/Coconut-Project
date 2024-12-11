@@ -1,51 +1,76 @@
 <template>
     <div class="news-container">
-        <nuxt-link to="" class="hot-news-section">
+        <nuxt-link :to="'/news/' + hotnewsid" class="hot-news-section">
             <div class="hot-news-image">
-                <img :src="imageSource" alt="Hot News Image" />
+                <img :src="formatImageSource(hotnewsimage)" alt="Hot News Image" />
             </div>
             <div class="hot-news-text">
-                <p>{{ newstitle }}</p>
+                <p>{{ hotnewstitle }}</p>
             </div>
         </nuxt-link>
 
         <div class="news-rows">
-            <div class="news-item">
-                <img :src="imageSource" alt="News Image" />
-                <p>{{ newstitle }}</p>
+            <div class="news-item" @click="$router.push('/news/' + newsid1)">
+                <img :src="formatImageSource(newsimage1)" alt="News Image 1" />
+                <p>{{ newstitle1 }}</p>
             </div>
-            <div class="news-item">
-                <img :src="imageSource" alt="News Image" />
-                <p>{{ newstitle }}</p>
+            <div class="news-item" @click="$router.push('/news/' + newsid2)">
+                <img :src="formatImageSource(newsimage2)" alt="News Image 2" />
+                <p>{{ newstitle2 }}</p>
             </div>
         </div>
     </div>
 
-    <nuxt-link to="/news"><button class="news-button">ข่าวสารทั้งหมด</button></nuxt-link>
+    
 </template>
+
 
 <script>
 export default {
     props: {
-        newstitle: {
+        hotnewstitle: {
             type: String,
-            required: true,
+            Required: true,
         },
-        newsimage: {
+        hotnewsimage: {
             type: [String, File, Blob],
             required: true,
         },
-        newsid: {
+        hotnewsid: {
             type: String,
             required: true
-        }
+        },
+        newstitle1: {
+            type: String,
+            required: true,
+        },
+        newsimage1: {
+            type: [String, File, Blob],
+            required: true,
+        },
+        newsid1: {
+            type: String,
+            required: true
+        },
+        newstitle2: {
+            type: String,
+            required: true,
+        },
+        newsimage2: {
+            type: [String, File, Blob],
+            required: true,
+        },
+        newsid2: {
+            type: String,
+            required: true
+        },
     },
-    computed: {
-        imageSource() {
-            if (typeof this.newsimage === 'string') {
-                return this.newsimage;
-            } else if (this.newsimage instanceof File || this.newsimage instanceof Blob) {
-                return URL.createObjectURL(this.newsimage);
+    methods: {
+        formatImageSource(image) {
+            if (typeof image === 'string') {
+                return image;
+            } else if (image instanceof File || image instanceof Blob) {
+                return URL.createObjectURL(image);
             }
             return '';
         },
@@ -54,37 +79,7 @@ export default {
 </script>
 
 <style scoped>
-.news-button {
-    display: flex;
-    justify-self: center;
-    justify-content: center;
-    margin: 2rem;
-    width: 80%;
-    background-color: transparent;
-    color: #4e6d16;
-    padding: 10px 20px;
-    font-size: 26px;
-    font-weight: bold;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    border: #4e6d16 solid 3px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
 
-.news-button:hover {
-    background-color: #4e6d16;
-    color: white;
-    transform: scale(1.01);
-}
-
-.news-button:focus {
-    outline: none;
-}
-
-.news-button:active {
-    background-color: #2c440f;
-}
 
 .news-container {
     margin-left: 4%;
@@ -187,6 +182,7 @@ export default {
         opacity: 0;
         transform: translateY(50px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
