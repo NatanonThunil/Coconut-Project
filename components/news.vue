@@ -3,7 +3,7 @@
       <!-- Check if newsItems are available -->
       <div v-if="newsItems.length">
         <div v-for="news in newsItems" :key="news.news_id" class="news-item">
-          <img :src="news.image" :alt="news.summerize || 'News Image'" />
+          <img :src="news.image" alt="News Image" />
           <div class="news-text">
             <h3>{{ news.summerize }}</h3>
             <p>{{ news.description }}</p>
@@ -14,13 +14,8 @@
       </div>
   
       <!-- Show loading message while news is being fetched -->
-      <div v-else-if="loading">
-        <p>Loading news...</p>
-      </div>
-  
-      <!-- Show message if no news items are available -->
       <div v-else>
-        <p>No news available.</p>
+        <p>Loading news...</p>
       </div>
   
       <!-- Link to all news page -->
@@ -30,37 +25,29 @@
     </div>
   </template>
   
-  <script>
-  import axios from 'axios';
+  <script setup>
+  import { ref, onMounted } from 'vue';
   
-  export default {
-    data() {
-      return {
-        newsItems: [], // Holds the fetched news data
-        loading: true, // Loading state for news data
-      };
-    },
-    async created() {
-      await this.fetchNews();
-    },
-    methods: {
-      async fetchNews() {
-        try {
-          const response = await axios.get('http://localhost:3000/api/news_table');
-          this.newsItems = response.data; // Store fetched data
-        } catch (error) {
-          console.error('Error fetching news:', error.message);
-        } finally {
-          this.loading = false; // Set loading to false after data fetch
-        }
-      },
-      formatDate(dateString) {
-        if (!dateString) return 'Invalid date';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-GB'); // Format date to a readable format (DD/MM/YYYY)
-      },
-    },
+  const newsItems = ref([]);
+  const loading = ref(true);
+  
+  const fetchNews = async () => {
+    try {
+      const response = await $fetch('/api/news_table');
+      newsItems.value = response;
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    } finally {
+      loading.value = false;
+    }
   };
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+  
+  onMounted(fetchNews);
   </script>
   
   <style scoped>
@@ -86,7 +73,6 @@
     width: 100%;
     max-height: 200px;
     object-fit: cover;
-    border-radius: 10px;
   }
   
   .news-text {
@@ -111,9 +97,10 @@
     padding: 10px 20px;
     font-size: 26px;
     font-weight: bold;
-    border: #4e6d16 solid 3px;
+    border: none;
     border-radius: 30px;
     cursor: pointer;
+    border: #4e6d16 solid 3px;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   
