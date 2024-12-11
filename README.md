@@ -1,3 +1,14 @@
+# Clone
+
+เปิด Command Prompt เข้าไฟล์ที่ต้องการจะติดตั้ง
+
+```bash
+
+git clone -b DekshinePoom --single-branch https://github.com/NatanonThunil/Coconut-Project.git
+
+```
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
@@ -40,3 +51,10 @@ npm run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Log
+```Log
+- 2/12/24 - add structure files ✓
+- 5/12/24 - Navbar color icon fix, show navbar for every page and Tag line components Finished ✓
+- 9/12/24 - News components in homepage finished ✓
+```
