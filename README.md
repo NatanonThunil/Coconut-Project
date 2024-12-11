@@ -57,4 +57,5 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - 2/12/24 - add structure files ✓
 - 5/12/24 - Navbar color icon fix, show navbar for every page and Tag line components Finished ✓
 - 9/12/24 - News components in homepage finished ✓
+- 11/12/24 - Filter functions and events cards ✗
 ```
