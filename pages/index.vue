@@ -5,8 +5,10 @@
     
     <ContentHeader contexto="ข่าวสาร" />
     <NewsItem />
-    
+    <SeeAllButton text="ข่าวสารทั้งหมด"/>
     <ContentHeader contexto="กิจกรรม" />
+    <HomeEventFilter selecto="educate"/>
+    <SeeAllButton text="กิจกรรมทั้งหมด"/>
     <Footer />
   </div>
 </template>

@@ -9,10 +9,16 @@
                     <img class="btn-icons" :src="selecto === 'aboutus' ? '_nuxt/assets/icon/w/people.svg':'_nuxt/assets/icon/people.svg'" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
                 </nuxt-link>
             </li>
-            <li class="first-has-submenu">
+
+            <li :class="{ Selected: selecto === 'coconutdata' }">
+                <nuxt-link to="/coconut-information">
+                    <img class="btn-icons" :src="selecto === 'coconutdata' ? '_nuxt/assets/icon/w/database.svg':'_nuxt/assets/icon/database.svg'" alt="ข้อมูลมะพร้าว" />ข้อมูลมะพร้าว
+                </nuxt-link>
+            </li>
+            <!-- <li class="first-has-submenu">
                 <img class="btn-icons" src="~/assets/icon/database.svg" alt="เกี่ยวกับเรา" />ข้อมูลมะพร้าว
                 <ul class="first-submenu">
-                    <!-- Young Coconut -->
+                    
                     <li class="has-submenu">มะพร้าวอ่อน
                         <ul class="submenu">
                             <li class="has-submenu">ต้นน้ำ
@@ -71,7 +77,7 @@
                             </li>
                         </ul>
                     </li>
-                    <!-- Old Coconut -->
+                    
                     <li class="has-submenu">มะพร้าวแก่
                         <ul class="submenu">
                             <li class="has-submenu">ต้นน้ำ
@@ -130,7 +136,7 @@
                         </ul>
                     </li>
                 </ul>
-            </li>
+            </li> -->
             <li :class="{ Selected: selecto === 'expert' }">
                 <nuxt-link to="/Expert">
                     <img class="btn-icons" :src="selecto === 'expert' ? '_nuxt/assets/icon/w/expert.svg':'_nuxt/assets/icon/expert.svg'" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
@@ -342,3 +348,346 @@ export default {
 
 
 </script>
+
+<style scoped>
+a,
+nuxt-link {
+    color: inherit;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:hover,
+nuxt-link:hover {
+    text-decoration: underline;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.navbar {
+    margin: 1rem 1rem; 
+    width: 95%;
+    background-color: #dbdbdb;
+    color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    height: 60px;
+    position: fixed ;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    outline: solid 3px #4E6D16;
+    box-shadow: rgba(0, 0, 0, 0.6) 0rem 1rem 2rem;
+}
+.navbar.scrolled {
+    margin: 0;
+    background-color: #bfbfbf;
+}
+
+.logo {
+    margin-right: 2rem;
+}
+
+.logo img {
+    height: 40px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.first-has-submenu {
+    position: relative;
+}
+
+
+.first-submenu {
+    display: none;
+    position: absolute;
+    list-style: none;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    padding: 0;
+    min-width: 200px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    animation: fadeInY 0.5s ease-in-out forwards;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.first-has-submenu:hover>.first-submenu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+.first-submenu li {
+    padding: 10px 15px;
+    white-space: nowrap;
+    color: #333;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.first-submenu li:hover {
+    background-color: #f0f0f0;
+}
+
+.main-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-radius: 5px;
+    flex: 1;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: fadeIn 1s ease-out forwards;
+}
+
+
+
+.main-menu>li {
+    position: relative;
+    padding: 10px 15px;
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    font-size: 16px;
+    background-color: white;
+    box-shadow: #0000003c 4px 4px 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.main-menu>li.Selected {
+    position: relative;
+    padding: 10px 15px;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    border-radius: 20px;
+    font-size: 16px;
+    background-color: #4E6D16;
+    box-shadow: #0000003c 4px 4px 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.mobile-main-menu>li.mobile-Selected {
+    color: white;
+    background-color: #4E6D16;
+}
+
+.main-menu>li.Selected .btn-icons {
+    color: white;
+}
+
+.main-menu>li.Selected:hover {
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    border-radius: 20px;
+    font-size: 16px;
+    background-color: #658f18;
+    box-shadow: #0000003c 4px 4px 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.main-menu>li:hover {
+    background-color: #E6E6E6;
+    outline: solid black 3px;
+    border-radius: 20px;
+}
+
+.btn-icons {
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+
+.submenu {
+    display: none;
+    position: absolute;
+    list-style: none;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    padding: 0;
+    min-width: 200px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.submenu li {
+    padding: 10px 15px;
+    white-space: nowrap;
+    color: #333;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.submenu li:hover {
+    background-color: #f0f0f0;
+}
+
+.has-submenu:hover>.submenu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.has-submenu .submenu {
+    top: 0;
+    left: 100%;
+
+}
+
+
+.lang-toggle {
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.lang-toggle:hover {
+    background-color: #E6E6E6;
+}
+
+.hamburger-container {
+    display: none;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 25px;
+    width: 35px;
+}
+
+.hamburger-icon span {
+    display: block;
+    width: 100%;
+    height: 4px;
+    background-color: #4E6D16;
+    border-radius: 5px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+.mobile-main-menu>li {
+    cursor: pointer;
+    width: 100%;
+    background-color: #ffffff;
+    text-align: center;
+    padding: 0.5rem;
+    border-bottom: 3px #4E6D16 solid;
+
+}
+.mobile-first-submenu .mobile-has-submenu{
+    background-color: #797979;
+}
+
+.mobile-submenu>li {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: #575757;
+
+    cursor: pointer;
+}
+.mobile-main-menu {
+    overflow: hidden;
+    outline: 3px solid#4E6D16;
+    border-radius: 10px;
+    left: 0;
+    position: absolute;
+    top: 4.5rem;
+    width: 100%;
+    list-style: none;
+    animation: fadeInY 0.5s;
+}
+
+.mobile-first-submenu {
+
+    list-style: none;
+
+}
+
+.mobile-first-submenu>li {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: #cccccc;
+}
+
+
+@media (max-width: 950px) {
+    .main-menu {
+
+        display: none;
+    }
+
+    .lang-toggle {
+        display: none;
+    }
+
+    .hamburger-container {
+        display: block;
+    }
+
+}
+
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(5%)
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0)
+    }
+}
+
+@keyframes fadeInY {
+    0% {
+        opacity: 0;
+        transform: translateY(5%)
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}</style>
