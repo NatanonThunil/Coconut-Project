@@ -58,15 +58,18 @@ export default {
 
       // Set today's date for the uploadDate field
       const uploadDateField = form.querySelector('#uploadDate');
-      uploadDateField.value = new Date().toISOString().slice(0, 10); // Set format as YYYY-MM-DD
+      uploadDateField.value = new Date().toISOString().slice(0, 10);
+      formData.set('uploadDate', uploadDateField.value);
 
       try {
-        const response = await fetch('/api/news_table', {
+        // Make the POST request with formData
+        const response = await fetch('/api/post_news', {
           method: 'POST',
-          body: formData, // Send the form data, including the image
+          body: formData,
         });
 
-        const result = await response.json();
+        const result = await response.json(); // Parse the JSON response
+
         if (response.ok) {
           alert('News added successfully!');
           form.reset(); // Reset the form after successful submission
