@@ -7,7 +7,7 @@
     <NewsItem />
     <SeeAllButton text="ข่าวสารทั้งหมด"/>
     <ContentHeader contexto="กิจกรรม" />
-    <HomeEventFilter selecto="educate"/>
+    <HomeEvent />
     <SeeAllButton text="กิจกรรมทั้งหมด"/>
     <Footer />
   </div>
