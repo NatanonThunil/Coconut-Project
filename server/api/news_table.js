@@ -15,7 +15,7 @@ export default defineEventHandler(async () => {
     const connection = await mysql.createConnection(dbConfig);
 
     // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM news_table');
+    const [rows] = await connection.execute('SELECT * FROM news_table ORDER BY news_id DESC');
 
     // Convert each row's image BLOB to a Base64 data URL
     const newsItems = rows.map((news) => {

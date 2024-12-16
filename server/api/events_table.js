@@ -11,7 +11,7 @@ export default defineEventHandler(async () => {
 
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM events_table');
+    const [rows] = await connection.execute('SELECT * FROM events_table ORDER BY event_id DESC');
 
     const events = rows.map(event => {
       let imageBase64 = null;
