@@ -5,13 +5,37 @@
         </div>
         <div class="line"></div>
     </div>
-    
+
 </template>
 
+<style>
+.context-container {
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
 
+.line {
+    display: block;
+    height: 5px;
+    width: 70%;
+    max-width: 70%;
+    background-color: #4E6D16;
+}
+
+.headtext {
+
+
+    color: #4E6D16;
+    font-weight: bolder;
+    font-size: 40px;
+}
+</style>
 <script>
 
-import '~/components/styles/contextheader.css';
+
 export default {
     props: {
         contexto: {

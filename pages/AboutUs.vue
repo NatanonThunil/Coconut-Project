@@ -34,9 +34,10 @@
           </div>
         </div>
       </div>
-      <div class="work">
+      <!-- <div class="work">
         <button class="button">ผลงานทั้งหมด</button>
-      </div>
+      </div> -->
+      <SeeAllButton text="ผลงานทั้งหมด" link=""/>
     </section>
   </div>
 </template>
