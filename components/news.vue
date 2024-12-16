@@ -66,6 +66,7 @@ onMounted(fetchNews);
 
 <style scoped>
 .news-container {
+
   margin-left: 4%;
   margin-right: 4%;
   display: flex;
@@ -94,17 +95,22 @@ onMounted(fetchNews);
   transform: scale(1.01);
   background-color: #2c440f;
   box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 4px;
+  
 }
 
 .hot-news-image {
   max-height: 300px;
+  width: 50%;
   max-width: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
 .hot-news-image img {
   height: 100%;
   width: 100%;
+  
   object-fit: cover;
 }
 
@@ -127,6 +133,7 @@ onMounted(fetchNews);
 
 .news-item {
   cursor: pointer;
+  height: 15rem;
   flex: 1;
   background-color: #4e6d16;
   border-radius: 10px;
@@ -149,8 +156,10 @@ onMounted(fetchNews);
 }
 
 .news-item img {
-  width: 100%;
-  max-height: 200px;
+
+  align-self: center;
+  width: 65%;
+  max-height: 100%;
   object-fit: cover;
 }
 

@@ -30,7 +30,7 @@
 
     color: #4E6D16;
     font-weight: bolder;
-    font-size: 25px;
+    font-size: 40px;
 }
 </style>
 <script>
