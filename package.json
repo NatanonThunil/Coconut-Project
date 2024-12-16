@@ -12,9 +12,10 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "cors": "^2.8.5",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "formidable": "^3.5.2",
     "fs-extra": "^11.2.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "nuxt": "^3.14.1592",
     "nuxt-app": "file:",
