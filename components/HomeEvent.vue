@@ -10,9 +10,9 @@
           อบรม
         </li>
         <li
-          class="filtli academic conference"
-          :class="{ selecto: selectedFilter === 'academic conference' }"
-          @click="selectedFilter = 'academic conference'"
+          class="filtli academic"
+          :class="{ selecto: selectedFilter === 'conference' }"
+          @click="selectedFilter = 'conference'"
         >
           ประชุมวิชาการ
         </li>
@@ -34,7 +34,7 @@
           v-for="(event, index) in filteredEvents"
           :key="index"
           :class="['event-card', `${event.event_category}-card`]">
-          <nuxt-link :to="`/event/detail/${event.id}`">
+          <nuxt-link :to="`/event/detail/${event.event_id}`">
             <img :src="event.image" alt="" draggable="false" />
             <div class="event-card-text">
               <p class="event-title">{{ event.title }}</p>
@@ -158,7 +158,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+
   }
   
   .event-title {
@@ -171,6 +171,7 @@
   .event-card-date {
     display: flex;
     align-items: center;
+    margin-top: 0rem;
     gap: 0.5rem;
     margin-top: auto;
   }
