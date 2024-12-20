@@ -111,11 +111,12 @@
     height: 100%;
     width: 33.33%;
     transition: 0.5s ease-in-out;
+    font-size: 25px;
   }
   
   ul.homeeventfiltercontainer li.filtli.selecto {
     font-weight: bolder;
-    font-size: larger;
+    font-size: 28px;
     background-color: #C5D944;
   }
   
@@ -133,7 +134,7 @@
     min-width: 16rem;
     flex: 1 1 calc(25% - 1rem);
     max-width: 22rem;
-    height: auto;
+    height: 22rem;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     background-color: white;
@@ -158,7 +159,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+    height: 50%;
   }
   
   .event-title {
@@ -172,7 +173,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: auto;
+
   }
   
   .event-card-date img {
@@ -190,17 +191,39 @@
     .event-card {
       flex: 1 1 calc(50% - 1rem);
     }
+    .event-card-text{
+      height: 50%;
+    }
+    
+    .event-card-section{
+      width: 20%;
+    }
   }
-  
+  @media screen and (max-width: 1123px) {
+
+    
+    .event-card-section{
+      justify-self: center;
+      width:75%;
+    }
+  }
+    
+
   @media screen and (max-width: 768px) {
     .event-card {
       flex: 1 1 calc(50% - 1rem);
+    }
+    .event-card-text{
+      height: 50%;
     }
   }
   
   @media screen and (max-width: 480px) {
     .event-card {
       flex: 1 1 100%;
+    }
+    .event-card-text{
+      height: 10%;
     }
   }
   </style>

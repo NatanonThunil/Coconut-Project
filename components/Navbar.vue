@@ -377,7 +377,7 @@ nuxt-link:hover {
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
-    outline: solid 3px #4E6D16;
+
     box-shadow: rgba(0, 0, 0, 0.6) 0rem 1rem 2rem;
 }
 .navbar.scrolled {

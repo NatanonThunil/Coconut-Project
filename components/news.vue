@@ -20,7 +20,7 @@
         @click="$router.push('/news/' + news.id)"
       >
         <img :src="news.image" alt="News Image" />
-        <p>{{ news.summerize }}</p>
+        <p>{{ news.title }}</p>
       </div>
     </div>
 
@@ -167,7 +167,7 @@ onMounted(fetchNews);
 .news-item p {
   margin: 1rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   line-height: 1.4;
   color: white;
 }
@@ -196,6 +196,7 @@ onMounted(fetchNews);
 @media screen and (max-width: 1250px) {
   .hot-news-image {
     width: 70%;
+   
   }
 
   .news-item {
@@ -217,6 +218,7 @@ onMounted(fetchNews);
 
   .hot-news-image img {
     width: 100%;
+    
   }
 
   .hot-news-text {
@@ -225,6 +227,7 @@ onMounted(fetchNews);
   }
 
   .news-rows {
+    display: none;
     flex-direction: column;
   }
 
@@ -236,8 +239,20 @@ onMounted(fetchNews);
 
   .news-item img {
     max-height: 120px;
+    
+
   }
 }
+
+@media screen and (max-width: 1250px) {
+  .news-item img{
+    width: 60%;
+    height: 100%;
+  }
+  .news-item{
+    flex-direction: row;
+  }}
+
 
 @media screen and (max-width: 480px) {
   .hot-news-image img {
@@ -246,10 +261,13 @@ onMounted(fetchNews);
 
   .news-item img {
     max-height: 100px;
+   
   }
 
   .news-item {
+    display: none;
     flex-direction: column;
   }
+
 }
 </style>
