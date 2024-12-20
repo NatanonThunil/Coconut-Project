@@ -1,8 +1,5 @@
 <template>
   <form id="newsForm" @submit.prevent="handleFormSubmit" enctype="multipart/form-data">
-    <!-- Event ID Input -->
-    <label for="event_id">Event ID:</label>
-    <input type="text" id="event_id" name="event_id" placeholder="Enter Event ID" required>
 
     <!-- Title Input -->
     <label for="title">Title:</label>

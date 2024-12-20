@@ -10,12 +10,20 @@ export default defineEventHandler(async () => {
     port: 3306,
   };
 
+  let connection;
+
   try {
     // Create a connection to MySQL database
-    const connection = await mysql.createConnection(dbConfig);
+    connection = await mysql.createConnection(dbConfig);
 
     // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM news_table ORDER BY news_id DESC');
+    const [rows] = await connection.execute('SELECT * FROM news_table ORDER BY id DESC');
+
+    console.log('Fetched rows:', rows); // Debugging log
+
+    if (rows.length === 0) {
+      return { message: 'No news available.' };
+    }
 
     // Convert each row's image BLOB to a Base64 data URL
     const newsItems = rows.map((news) => {
@@ -30,9 +38,6 @@ export default defineEventHandler(async () => {
       };
     });
 
-    // Close the connection
-    await connection.end();
-
     // Return the news items with Base64-encoded images
     return newsItems;
   } catch (error) {
@@ -41,5 +46,10 @@ export default defineEventHandler(async () => {
       statusCode: 500,
       body: { error: 'Failed to fetch news' },
     };
+  } finally {
+    // Ensure the connection is closed even if an error occurs
+    if (connection) {
+      await connection.end();
+    }
   }
 });

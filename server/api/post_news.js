@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const form = formidable({
     uploadDir: path.join(process.cwd(), 'uploads'),
     keepExtensions: true,
-    multiples: false,
+    multiples: false, // Set to false to only allow one file upload at a time
   });
 
   try {
@@ -30,10 +30,12 @@ export default defineEventHandler(async (event) => {
     console.log('Received fields:', fields);
     console.log('Received files:', files);
 
-    const { newsId, title, author, description, summerize, hotNew } = fields;
+    // Destructure required fields from the parsed form
+    const { title, author, description, summerize, hotNew } = fields;
     const image = files.image;
 
-    if (!newsId || !title || !author || !description || !image) {
+    // Validate required fields
+    if (!title || !author || !description || !image) {
       throw new Error('Missing required fields');
     }
 
@@ -47,16 +49,15 @@ export default defineEventHandler(async (event) => {
 
     // Insert the data into the database
     const [result] = await connection.execute(
-      `INSERT INTO news_table (news_id, title, image, author, upload_date, description, summerize, hot_new)
-       VALUES (?, ?, ?, ?, NOW(), ?, ?, ?)`,
+      `INSERT INTO news_table (title, image, author, upload_date, description, summerize, hot_new)
+       VALUES (?, ?, ?, NOW(), ?, ?, ?)`,
       [
-        newsId[0],
-        title[0],
-        imageBuffer,
-        author[0],
-        description[0],
-        summerize ? summerize[0] : null,
-        hotNew ? 1 : 0,
+        title[0],            // Title
+        imageBuffer,         // Image as Buffer
+        author[0],           // Author
+        description[0],      // Description
+        summerize ? summerize[0] : null, // Summary (optional)
+        hotNew ? 1 : 0,      // Hot News (1 for true, 0 for false)
       ]
     );
 
@@ -70,7 +71,7 @@ export default defineEventHandler(async (event) => {
       statusCode: 201,
       body: {
         message: 'News added successfully',
-        newsId: result.insertId,
+        newsId: result.insertId, // Return the auto-generated ID
       },
     };
   } catch (error) {
