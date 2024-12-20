@@ -43,19 +43,18 @@ npm run preview
 git push origin ชื่อbranch:main --force
 
 ```
-
-# Jeff
 ``` bash
+//JEFF
 git push origin DEKshiSUJEFF:main --force
 
 ```
-# Poom
 ``` bash
+//POOM
 git push origin DekshinePoom:main --force
 
 ```
-# Jame
 ``` bash
+//JAME
 git push origin dekchaijame:main --force
 
 ```
