@@ -6,13 +6,13 @@
         <ul class="main-menu">
             <li :class="{ Selected: selecto === 'aboutus' }">
                 <nuxt-link to="/AboutUs">
-                    <img class="btn-icons" :src="selecto === 'aboutus' ? '_nuxt/assets/icon/w/people.svg':'_nuxt/assets/icon/people.svg'" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
+                    <img class="btn-icons" :src="selecto === 'aboutus' ? '/_nuxt/assets/icon/w/people.svg':'/_nuxt/assets/icon/people.svg'" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
                 </nuxt-link>
             </li>
 
             <li :class="{ Selected: selecto === 'coconutdata' }">
                 <nuxt-link to="/coconut-information">
-                    <img class="btn-icons" :src="selecto === 'coconutdata' ? '_nuxt/assets/icon/w/database.svg':'_nuxt/assets/icon/database.svg'" alt="ข้อมูลมะพร้าว" />ข้อมูลมะพร้าว
+                    <img class="btn-icons" :src="selecto === 'coconutdata' ? '/_nuxt/assets/icon/w/database.svg':'/_nuxt/assets/icon/database.svg'" alt="ข้อมูลมะพร้าว" />ข้อมูลมะพร้าว
                 </nuxt-link>
             </li>
             <!-- <li class="first-has-submenu">
@@ -139,12 +139,12 @@
             </li> -->
             <li :class="{ Selected: selecto === 'expert' }">
                 <nuxt-link to="/Expert">
-                    <img class="btn-icons" :src="selecto === 'expert' ? '_nuxt/assets/icon/w/expert.svg':'_nuxt/assets/icon/expert.svg'" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
+                    <img class="btn-icons" :src="selecto === 'expert' ? '/_nuxt/assets/icon/w/expert.svg':'/_nuxt/assets/icon/expert.svg'" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
                 </nuxt-link>
             </li>
             <li :class="{ Selected: selecto === 'faqs' }">
                 <nuxt-link to="/faqs">
-                    <img class="btn-icons" :src="selecto === 'faqs' ? '_nuxt/assets/icon/w/questions.svg':'_nuxt/assets/icon/questions.svg'" alt="FAQs" />FAQs
+                    <img class="btn-icons" :src="selecto === 'faqs' ? '/_nuxt/assets/icon/w/questions.svg':'/_nuxt/assets/icon/questions.svg'" alt="FAQs" />FAQs
                 </nuxt-link>
             </li>
         </ul>

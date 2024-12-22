@@ -4,14 +4,13 @@ export default defineEventHandler(async () => {
   const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
-    password: 'asd123asd',
     database: 'events',
     port: 3306,
   };
 
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM events_table ORDER BY id DESC');
+    const [rows] = await connection.execute('SELECT * FROM event_table ORDER BY id DESC');
     
     const events = rows.map((event) => {
       let imageBase64 = null;
