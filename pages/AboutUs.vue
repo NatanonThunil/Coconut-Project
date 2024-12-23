@@ -58,16 +58,17 @@
 .navcontainer {
   width: 100vw;
   height: 100px;
-
+  border: green solid 2px;
 }
 .a {
   padding-top: 20px;
-
+  border: 2px solid #000;
 }
 .headers h1 {
   text-align: center;
 }
 .box1 {
+  border: 2px solid #ff0000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -93,7 +94,7 @@
   justify-content: space-between;
 }
 .header-container {
-
+  border: blue solid 3px;
   text-align: center;
   margin-top: 0;
   padding-top: 20px;
@@ -167,7 +168,7 @@
   width: 400px;
   height: 512px;
   background-color: #ffffff;
-  /* margin-left: 250px; */
+  margin-left: 250px;
   border-radius: 10px; /* มุมโค้งทุกด้าน */
   border: 2px solid #000000; /* กำหนดเส้นขอบ */
   overflow: hidden; /* ซ่อนส่วนเกิน */
@@ -175,7 +176,6 @@
 }
 
 .cards-container {
-  justify-self: center;
   display: flex;
   flex-direction: row; /* Stack cards vertically */
   gap: 20px; /* Adds spacing between the cards */

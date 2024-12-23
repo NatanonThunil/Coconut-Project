@@ -6,13 +6,17 @@
         <ul class="main-menu">
             <li :class="{ Selected: selecto === 'aboutus' }">
                 <nuxt-link to="/AboutUs">
-                    <img class="btn-icons" :src="selecto === 'aboutus' ? '/_nuxt/assets/icon/w/people.svg':'/_nuxt/assets/icon/people.svg'" alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
+                    <img class="btn-icons"
+                        :src="selecto === 'aboutus' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
+                        alt="เกี่ยวกับเรา" />เกี่ยวกับเรา
                 </nuxt-link>
             </li>
 
             <li :class="{ Selected: selecto === 'coconutdata' }">
                 <nuxt-link to="/coconut-information">
-                    <img class="btn-icons" :src="selecto === 'coconutdata' ? '/_nuxt/assets/icon/w/database.svg':'/_nuxt/assets/icon/database.svg'" alt="ข้อมูลมะพร้าว" />ข้อมูลมะพร้าว
+                    <img class="btn-icons"
+                        :src="selecto === 'coconutdata' ? '/_nuxt/assets/icon/w/database.svg' : '/_nuxt/assets/icon/database.svg'"
+                        alt="ข้อมูลมะพร้าว" />ข้อมูลมะพร้าว
                 </nuxt-link>
             </li>
             <!-- <li class="first-has-submenu">
@@ -139,12 +143,16 @@
             </li> -->
             <li :class="{ Selected: selecto === 'expert' }">
                 <nuxt-link to="/Expert">
-                    <img class="btn-icons" :src="selecto === 'expert' ? '/_nuxt/assets/icon/w/expert.svg':'/_nuxt/assets/icon/expert.svg'" alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
+                    <img class="btn-icons"
+                        :src="selecto === 'expert' ? '/_nuxt/assets/icon/w/expert.svg' : '/_nuxt/assets/icon/expert.svg'"
+                        alt="ผู้เชี่ยวชาญ" />ผู้เชี่ยวชาญ
                 </nuxt-link>
             </li>
             <li :class="{ Selected: selecto === 'faqs' }">
                 <nuxt-link to="/faqs">
-                    <img class="btn-icons" :src="selecto === 'faqs' ? '/_nuxt/assets/icon/w/questions.svg':'/_nuxt/assets/icon/questions.svg'" alt="FAQs" />FAQs
+                    <img class="btn-icons"
+                        :src="selecto === 'faqs' ? '/_nuxt/assets/icon/w/questions.svg' : '/_nuxt/assets/icon/questions.svg'"
+                        alt="FAQs" />FAQs
                 </nuxt-link>
             </li>
         </ul>
@@ -158,139 +166,24 @@
             </div>
         </div>
         <ul class="mobile-main-menu" v-show="isMenuOpen">
-            <li class="mobile-Selected">
+            <li :class="{mobileSelected: selecto ==='home'}" >
                 <nuxt-link to="/">
                     หน้าหลัก
                 </nuxt-link>
             </li>
-            <li>
+            <li :class="{mobileSelected: selecto ==='aboutus'}">
                 <nuxt-link to="/AboutUs">
                     เกี่ยวกับเรา
                 </nuxt-link>
             </li>
-            <li class="mobile-first-has-submenu" @click="ToggleMobileFirstSubMenu">ข้อมูลมะพร้าว</li>
-            <ul class="mobile-first-submenu" v-show="MobileFirstDropdownVisible">
-                <li class="mobile-has-submenu-top" @click="YT">มะพร้าวอ่อน</li>
-                <ul class="mobile-submenu" v-show="MobileYoung">
-                    <li class="mobile-has-submenu" @click="YTU">ต้นน้ำ
-                        <ul class="mobile-submenu" v-show="MobileYoungUpsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/upstream/PlantingAreaAndProduction">พื้นที่ปลูกและผลผลิต</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/upstream/CoconutVarieties">พันธุ์มะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/upstream/Propagation">การขยายพันธุ์</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/upstream/CoconutPlantationManagement">การจัดการสวนมะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/upstream/ManagingPestsDiseasesAndWeeds">การจัดการแมลงศัตรู
-                                    โรค และวัชพืช</nuxt-link></li>
-                        </ul>
-                    </li>
-                    <li class="mobile-has-submenu" @click="YTM">กลางน้ำ
-                        <ul class="mobile-submenu" v-show="MobileYoungMidsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/midstream/ProcessingAndAddingValue">การแปรรูปและเพิ่มมูลค่า</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/midstream/PostHarvestManagement">การจัดการหลังการเก็บเกี่ยว</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/midstream/HarvestingAndExportingFromTheGarden">การเก็บเกี่ยวและส่งออกจากสวน</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/midstream/FoodProductionStandards">มาตรฐานการผลิตอาหาร</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/midstream/WasteManagementInFactoriesAndReducingGreenhouseGasEmissions">การจัดการของเสียในโรงงานและการลดการปลดปล่อยก๊าซเรือนกระจก</nuxt-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mobile-has-submenu" @click="YTD">ปลายน้ำ
-                        <ul class="mobile-submenu" v-show="MobileYoungDownsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/CoconutMarket">ตลาดมะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link to="/coconut-data/young-coconut/downstream/Export">การส่งออก</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/CarbonEmissionInTransportation">Carbon
-                                    Emission ในการขนส่ง</nuxt-link></li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/RelatedRegulations">กฎระเบียบที่เกี่ยวข้อง</nuxt-link>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+            <li :class="{mobileSelected: selecto ==='coconutdata'}"> <nuxt-link to="/coconut-informations">ข้อมูลมะพร้าว</nuxt-link></li>
 
-
-                <!-- Old Coconut -->
-                <li class="mobile-has-submenu-top" @click="OT">มะพร้าวแก่</li>
-                <ul class="mobile-submenu" v-show="MobileOld">
-                    <li class="mobile-has-submenu" @click="OTU">ต้นน้ำ
-                        <ul class="mobile-submenu" v-show="MobileOldUpsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/upstream/PlantingAreaAndProduction">พื้นที่ปลูกและผลผลิต</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/upstream/CoconutVarieties">พันธุ์มะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link to="/coconut-data/old-coconut/upstream/Propagation">การขยายพันธุ์</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/upstream/CoconutPlantationManagement">การจัดการสวนมะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/upstream/ManagingPestsDiseasesAndWeeds">การจัดการแมลงศัตรู
-                                    โรค และวัชพืช</nuxt-link></li>
-                        </ul>
-                    </li>
-                    <li class="mobile-has-submenu" @click="OTM">กลางน้ำ
-                        <ul class="mobile-submenu" v-show="MobileOldMidsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/midstream/ProcessingAndAddingValue">การแปรรูปและเพิ่มมูลค่า</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/midstream/PostHarvestManagement">การจัดการหลังการเก็บเกี่ยว</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/midstream/HarvestingAndExportingFromTheGarden">การเก็บเกี่ยวและส่งออกจากสวน</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/midstream/FoodProductionStandards">มาตรฐานการผลิตอาหาร</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/old-coconut/midstream/WasteManagementInFactoriesAndReducingGreenhouseGasEmissions">การจัดการของเสียในโรงงานและการลดการปลดปล่อยก๊าซเรือนกระจก</nuxt-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mobile-has-submenu" @click="OTD">ปลายน้ำ
-                        <ul class="mobile-submenu" v-show="MobileOldDownsteam">
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/CoconutMarket">ตลาดมะพร้าว</nuxt-link>
-                            </li>
-                            <li><nuxt-link to="/coconut-data/young-coconut/downstream/Export">การส่งออก</nuxt-link>
-                            </li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/CarbonEmissionInTransportation">Carbon
-                                    Emission ในการขนส่ง</nuxt-link></li>
-                            <li><nuxt-link
-                                    to="/coconut-data/young-coconut/downstream/RelatedRegulations">กฎระเบียบที่เกี่ยวข้อง</nuxt-link>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </ul>
-            <li>
+            <li :class="{mobileSelected: selecto ==='expert'}">
                 <nuxt-link to="/Expert">
                     ผู้เชี่ยวชาญ
                 </nuxt-link>
             </li>
-            <li>
+            <li :class="{mobileSelected: selecto ==='faqs'}">
                 <nuxt-link to="/faqs">
                     FAQs
                 </nuxt-link>
@@ -364,22 +257,25 @@ nuxt-link:hover {
 }
 
 .navbar {
-    margin: 1rem 1rem; 
+    margin: 1rem 1rem;
     width: 95%;
     background-color: #dbdbdb;
     color: rgb(0, 0, 0);
     display: flex;
     justify-content: space-between;
+    margin-left: 2.5%;
+    margin-right: 2.5%;;
     align-items: center;
     padding: 0 2rem;
     height: 60px;
-    position: fixed ;
+    position: fixed;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
 
     box-shadow: rgba(0, 0, 0, 0.6) 0rem 1rem 2rem;
 }
+
 .navbar.scrolled {
     margin: 0;
     background-color: #bfbfbf;
@@ -477,7 +373,7 @@ nuxt-link:hover {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.mobile-main-menu>li.mobile-Selected {
+.mobile-main-menu>li.mobileSelected {
     color: white;
     background-color: #4E6D16;
 }
@@ -610,9 +506,11 @@ nuxt-link:hover {
     text-align: center;
     padding: 0.5rem;
     border-bottom: 3px #4E6D16 solid;
+    
 
 }
-.mobile-first-submenu .mobile-has-submenu{
+
+.mobile-first-submenu .mobile-has-submenu {
     background-color: #797979;
 }
 
@@ -624,6 +522,7 @@ nuxt-link:hover {
 
     cursor: pointer;
 }
+
 .mobile-main-menu {
     overflow: hidden;
     outline: 3px solid#4E6D16;
@@ -633,7 +532,7 @@ nuxt-link:hover {
     top: 4.5rem;
     width: 100%;
     list-style: none;
-    animation: fadeInY 0.5s;
+    animation: fadeInY 0.5s ease-in-out;
 }
 
 .mobile-first-submenu {
@@ -664,7 +563,19 @@ nuxt-link:hover {
         display: block;
     }
 
+
+
 }
+
+
+@media (min-width: 951px) {
+    .mobile-main-menu {
+        display: none;
+    }
+
+
+}
+
 
 
 
@@ -690,4 +601,5 @@ nuxt-link:hover {
         opacity: 1;
         transform: translateY(0)
     }
-}</style>
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <nuxt-link :to="url" class="coconut-v-card" loading="lazy">
+    <div  class="coconut-v-card" loading="lazy">
         <div class="coconut-v-img-frame">
             <img :src="img" alt="" class="coconut-v-image" draggable="false">
         </div>
@@ -11,7 +11,7 @@
                 <i class="coconut-v-sci-name-back">{{ sci_back }}</i>
             </div>
         </div>
-    </nuxt-link>
+    </div>
 </template>
 
 <style scoped>
@@ -76,13 +76,30 @@
 
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
 }
 
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-front,
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-middle,
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-back {
     font-weight: 200;
+}
+
+@media (max-width: 590px) {
+    .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container {
+    display: none;
+    
+  
+}
+.coconut-v-card-text-container{
+    height: 5rem
+}
+.coconut-v-card-text-container .coconut-v-name{
+    padding-bottom: 0.8rem;
+}
+.coconut-v-card{
+    width: 14.5rem;
+}
 }
 </style>
 
@@ -108,10 +125,7 @@ export default {
             type: String,
             required: true,
         },
-        url: {
-            type: String,
-            required: true,
-        },
+       
     },
 };
 </script>

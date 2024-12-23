@@ -52,7 +52,7 @@
 
       <div>
         <label for="image">Image</label>
-        <input type="file" @change="handleFileChange" id="image" accept="image/*" required />
+        <input type="file" @change="handleFileChange" id="image" accept="image/png, image/jpeg" required />
       </div>
 
       <button type="submit">Add Coconut</button>
@@ -87,7 +87,7 @@ export default {
     };
   },
   methods: {
-    // Handle image file selection
+
     handleFileChange(event) {
       const file = event.target.files[0];
       if (file) {
@@ -95,19 +95,19 @@ export default {
       }
     },
 
-    // Convert image to Base64
+    
     convertImageToBase64(file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        this.form.image = reader.result.split(',')[1]; // Get base64 without prefix
+        this.form.image = reader.result.split(',')[1]; 
       };
     },
 
     // Handle form submission
     async submitForm() {
       try {
-        const response = await axios.post('/api/coconut', this.form); // Adjust API endpoint based on your server
+        const response = await axios.post('/api/coconut', this.form); 
         this.message = response.data.message || 'Coconut added successfully!';
         this.isError = false;
       } catch (error) {

@@ -8,51 +8,40 @@
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts">
     </label>
 
-    <div class="coconut-v-cards-container" loading="lazy"> 
-        <CoconutCards
-            v-for="coconut in paginatedCoconuts"
-            :key="coconut.id"
+    <div class="coconut-v-cards-container" loading="lazy">
+        <CoconutCards v-for="coconut in paginatedCoconuts" :key="coconut.id"
             :img="coconut.image || 'https://via.placeholder.com/1280x720'"
-            :url="`/coconut-varieties/details/${coconut.id}`"
-            :name="coconut.name_th || 'ชื่อไทย'"
-            :sci_front="coconut.sci_name_f || 'วิทย์ 1'"
-            :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
-            :sci_back="coconut.sci_name_l || 'วิทย์ 3'"
-        />
+            :url="`/coconut-varieties/details/${coconut.id}`" :name="coconut.name_th || 'ชื่อไทย'"
+            :sci_front="coconut.sci_name_f || 'วิทย์ 1'" :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
+            :sci_back="coconut.sci_name_l || 'วิทย์ 3'" @click="goToDetails(coconut.id)" />
+
     </div>
 
     <div class="pagination">
-        <button @click="changePage('prev')" :disabled="currentPage === 1">Previous</button>
-        
-        <input 
-            type="number" 
-            v-model.number="pageInput" 
-            @change="goToPage" 
-            :min="1" 
-            :max="totalPages" 
-            class="page-input"
-        />
-        
-        <span>of {{ totalPages }}</span>
-        
-        <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+        <div class="pagination-line"></div>
+        <div class="pagination-controller">
+            <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
+
+            <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+                class="page-input" />
+
+            <span style="display: flex;align-self: center;">จาก {{ totalPages }}</span>
+
+            <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
+        </div>
+        <div class="pagination-line"></div>
     </div>
 
     <Footer />
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
-import Footer from '@/components/Footer.vue';
-import CoconutCards from '@/components/CoconutCards.vue';
-
 export default {
-    components: { Navbar, Footer, CoconutCards },
     data() {
         return {
-            coconuts: [], 
-            filteredCoconuts: [], 
-            searchQuery: '', 
+            coconuts: [],
+            filteredCoconuts: [],
+            searchQuery: '',
             currentPage: 1,
             itemsPerPage: 30,
             pageInput: 1,
@@ -70,16 +59,16 @@ export default {
     },
     watch: {
         currentPage(newPage) {
-            this.pageInput = newPage; 
+            this.pageInput = newPage;
         },
     },
     async mounted() {
         try {
-            const response = await fetch('/api/coconut'); 
+            const response = await fetch('/api/coconut');
             if (!response.ok) throw new Error('Failed to fetch data');
             const data = await response.json();
             this.coconuts = data;
-            this.filteredCoconuts = data; 
+            this.filteredCoconuts = data;
         } catch (error) {
             console.error('Error fetching coconuts:', error);
         }
@@ -90,7 +79,7 @@ export default {
             this.filteredCoconuts = this.coconuts.filter(coconut =>
                 coconut.name_th.toLowerCase().includes(query) || coconut.name_eng.toLowerCase().includes(query)
             );
-            
+
             this.currentPage = 1;
         },
         changePage(direction) {
@@ -104,14 +93,17 @@ export default {
             if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
                 this.currentPage = this.pageInput;
             } else {
-              
                 this.pageInput = this.currentPage;
             }
+        },
+
+        // Method to handle click event and navigate to the detail page
+        goToDetails(id) {
+            this.$router.push(`/coconut-varieties/details/${id}`);
         },
     },
 };
 </script>
-
 <style scoped>
 h1.context-header {
     text-align: center;
@@ -123,13 +115,14 @@ label.coconut-v-input {
     justify-self: center;
     width: 60%;
     height: 3rem;
-    outline: 3px solid #4E6D16;
+    outline: 3px solid #4e6d16;
     border-radius: 10px;
     overflow: hidden;
+    cursor: text;
 }
 
 label.coconut-v-input:hover {
-    outline: 4px solid #4E6D16;
+    outline: 4px solid #4e6d16;
 }
 
 label.coconut-v-input img {
@@ -155,7 +148,7 @@ label.coconut-v-input input {
     justify-self: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 2rem;
     margin: 2rem;
 }
 
@@ -169,7 +162,7 @@ label.coconut-v-input input {
 
 .pagination button {
     padding: 0.5rem 1rem;
-    background-color: #4E6D16;
+    background-color: #4e6d16;
     color: white;
     border: none;
     border-radius: 5px;
@@ -187,5 +180,25 @@ label.coconut-v-input input {
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 0.3rem;
+}
+
+.pagination .pagination-line {
+    width: fit-content;
+    min-width: 20%;
+    height: 4px;
+    background-color: #4e6d16;
+}
+
+.pagination-controller {
+    justify-content: center;
+    display: flex;
+    justify-content: space-around;
+    width: 20rem;
+}
+
+@media (max-width: 662px) {
+    .coconut-v-cards-container {
+        width: 90%;
+    }
 }
 </style>
