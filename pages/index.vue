@@ -2,7 +2,7 @@
   <div>
     <Navbar selecto="home" />
     <TagLine taglinetext="This is Coconut KnowledgeHub TagLine" />
-    
+
     <ContentHeader contexto="ข่าวสาร" />
     <news/>
     <SeeAllButton text="ข่าวสารทั้งหมด"link="news"/>
@@ -32,11 +32,11 @@ import { useHead } from '@vueuse/head';
 
 
 useHead({
-  title: '🥥Coconut - Home', 
+  title: '🥥Coconut - Home',
   meta: [
     {
       name: 'description',
-      content: 'Home page for Coconut Knowledge Hub', 
+      content: 'Home page for Coconut Knowledge Hub',
     },
   ],
 });

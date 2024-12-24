@@ -8,7 +8,7 @@
 
 </template>
 
-<style>
+<style scoped>
 .context-container {
     
     display: flex;
