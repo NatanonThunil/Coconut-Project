@@ -74,6 +74,16 @@ export default {
     margin: 2rem;
 }
 
+.f-banner .f-banner-text-container p{
+    max-width: 100%;
+    overflow: hidden; /* Fix: Changed from overflow-y: hidden */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    text-overflow: ellipsis;
+
+}
+
 .f-banner .f-banner-text {
     font-size: 1.5rem;
     color: #333;

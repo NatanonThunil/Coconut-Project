@@ -2,42 +2,34 @@
   <Navbar selecto="coconutdata" />
   <div style="height: 10rem;"></div>
 
-
-  <div v-if="coconut">
-    <div class="coconut-detail-container">
-      <div class="row-top">
-        <div class="coconut-detail-img">
-          <img :src="coconut.image || 'https://via.placeholder.com/1280x720'" alt="Coconut Image" />
-        </div>
-        <div class="coconut-detail-info">
-          <h2>{{ coconut.name_th || 'ชื่อไทย' }}</h2>
-          <p><strong>ชื่ออังกฤษ :</strong> {{ coconut.name_eng }}</p>
-          <p><strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut.sci_name_f }} {{ coconut.sci_name_m }} {{ coconut.sci_name_l
-            }}</p>
-          <p><strong>คำอธิบาย :</strong> {{ coconut.description || 'ไม่มีคำอธิบาย' }}</p>
-          <p><strong>ถิ่นกำเนิด :</strong> <br>
-          <p class="origin-desc">{{ coconut.origin || 'ไม่มีข้อมูล' }}</p>
-          </p>
-        </div>
-
-
+  <div v-if="coconut" class="coconut-detail-container">
+    <div class="row-top">
+      <div class="coconut-detail-img">
+        <img :src="coconut.image || 'https://via.placeholder.com/1280x720'" alt="Coconut Image" />
       </div>
-      <div class="deta-below">
-        <p><strong>ลักษณะเฉพาะ :</strong> <br>
-        <p class="origin-desc">{{ coconut.characteristics || 'ไม่มีข้อมูล' }}</p>
-        </p>
-        <p><strong>ประเภท :</strong>
-          {{ coconut.youngold === 'Old' ? 'มะพร้าวแก่' : (coconut.youngold === 'Young' ? 'มะพร้าวอ่อน' :
-          'ข้อมูลไม่ระบุ') }}
-        </p>
+      <div class="coconut-detail-info">
+        <h2>{{ coconut.name_th || 'ชื่อไทย' }}</h2>
+        <p><strong>ชื่ออังกฤษ :</strong> {{ coconut.name_eng || 'ไม่มีข้อมูล' }}</p>
+        <p><strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut.sci_name_f }} {{ coconut.sci_name_m }} {{ coconut.sci_name_l }}</p>
+        <p><strong>คำอธิบาย :</strong> {{ coconut.description || 'ไม่มีคำอธิบาย' }}</p>
+        <p><strong>ถิ่นกำเนิด :</strong></p>
+        <p class="origin-desc">{{ coconut.origin || 'ไม่มีข้อมูล' }}</p>
       </div>
     </div>
-    <div style="height: 4px;background-color: #4e6d16;width: 80%; display: flex;justify-self: center; margin: 1rem;"></div>
-  <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-varieties"/>
-  </div>
-  
 
-  <div v-else>
+    <div class="deta-below">
+      <p><strong>ลักษณะเฉพาะ :</strong></p>
+      <p class="origin-desc">{{ coconut.characteristics || 'ไม่มีข้อมูล' }}</p>
+      <p><strong>ประเภท :</strong>
+        {{ coconut.youngold === 'Old' ? 'มะพร้าวแก่' : (coconut.youngold === 'Young' ? 'มะพร้าวอ่อน' : 'ข้อมูลไม่ระบุ') }}
+      </p>
+    </div>
+
+    <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
+    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-varieties" />
+  </div>
+
+  <div v-else class="loading-container">
     <p>กำลังโหลดข้อมูล...</p>
   </div>
 
@@ -45,6 +37,8 @@
 </template>
 
 <script>
+import { useHead } from '@vueuse/head';
+
 export default {
   data() {
     return {
@@ -59,6 +53,17 @@ export default {
       if (!response.ok) throw new Error('Failed to fetch coconut details');
       const data = await response.json();
       this.coconut = data.find(coconut => coconut.id === parseInt(cid)) || null;
+
+      
+      useHead({
+        title: `🥥 Coconut - ${this.coconut ? this.coconut.name_th : 'Details'}`,
+        meta: [
+          {
+            name: 'description',
+            content: `Detailed information about ${this.coconut?.name_th || 'coconut'} varieties.`,
+          },
+        ],
+      });
     } catch (error) {
       console.error('Error fetching coconut details:', error);
     }
@@ -77,13 +82,11 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 2rem
+  gap: 2rem;
 }
 
 .deta-below {
-  gap: 2rem;
-  padding-left: 5rem;
-  padding-right: 5rem;
+  padding: 0 5rem;
 }
 
 .deta-below p {
@@ -91,16 +94,13 @@ export default {
   margin-bottom: 0.5rem;
 }
 
-
-
-
 .coconut-detail-container {
   display: flex;
-  justify-self: center;
-  width: 80%;
   flex-direction: column;
   justify-content: center;
   gap: 2rem;
+  width: 80%;
+  margin: auto;
 }
 
 .coconut-detail-img {
@@ -116,7 +116,6 @@ export default {
 .coconut-detail-img img {
   height: 100%;
   object-fit: cover;
-
 }
 
 .coconut-detail-info {
@@ -124,8 +123,6 @@ export default {
   font-size: 1rem;
   line-height: 1.5;
 }
-
-
 
 .coconut-detail-info h2 {
   font-size: 3rem;
@@ -146,8 +143,12 @@ p.origin-desc {
   overflow: hidden;
 }
 
-.coconut-detail-info strong {
-  font-weight: bold;
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-size: 1.5rem;
 }
 
 @media (max-width: 900px) {
@@ -157,8 +158,13 @@ p.origin-desc {
 }
 
 @media (max-width: 762px) {
-  .coconut-detail-info {
-    justify-content: center;
+  .row-top {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .deta-below {
+    padding: 0 2rem;
   }
 }
 </style>

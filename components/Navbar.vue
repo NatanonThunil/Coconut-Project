@@ -178,6 +178,7 @@ nuxt-link:hover {
     height: 40px;
     vertical-align: middle;
     cursor: pointer;
+    animation: ease-in-out fadeIn backwards 1s;
 }
 
 .main-menu {
@@ -188,9 +189,8 @@ nuxt-link:hover {
     align-items: center;
     gap: 20px;
     flex: 1;
-    opacity: 0;
-    transform: translateX(100%);
-    animation: fadeIn 1s ease-out forwards;
+    
+
 }
 
 .main-menu>li {
@@ -203,10 +203,38 @@ nuxt-link:hover {
     background-color: white;
     box-shadow: #0000003c 4px 4px 4px;
     transition: background-color 0.3s, color 0.3s;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+
+.main-menu li:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.main-menu li:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.main-menu li:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.main-menu li:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+.main-menu li:nth-child(6) {
+    animation-delay: 1s;
 }
 
 .main-menu>li.Selected {
     background-color: #4E6D16;
+    color: white;
+}
+
+.main-menu>li.Selected:hover {
+    background-color: #2a3b0b;
     color: white;
 }
 
@@ -254,7 +282,7 @@ nuxt-link:hover {
     padding: 10px;
     background: #f0f0f0;
     border-radius: 20px;
-    transition: background-color 0.3s, color 0.3s;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .lang-toggle:hover {
@@ -294,9 +322,27 @@ nuxt-link:hover {
 .hamburger-icon.open span:nth-child(3) {
     transform: translateY(-10px) rotate(-45deg);
 }
-
-@media (max-width: 950px) {
+.mobile-main-menu .mobileSelected{
+    background-color: #4E6D16;
+    color: white;
+}
+@media (max-width: 1239px) {
     .main-menu {
+        gap: 10px;
+    }
+}
+
+
+@media (max-width: 1185px) {
+    li a img.btn-icons {
+        display: none;
+    }
+}
+
+
+@media (max-width: 1014px) {
+    .main-menu {
+
         display: none;
     }
 
@@ -318,7 +364,7 @@ nuxt-link:hover {
 @keyframes fadeIn {
     0% {
         opacity: 0;
-        transform: translateX(5%);
+        transform: translateX(20%);
     }
 
     100% {
@@ -348,6 +394,18 @@ nuxt-link:hover {
     100% {
         opacity: 1;
         transform: translateY(-10%);
+    }
+}
+
+@keyframes disappear {
+    100% {
+        opacity: 1;
+  
+    }
+
+    0% {
+        opacity: 0;
+        display: none;
     }
 }
 </style>

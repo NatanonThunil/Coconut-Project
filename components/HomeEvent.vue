@@ -13,8 +13,8 @@
       </li>
     </ul>
 
-    <div class="event-card-section" loading="lazy">
-      <p v-if="filteredEvents.length === 0">No events found for this category.</p>
+    <div  class="event-card-section" loading="lazy">
+      <p v-if="filteredEvents.length === 0"><CardShimmer /><CardShimmer /><CardShimmer /><CardShimmer /></p>
       <div v-for="(event, index) in filteredEvents" :key="index"
         :class="['event-card', `${event.event_category}-card`]">
         <nuxt-link :to="`/event/detail/${event.id}`">

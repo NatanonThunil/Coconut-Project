@@ -1,11 +1,9 @@
 <template>
   <div class="coconut-v-card shimmer" loading="lazy">
     <div class="coconut-v-img-frame">
-      <!-- Shimmer box always visible for infinite loading -->
       <div class="shimmer-box"></div>
     </div>
     <div class="coconut-v-card-text-container">
-      <!-- Shimmer text placeholders -->
       <div class="shimmer-text"></div>
       <div class="shimmer-text" style="width: 60%;"></div>
     </div>
@@ -14,7 +12,6 @@
 
 <script></script>
 <style scoped>
-/* Card styles */
 .coconut-v-card {
   cursor: default;
   height: 18rem;
@@ -29,7 +26,6 @@
   animation: shimmer-loading 1.5s infinite;
 }
 
-/* Image frame */
 .coconut-v-card .coconut-v-img-frame {
   display: flex;
   justify-content: center;
@@ -48,7 +44,6 @@
   animation: shimmer-effect 1.5s infinite;
 }
 
-/* Text container */
 .coconut-v-card .coconut-v-card-text-container {
   color: black;
   display: flex;
@@ -66,7 +61,7 @@
   animation: shimmer-effect 1.5s infinite;
 }
 
-/* Shimmer animations */
+
 @keyframes shimmer-effect {
   0% {
     background-position: -200% 0;

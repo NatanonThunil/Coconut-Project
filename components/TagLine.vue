@@ -1,6 +1,6 @@
 <template>
     <div class="image-container">
-        <img src="~/assets/img/tl.png" class="img" alt="Coconut Image">
+        <img src="~/assets/img/tl.png" class="img" alt="Coconut Image" draggable="false">
         <h1>{{ taglinetext }}</h1>
     </div>
     <div style="height: 32rem;"></div>
@@ -22,8 +22,13 @@ export default {
     top: 0%;
     position: absolute;
     width: 100%;
-    height: auto;
+    height: 32rem;
     overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    object-fit: cover;
 }
 
 h1 {
@@ -71,7 +76,7 @@ img {
 
     100% {
 
-        filter: brightness(1) blur(0px);
+        filter: brightness(0.6) blur(0px);
         ;
         opacity: 1;
         transform: scale(1);

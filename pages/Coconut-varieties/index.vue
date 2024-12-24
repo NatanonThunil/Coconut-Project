@@ -142,6 +142,7 @@ label.coconut-v-input {
     border-radius: 10px;
     overflow: hidden;
     cursor: text;
+    animation: btnexpand 0.5s ease-in-out forwards;
 }
 
 label.coconut-v-input:hover {
@@ -244,5 +245,17 @@ label.coconut-v-input input {
     .coconut-v-cards-container {
         width: 90%;
     }
+}
+
+@keyframes btnexpand {
+    0%{
+        opacity: 0;
+        width: 20%;
+    }
+    100%{
+        opacity: 1;
+        width: 60%;
+    }
+    
 }
 </style>
