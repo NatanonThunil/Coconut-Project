@@ -49,9 +49,27 @@ Locally preview production build:
 npm run preview
 
 ```
-# put file
+# Push branch ไป main
+``` bash
+git push origin ชื่อbranch:main --force
 
+```
+``` bash
+//JEFF
 git push origin DEKshiSUJEFF:main --force
+
+```
+``` bash
+//POOM
+git push origin DekshinePoom:main --force
+
+```
+``` bash
+//JAME
+git push origin dekchaijame:main --force
+
+```
+
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 

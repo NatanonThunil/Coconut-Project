@@ -1,6 +1,6 @@
-<template>
-    <nuxt-link :to="link">
-        <button class="news-button">{{ text }}</button>
+<template >
+    <nuxt-link :to="link" >
+        <button class="news-button" >{{ text }}</button>
     </nuxt-link>
 </template>
 
@@ -21,11 +21,14 @@ export default {
 
 <style scoped>
 .news-button {
+    overflow: hidden;
     display: flex;
     justify-self: center;
     justify-content: center;
     margin: 2rem;
     width: 80%;
+    align-self: center;
+    height: 4rem;
     background-color: transparent;
     color: #4e6d16;
     padding: 10px 20px;
@@ -35,6 +38,7 @@ export default {
     border-radius: 30px;
     cursor: pointer;
     border: #4e6d16 solid 3px;
+    animation: btnexpand 1s;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -50,5 +54,17 @@ export default {
 
 .news-button:active {
     background-color: #2c440f;
+}
+
+@keyframes btnexpand {
+    0%{
+        opacity: 0;
+        width: 20%;
+    }
+    100%{
+        opacity: 1;
+        width: 80%;
+    }
+    
 }
 </style>

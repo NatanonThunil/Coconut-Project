@@ -24,12 +24,14 @@
       </div>
     </div>
 
-    <!-- Show loading message while news is being fetched -->
-    <div v-else-if="loading">
-      <p>Loading news...</p>
+   
+    <div v-else-if="loading" class="loading-shimmer">
+      <div class="shimmer-item"></div>
+      <div class="shimmer-item"></div>
+      <div class="shimmer-item"></div>
     </div>
 
-    <!-- Fallback message if no news is available -->
+ 
     <div v-else>
       <p>No news available.</p>
     </div>
@@ -49,10 +51,10 @@ const fetchNews = async () => {
     const response = await $fetch('/api/news_table');
     newsItems.value = response;
 
-    // Find the hot news item
+
     hotNews.value = newsItems.value.find((news) => news.hot_new) || null;
 
-    // Filter out regular news items, excluding the hot news
+  
     regularNews.value = newsItems.value.filter((news) => !news.hot_new).slice(0, 2);
   } catch (error) {
     console.error('Error fetching news:', error);
@@ -192,11 +194,32 @@ onMounted(fetchNews);
   animation-delay: 0.4s;
 }
 
+
+.loading-shimmer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.shimmer-item {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  height: 180px;
+  border-radius: 10px;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Responsive styles */
 @media screen and (max-width: 1250px) {
   .hot-news-image {
     width: 70%;
-   
   }
 
   .news-item {
@@ -204,7 +227,7 @@ onMounted(fetchNews);
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1250px) {
   .hot-news-section {
     flex-direction: column;
     align-items: center;
@@ -218,7 +241,6 @@ onMounted(fetchNews);
 
   .hot-news-image img {
     width: 100%;
-    
   }
 
   .hot-news-text {
@@ -239,20 +261,8 @@ onMounted(fetchNews);
 
   .news-item img {
     max-height: 120px;
-    
-
   }
 }
-
-@media screen and (max-width: 1250px) {
-  .news-item img{
-    width: 60%;
-    height: 100%;
-  }
-  .news-item{
-    flex-direction: row;
-  }}
-
 
 @media screen and (max-width: 480px) {
   .hot-news-image img {
@@ -261,13 +271,11 @@ onMounted(fetchNews);
 
   .news-item img {
     max-height: 100px;
-   
   }
 
   .news-item {
     display: none;
     flex-direction: column;
   }
-
 }
 </style>

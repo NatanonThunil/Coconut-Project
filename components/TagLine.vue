@@ -1,29 +1,34 @@
 <template>
     <div class="image-container">
-        <img src="~/assets/img/tl.png" class="img" alt="Coconut Image">
-        <h1>{{taglinetext}}</h1>
+        <img src="~/assets/img/tl.png" class="img" alt="Coconut Image" draggable="false">
+        <h1>{{ taglinetext }}</h1>
     </div>
+    <div style="height: 32rem;"></div>
 </template>
 
-
-
 <script>
-import '~/components/styles/tagline.css';
 export default {
     props: {
-        taglinetext:
-        {
+        taglinetext: {
             type: String,
             required: true
         }
-
     }
 }
 </script>
-<style scoped>.image-container {
-    position: relative;
+
+<style scoped>
+.image-container {
+    top: 0%;
+    position: absolute;
     width: 100%;
-    height: auto;
+    height: 32rem;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    object-fit: cover;
 }
 
 h1 {
@@ -35,10 +40,20 @@ h1 {
     transform: translate(-50%, -50%);
     font-size: 2em;
     margin: 0;
+    opacity: 0;
+    animation: fadeInText 1s ease-out 0.5s forwards;
 }
 
-.img {
-    width: 100%;
-    height: auto;
+
+@keyframes fadeInText {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 </style>

@@ -1,23 +1,21 @@
 <template>
   <div class="navcontainer">
-  <Navbar selecto="expert"/>
-</div>
-<h3 class="header-content">ผู้เชี่ยวชาญ</h3>
-<div class="header-container">
-      <h1>ผู้เชี่ยวชาญ</h1>
-    </div>
+    <Navbar selecto="expert" />
+  </div>
+  <h3 class="header-content">ผู้เชี่ยวชาญ</h3>
+  <div class="header-container">
+    <h1>ผู้เชี่ยวชาญ</h1>
+  </div>
+</template>
 
-    <div class="navigation">
-      
-    </div>
-  </template>
-  
-  <style scoped>
-.navcontainer{
+<style scoped>
+.navcontainer {
   width: 100vw;
   height: 100px;
+  border: green solid 2px;
 }
 .header-container {
+  border: blue solid 3px;
   text-align: center;
   margin-top: 0;
   padding-top: 20px;

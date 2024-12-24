@@ -4,11 +4,11 @@
     <TagLine taglinetext="This is Coconut KnowledgeHub TagLine" />
 
     <ContentHeader contexto="ข่าวสาร" />
-    <news/>
-    <SeeAllButton text="ข่าวสารทั้งหมด"link="news"/>
+    <news />
+    <SeeAllButton text="ข่าวสารทั้งหมด" link="news" />
     <ContentHeader contexto="กิจกรรม" />
     <HomeEvent />
-    <SeeAllButton text="กิจกรรมทั้งหมด"link="events"/>
+    <SeeAllButton text="กิจกรรมทั้งหมด" link="events" />
     <ContentHeader contexto="อื่นๆ" />
     <HomeFootBanner
       text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
@@ -27,19 +27,30 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import { useHead } from '@vueuse/head';
-
-
-useHead({
-  title: '🥥Coconut - Home',
-  meta: [
-    {
-      name: 'description',
-      content: 'Home page for Coconut Knowledge Hub',
+export default {
+  mounted() {
+    window.scrollTo(0, 0);
+  }, setup() {
+    useHead({
+      title: '🥥Coconut - Home',
+      meta: [
+        {
+          name: 'description',
+          content: 'Home page for Coconut Knowledge Hub',
+        },
+      ],
     },
-  ],
-});
+
+
+    );
+  }
+}
+
+
+
+
 </script>
 <style scoped>
 footer {
