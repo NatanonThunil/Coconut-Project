@@ -1,9 +1,5 @@
 <template>
   <form id="newsForm" @submit.prevent="handleFormSubmit">
-    <!-- News ID Input -->
-    <label for="newsId">News ID:</label>
-    <input type="text" id="newsId" name="newsId" placeholder="Enter News ID" required>
-
     <!-- Title Input -->
     <label for="title">Title:</label>
     <input type="text" id="title" name="title" placeholder="Enter Title" required>
@@ -36,6 +32,7 @@
     <button type="submit">Add News</button>
   </form>
 </template>
+
 
 <style scoped>
 form {

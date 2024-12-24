@@ -1,7 +1,7 @@
 <template>
   <div class="news-container">
     <!-- Hot News Section -->
-    <div v-if="hotNews" class="hot-news-section" @click="$router.push('/news/' + hotNews.news_id)">
+    <div v-if="hotNews" class="hot-news-section" @click="$router.push('/news/' + hotNews.id)">
       <div class="hot-news-image">
         <img :src="hotNews.image" alt="Hot News Image" />
       </div>
@@ -16,17 +16,22 @@
       <div
         class="news-item"
         v-for="news in regularNews"
-        :key="news.news_id"
-        @click="$router.push('/news/' + news.news_id)"
+        :key="news.id"
+        @click="$router.push('/news/' + news.id)"
       >
         <img :src="news.image" alt="News Image" />
-        <p>{{ news.summerize }}</p>
+        <p>{{ news.title }}</p>
       </div>
     </div>
 
     <!-- Show loading message while news is being fetched -->
     <div v-else-if="loading">
       <p>Loading news...</p>
+    </div>
+
+    <!-- Fallback message if no news is available -->
+    <div v-else>
+      <p>No news available.</p>
     </div>
   </div>
 </template>
@@ -35,7 +40,7 @@
 import { ref, onMounted } from 'vue';
 
 const newsItems = ref([]);
-const hotNews = ref(null); // Correct declaration
+const hotNews = ref(null);
 const loading = ref(true);
 const regularNews = ref([]);
 
@@ -58,7 +63,7 @@ const fetchNews = async () => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString();
+  return isNaN(date) ? 'Invalid Date' : date.toLocaleDateString();
 };
 
 onMounted(fetchNews);
@@ -66,7 +71,6 @@ onMounted(fetchNews);
 
 <style scoped>
 .news-container {
-
   margin-left: 4%;
   margin-right: 4%;
   display: flex;
@@ -95,7 +99,6 @@ onMounted(fetchNews);
   transform: scale(1.01);
   background-color: #2c440f;
   box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 4px;
-  
 }
 
 .hot-news-image {
@@ -110,7 +113,6 @@ onMounted(fetchNews);
 .hot-news-image img {
   height: 100%;
   width: 100%;
-  
   object-fit: cover;
 }
 
@@ -156,7 +158,6 @@ onMounted(fetchNews);
 }
 
 .news-item img {
-
   align-self: center;
   width: 65%;
   max-height: 100%;
@@ -166,7 +167,7 @@ onMounted(fetchNews);
 .news-item p {
   margin: 1rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   line-height: 1.4;
   color: white;
 }
@@ -191,63 +192,82 @@ onMounted(fetchNews);
   animation-delay: 0.4s;
 }
 
+/* Responsive styles */
 @media screen and (max-width: 1250px) {
-    .hot-news-image {
-        width: 70%;
-    }
+  .hot-news-image {
+    width: 70%;
+   
+  }
 
-    .news-item {
-        flex-direction: column;
-    }
+  .news-item {
+    flex-direction: column;
+  }
 }
 
 @media screen and (max-width: 1024px) {
-    .hot-news-section {
-        flex-direction: column;
-        align-items: center;
-        border-radius: 10px;
-        overflow: hidden;
-    }
+  .hot-news-section {
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    overflow: hidden;
+  }
 
-    .hot-news-image {
-        width: 100%;
-    }
+  .hot-news-image {
+    width: 100%;
+  }
 
-    .hot-news-image img {
-        width: 100%;
-    }
+  .hot-news-image img {
+    width: 100%;
+    
+  }
 
-    .hot-news-text {
-        max-width: 100%;
-        text-align: center;
-    }
+  .hot-news-text {
+    max-width: 100%;
+    text-align: center;
+  }
 
-    .news-rows {
-        flex-direction: row;
-    }
+  .news-rows {
+    display: none;
+    flex-direction: column;
+  }
 
-    .news-item {
-        margin-bottom: 1rem;
-        max-width: 100%;
-        display: none;
-    }
+  .news-item {
+    margin-bottom: 1rem;
+    max-width: 100%;
+    display: flex;
+  }
 
-    .news-item img {
-        max-height: 120px;
-    }
+  .news-item img {
+    max-height: 120px;
+    
+
+  }
 }
 
+@media screen and (max-width: 1250px) {
+  .news-item img{
+    width: 60%;
+    height: 100%;
+  }
+  .news-item{
+    flex-direction: row;
+  }}
+
+
 @media screen and (max-width: 480px) {
-    .hot-news-image img {
-        max-width: 90%;
-    }
+  .hot-news-image img {
+    max-width: 90%;
+  }
 
-    .news-item img {
-        max-height: 100px;
-    }
+  .news-item img {
+    max-height: 100px;
+   
+  }
 
-    .news-item {
-        display: none;
-    }
+  .news-item {
+    display: none;
+    flex-direction: column;
+  }
+
 }
 </style>

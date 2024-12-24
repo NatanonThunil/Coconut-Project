@@ -11,14 +11,27 @@ export default defineEventHandler(async () => {
 
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM events_table ORDER BY event_id DESC');
-
-    const events = rows.map(event => {
+    const [rows] = await connection.execute('SELECT * FROM events_table ORDER BY id DESC');
+    
+    const events = rows.map((event) => {
       let imageBase64 = null;
       if (event.image) {
-        imageBase64 = `data:image/jpeg;base64,${Buffer.from(event.image).toString('base64')}`;
-      }
+        // Determine the MIME type by checking the first few bytes of the image
+        const imageBuffer = Buffer.from(event.image);
+        let mimeType = 'image/jpeg'; // Default to JPEG
 
+        if (
+          imageBuffer[0] === 0x89 &&
+          imageBuffer[1] === 0x50 &&
+          imageBuffer[2] === 0x4E &&
+          imageBuffer[3] === 0x47
+        ) {
+          mimeType = 'image/png'; // PNG file signature
+        }
+
+        imageBase64 = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+      }
+      
       return {
         ...event,
         image: imageBase64,

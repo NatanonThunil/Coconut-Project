@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const form = formidable({
     uploadDir: path.join(process.cwd(), 'uploads'),
     keepExtensions: true,
-    multiples: false,
+    multiples: false, // Only one file upload at a time
   });
 
   try {
@@ -30,11 +30,12 @@ export default defineEventHandler(async (event) => {
     console.log('Received fields:', fields);
     console.log('Received files:', files);
 
-    // Extract form fields
-    const { event_id, title, organizer, date_start, date_end, location_url, register_url, description, event_category } = fields;
+    // Destructure the form fields
+    const { title, organizer, date_start, date_end, location_url, register_url, description, event_category } = fields;
     const image = files.image;
-    
-    if (!event_id || !title || !organizer || !date_start || !date_end || !description || !image || !event_category) {
+
+    // Validate the required fields
+    if (!title || !organizer || !date_start || !date_end || !description || !image || !event_category) {
       throw new Error('Missing required fields');
     }
 
@@ -48,27 +49,23 @@ export default defineEventHandler(async (event) => {
 
     const location_name = fields.location_name ? fields.location_name[0] : 'Default Location';
 
-
     // Insert the data into the database
     const [result] = await connection.execute(
-      `INSERT INTO events_table (event_id, image, title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO events_table (image, title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        event_id[0],
-        imageBuffer,
-        title[0],
-        organizer[0],
-        date_start[0],
-        date_end[0],
-        location_name ? location_name[0] : null, // Handle optional location_name
-        location_url[0],
-        register_url[0],
-        description[0],
-        event_category[0],
+        imageBuffer,         // Image as Buffer
+        title[0],            // Title
+        organizer[0],        // Organizer
+        date_start[0],       // Start Date
+        date_end[0],         // End Date
+        location_name,       // Location Name (optional)
+        location_url[0],     // Location URL
+        register_url[0],     // Registration URL
+        description[0],      // Description
+        event_category[0],   // Event Category
       ]
     );
-    
-    
 
     console.log('Insert result:', result);
 
@@ -80,7 +77,7 @@ export default defineEventHandler(async (event) => {
       statusCode: 201,
       body: {
         message: 'Event added successfully',
-        eventId: result.insertId,
+        eventId: result.insertId, // Auto-generated ID by MySQL
       },
     };
   } catch (error) {
