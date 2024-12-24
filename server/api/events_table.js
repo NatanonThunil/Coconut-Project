@@ -1,16 +1,11 @@
 import mysql from 'mysql2/promise';
-
+import { dbConfig } from '../config/poom_db_config';
 export default defineEventHandler(async () => {
-  const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',
-    database: 'events',
-    port: 3306,
-  };
+
 
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM event_table ORDER BY id DESC');
+    const [rows] = await connection.execute('SELECT * FROM event ORDER BY id DESC');
     
     const events = rows.map((event) => {
       let imageBase64 = null;

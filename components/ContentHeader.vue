@@ -15,6 +15,7 @@
     align-items: center;
     justify-content: space-evenly;
     margin: 1rem;
+    animation:  fadeinbelow 1s;
 }
 
 .line {
@@ -31,6 +32,18 @@
     color: #4E6D16;
     font-weight: bolder;
     font-size: 40px;
+}
+
+@keyframes fadeinbelow{
+    0%{
+        opacity: 0;
+        transform: translateY(50%);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translateY(0%);
+}
 }
 </style>
 <script>

@@ -5,28 +5,30 @@
     <div style="height: 5rem;"></div>
     <label class="coconut-v-input">
         <img src="@/assets/icon/search.svg">
-        <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts">
+        <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
     </label>
 
-    <div class="coconut-v-cards-container" loading="lazy">
+    <!-- Loading State -->
+    <div v-if="loading" class="coconut-v-cards-container">
+        <CardShimmer v-for="index in 30" :key="index" />
+    </div>
+
+    <!-- Loaded Content -->
+    <div v-else class="coconut-v-cards-container">
         <CoconutCards v-for="coconut in paginatedCoconuts" :key="coconut.id"
             :img="coconut.image || 'https://via.placeholder.com/1280x720'"
             :url="`/coconut-varieties/details/${coconut.id}`" :name="coconut.name_th || 'ชื่อไทย'"
             :sci_front="coconut.sci_name_f || 'วิทย์ 1'" :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
             :sci_back="coconut.sci_name_l || 'วิทย์ 3'" @click="goToDetails(coconut.id)" />
-
     </div>
 
     <div class="pagination">
         <div class="pagination-line"></div>
         <div class="pagination-controller">
             <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
-
             <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
                 class="page-input" />
-
-            <span style="display: flex;align-self: center;">จาก {{ totalPages }}</span>
-
+            <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
             <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
         </div>
         <div class="pagination-line"></div>
@@ -36,6 +38,7 @@
 </template>
 
 <script>
+import { useHead } from '@vueuse/head';
 export default {
     data() {
         return {
@@ -45,6 +48,7 @@ export default {
             currentPage: 1,
             itemsPerPage: 30,
             pageInput: 1,
+            loading: true, // Initial loading state
         };
     },
     computed: {
@@ -63,12 +67,17 @@ export default {
         },
     },
     async mounted() {
+        window.scrollTo(0, 0);
         try {
-            const response = await fetch('/api/coconut');
-            if (!response.ok) throw new Error('Failed to fetch data');
-            const data = await response.json();
-            this.coconuts = data;
-            this.filteredCoconuts = data;
+         
+            setTimeout(async () => {
+                const response = await fetch('/api/coconut');
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                this.coconuts = data;
+                this.filteredCoconuts = data;
+                this.loading = false; state
+            }, 200); 
         } catch (error) {
             console.error('Error fetching coconuts:', error);
         }
@@ -76,10 +85,11 @@ export default {
     methods: {
         filterCoconuts() {
             const query = this.searchQuery.toLowerCase();
-            this.filteredCoconuts = this.coconuts.filter(coconut =>
-                coconut.name_th.toLowerCase().includes(query) || coconut.name_eng.toLowerCase().includes(query)
+            this.filteredCoconuts = this.coconuts.filter(
+                coconut =>
+                    coconut.name_th.toLowerCase().includes(query) ||
+                    coconut.name_eng.toLowerCase().includes(query)
             );
-
             this.currentPage = 1;
         },
         changePage(direction) {
@@ -96,19 +106,32 @@ export default {
                 this.pageInput = this.currentPage;
             }
         },
-
-        // Method to handle click event and navigate to the detail page
         goToDetails(id) {
             this.$router.push(`/coconut-varieties/details/${id}`);
         },
     },
+    setup() {
+        useHead(
+            {
+                title: '🥥Coconut - Varieties',
+                meta: [
+                    {
+                        name: 'description',
+                        content: 'Home page for Coconut Knowledge Hub',
+                    },
+                ],
+            },
+        );
+    },
 };
 </script>
-<style scoped>
-h1.context-header {
-    text-align: center;
-}
 
+<style scoped>
+
+.context-header{
+    display: flex;
+    justify-self: center;
+}
 label.coconut-v-input {
     transition: ease-in-out 0.5s;
     display: flex;
@@ -141,6 +164,17 @@ label.coconut-v-input input {
     width: 90%;
 }
 
+
+@keyframes shimmer-effect {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
 .coconut-v-cards-container {
     height: auto;
     width: 80%;
@@ -152,6 +186,16 @@ label.coconut-v-input input {
     margin: 2rem;
 }
 
+.CardShimmer {
+    height: 18rem;
+    width: 15rem;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-effect 1.5s infinite;
+}
+
+/* Pagination */
 .pagination {
     display: flex;
     justify-content: center;
