@@ -10,17 +10,17 @@
     <HomeEvent />
     <SeeAllButton text="กิจกรรมทั้งหมด" link="events" />
     <ContentHeader contexto="อื่นๆ" />
-    <HomeFootBanner
+    <HomeFootBanner title="เกี่ยวกับเรา"
       text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/1280x720" url="รอลิงค์" />
+      picture="_nuxt/assets/img/AboutUs.png" url="/AboutUs" />
 
-    <HomeFootBanner
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/2280x120" url="รอลิงค์" />
+    <HomeFootBanner title="ข้อมูลมะพร้าว"
+      text="มะพร้าว เป็นพืชยืนต้นชนิดหนึ่งอยู่ในวงศ์ปาล์ม (Arecaceae)และเป็นสปีชีส์เดียวของสกุล Cocos ที่ยังมีชีวิตอย มะพร้าว เป็นพืชซึ่งสามารถใช้ประโยชน์ได้ในหลากหลายด้าน "
+      picture="_nuxt/assets/img/CoconutInformation.jpg" url="/coconut-varieties" />
 
-    <HomeFootBanner
+    <HomeFootBanner title="ผู้เชี่ยวชาญ"
       text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/1280x720" url="รอลิงค์" />
+      picture="_nuxt/assets/img/Expert.png" url="/Expert" />
 
     <Footer />
 

@@ -9,136 +9,120 @@
 
   <div class="a">
     <section>
-      <div>
-        <div class="headers"><h1></h1></div>
-        <div class="box1">
-          <div class="greenbox1">
-            <div class="textcontent">
-          
-            <div class="content1">ผลงาน</div>
-            <div class="text">ข้อความ</div>
-          </div>
-            <div class="image">
-              <img
-                src="https://static.cdntap.com/tap-assets-prod/wp-content/uploads/sites/25/2020/04/32-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%8C%E0%B8%95%E0%B8%B9%E0%B8%99%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%8134.png"
-                alt="picture"
-              />
-            </div>
-          </div>
-          <div class="greenbox2">
-            <div class="textcontent">
-          
-            <div class="content1">ผลงาน</div>
-            <div class="text">ข้อความ</div>
-          </div>
-            <div class="image">
-              <img
-                src="https://static.cdntap.com/tap-assets-prod/wp-content/uploads/sites/25/2020/04/32-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%8C%E0%B8%95%E0%B8%B9%E0%B8%99%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%8134.png"
-                alt="picture"
-              />
-            </div>
-          </div>
-        </div>
+      <div class="achivement-container">
+        <HomeFootBanner v-for="achievement in achievements" :key="achievement.id"
+        :text="achievement.description || 'No description'" :title="achievement.title || 'No Title'" color="#C5D944" :picture="achievement.image || 'No image'"
+          :url="'achievements/details/' + achievement.id || '404'" />
       </div>
-      <!-- <div class="work">
-        <button class="button">ผลงานทั้งหมด</button>
-      </div> -->
+
       <SeeAllButton text="ผลงานทั้งหมด" link="" />
     </section>
   </div>
-  <ContentHeader class="ch" contexto="คณะทำงาน" />
+
+  <ContentHeader contexto="คณะทำงาน" />
   <div class="cards-container">
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://s359.kapook.com/r/600/auto/pagebuilder/19c270cb-85d2-4682-956a-8151861d0936.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
+
+    <Card v-for="employee in employees" :key="employee.id" :title="employee.name || 'ชื่อ'"
+      :image="employee.image || 'รูป'" :description="employee.description || 'ไม่มีข้อความ'"></Card>
+
   </div>
 
-  <ContentHeader class="ch" contexto="สิทธิประโยชน์และการบริการ" />
+  <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
   <div class="cards-container">
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://s359.kapook.com/r/600/auto/pagebuilder/19c270cb-85d2-4682-956a-8151861d0936.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
+    <Card title="ชื่อ" image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg" description="ข้อความ"></Card>
+    <Card title="ชื่อ" image="https://s359.kapook.com/r/600/auto/pagebuilder/19c270cb-85d2-4682-956a-8151861d0936.jpg"
+      description="ข้อความ"></Card>
+    <Card title="ชื่อ" image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg" description="ข้อความ"></Card>
   </div>
 
-  <ContentHeader class="ch" contexto="สมาชิก" />
+  <ContentHeader contexto="สมาชิก" />
   <div class="cards-container">
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://s359.kapook.com/r/600/auto/pagebuilder/19c270cb-85d2-4682-956a-8151861d0936.jpg"
-      description="ข้อความ"
-    ></Card>
-    <Card
-      title="ชื่อ"
-      image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg"
-      description="ข้อความ"
-    ></Card>
+    <Card v-for="member in members" :key="member.id" :title="member.name || 'ชื่อ'"
+    :image="member.image || 'รูป'" :description="member.description || 'ไม่มีข้อความ'"></Card>
   </div>
+
   <Footer />
 </template>
 
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      members: [], // Stores the fetched member data
+      employees: [], // Stores the fetched employee data
+      achievements: [] // Stores the fetched achievement data
+    };
+  },
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      try {
+        const [membersResponse, employeesResponse, achievementsResponse] = await Promise.all([
+          axios.get("/api/members_table"), // Assuming no changes needed for members table
+          axios.get("/api/employees_table"), // Updated to the correct table name
+          axios.get("/api/achievements_table") // Assuming no changes needed for achievements table
+        ]);
+
+        this.members = membersResponse.data.slice(0, 3);
+        this.employees = employeesResponse.data.slice(0, 3); // Only show top 3 employees
+        this.achievements = achievementsResponse.data.slice(0, 2); // Only show top 2 achievements
+      } catch (error) {
+        console.error("Error fetching data:", error.message || error);
+      }
+    },
+  }
+};
+</script>
+
 <style scoped>
+/* Updated and cleaned styles */
 .navcontainer {
   width: 100vw;
   height: 100px;
 }
+
 .a {
   padding-top: 20px;
 }
+
 .headers h1 {
   text-align: center;
 }
+
 .box1 {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.greenbox1,.greenbox2 {
+
+.greenbox1,
+.greenbox2 {
   margin-bottom: 53px;
   display: flex;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+  margin: 1rem;
   justify-content: center;
   background-color: #c5d944;
-  
-  width: 1450px;
+  width: 100%;
+  max-width: 1450px;
   height: 347px;
 }
-.textcontent{
+
+.textcontent {
   flex: 0 0 40%;
 }
-.image{
+
+.image {
   flex: 0 0 60%;
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .image img {
   height: 347px;
   object-fit: cover;
@@ -151,11 +135,13 @@
   padding-top: 20px;
   font-size: 2rem;
 }
+
 .header-content {
   color: #aca8a8;
   margin-left: 2%;
   font-weight: 300;
 }
+
 .content1 {
   color: #000;
   margin-left: 10%;
@@ -163,79 +149,98 @@
   font-weight: 700;
   font-size: 40px;
 }
+
 .text {
   margin-left: 15%;
   margin-top: 7px;
   font-size: 36px;
   font-weight: 400;
 }
-.work {
-  border: 2px solid #000000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.button {
-  border: 2px solid #000000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 1.5%;
-  padding: 10px 400px;
-  font-size: 36px;
-  border-radius: 20;
-}
-.ch {
-  margin-left: 100px;
-}
-.card-image img {
-  display: block; /* เปลี่ยนเป็น block ให้รูปครอบคลุมเต็ม */
-  width: 400px; /* ปรับขนาดรูปให้เต็มการ์ด */
-  height: 400px; /* กำหนดความสูง */
-  object-fit: cover; /* ให้รูปภาพครอบคลุม */
-  border-radius: 10px 10px 0 0; /* มุมโค้งด้านบน */
-  flex-direction: row;
-}
-
-.card-text {
-  padding: 20px; /* เพิ่ม padding เพื่อให้ข้อความดูชัดเจน */
-  color: #000000;
-  text-align: left;
-}
-
-.ct {
-  font-size: 20px;
-  margin: 0 0 10px;
-}
-
-.ct1 {
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.cards {
-  width: 400px;
-  height: 512px;
-  background-color: #ffffff;
-  /* margin-left: 250px; */
-  border-radius: 10px; /* มุมโค้งทุกด้าน */
-  border: 2px solid #000000; /* กำหนดเส้นขอบ */
-  overflow: hidden; /* ซ่อนส่วนเกิน */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
-}
 
 .cards-container {
-  justify-self: center;
   display: flex;
-  flex-direction: row; /* Stack cards vertically */
-  gap: 20px; /* Adds spacing between the cards */
-  justify-content: flex-start; /* Centers cards vertically in their container */
-  align-items: center; /* Centers cards horizontally in their container */
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
   margin-top: 20px;
-  flex-wrap: wrap; /* การ์ดจะลงแถวใหม่ถ้าพื้นที่ไม่พอ */
 }
-.footer {
-  margin-top: 2rem;
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 18px;
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #333;
+}
+
+.card p {
+  font-size: 14px;
+  color: #d4d3d3;
+}
+
+/* Achievement Section Styles */
+.achievement-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 0 16px;
+}
+
+.achievement-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #c5d944;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.achievement-text {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.achievement-text h2 {
+  font-size: 25px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.achievement-text p {
+  font-size: 19px;
+  color: #ffffff;
+}
+
+.achievement-image {
+  flex: 0 0 200px;
+  text-align: center;
+}
+
+.achievement-image img {
+  max-width: 100%;
+  height: 150px;
+  /* Ensures uniform height */
+  object-fit: cover;
+  /* Maintains aspect ratio */
+  border-radius: 8px;
 }
 </style>

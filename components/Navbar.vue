@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar" id="nav-header">
         <a class="logo" href="/">
-            <img class="btn-icons" src="~/assets/logo/CKH.png" alt="Logo" loading="lazy" />
+            <img class="btn-icons" src="~/assets/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
         </a>
         <ul class="main-menu">
             <li :class="{ Selected: selecto === 'aboutus' }">
@@ -189,7 +189,7 @@ nuxt-link:hover {
     align-items: center;
     gap: 20px;
     flex: 1;
-    
+
 
 }
 
@@ -322,10 +322,12 @@ nuxt-link:hover {
 .hamburger-icon.open span:nth-child(3) {
     transform: translateY(-10px) rotate(-45deg);
 }
-.mobile-main-menu .mobileSelected{
+
+.mobile-main-menu .mobileSelected {
     background-color: #4E6D16;
     color: white;
 }
+
 @media (max-width: 1239px) {
     .main-menu {
         gap: 10px;
@@ -353,12 +355,14 @@ nuxt-link:hover {
     .hamburger-container {
         display: block;
     }
+
 }
 
-@media (min-width: 951px) {
+@media (min-width: 1015px) {
     .mobile-main-menu {
         display: none;
     }
+
 }
 
 @keyframes fadeIn {
@@ -400,7 +404,7 @@ nuxt-link:hover {
 @keyframes disappear {
     100% {
         opacity: 1;
-  
+
     }
 
     0% {

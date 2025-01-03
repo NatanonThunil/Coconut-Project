@@ -13,6 +13,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@vueuse/head": "^2.0.0",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "express": "^4.21.2",
     "formidable": "^3.5.2",
     "fs-extra": "^11.2.0",

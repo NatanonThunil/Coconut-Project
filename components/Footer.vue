@@ -15,9 +15,9 @@
         <div class="footer-section">
           <h3>Quick Links</h3>
           <ul>
-            <li><nuxt-link to="/about-us">About Us</nuxt-link></li>
+            <li><nuxt-link to="/aboutus">About Us</nuxt-link></li>
             <li><nuxt-link to="/services">Services</nuxt-link></li>
-            <li><nuxt-link to="/faq">FAQ</nuxt-link></li>
+            <li><nuxt-link to="/faqs">FAQ</nuxt-link></li>
             <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
           </ul>
         </div>

@@ -20,8 +20,8 @@ const detectMimeType = (imageBuffer) => {
     switch (signature) {
         case '89504e47': return 'image/png';
         case 'ffd8ffe0': return 'image/jpeg';
-        case '47494638': return 'image/gif'; 
-        default: return 'image/jpeg'; 
+        case '47494638': return 'image/gif';
+        default: return 'image/jpeg';
     }
 };
 
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     try {
         connection = await createConnection();
 
-    
+
         if (event.req.method === 'GET') {
             const [rows] = await connection.execute('SELECT * FROM coconut');
 
@@ -49,18 +49,18 @@ export default defineEventHandler(async (event) => {
 
             return coconuts;
 
-        } 
+        }
         else if (event.req.method === 'POST') {
-            const body = await readBody(event); 
+            const body = await readBody(event);
 
             const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image } = body;
 
-    
+
             if (!image) {
                 return { error: 'Image is required.' };
             }
 
-     
+
             const imageBuffer = imageToBuffer(image);
             const mimeType = detectMimeType(imageBuffer);
 
@@ -72,11 +72,11 @@ export default defineEventHandler(async (event) => {
             );
 
             return {
-                message: 'Coconut added successfully',
+                message: 'Coconut added',
                 id: result.insertId,
             };
 
-        } 
+        }
 
         else {
             return { error: 'Method Not Allowed' };

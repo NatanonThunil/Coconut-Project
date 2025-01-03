@@ -1,7 +1,7 @@
 <template>
   <div class="cards">
     <div class="card-image">
-      <img :src="image" alt="Card Image" />
+      <img :src="image" alt="Card Image" draggable="false"/>
       <div class="card-text">
         <h2 class="ct">{{ title }}</h2>
         <p class="ct1">{{ description }}</p>
@@ -29,6 +29,7 @@ defineProps({
 
 <style scoped>
 .cards {
+  overflow: hidden;
   height: 512px;
   width: 400px;
   background-color: #ffffff;

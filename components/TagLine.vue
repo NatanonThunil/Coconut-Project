@@ -11,7 +11,7 @@ export default {
     props: {
         taglinetext: {
             type: String,
-            required: true
+            
         }
     }
 }

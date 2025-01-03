@@ -1,7 +1,8 @@
 <template>
     <nuxt-link :to="url">
-        <div class="f-banner">
+        <div class="f-banner" :style="{ backgroundColor: inputColor }">
             <div class="f-banner-text-container">
+                <h1 class="f-banner-title">{{ title }}</h1>
                 <p class="f-banner-text">{{ text }}</p>
             </div>
             <div class="f-banner-image-container">
@@ -12,6 +13,7 @@
 </template>
 
 <script>
+
 export default {
     props: {
         text: {
@@ -19,12 +21,22 @@ export default {
             required: true
         },
         picture: {
-            type: String, // Use String for image URLs or handle Blob separately
+            type: String,
             required: true
         },
         url: {
             type: String,
             required: true
+        },
+        color: {
+            type: String
+        },
+        title: {
+            type: String
+        }
+    }, computed: {
+        inputColor() {
+            return this.color || '#A6AB82';
         }
     }
 }
@@ -36,6 +48,7 @@ export default {
     border-radius: 20px;
     display: flex;
     justify-self: center;
+    justify-content: space-between;
     min-height: 12rem;
     height: 16rem;
     background-color: #A6AB82;
@@ -66,27 +79,37 @@ export default {
 
 .f-banner .f-banner-text-container {
     max-width: 30%;
-    overflow: hidden; /* Fix: Changed from overflow-y: hidden */
+    overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
     text-overflow: ellipsis;
     margin: 2rem;
 }
 
-.f-banner .f-banner-text-container p{
+.f-banner .f-banner-text-container p {
     max-width: 100%;
-    overflow: hidden; /* Fix: Changed from overflow-y: hidden */
+    overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
+    -webkit-line-clamp: 4;
+    padding-left: 1rem;
     text-overflow: ellipsis;
+    font-size: 1.3rem;
+    color: #333;
 
 }
 
-.f-banner .f-banner-text {
-    font-size: 1.5rem;
-    color: #333;
+
+.f-banner .f-banner-text-container h1 {
+    max-width: 100%;
+    overflow: hidden;
+    color: black;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+
 }
 
 @media screen and (max-width: 1024px) {
@@ -97,7 +120,6 @@ export default {
     .f-banner .f-banner-text-container {
         max-width: 40%;
         -webkit-line-clamp: 3;
-        /* Limit to 3 lines for medium screens */
     }
 }
 
@@ -109,7 +131,7 @@ export default {
     .f-banner .f-banner-text-container {
         max-width: 50%;
         -webkit-line-clamp: 2;
-        /* Limit to 2 lines for small screens */
+
     }
 }
 </style>

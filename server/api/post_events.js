@@ -2,15 +2,9 @@ import mysql from 'mysql2/promise';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
-
+import { dbConfig } from '../config/poom_db_config';
 export default defineEventHandler(async (event) => {
-  const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'asd123asd',
-    database: 'events',  // Your database name
-    port: 3306,
-  };
+
 
   const form = formidable({
     uploadDir: path.join(process.cwd(), 'uploads'),
@@ -51,7 +45,7 @@ export default defineEventHandler(async (event) => {
 
     // Insert the data into the database
     const [result] = await connection.execute(
-      `INSERT INTO events_table (image, title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category)
+      `INSERT INTO event (image, title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         imageBuffer,         // Image as Buffer

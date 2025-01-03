@@ -42,9 +42,9 @@
     <!-- Event Category -->
     <label for="event_category">Event Category:</label>
     <select id="event_category" name="event_category">
-      <option value="1">Train</option>
-      <option value="2">Academic Conference</option>
-      <option value="3">Other</option>
+      <option value="educate">Train</option>
+      <option value="conference">Academic Conference</option>
+      <option value="other">Other</option>
     </select>
 
     <!-- Submit Button -->
