@@ -48,7 +48,8 @@ export default {
             currentPage: 1,
             itemsPerPage: 30,
             pageInput: 1,
-            loading: true, // Initial loading state
+            loading: true, 
+             
         };
     },
     computed: {
@@ -87,8 +88,8 @@ export default {
             const query = this.searchQuery.toLowerCase();
             this.filteredCoconuts = this.coconuts.filter(
                 coconut =>
-                    coconut.name_th.toLowerCase().includes(query) ||
-                    coconut.name_eng.toLowerCase().includes(query)
+                    (coconut.name_th.toLowerCase().includes(query) ||
+                    coconut.name_eng.toLowerCase().includes(query)) && coconut.youngold === this.youngOldFilter
             );
             this.currentPage = 1;
         },
@@ -107,7 +108,7 @@ export default {
             }
         },
         goToDetails(id) {
-            this.$router.push(`/coconut-information/coconut-varieties/details/${id}`);
+            this.$router.push(`/coconut-information/old/coconut-varieties/details/${id}`);
         },
     },
     setup() {

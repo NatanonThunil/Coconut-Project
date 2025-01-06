@@ -1,5 +1,5 @@
 <template>
-    <div class="image-container">
+    <div class="image-container" >
         <img src="~/assets/img/tl.png" class="img" alt="Coconut Image" draggable="false">
         <h1>{{ $t('Tagline')}}</h1>
     </div>

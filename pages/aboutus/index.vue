@@ -23,7 +23,7 @@
   <div class="cards-container">
 
     <Card v-for="employee in employees" :key="employee.id" :title="employee.name || 'ชื่อ'"
-      :image="employee.image || 'รูป'" :description="employee.description || 'ไม่มีข้อความ'"></Card>
+      :image="employee.image || 'รูป'" :description="employee.description || 'ไม่มีข้อความ'" :url="'/aboutus/employees/details/'+employee.id"></Card>
 
   </div>
 
@@ -38,7 +38,7 @@
   <ContentHeader contexto="สมาชิก" />
   <div class="cards-container">
     <Card v-for="member in members" :key="member.id" :title="member.name || 'ชื่อ'"
-    :image="member.image || 'รูป'" :description="member.description || 'ไม่มีข้อความ'"></Card>
+    :image="member.image || 'รูป'" :description="member.description || 'ไม่มีข้อความ'":url="'/aboutus/employees/details/'+members.id"></Card>
   </div>
 
   <Footer />

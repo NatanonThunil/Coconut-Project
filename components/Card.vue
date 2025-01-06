@@ -1,5 +1,5 @@
 <template>
-  <div class="cards">
+  <NuxtLinkLocale :to="url" class="cards">
     <div class="card-image">
       <img :src="image" alt="Card Image" draggable="false"/>
       <div class="card-text">
@@ -7,7 +7,7 @@
         <p class="ct1">{{ description }}</p>
       </div>
     </div>
-  </div>
+  </NuxtLinkLocale>
 </template>
 
 <script setup>
@@ -24,6 +24,10 @@ defineProps({
     type: String,
     required: true,
   },
+  url: {
+    type:String,
+    required:true,
+  }
 });
 </script>
 
