@@ -2,24 +2,25 @@
   <div>
     <Navbar selecto="home" />
     <TagLine taglinetext="This is Coconut KnowledgeHub TagLine" />
-
-    <ContentHeader contexto="ข่าวสาร" />
+    
+    <ContentHeader :contexto="$t('News')" />
+   
     <news />
-    <SeeAllButton text="ข่าวสารทั้งหมด" link="news" />
-    <ContentHeader contexto="กิจกรรม" />
+    <SeeAllButton :text="$t('SeeAll_News')" link="news" />
+    <ContentHeader :contexto="$t('Events')" />
     <HomeEvent />
-    <SeeAllButton text="กิจกรรมทั้งหมด" link="events" />
-    <ContentHeader contexto="อื่นๆ" />
-    <HomeFootBanner title="เกี่ยวกับเรา"
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
+    <SeeAllButton :text="$t('SeeAll_Events')" link="events" />
+    <ContentHeader :contexto="$t('Other')" />
+    <HomeFootBanner :title="$t('AboutUs')"
+      :text="$t('abs_desc')"
       picture="_nuxt/assets/img/AboutUs.png" url="/AboutUs" />
 
-    <HomeFootBanner title="ข้อมูลมะพร้าว"
-      text="มะพร้าว เป็นพืชยืนต้นชนิดหนึ่งอยู่ในวงศ์ปาล์ม (Arecaceae)และเป็นสปีชีส์เดียวของสกุล Cocos ที่ยังมีชีวิตอย มะพร้าว เป็นพืชซึ่งสามารถใช้ประโยชน์ได้ในหลากหลายด้าน "
-      picture="_nuxt/assets/img/CoconutInformation.jpg" url="/coconut-varieties" />
+    <HomeFootBanner :title="$t('CoconutInfo')"
+      :text="$t('ccnif_desc')"
+      picture="_nuxt/assets/img/CoconutInformation.jpg" url="/coconut-information" />
 
-    <HomeFootBanner title="ผู้เชี่ยวชาญ"
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
+    <HomeFootBanner :title="$t('Experts')"
+     :text="$t('ep_desc')"
       picture="_nuxt/assets/img/Expert.png" url="/Expert" />
 
     <Footer />
@@ -29,10 +30,10 @@
 
 <script>
 import { useHead } from '@vueuse/head';
+
 export default {
-  mounted() {
-    window.scrollTo(0, 0);
-  }, setup() {
+
+  setup() {
     useHead({
       title: '🥥Coconut - Home',
       meta: [

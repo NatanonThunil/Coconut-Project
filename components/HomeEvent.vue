@@ -2,14 +2,14 @@
   <div>
     <ul class="homeeventfiltercontainer">
       <li class="filtli train" :class="{ selecto: selectedFilter === 'educate' }" @click="selectedFilter = 'educate'">
-        อบรม
+        {{ $t('Educate') }}
       </li>
       <li class="filtli conference" :class="{ selecto: selectedFilter === 'conference' }"
         @click="selectedFilter = 'conference'">
-        ประชุมวิชาการ
+        {{ $t('Conference') }}
       </li>
       <li class="filtli other" :class="{ selecto: selectedFilter === 'other' }" @click="selectedFilter = 'other'">
-        อื่นๆ
+        {{ $t('Other') }}
       </li>
     </ul>
 
@@ -23,7 +23,7 @@
     </div>
 
     <div class="event-card-section" v-if="!isLoading && filteredEvents.length > 0">
-      <nuxt-link v-for="(event, index) in filteredEvents" :key="index" class="event-card"
+      <NuxtLinkLocale v-for="(event, index) in filteredEvents" :key="index" class="event-card"
         :to="`/events/details/${event.id}`">
         <div class="event-card-image">
           <img :src="event.image" alt="" draggable="false" />
@@ -35,10 +35,13 @@
             <p class="event-date">{{ formatDate(event.date_start) }}</p>
           </div>
           <div :class="['event-card-status', getStatusClass(event)]">
-            {{ getStatusText(event) }}
+            <span v-if="getStatusText(event) === 'กำลังดำเนินการ'">{{ $t("Ongoing") }}</span>
+            <span v-else-if="getStatusText(event) === 'กำลังจะเริ่ม'">{{ $t("Upcoming") }}</span>
+            <span v-else-if="getStatusText(event) === 'จบแล้ว'">{{ $t("Finished") }}</span>
+            <span v-else>{{ $t("Error") }}</span>
           </div>
         </div>
-      </nuxt-link>
+      </NuxtLinkLocale>
     </div>
 
     <div v-if="!isLoading && filteredEvents.length === 0" class="no-events">
@@ -48,7 +51,7 @@
 </template>
 
 <script>
-import { formatDate } from "@/utils/Thaidate.js";
+
 
 export default {
   data() {

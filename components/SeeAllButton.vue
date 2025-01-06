@@ -1,7 +1,7 @@
 <template >
-    <nuxt-link :to="link" >
-        <button class="news-button" >{{ text }}</button>
-    </nuxt-link>
+    <NuxtLinkLocale :to="link" class="news-button" >
+     {{ text }}
+    </NuxtLinkLocale>
 </template>
 
 <script>
@@ -45,7 +45,7 @@ export default {
 .news-button:hover {
     background-color: #4e6d16;
     color: white;
-    transform: scale(1.01);
+    transform: scale(1.05);
 }
 
 .news-button:focus {

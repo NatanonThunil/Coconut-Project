@@ -3,28 +3,28 @@
       <div class="footer-content">
 
         <div class="footer-section">
-          <h3>ติดต่อเรา</h3>
+          <h3>{{$t('ContactUs')}} </h3>
           <ul>
-            <li><strong>Email:</strong> info@yourwebsite.com</li>
-            <li><strong>Phone:</strong> +66 123 456 789</li>
-            <li><strong>Address:</strong> 123 Coconut Street, Coconut City, Thailand</li>
+            <li><strong>{{$t('Email')}} :</strong> info@yourwebsite.com</li>
+            <li><strong>{{$t('Phone')}} :</strong> +66 123 456 789</li>
+            <li><strong>{{$t('Address')}} :</strong> 123 Coconut Street, Coconut City, Thailand</li>
           </ul>
         </div>
         
 
         <div class="footer-section">
-          <h3>Quick Links</h3>
+          <h3>{{$t('QuickLinks')}}</h3>
           <ul>
-            <li><nuxt-link to="/aboutus">About Us</nuxt-link></li>
-            <li><nuxt-link to="/services">Services</nuxt-link></li>
-            <li><nuxt-link to="/faqs">FAQ</nuxt-link></li>
-            <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
+            <li><NuxtLinkLocale to="/aboutus">{{$t('AboutUs')}}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/services">{{$t('Services')}}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/faqs">{{$t('FAQ')}}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/privacy-policy">{{$t('PrivacyPolicy')}}</NuxtLinkLocale></li>
           </ul>
         </div>
   
 
         <div class="footer-section">
-          <h3>Follow Us</h3>
+          <h3>{{$t('FollowUs')}}</h3>
           <ul class="social-media-links">
             <li><a href="https://facebook.com/yourpage" target="_blank">Facebook</a></li>
             <li><a href="https://twitter.com/yourprofile" target="_blank">Twitter</a></li>

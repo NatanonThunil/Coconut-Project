@@ -1,5 +1,4 @@
 export default defineNuxtConfig({
-
   runtimeConfig: {
     apiSecret: '123',
     public: {
@@ -12,6 +11,7 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-11-24',
+
   app: {
     head: {
       title: 'Coconut Knowledge hub',
@@ -33,8 +33,27 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   css: [
 
     '@/assets/css/global.css',
   ],
+
+  modules: ['@nuxtjs/i18n'],
+  i18n: {
+    lazy: true,
+    langDir: 'locales',
+    strategy: 'prefix_except_default',
+    locales: [
+      { code: 'th', language: 'th-TH', file: 'th-TH.json', name: 'Thai' },
+      { code: 'en', language: 'en-US', file: 'en-US.json', name: 'English' },
+    ],
+    defaultLocale: 'th', 
+  
+  },
+
+  
+
+
+
 })

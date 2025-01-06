@@ -1,15 +1,15 @@
 <template>
-    <nuxt-link :to="url">
+    <NuxtLinkLocale :to="url">
         <div class="f-banner" :style="{ backgroundColor: inputColor }">
             <div class="f-banner-text-container">
                 <h1 class="f-banner-title">{{ title }}</h1>
                 <p class="f-banner-text">{{ text }}</p>
             </div>
             <div class="f-banner-image-container">
-                <img :src="picture" alt="banner image" loading="lazy">
+                <img :src="picture" alt="banner image" loading="lazy" draggable="false">
             </div>
         </div>
-    </nuxt-link>
+    </NuxtLinkLocale>
 </template>
 
 <script>
@@ -44,6 +44,7 @@ export default {
 
 <style>
 .f-banner {
+    cursor: pointer;
     overflow: hidden;
     border-radius: 20px;
     display: flex;

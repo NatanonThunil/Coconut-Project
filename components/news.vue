@@ -1,7 +1,7 @@
 <template>
   <div class="news-container">
     <!-- Hot News Section -->
-    <div v-if="hotNews" class="hot-news-section" @click="$router.push('/news/details/' + hotNews.id)">
+    <NuxtLinkLocale v-if="hotNews" class="hot-news-section" :to="'/news/details/' + hotNews.id">
       <div class="hot-news-image">
         <img :src="hotNews.image" alt="Hot News Image" draggable="false" />
       </div>
@@ -12,7 +12,7 @@
         <div style="height: 1rem;"></div>
         <p style="display: flex; justify-content: flex-end;">{{ formatDate(hotNews.upload_date) }}</p>
       </div>
-    </div>
+    </NuxtLinkLocale>
 
     <!-- Regular News Section -->
     <div class="news-rows" v-if="regularNews.length">
@@ -42,7 +42,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { formatDate } from '@/utils/Thaidate.js';
+
 const newsItems = ref([]);
 const hotNews = ref(null);
 const loading = ref(true);
