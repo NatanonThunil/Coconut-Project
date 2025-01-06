@@ -1,8 +1,6 @@
 <template>
-    <Navbar selecto="coconutdata" />
-    <div style="height: 10rem;"></div>
-    <h1 class="context-header">พันธุ์มะพร้าว</h1>
-    <div style="height: 5rem;"></div>
+  <Navbar selecto="coconutdata" />
+  <page-header head="CoconutInfo" />
     <label class="coconut-v-input">
         <img src="@/assets/icon/search.svg">
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
@@ -49,7 +47,6 @@ export default {
             itemsPerPage: 30,
             pageInput: 1,
             loading: true, 
-             
         };
     },
     computed: {
@@ -59,7 +56,7 @@ export default {
         paginatedCoconuts() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.filteredCoconuts.slice(start, end);
+            return this.filteredCoconuts.slice(start, end).filter(coconut => coconut.youngold === 'Old');
         },
     },
     watch: {
@@ -75,7 +72,7 @@ export default {
                 const response = await fetch('/api/coconut');
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
-                this.coconuts = data;
+                this.coconuts = data
                 this.filteredCoconuts = data;
                 this.loading = false; state
             }, 200); 
@@ -88,8 +85,8 @@ export default {
             const query = this.searchQuery.toLowerCase();
             this.filteredCoconuts = this.coconuts.filter(
                 coconut =>
-                    (coconut.name_th.toLowerCase().includes(query) ||
-                    coconut.name_eng.toLowerCase().includes(query)) && coconut.youngold === this.youngOldFilter
+                    coconut.name_th.toLowerCase().includes(query) ||
+                    coconut.name_eng.toLowerCase().includes(query)
             );
             this.currentPage = 1;
         },

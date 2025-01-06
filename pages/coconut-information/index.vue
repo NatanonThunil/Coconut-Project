@@ -1,108 +1,211 @@
 <template>
     <Navbar selecto="coconutdata" />
-    <div style="height: 10rem;"></div>
-    <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
-    <div style="height: 5rem;"></div>
-    <div class="old-young-selection-container">
-        <select class="old-young-selection" v-model="coconutType">
-            <option value="Young" default="true">มะพร้าวอ่อน</option>
-            <option value="Old">มะพร้าวแก่</option>
-        </select>
-    </div>
+    <page-header head="CoconutInfo" />
+
+    <label class="old-young-selection-container">
+        <div class="dropdown">
+            <div class="dropdown-toggle" @click="toggleDropdown">
+                {{ (coconutType === "Young") ? $t('Young-coconut') : $t('Old-coconut') }}
+                <span :class="[dropdownOpen ? 'ddusd' : '', 'dropdown-arrow']">&#9662;</span>
+            </div>
+            <ul v-show="dropdownOpen" class="old-young-selection animated-dropdown">
+                <li v-for="option in coconutOptions" :key="option.value" @click="selectCoconutType(option.value)">
+                    {{ $t(option.label) }}
+                </li>
+            </ul>
+        </div>
+    </label>
+
     <div style="height: 5rem;"></div>
 
+
     <div class="coconut-info-selection">
-        <NuxtLinkLocale
-            :to="`/coconut-information/${coconutType.toLowerCase()}/coconut-varieties/`"
-            class="coconut-info-selection-items"
-        >
-            <img src="@/assets/icon/coconut.png" style="height: calc(100% - 8rem); width: calc(100% - 8rem);">
-            <p>Coconut varieties</p>
-        </NuxtLinkLocale>
-        <NuxtLinkLocale
-            :to="`/coconut-information/${coconutType.toLowerCase()}/coconut-varieties/`"
-            class="coconut-info-selection-items"
-        >
-            <img src="@/assets/icon/harvest.png" style="height: calc(100% - 8rem); width: calc(100% - 8rem);">
-            <p>Upstream</p>
-        </NuxtLinkLocale>
-        <NuxtLinkLocale
-            :to="`/coconut-information/${coconutType.toLowerCase()}/coconut-varieties/`"
-            class="coconut-info-selection-items"
-        >
-            <img src="@/assets/icon/wash.png" style="height: calc(100% - 8rem); width: calc(100% - 8rem);">
-            <p>MidStream</p>
-        </NuxtLinkLocale>
-        <NuxtLinkLocale
-            :to="`/coconut-information/${coconutType.toLowerCase()}/coconut-varieties/`"
-            class="coconut-info-selection-items"
-        >
-            <img src="@/assets/icon/export.png" style="height: calc(100% - 8rem); width: calc(100% - 8rem);">
-            <p>DownStream</p>
-        </NuxtLinkLocale>
+        <div class="fadeinanim" v-for="(item, index) in pagesel" :key="index">
+            <NuxtLinkLocale :to="'/coconut-information/' + coconutType.toLowerCase() + item.link"
+                class="coconut-info-selection-items">
+                <img :src="item.icon" style="height: 50%; width: 50%;" />
+                <p>{{ $t(item.label) }}</p>
+            </NuxtLinkLocale>
+        </div>
     </div>
+
     <div style="height: 5rem;"></div>
     <Footer />
 </template>
 
 <script>
+import coconutIcon from "@/assets/icon/coconut.png";
+import harvestIcon from "@/assets/icon/harvest.png";
+import washIcon from "@/assets/icon/wash.png";
+import exportIcon from "@/assets/icon/export.png";
+
 export default {
     data() {
         return {
-            coconutType: "Young", // Default selection
+            dropdownOpen: false,
+            coconutType: "Young",
+            coconutOptions: [
+                { label: "Young-coconut", value: "Young"},
+                { label: "Old-coconut", value: "Old" },
+            ],
+            pagesel: [
+                { label: "Coconut-varieties", icon: coconutIcon , link:"/coconut-varieties/"},
+                { label: "Upstream", icon: harvestIcon, link:"/upstream/" },
+                { label: "Midstream", icon: washIcon, link:"/midstream/" },
+                { label: "Downstream", icon: exportIcon , link:"/downstream/"},
+            ],
         };
+    },
+    methods: {
+        toggleDropdown() {
+            this.dropdownOpen = !this.dropdownOpen;
+        },
+        selectCoconutType(type) {
+            this.coconutType = type;
+            this.dropdownOpen = false;
+        },
     },
 };
 </script>
 
-<style>
-h1.context-header {
-    display: flex;
-    justify-content: center;
+<style scoped>
+.ddusd {
+    transform: rotateZ(180deg);
 }
+
+.animated-dropdown {
+    animation: fadeInSlideDown 0.3s ease-out forwards;
+}
+
+@keyframes fadeInSlideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+
+.fadeinanim {
+    opacity: 0;
+    animation: fadeinbelow 1s ease-out forwards;
+}
+
+.fadeinanim:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.fadeinanim:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.fadeinanim:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeinbelow {
+    0% {
+        opacity: 0;
+        transform: translateY(20%) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%) scale(1);
+    }
+}
+
 
 .old-young-selection-container {
+    width: 100%;
     display: flex;
+    justify-self: center;
     justify-content: center;
+    /* opacity: 0;
+    animation: fadeinbelow 0.3s ease-in-out forwards; */
 }
 
-.old-young-selection {
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 30%;
+}
+
+.dropdown-toggle {
     cursor: pointer;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     text-align: center;
     font-size: 1.5rem;
     height: 4rem;
-    width: 30%;
+    padding: 0 1rem;
     border-radius: 20px;
-    border: #4E6D16 4px solid;
-    transition: ease-in-out 0.2s;
+    border: #4e6d16 4px solid;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
 }
 
-.old-young-selection option {
-    border: #4E6D16 4px solid;
+.dropdown-toggle:hover {
+    background-color: #e2e2e2;
+    border-color: #5e7d22;
 }
 
-.old-young-selection:hover {
-    background-color: rgb(223, 223, 223);
-
+.dropdown-arrow {
+    transition: translate 0.5 ease-in-out;
+    color: #4e6d16;
+    font-size: 3rem;
+    margin-left: 1rem;
 }
 
-.old-young-selection:focus-visible {
+.old-young-selection {
 
-    border: #4E6D16 6px solid;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 4.5rem;
+
+    width: 100%;
+    background-color: #ffffff;
+    outline: 2px solid #4E6D16;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
 }
+
+
+
+.old-young-selection li {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.old-young-selection li:hover {
+    background-color: #f1f1f1;
+}
+
+.old-young-selection li:active {
+    background-color: #e2e2e2;
+}
+
 
 .coconut-info-selection {
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
-    justify-content: center;
     justify-self: center;
+    justify-content: center;
     width: 40%;
-
 }
 
-.coconut-info-selection .coconut-info-selection-items {
+.coconut-info-selection-items {
     all: unset;
     display: flex;
     flex-direction: column;
@@ -118,14 +221,48 @@ h1.context-header {
     transition: ease-in-out 0.2s;
 }
 
-.coconut-info-selection .coconut-info-selection-items:hover {
-
+.coconut-info-selection-items:hover {
     background-color: rgb(223, 223, 223);
     outline: 6px solid #4E6D16;
     transform: scale(1.1);
 }
 
-.coconut-info-selection .coconut-info-selection-items p {
+.coconut-info-selection-items p {
     margin-top: 1rem;
+}
+
+
+@media (max-width: 1696px) {
+    .coconut-info-selection {
+        width: 60%;
+    }
+}
+
+@media (max-width: 1137px) {
+    .coconut-info-selection {
+        width: 70%;
+    }
+}
+
+@media (max-width: 978px) {
+    .coconut-info-selection {
+        width: 80%;
+    }
+}
+
+@media (max-width: 857px) {
+    .coconut-info-selection .coconut-info-selection-items {
+        height: 16rem;
+        width: 16rem;
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 697px) {
+    .coconut-info-selection .coconut-info-selection-items {
+        height: 14rem;
+        width: 14rem;
+        font-size: 1.5rem;
+    }
 }
 </style>

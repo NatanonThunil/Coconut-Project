@@ -21,7 +21,7 @@
 
     <HomeFootBanner :title="$t('Experts')"
      :text="$t('ep_desc')"
-      picture="_nuxt/assets/img/Expert.png" url="/Expert" />
+      picture="_nuxt/assets/img/Expert.png" url="/experts" />
 
     <Footer />
 

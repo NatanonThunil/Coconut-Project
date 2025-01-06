@@ -35,11 +35,14 @@ export default defineNuxtConfig({
   },
 
   css: [
-
     '@/assets/css/global.css',
   ],
 
-  modules: ['@nuxtjs/i18n'],
+  modules: [
+    'nuxt-primevue', 
+    '@nuxtjs/i18n',  
+  ],
+
   i18n: {
     lazy: true,
     langDir: 'locales',
@@ -48,12 +51,6 @@ export default defineNuxtConfig({
       { code: 'th', language: 'th-TH', file: 'th-TH.json', name: 'Thai' },
       { code: 'en', language: 'en-US', file: 'en-US.json', name: 'English' },
     ],
-    defaultLocale: 'th', 
-  
+    defaultLocale: 'th',
   },
-
-  
-
-
-
 })

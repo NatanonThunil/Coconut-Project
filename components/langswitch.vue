@@ -109,7 +109,7 @@ gap: 0.5rem;
   font-weight: 700;
 }
 
-@media (max-width: 1014px) {
+@media (max-width: 1039px) {
   .locale-switcher {
 
     display: none;

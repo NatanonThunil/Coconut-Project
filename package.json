@@ -25,5 +25,8 @@
     "path": "^0.12.7",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "nuxt-primevue": "^3.0.0"
   }
 }

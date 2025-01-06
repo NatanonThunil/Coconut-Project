@@ -366,21 +366,21 @@ background-color: #2a3b0b;
   color: white;
 }
 
-@media (max-width: 1239px) {
+@media (max-width: 1258px) {
   .main-menu {
     gap: 10px;
   }
 }
 
 
-@media (max-width: 1185px) {
+@media (max-width: 1205px) {
   li a img.btn-icons {
     display: none;
   }
 }
 
 
-@media (max-width: 1014px) {
+@media (max-width: 1039px) {
   .main-menu {
 
     display: none;
@@ -397,6 +397,7 @@ background-color: #2a3b0b;
   .hamburger-container {
     display: block;
   }
+  
 
 }
 
