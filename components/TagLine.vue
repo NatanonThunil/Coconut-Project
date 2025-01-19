@@ -56,30 +56,4 @@ h1 {
         transform: translate(-50%, -50%) scale(1);
     }
 }
-
-img {
-    display: flex;
-    justify-self: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-    height: 32rem;
-    opacity: 0;
-    animation: fadeInImage 1s ease-out forwards;
-
-}
-
-@keyframes fadeInImage {
-    0% {
-        filter: brightness(0) blur(10px);
-        opacity: 0;
-        transform: scale(1.1);
-    }
-
-    100% {
-
-        filter: brightness(0.6) blur(0px);
-        ;
-        opacity: 1;
-        transform: scale(1);
-    }
-}
 </style>
