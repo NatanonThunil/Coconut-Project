@@ -35,5 +35,11 @@
   "Midstream": "กลางน้ำ",
   "Downstream": "ปลายน้ำ",
   "Old-coconut": "มะพร้าวแก่",
-  "Young-coconut": "มะพร้าวอ่อน"
+  "Young-coconut": "มะพร้าวอ่อน",
+  "Home": "หน้าหลัก",
+  "Newest": "ใหม่สุด",
+  "Oldest": "เก่าที่สุด",
+  "All": "ทั้งหมด",
+  "SearchbyName": "ค้นหาด้วยชื่อ...",
+  "No events found": "ไม่พบกิจกรรม"
 }

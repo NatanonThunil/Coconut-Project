@@ -12,6 +12,7 @@
     </div>
 
     <!-- Loaded Content -->
+     <!-- ดึงข้อมูลเข้า cards -->
     <div v-else class="coconut-v-cards-container">
         <CoconutCards v-for="coconut in paginatedCoconuts" :key="coconut.id"
             :img="coconut.image || 'https://via.placeholder.com/1280x720'"
@@ -32,7 +33,7 @@
         <div class="pagination-line"></div>
     </div>
 
-    <Footer />
+    
 </template>
 
 <script>

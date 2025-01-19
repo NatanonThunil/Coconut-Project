@@ -11,7 +11,7 @@
             alt="เกี่ยวกับเรา" />{{ $t('AboutUs') }}
         </NuxtLinkLocale>
       </li>
-      <li :class="{ Selected: selecto === 'news' }">
+      <!-- <li :class="{ Selected: selecto === 'news' }">
         <NuxtLinkLocale to="/news">
           <img class="btn-icons"
             :src="selecto === 'news' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
@@ -24,7 +24,27 @@
             :src="selecto === 'events' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
             alt="เกี่ยวกับเรา" />{{ $t('Events') }}
         </NuxtLinkLocale>
-      </li>
+      </li> -->
+
+      <li :class="[{ Selected: ((selecto === 'news')|| (selecto === 'events')) }, 'nnedd']">
+  <p>
+    <img
+      class="btn-icons"
+      :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+      alt="ข้อมูลมะพร้าว"
+    />
+    News & Events <span>▼</span>
+  </p>
+  <ul class="dropdown">
+    <li>
+      <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+    </li>
+    <li>
+      <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+    </li>
+  </ul>
+</li>
+
       <li :class="{ Selected: selecto === 'coconutdata' }">
         <NuxtLinkLocale to="/coconut-information">
           <img class="btn-icons"
@@ -130,6 +150,85 @@ export default {
 </script>
 
 <style scoped>
+.Selected.nnedd .dropdown{
+color: black;
+}
+
+.Selected.nnedd p span{
+color: white;
+}
+.nnedd p span {
+  color: #4E6D16;
+  display: inline-block;
+  transition: transform 0.3s ease-out;
+}
+
+.nnedd:hover p span {
+  transform: rotate(150deg);
+}
+
+.nnedd {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  height: 0px;
+  transition: background 0.3s height 0.3s;
+}
+
+.main-menu .nnedd:hover {
+  border-radius: 10px 10px 0px 0px;
+  height: inherit;
+  background: #e6e6e6;
+}
+
+.nnedd:hover p span {
+  rotate: 30deg;
+}
+
+.nnedd:hover .dropdown {
+  
+  outline: #000 3px solid;
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.dropdown {
+  list-style: none;
+  position: absolute;
+  left: 0;
+  bottom: -200%;
+  background: white;
+  width: 100%;
+  display: none;
+
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: ease-out 0.4s;
+}
+
+.dropdown li {
+
+  text-align: left;
+  transition: ease-out 0.2s;
+}
+
+
+.dropdown li:hover {
+  background: #4E6D16;
+  color: white;
+  border-radius: 10px;
+  transform: scale(1.1);
+}
+
+
 a,
 nuxt-link {
   color: inherit;
@@ -139,13 +238,15 @@ nuxt-link {
 
 a:hover,
 nuxt-link:hover {
-  
+
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
 .main-menu li a {
+  display: block;
   padding: 10px 15px;
   ;
+  width: 100%;
 }
 
 .navbar {
@@ -157,7 +258,7 @@ nuxt-link:hover {
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  height: 60px;
+  height: 80px;
   position: absolute;
 
   top: 0;
@@ -179,8 +280,6 @@ nuxt-link:hover {
 
 
 }
-
-
 
 
 
@@ -278,28 +377,30 @@ nuxt-link:hover {
   transition: ease-in-out 0.4s;
   border-bottom: 3px #4E6D16 solid;
 }
-.mobile-main-menu li a{
-display: flex;
-justify-content: center;
-align-items: center;
-padding: 0.5rem;
+
+.mobile-main-menu li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
 
 }
 
-.mobile-main-menu li:nth-child(6){
+.mobile-main-menu li:nth-child(6) {
   border-bottom: none;
 
 }
 
-.mobile-main-menu li:hover{
-background-color: #dbdbdb;
+.mobile-main-menu li:hover {
+  background-color: #dbdbdb;
 
 }
 
-.mobile-main-menu li.mobileSelected:hover{
-background-color: #2a3b0b;
+.mobile-main-menu li.mobileSelected:hover {
+  background-color: #2a3b0b;
 
 }
+
 .mobile-main-menu {
   overflow: hidden;
   outline: 3px solid #4E6D16;
@@ -397,7 +498,7 @@ background-color: #2a3b0b;
   .hamburger-container {
     display: block;
   }
-  
+
 
 }
 

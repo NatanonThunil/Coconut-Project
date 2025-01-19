@@ -2,46 +2,65 @@
   <div class="navcontainer">
     <Navbar selecto="aboutus" />
   </div>
-  <h3 class="header-content">{{$t('Address')}}</h3>
+  <h3 class="header-content">{{ $t("Address") }}</h3>
   <div class="header-container">
-    <h1>{{$t('AboutUs')}}</h1>
+    <h1>{{ $t("AboutUs") }}</h1>
   </div>
 
   <div class="a">
     <section>
       <div class="achivement-container">
-        <HomeFootBanner v-for="achievement in achievements" :key="achievement.id"
-        :text="achievement.description || 'No description'" :title="achievement.title || 'No Title'" color="#C5D944" :picture="achievement.image || 'No image'"
-          :url="'achievements/details/' + achievement.id || '404'" />
+        <HomeFootBanner
+          v-for="achievement in achievements"
+          :key="achievement.id"
+          :text="achievement.description || 'No description'"
+          :title="achievement.title || 'No Title'"
+          color="#C5D944"
+          :picture="achievement.image || 'No image'"
+          :url="'achievements/details/' + achievement.id || '404'"
+        />
       </div>
 
-      <SeeAllButton text="ผลงานทั้งหมด" link="" />
+      <SeeAllButton text="ผลงานทั้งหมด" link="/achivement" />
     </section>
   </div>
 
   <ContentHeader contexto="คณะทำงาน" />
   <div class="cards-container">
-
-    <Card v-for="employee in employees" :key="employee.id" :title="employee.name || 'ชื่อ'"
-      :image="employee.image || 'รูป'" :description="employee.description || 'ไม่มีข้อความ'" :url="'/aboutus/employees/details/'+employee.id"></Card>
-
+    <Card
+      v-for="employee in employees"
+      :key="employee.id"
+      :title="employee.name || 'ชื่อ'"
+      :image="employee.image || 'รูป'"
+      :description="employee.description || 'ไม่มีข้อความ'"
+      :url="'/aboutus/employees/details/' + employee.id"
+    ></Card>
   </div>
 
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
   <div class="cards-container">
-    <Card title="ชื่อ" image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg" description="ข้อความ"></Card>
-    <Card title="ชื่อ" image="https://s359.kapook.com/r/600/auto/pagebuilder/19c270cb-85d2-4682-956a-8151861d0936.jpg"
-      description="ข้อความ"></Card>
-    <Card title="ชื่อ" image="https://pbs.twimg.com/media/EvMY9LqVkAMfW-9.jpg" description="ข้อความ"></Card>
+    <Card
+      v-for="achievements in achievements"
+      :key="achievements.id"
+      :title="achievements.name || 'ชื่อ'"
+      :image="achievements.image || 'รูป'"
+      :description="achievements.description || 'ไม่มีข้อความ'"
+      :url="'/aboutus/employees/details/' + achievements.id"
+    ></Card>
   </div>
 
   <ContentHeader contexto="สมาชิก" />
   <div class="cards-container">
-    <Card v-for="member in members" :key="member.id" :title="member.name || 'ชื่อ'"
-    :image="member.image || 'รูป'" :description="member.description || 'ไม่มีข้อความ'":url="'/aboutus/employees/details/'+members.id"></Card>
+    <Card
+      v-for="member in members"
+      :key="member.id"
+      :title="member.name || 'ชื่อ'"
+      :image="member.image || 'รูป'"
+      :description="member.description || 'ไม่มีข้อความ'"
+      :url="'/aboutus/employees/details/' + members.id"
+    ></Card>
   </div>
-
-  <Footer />
+  <div style="height: 5rem"></div>
 </template>
 
 <script>
@@ -52,7 +71,7 @@ export default {
     return {
       members: [], // Stores the fetched member data
       employees: [], // Stores the fetched employee data
-      achievements: [] // Stores the fetched achievement data
+      achievements: [], // Stores the fetched achievement data
     };
   },
   mounted() {
@@ -61,11 +80,12 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const [membersResponse, employeesResponse, achievementsResponse] = await Promise.all([
-          axios.get("/api/members_table"), // Assuming no changes needed for members table
-          axios.get("/api/employees_table"), // Updated to the correct table name
-          axios.get("/api/achievements_table") // Assuming no changes needed for achievements table
-        ]);
+        const [membersResponse, employeesResponse, achievementsResponse] =
+          await Promise.all([
+            axios.get("/api/members_table"), // Assuming no changes needed for members table
+            axios.get("/api/employees_table"), // Updated to the correct table name
+            axios.get("/api/achievements_table"), // Assuming no changes needed for achievements table
+          ]);
 
         this.members = membersResponse.data.slice(0, 3);
         this.employees = employeesResponse.data.slice(0, 3); // Only show top 3 employees
@@ -74,7 +94,7 @@ export default {
         console.error("Error fetching data:", error.message || error);
       }
     },
-  }
+  },
 };
 </script>
 

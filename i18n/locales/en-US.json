@@ -34,5 +34,12 @@
   "Midstream": "Midstream",
   "Downstream": "Downstream",
   "Old-coconut": "Old coconut",
-  "Young-coconut": "Young coconut"
+  "Young-coconut": "Young coconut",
+  "Home": "Home",
+  "Newest": "Newest",
+  "Oldest": "Oldest",
+  "All": "All",
+  "SearchbyName": "Search by name...",
+  "No events found": "Events not found"
+
 }

@@ -1,23 +1,78 @@
 <template>
     <Navbar selecto="events" />
-    <div class="image-container" v-if="event" >
+
+    <!-- Event Image -->
+    <div class="image-container" v-if="event">
         <div class="blur-background"></div>
-        <img :src="event.image || '~/assets/img/tl.png'" class="img" alt="Coconut Image" draggable="false">
+        <img :src="event?.image || tlImage" class="img" alt="Coconut Image" draggable="false">
     </div>
     <div v-else class="no-data">
         <p>No event data available. Please try again later.</p>
     </div>
-    <div style="height: 32rem;" v-if="event"></div>
+
+    <!-- Event Date & Location -->
+    <div class="date-and-local" v-if="event">
+        <div class="dnl">
+            <img :src="calendarIcon">
+            {{ formatDate(event?.date_start) }} - {{ formatDate(event?.date_end) }}
+        </div>
+        <NuxtLinkLocale class="dnl" :to="event?.location_url || 'https://www.google.co.th/maps/'">
+            <img :src="locationIcon">
+            {{ event?.location_name || 'Unknown location' }}
+        </NuxtLinkLocale>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Event Title -->
+    <h1 style="text-align: center;">{{ event?.title }}</h1>
+
+    <!-- Event Details -->
+    <div class="brief-details">
+        <div class="toline">
+            <div class="event-head">ผู้จัดกิจกรรม</div>: <div class="event-main-detail">{{ event?.organizer || 'N/A' }}
+            </div>
+        </div>
+        <div class="toline">
+            <div class="event-head">วัน</div>: <div class="event-main-detail">{{ formatDate(event?.date_start) }} - {{
+                formatDate(event?.date_end) }}</div>
+        </div>
+        <div class="toline">
+            <div class="event-head">สถานที่จัดงาน</div>: <div class="event-main-detail">
+                <NuxtLinkLocale :to="event?.location_url || 'https://www.google.co.th/maps/'">{{ event?.location_name ||
+                    'N/A' }}</NuxtLinkLocale>
+            </div>
+        </div>
+        <div class="toline">
+            <div class="event-head">เข้าร่วมกิจกรรม</div>: <div class="event-main-detail">
+                <NuxtLinkLocale :to="event?.register_url || '/'">{{ event?.register_url ||
+                    'N/A' }}</NuxtLinkLocale>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">คำอธิบาย</h2>
+    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">{{ event?.description ||
+        'ไม่มีคำอธิบาย' }}</p>
+    <SeeAllButton text="ดูกิจกรรมอื่นๆ" link="/events" />
+
 </template>
 
 <script>
 import { useHead } from '@vueuse/head';
+import calendarIcon from '@/assets/icon/calenda.svg';
+import locationIcon from '@/assets/icon/location.png';
+import tlImage from '@/assets/img/tl.png';
 
 export default {
     data() {
         return {
             event: null,
             error: null,
+            calendarIcon,
+            locationIcon,
+            tlImage
         };
     },
     async mounted() {
@@ -30,6 +85,16 @@ export default {
             this.event = data.find(event => event.id === parseInt(cid)) || null;
 
             if (this.event) {
+                this.updateHead();
+            }
+        } catch (error) {
+            console.error('Error fetching event details:', error);
+            this.error = 'Failed to load event data. Please try again later.';
+        }
+    },
+    methods: {
+        updateHead() {
+            if (this.event) {
                 useHead({
                     title: `🥥 Coconut - ${this.event.title}`,
                     meta: [
@@ -40,26 +105,38 @@ export default {
                     ],
                 });
             }
-        } catch (error) {
-            console.error('Error fetching event details:', error);
-            this.error = 'Failed to load event data. Please try again later.';
         }
-    },
+    }
 };
 </script>
 
 <style scoped>
+.brief-details {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    width: inherit;
+
+}
+
+.toline {
+    display: flex;
+    gap: 1rem;
+}
+
+.toline .event-head {
+    font-weight: 700;
+    width: 8rem;
+}
+
 .image-container {
-    top: 0%;
-    position: absolute;
+    position: relative;
     width: 100%;
     height: 32rem;
-    overflow: hidden;
-    background-color: #4E6D16; /* Default background color if no image */
+    background-color: #4E6D16;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
 }
 
 .image-container .blur-background {
@@ -70,12 +147,12 @@ export default {
     bottom: 0;
     background-size: cover;
     background-position: center;
-    filter: blur(10px); /* Apply blur only to background */
+    filter: blur(10px);
     z-index: 0;
 }
 
 .image-container img {
-    z-index: 1; /* Ensure the image stays on top */
+    z-index: 1;
     height: 100%;
     object-fit: cover;
 }
@@ -87,49 +164,32 @@ export default {
     color: #555;
 }
 
-h1 {
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
-    color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2em;
-    margin: 0;
-    opacity: 0;
-    animation: fadeInText 1s ease-out 0.5s forwards;
-}
-
-@keyframes fadeInText {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-img {
+.date-and-local {
     display: flex;
-    justify-self: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-    height: 32rem;
-    opacity: 0;
-    animation: fadeInImage 1s ease-out forwards;
+    justify-content: center;
+    text-align: center;
+    margin: 1rem;
+    font-size: 1.2rem;
+    color: #333;
+    gap: 2rem;
 }
 
-@keyframes fadeInImage {
-    0% {
-        filter: brightness(0) blur(10px);
-        opacity: 0;
-        transform: scale(1.1);
-    }
-    100% {
-        filter: brightness(1) blur(0px);
-        opacity: 1;
-        transform: scale(1);
-    }
+.dnl img {
+    height: 1rem;
+}
+
+.dnl {
+    background-color: #DFF169;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    color: black;
+}
+
+.divider {
+    height: 3px;
+    width: 60%;
+    background-color: #4E6D16;
+    margin: 1rem auto;
+    border-radius: 1px;
 }
 </style>

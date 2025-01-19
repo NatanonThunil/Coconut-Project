@@ -46,7 +46,7 @@ export default defineNuxtConfig({
   i18n: {
     lazy: true,
     langDir: 'locales',
-    strategy: 'prefix_except_default',
+    strategy: 'no_prefix',
     locales: [
       { code: 'th', language: 'th-TH', file: 'th-TH.json', name: 'Thai' },
       { code: 'en', language: 'en-US', file: 'en-US.json', name: 'English' },

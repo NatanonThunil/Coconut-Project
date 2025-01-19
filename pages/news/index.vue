@@ -1,17 +1,130 @@
 
 <template>
-    <Navbar selecto="news"/>
+    <Navbar selecto="news" />
+  
     <div style="height: 10rem;"></div>
-    <h1 class="context-header">{{ $t('News') }}</h1>
+    <h3 class="header-content">{{ $t("News") }}</h3>
+    <h1 class="context-header">{{ $t("News") }}</h1>
     <div style="height: 5rem;"></div>
-    <SearchButton/>
-    <div class="hot-news-section"></div>
-    <ContentHeader contexto="ข่าวอื่นๆ"/>
-</template>
+    <SearchButton />
+ 
+    <div class="hot-news-section" >
+        <section class="beeg-news">   
+        <HotBigAllNews
+          :url="`/news/details/${hotNews.id}`"
+          :image="hotNews.image || 'https://via.placeholder.com/600x400'"
+          :title="hotNews.title || ''"
+          :date="formatDate(hotNews.upload_date) || ''"
+          v-if="hotNews" />
+          <div v-else class="hot-news-section"><p>No hot news available at the moment.</p></div>
+        </section>
+        
+            
+        <section class="smol-news">
+  <HotSmallAllNews
+    v-for="news in newsItems.filter((news) => news.hot_new && news.id !== hotNews?.id).slice(0,2)"
+    :key="news.id"
+    :url="`/news/details/${news.id}`"
+    :image="news.image || 'https://via.placeholder.com/1280x720'"
+    :title="news.title || ''"
+    :date="formatDate(news.upload_date) || ''"
+  />
+</section>
+
+
+
+    </div>
+    
+ 
+    
+  
+    <ContentHeader contexto="ข่าวอื่นๆ" />
+    
+    <section class="news-etc">
+    <etcNews
+      v-for="news in regularNews.slice(0, 9)" 
+      :key="news.id"
+      :url="`/news/details/${news.id}`"
+      :image="news.image || 'https://via.placeholder.com/1280x720'"
+      :title="news.title || ''"
+      :date="formatDate(news.upload_date) || ''"
+    />
+  </section>
+  </template>
+
+
+<script setup>
+import { ref, onMounted } from 'vue';
+
+const newsItems = ref([]);
+const hotNews = ref(null);
+const loading = ref(true);
+const regularNews = ref([]);
+
+const fetchNews = async () => {
+  try {
+    const response = await $fetch('/api/news_table');
+    newsItems.value = response;
+
+    hotNews.value = newsItems.value.find((news) => news.hot_new) || null;
+    regularNews.value = newsItems.value.filter((news) => !news.hot_new);
+  } catch (error) {
+    console.error('Error fetching news:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchNews);
+</script>
+
 
 <style scoped>
+.news-etc{
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    width: 80%;
+    height: auto;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.hot-news-section .beeg-news{
+    padding: 1rem;
+  height: 100%;
+  width: 70%;
+}
+
+.hot-news-section .smol-news{
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+
+
+padding: 1rem;
+  height: 100%;
+  width: 28%;
+  
+}
+.hot-news-section{
+    display: flex;
+    flex-direction: row;
+    justify-self: center;
+    background-color: #A6AB82;
+    height: 30rem;
+    width: 80%;
+    border-radius: 10px;
+}
 h1.context-header {
     text-align: center;
    
+}
+.header-content {
+  color: #aca8a8;
+  margin-left: 2%;
+  font-weight: 300;
 }
 </style>

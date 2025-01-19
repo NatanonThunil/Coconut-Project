@@ -32,7 +32,7 @@
         <div class="pagination-line"></div>
     </div>
 
-    <Footer />
+   
 </template>
 
 <script>

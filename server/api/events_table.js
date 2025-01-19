@@ -2,7 +2,6 @@ import mysql from 'mysql2/promise';
 import { dbConfig } from '../config/poom_db_config';
 export default defineEventHandler(async () => {
 
-
   try {
     const connection = await mysql.createConnection(dbConfig);
     const [rows] = await connection.execute('SELECT * FROM event ORDER BY id DESC');

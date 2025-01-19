@@ -1,8 +1,11 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',  
-    database: 'coconutknowledgehub',  
-    port: 3306,
-  };
-  
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASSWORD,
+};

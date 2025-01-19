@@ -1,9 +1,10 @@
 <template>
-  <div>
-    <AppHeader />
+  <header>
+  </header>
+  <main>
     <slot />
-    <AppFooter />
-  </div>
+  </main>
+  <NewFooter />
 </template>
 <script>
 export default {

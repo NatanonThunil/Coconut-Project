@@ -23,7 +23,7 @@
      :text="$t('ep_desc')"
       picture="_nuxt/assets/img/Expert.png" url="/experts" />
 
-    <Footer />
+
 
   </div>
 </template>
