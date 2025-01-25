@@ -1,59 +1,92 @@
 <template>
-    <div class="image-container" >
-        <img src="~/assets/img/tl.png" class="img" alt="Coconut Image" draggable="false">
-        <h1>{{ $t('Tagline')}}</h1>
+    <div class="hero-bar">
+      <div class="overlay"></div>
+      <h1>{{ taglinetext }}</h1>
     </div>
-    <div style="height: 32rem;"></div>
-</template>
-
-<script>
-export default {
+  </template>
+  
+  <script>
+  export default {
     props: {
-        taglinetext: {
-            type: String,
-            
-        }
-    }
-}
-</script>
-
-<style scoped>
-.image-container {
-    top: 0%;
+      taglinetext: {
+        type: String,
+        required: true,
+      },
+      imageSrc: {
+        type: String,
+        default: "@/assets/img/tl.png",
+      },
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .hero-bar {
+    position: relative;
+    width: 100%;
+    height: 40rem;
+    background-image: url(@/assets/img/tl.png);
+    background-size: cover;
+   
+    background-position: top center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+  }
+  
+  .overlay {
     position: absolute;
     width: 100%;
-    height: 32rem;
-    overflow: hidden;
-}
-
-.image-container img {
-    width: 100%;
-    object-fit: cover;
-}
-
-h1 {
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+    height: 100%;
+    opacity: 1;
+    background: black;
+    animation:  fadeInOverlay 0.5s ease-in-out forwards; 
+  }
+  
+  h1 {
     color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2em;
-    margin: 0;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+    font-size: 2.5em;
+    text-align: center;
     opacity: 0;
     animation: fadeInText 1s ease-out 0.5s forwards;
-}
-
-
-@keyframes fadeInText {
+    position: relative;
+    z-index: 2;
+  }
+  
+  @keyframes fadeInText {
     0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
+      opacity: 0;
+      transform: scale(0.95);
     }
-
     100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transform: scale(1);
     }
-}
-</style>
+  }
+
+  @keyframes fadeInOverlay {
+    0% {
+      opacity: 1;
+      
+    }
+    100% {
+      opacity: 0.4;
+     
+    }
+  }
+  @keyframes zoomOutBG {
+    0% {
+        transform: scale(1.2);
+      
+    }
+    100% {
+        transform: scale(1);
+     
+    }
+  }
+  </style>
+  

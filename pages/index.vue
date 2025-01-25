@@ -22,7 +22,7 @@
     <HomeFootBanner :title="$t('Experts')"
      :text="$t('ep_desc')"
       picture="_nuxt/assets/img/Expert.png" url="/experts" />
-
+      <div style="height: 2rem;"></div>
 
 
   </div>

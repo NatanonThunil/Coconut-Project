@@ -1,5 +1,5 @@
 {
-  "News": "ข่าวสาร",
+  "News": "ข่าว",
   "SeeAll_News": "ข่าวสารทั้งหมด",
   "Events": "กิจกรรม",
   "SeeAll_Events": "กิจกรรมทั้งหมด",
@@ -41,5 +41,6 @@
   "Oldest": "เก่าที่สุด",
   "All": "ทั้งหมด",
   "SearchbyName": "ค้นหาด้วยชื่อ...",
-  "No events found": "ไม่พบกิจกรรม"
+  "No events found": "ไม่พบกิจกรรม",
+  "News & Events":"ข่าวสาร"
 }

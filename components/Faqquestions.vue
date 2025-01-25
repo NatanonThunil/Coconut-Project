@@ -91,11 +91,13 @@ export default {
 .question p {
     color: #4E6D16;
     margin: 0;
+    font-size: 1.4rem;
 }
 
 .answer p {
     color: #828282;
     margin: 0;
+    font-size: 1.2rem;
 }
 
 .question-label,

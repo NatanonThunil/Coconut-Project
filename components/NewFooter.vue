@@ -7,7 +7,7 @@
         </section>
         <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
         <section class="ft-contract-us">
-            <h1>ติดต่อเรา</h1>
+            <h1>{{ $t("ContactUs") }}</h1>
             <div class="ft-contract">123 Coconut Street, Coconut City, Thailand</div>
             <div class="ft-contract">095-XXX-XXXX</div>
             <div class="ft-contract">

@@ -26,24 +26,22 @@
         </NuxtLinkLocale>
       </li> -->
 
-      <li :class="[{ Selected: ((selecto === 'news')|| (selecto === 'events')) }, 'nnedd']">
-  <p>
-    <img
-      class="btn-icons"
-      :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
-      alt="ข้อมูลมะพร้าว"
-    />
-    News & Events <span>▼</span>
-  </p>
-  <ul class="dropdown">
-    <li>
-      <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
-    </li>
-    <li>
-      <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
-    </li>
-  </ul>
-</li>
+      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events')) }, 'nnedd']">
+        <p class="img-dd-adjust">
+          <img class="btn-icons"
+            :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+            alt="ข้อมูลมะพร้าว" />
+          {{ $t("News & Events") }} <span> ▼</span>
+        </p>
+        <ul class="dropdown">
+          <li>
+            <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+          </li>
+          <li>
+            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+          </li>
+        </ul>
+      </li>
 
       <li :class="{ Selected: selecto === 'coconutdata' }">
         <NuxtLinkLocale to="/coconut-information">
@@ -150,17 +148,25 @@ export default {
 </script>
 
 <style scoped>
-.Selected.nnedd .dropdown{
-color: black;
+.img-dd-adjust {
+  display: flex;
+  align-items: center;
 }
 
-.Selected.nnedd p span{
-color: white;
+.Selected.nnedd .dropdown {
+  color: black;
 }
+
+.Selected.nnedd p span {
+  color: white;
+  margin-left: 0.5rem;
+}
+
 .nnedd p span {
   color: #4E6D16;
   display: inline-block;
   transition: transform 0.3s ease-out;
+  margin-left: 0.5rem;
 }
 
 .nnedd:hover p span {
@@ -168,10 +174,11 @@ color: white;
 }
 
 .nnedd {
+
   position: relative;
   display: inline-block;
   cursor: pointer;
-  padding: 10px;
+  padding: 10px 15px;
   border-radius: 5px;
   background: white;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -187,37 +194,49 @@ color: white;
 
 .nnedd:hover p span {
   rotate: 30deg;
+  
 }
 
 .nnedd:hover .dropdown {
-  
   outline: #000 3px solid;
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  transform: translateY(100%);
+  left: 0;
+  height: auto;
+  max-height: 200px;
+  width: 100%;
+  border-radius: 0px 0px 5px 5px;
+  overflow: visible;
 }
 
-.dropdown {
+.nnedd .dropdown {
   list-style: none;
   position: absolute;
-  left: 0;
-  bottom: -200%;
+  left: 50%;
+  bottom: 0%;
   background: white;
-  width: 100%;
-  display: none;
-
+  width: 0%;
+  max-height: 0;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: ease-out 0.4s;
+  overflow: hidden;
+  transform: translateY(90%);
+  transition: 0.4s ease-out;
+
+
+}
+
+.nnedd:hover .dropdown li {
+
+  text-align: left;
+  transition: ease-out 0.2s;
 }
 
 .dropdown li {
 
   text-align: left;
   transition: ease-out 0.2s;
+  width: inherit;
+  overflow: hidden;
 }
 
 
@@ -226,7 +245,17 @@ color: white;
   color: white;
   border-radius: 10px;
   transform: scale(1.1);
+  outline: #000 3px solid;
+  
+ 
 }
+
+.dropdown li:hover:active {
+  background: #27350e;
+  outline: black 3px solid;
+  box-shadow: inset 0px 0px 0px 3px white;
+}
+
 
 
 a,
@@ -243,10 +272,11 @@ nuxt-link:hover {
 }
 
 .main-menu li a {
-  display: block;
+  display: flex;
   padding: 10px 15px;
   ;
   width: 100%;
+  align-items: center;
 }
 
 .navbar {
@@ -318,7 +348,8 @@ nuxt-link:hover {
   font-size: 16px;
   background-color: white;
   box-shadow: #0000003c 4px 4px 4px;
-  transition: background-color 0.3s, color 0.3s;
+  transition: ease-in-out 0.2s;
+
   opacity: 0;
   animation: fadeIn 1s ease-in-out forwards;
 }
@@ -365,7 +396,9 @@ nuxt-link:hover {
 }
 
 .btn-icons {
-  height: 1rem;
+  display: inline-flex;
+
+  height: 1.2rem;
   margin-right: 0.5rem;
 }
 
@@ -475,9 +508,10 @@ nuxt-link:hover {
 
 
 @media (max-width: 1205px) {
-  li a img.btn-icons {
+  li a img.btn-icons, .img-dd-adjust .btn-icons{
     display: none;
   }
+  
 }
 
 
@@ -500,9 +534,11 @@ nuxt-link:hover {
   }
 
 
+
+
 }
 
-@media (min-width: 1015px) {
+@media (min-width: 1039px) {
   .mobile-main-menu {
     display: none;
   }
