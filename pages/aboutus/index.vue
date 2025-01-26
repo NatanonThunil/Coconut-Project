@@ -17,11 +17,11 @@
           :title="achievement.title || 'No Title'"
           color="#C5D944"
           :picture="achievement.image || 'No image'"
-          :url="'achievements/details/' + achievement.id || '404'"
+          :url="'/achievements/details/' + achievement.id || '404'"
         />
       </div>
 
-      <SeeAllButton text="ผลงานทั้งหมด" link="/achivement" />
+      <SeeAllButton text="ผลงานทั้งหมด" link="/achievements" />
     </section>
   </div>
 

@@ -1,8 +1,8 @@
 <template>
   <NuxtLinkLocale :to="url" class="achivement-card">
-    <div class="achivement-main-detail">Yesterday my dog die so I'm very depressing</div>
+    <div class="achivement-main-detail">{{title}}</div>
     <div class="ab">
-        <div class="achivement-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse impedit aspernatur veniam ducimus quos cumque tempore, atque quis labore? Quas fugiat modi sed. Facere asperiores eaque nostrum blanditiis ad. Dicta!</div>
+        <div class="achivement-detail">{{ details }}</div>
         <div class="achivement-image"><img :src="image" /></div>
     </div>
   </NuxtLinkLocale>
@@ -19,6 +19,9 @@ export default {
     title: {
       type: String,
     },
+    details:{
+      type: String,
+    }
     
   },
 };

@@ -46,7 +46,8 @@ props:{
 .Big-card{
     display: flex;
     flex-direction: column;
-    height: 13.5rem;
+    height: auto;
+    min-height: 15rem;
     width: 100%;
     background-color: white;
     overflow: hidden;

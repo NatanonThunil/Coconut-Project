@@ -16,7 +16,7 @@
           :title="hotNews.title || ''"
           :date="formatDate(hotNews.upload_date) || ''"
           v-if="hotNews" />
-          <div v-else class="hot-news-section"><p>No hot news available at the moment.</p></div>
+          <div v-else style="height:100%"><HotBigAllNewsShimmer/></div>
         </section>
         
             
@@ -36,13 +36,12 @@
     </div>
     
  
-    
   
     <ContentHeader contexto="ข่าวอื่นๆ" />
     
     <section class="news-etc">
     <etcNews
-      v-for="news in regularNews.slice(0, 9)" 
+      v-for="news in regularNews" 
       :key="news.id"
       :url="`/news/details/${news.id}`"
       :image="news.image || 'https://via.placeholder.com/1280x720'"
@@ -101,12 +100,11 @@ onMounted(fetchNews);
 .hot-news-section .smol-news{
 display: flex;
 flex-direction: column;
-justify-content: space-between;
-
-
+justify-content: center;
 padding: 1rem;
   height: 100%;
   width: 28%;
+  gap:1rem;
   
 }
 .hot-news-section{
@@ -114,7 +112,7 @@ padding: 1rem;
     flex-direction: row;
     justify-self: center;
     background-color: #A6AB82;
-    height: 30rem;
+    height: 40rem;
     width: 80%;
     border-radius: 10px;
 }
