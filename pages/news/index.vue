@@ -19,8 +19,8 @@
           <div v-else style="height:100%"><HotBigAllNewsShimmer/></div>
         </section>
         
-            
-        <section class="smol-news">
+      <section  class="smol-news" v-if="loading"><HotSmallAllNewsShimmer/><HotSmallAllNewsShimmer/></section>
+        <section  class="smol-news" v-else>
   <HotSmallAllNews
     v-for="news in newsItems.filter((news) => news.hot_new && news.id !== hotNews?.id).slice(0,2)"
     :key="news.id"
@@ -28,7 +28,7 @@
     :image="news.image || 'https://via.placeholder.com/1280x720'"
     :title="news.title || ''"
     :date="formatDate(news.upload_date) || ''"
-  />
+    />
 </section>
 
 

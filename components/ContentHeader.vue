@@ -1,19 +1,41 @@
 <template>
     <div class="context-container">
-        <div class="headtext">
+        <div ref="headTextRef" class="headtext">
             {{ contexto }}
         </div>
-        <div class="line"></div>
+        <div class="line" :style="{ width: `calc(80% - ${textWidth}px)` }"></div>
     </div>
-
 </template>
+
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+
+const props = defineProps({
+    contexto: {
+        type: String,
+        required: true
+    }
+});
+
+const headTextRef = ref(null);
+const textWidth = ref(0);
+
+const updateTextWidth = () => {
+    if (headTextRef.value) {
+        textWidth.value = headTextRef.value.getBoundingClientRect().width;
+    }
+};
+
+
+onMounted(updateTextWidth);
+watch(() => props.contexto, updateTextWidth);
+</script>
 
 <style scoped>
 .context-container {
-
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     margin: 1rem;
     animation: fadeinbelow 1s;
 }
@@ -22,17 +44,15 @@
     display: block;
     height: 5px;
     min-width: 30%;
-    width: 70%;
-    max-width: 70%;
+    transition: ease-in-out 0.3s;
     background-color: #4E6D16;
 }
 
 .headtext {
-
-
     color: #4E6D16;
     font-weight: bolder;
     font-size: 40px;
+    margin: 0rem 2rem;
 }
 
 @keyframes fadeinbelow {
@@ -40,23 +60,9 @@
         opacity: 0;
         transform: translateY(50%);
     }
-
     100% {
         opacity: 1;
         transform: translateY(0%);
     }
 }
 </style>
-<script>
-
-
-export default {
-    props: {
-        contexto: {
-            type: String,
-            required: true
-        }
-
-    }
-}
-</script>

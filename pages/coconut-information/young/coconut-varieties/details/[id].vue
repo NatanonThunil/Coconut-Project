@@ -10,8 +10,12 @@
       <div class="coconut-detail-info">
         <h2>{{ coconut.name_th || 'ชื่อไทย' }}</h2>
         <p><strong>ชื่ออังกฤษ :</strong> {{ coconut.name_eng || 'ไม่มีข้อมูล' }}</p>
-        <p><strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut.sci_name_f }} {{ coconut.sci_name_m }} {{ coconut.sci_name_l }}</p>
-        <p><strong>คำอธิบาย :</strong> {{ coconut.description || 'ไม่มีคำอธิบาย' }}</p>
+        <p><strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut.sci_name_f }} {{ coconut.sci_name_m }} {{ coconut.sci_name_l }}
+        </p>
+        <p><strong>ประเภท :</strong>
+          {{ coconut.youngold === 'Old' ? 'มะพร้าวแก่' : (coconut.youngold === 'Young' ? 'มะพร้าวอ่อน' :
+          'ข้อมูลไม่ระบุ') }}
+        </p>
         <p><strong>ถิ่นกำเนิด :</strong></p>
         <p class="origin-desc">{{ coconut.origin || 'ไม่มีข้อมูล' }}</p>
       </div>
@@ -20,9 +24,7 @@
     <div class="deta-below">
       <p><strong>ลักษณะเฉพาะ :</strong></p>
       <p class="origin-desc">{{ coconut.characteristics || 'ไม่มีข้อมูล' }}</p>
-      <p><strong>ประเภท :</strong>
-        {{ coconut.youngold === 'Old' ? 'มะพร้าวแก่' : (coconut.youngold === 'Young' ? 'มะพร้าวอ่อน' : 'ข้อมูลไม่ระบุ') }}
-      </p>
+
     </div>
 
     <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
@@ -54,7 +56,7 @@ export default {
       const data = await response.json();
       this.coconut = data.find(coconut => coconut.id === parseInt(cid)) || null;
 
-      
+
       useHead({
         title: `🥥 Coconut - ${this.coconut ? this.coconut.name_th : 'Details'}`,
         meta: [
@@ -86,7 +88,7 @@ export default {
 }
 
 .deta-below {
-  padding: 0 5rem;
+  padding: 0 15rem;
 }
 
 .deta-below p {

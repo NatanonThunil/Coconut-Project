@@ -1,4 +1,12 @@
 <template>
+  <div style="height: 5rem;"></div>
+  <div class="table-head-text-container">
+    <h1>จัดการข่าว</h1>
+    <p>จัดการข่าวทั้งหมด</p>
+  </div>
+  <div class="add-btn-container"><button class="add-news-btn">
+      ADD News
+    </button></div>
   <div class="table-container">
     <table class="item-list-table">
       <thead>
@@ -45,12 +53,32 @@
       </div>
     </div>
   </div>
+
+  <div v-if="showModalAddnews" class="modal-overlay">
+    <div class="modal">
+      <div class="text-alert-container"><span>ต้องการที่จะ
+          <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span>
+        </span>
+        <p>" {{ deleteName }} "</p>
+      </div>
+
+      <div class="modal-actions">
+        <button @click="confirmDelete" class="confirm-btn">Yes</button>
+        <button @click="cancelDelete" class="cancel-btn">No</button>
+      </div>
+    </div>
+  </div>
+  <div style="height: 5rem;"></div>
 </template>
 
 <script setup>
+definePageMeta({
+  layout: 'admin'
+});
 import { ref, onMounted } from 'vue';
 
 const News = ref([]);
+const showModalAddnews =ref(false);
 const selectAll = ref(false);
 const showModal = ref(false);
 const deleteId = ref(null);
@@ -121,6 +149,52 @@ const confirmDelete = async () => {
 onMounted(fetchNews);
 </script>
 <style scoped>
+.table-head-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  width: 90%;
+}
+
+.add-btn-container {
+  display: flex;
+  justify-content: end;
+  justify-self: center;
+  width: 90%;
+  padding: 1rem;
+}
+
+.add-news-btn {
+
+  all: unset;
+  cursor: pointer;
+  border: #4E6D16 solid 3px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  transition: ease-out 0.2s;
+  color: #4E6D16;
+  font-weight: 600;
+
+
+}
+
+.add-news-btn:hover {
+  color: white;
+  background-color: #4E6D16;
+
+
+}
+
+
+.add-news-btn:active {
+  border: #364b10 solid 3px;
+  background-color: #364b10;
+  box-shadow: outset 0px 0px 0px 3px white;
+}
+
 .text-alert-container {
   padding: 1rem;
 }
@@ -129,8 +203,8 @@ onMounted(fetchNews);
 .table-container {
   display: flex;
   justify-content: center;
-  padding: 20px;
-  background-color: #f4f6f9;
+
+
 }
 
 
