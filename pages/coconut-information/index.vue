@@ -34,7 +34,6 @@
   </div>
 
   <div style="height: 5rem;"></div>
-  <Footer />
 </template>
 
 <script>
