@@ -53,7 +53,7 @@
         v-for="(expert, index) in filteredExperts"
         :key="index"
         class="event-card"
-        :to="`/expert/details/${expert.id}`"
+        :to="`/experts/details/${expert.id}`"
       >
         <div class="event-card-image">
           <img :src="expert.image || 'https://placehold.co/600x400'" alt="Expert Image" draggable="false" />

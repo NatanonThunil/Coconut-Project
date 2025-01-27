@@ -112,7 +112,7 @@ const newNews = ref({
   upload_date: new Date().toISOString().split('T')[0],
   description: '',
   summerize: '',
-  hotNew: false
+  hot_new: false
 });
 
 const fetchNews = async () => {
@@ -148,7 +148,7 @@ const addNews = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...newNews.value,
-        hotNew: newNews.value.hotNew ? 1 : 0, // Ensure Boolean handling
+        hot_new: newNews.value.hot_new ? 1 : 0, // Ensure Boolean handling
       }),
     });
 
@@ -158,7 +158,7 @@ const addNews = async () => {
       showModalAddnews.value = false;
 
       // Reset form fields
-      newNews.value = { title: '', image: '', author: '', description: '', summerize: '', hotNew: false };
+      newNews.value = { title: '', image: '', author: '', description: '', summerize: '', hot_new: false };
     } else {
       console.error('Failed to add news');
     }
