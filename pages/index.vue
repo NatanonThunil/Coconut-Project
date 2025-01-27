@@ -3,43 +3,55 @@
     <Navbar selecto="home" />
     <TagLine taglinetext="This is Coconut KnowledgeHub TagLine" />
     
-    <ContentHeader contexto="ข่าวสาร" />
-    <news/>
-    <SeeAllButton text="ข่าวสารทั้งหมด"link="news"/>
-    <ContentHeader contexto="กิจกรรม" />
+    <ContentHeader :contexto="$t('News')" />
+   
+    <news />
+    <SeeAllButton :text="$t('SeeAll_News')" link="news" />
+    <ContentHeader :contexto="$t('Events')" />
     <HomeEvent />
-    <SeeAllButton text="กิจกรรมทั้งหมด"link="events"/>
-    <ContentHeader contexto="อื่นๆ" />
-    <HomeFootBanner
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/1280x720" url="รอลิงค์" />
+    <SeeAllButton :text="$t('SeeAll_Events')" link="events" />
+    <ContentHeader :contexto="$t('Other')" />
+    <HomeFootBanner :title="$t('AboutUs')"
+      :text="$t('abs_desc')"
+      picture="_nuxt/assets/img/AboutUs.png" url="/AboutUs" />
 
-    <HomeFootBanner
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/2280x120" url="รอลิงค์" />
+    <HomeFootBanner :title="$t('CoconutInfo')"
+      :text="$t('ccnif_desc')"
+      picture="_nuxt/assets/img/CoconutInformation.jpg" url="/coconut-information" />
 
-    <HomeFootBanner
-      text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, unde fuga laborum ipsum temporibus commodi neque excepturi facere tempore! Ipsum non eligendi cum, sapiente facere veniam fuga. Aperiam, culpa perspiciatis."
-      picture="https://via.placeholder.com/1280x720" url="รอลิงค์" />
+    <HomeFootBanner :title="$t('Experts')"
+     :text="$t('ep_desc')"
+      picture="_nuxt/assets/img/Expert.png" url="/experts" />
+      <div style="height: 2rem;"></div>
 
-    <Footer />
 
   </div>
 </template>
 
-<script setup>
+<script>
 import { useHead } from '@vueuse/head';
 
+export default {
 
-useHead({
-  title: '🥥Coconut - Home', 
-  meta: [
-    {
-      name: 'description',
-      content: 'Home page for Coconut Knowledge Hub', 
+  setup() {
+    useHead({
+      title: '🥥Coconut - Home',
+      meta: [
+        {
+          name: 'description',
+          content: 'Home page for Coconut Knowledge Hub',
+        },
+      ],
     },
-  ],
-});
+
+
+    );
+  }
+}
+
+
+
+
 </script>
 <style scoped>
 footer {

@@ -1,14 +1,8 @@
 import mysql from 'mysql2/promise';
-
+import { dbConfig } from '../config/poom_db_config';
 export default defineEventHandler(async () => {
   // Database connection configuration
-  const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'asd123asd',
-    database: 'members',
-    port: 3306,
-  };
+
 
   let connection;
 
@@ -17,7 +11,7 @@ export default defineEventHandler(async () => {
     connection = await mysql.createConnection(dbConfig);
 
     // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM members_table ORDER BY id DESC');
+    const [rows] = await connection.execute('SELECT * FROM member');
 
     console.log('Fetched rows:', rows); // Debugging log
 

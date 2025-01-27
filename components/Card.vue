@@ -1,13 +1,13 @@
 <template>
-  <div class="cards">
+  <NuxtLinkLocale :to="url" class="cards">
     <div class="card-image">
-      <img :src="image" alt="Card Image" />
+      <img :src="image" alt="Card Image" draggable="false"/>
       <div class="card-text">
         <h2 class="ct">{{ title }}</h2>
         <p class="ct1">{{ description }}</p>
       </div>
     </div>
-  </div>
+  </NuxtLinkLocale>
 </template>
 
 <script setup>
@@ -24,11 +24,16 @@ defineProps({
     type: String,
     required: true,
   },
+  url: {
+    type:String,
+    required:true,
+  }
 });
 </script>
 
 <style scoped>
 .cards {
+  overflow: hidden;
   height: 512px;
   width: 400px;
   background-color: #ffffff;
