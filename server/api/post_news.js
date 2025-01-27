@@ -2,15 +2,10 @@ import mysql from 'mysql2/promise';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
+import { dbConfig } from '@/server/config/poom_db_config';
 
 export default defineEventHandler(async (event) => {
-  const dbConfig = {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'asd123asd',
-    database: 'news',
-    port: 3306,
-  };
+
 
   const form = formidable({
     uploadDir: path.join(process.cwd(), 'uploads'),

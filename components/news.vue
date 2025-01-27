@@ -71,6 +71,7 @@ onMounted(fetchNews);
 
 <style scoped>
 .hot-news-text p {
+  text-align: left;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;

@@ -2,11 +2,12 @@
   <div style="height: 5rem;"></div>
   <div class="table-head-text-container">
     <h1>จัดการข่าว</h1>
-    <p>จัดการข่าวทั้งหมด</p>
+    <p>มีข่าวทั้งหมด {{ NewsNum }}</p>
   </div>
-  <div class="add-btn-container"><button class="add-news-btn">
-      ADD News
-    </button></div>
+  <div class="add-btn-container">
+    <button class="add-news-btn" @click="showModalAddnews = true">ADD News</button>
+  </div>
+
   <div class="table-container">
     <table class="item-list-table">
       <thead>
@@ -41,9 +42,8 @@
 
   <div v-if="showModal" class="modal-overlay">
     <div class="modal">
-      <div class="text-alert-container"><span>ต้องการที่จะ
-          <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span>
-        </span>
+      <div class="text-alert-container">
+        <span>ต้องการที่จะ <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span></span>
         <p>" {{ deleteName }} "</p>
       </div>
 
@@ -53,21 +53,41 @@
       </div>
     </div>
   </div>
+
 
   <div v-if="showModalAddnews" class="modal-overlay">
-    <div class="modal">
-      <div class="text-alert-container"><span>ต้องการที่จะ
-          <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span>
-        </span>
-        <p>" {{ deleteName }} "</p>
+    <form class="modal" @submit.prevent="addNews">
+      <h2>เพิ่มข่าว</h2>
+      <div class="modal-content">
+        <label >พาดหัวข่าว</label>
+        <input v-model="newNews.title" placeholder="Enter title" required />
+        <br>
+        <label>รองรับรูปภาพขนาดมากสุด 4GB</label>
+        <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader" />
+        <br>
+        <label>ชื่อผู้เขียน </label>
+        <input v-model="newNews.author" placeholder="Enter author name" required />
+        <br>
+        <label style="display: none;">Upload Date</label>
+        <input v-model="newNews.upload_date" type="date" style="display: none;" />
+        <br>
+        <label>เป็นข่าวใหญ่</label>
+        <input v-model="newNews.hotNew" type="checkbox" />
+        <br>
+        <label>Description</label><br>
+        <textarea v-model="newNews.description" placeholder="Enter description"></textarea>
+        <br>
+        <label>Summary</label><br>
+        <textarea v-model="newNews.summerize" placeholder="Enter summary"></textarea>
       </div>
 
       <div class="modal-actions">
-        <button @click="confirmDelete" class="confirm-btn">Yes</button>
-        <button @click="cancelDelete" class="cancel-btn">No</button>
+        <button type="submit" class="confirm-btn">Add</button>
+        <button @click="showModalAddnews = false" class="cancel-btn">Cancel</button>
       </div>
-    </div>
+    </form>
   </div>
+
   <div style="height: 5rem;"></div>
 </template>
 
@@ -75,35 +95,86 @@
 definePageMeta({
   layout: 'admin'
 });
-import { ref, onMounted } from 'vue';
+
+import { ref, onMounted, watch } from 'vue';
 
 const News = ref([]);
-const showModalAddnews =ref(false);
+const NewsNum = ref(0);
+const showModalAddnews = ref(false);
 const selectAll = ref(false);
 const showModal = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
-
+const newNews = ref({
+  title: '',
+  image: '',
+  author: '',
+  upload_date: new Date().toISOString().split('T')[0],
+  description: '',
+  summerize: '',
+  hotNew: false
+});
 
 const fetchNews = async () => {
   try {
     const response = await $fetch('/api/news_table');
-    News.value = response.map((news) => ({
-      ...news,
-      selected: false,
-    }));
+    News.value = response.map(news => ({ ...news, selected: false }));
+    NewsNum.value = News.value.length;
   } catch (error) {
     console.error('Error fetching news:', error);
   }
 };
 
-
-const toggleSelectAll = () => {
-  News.value.forEach((news) => {
-    news.selected = selectAll.value;
-  });
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      newNews.value.image = reader.result; // Base64 encoding (includes `data:image/png;base64,`)
+    };
+    reader.readAsDataURL(file);
+  }
 };
 
+const addNews = async () => {
+  if (!newNews.value.title || !newNews.value.author || !newNews.value.image) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/news_rest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...newNews.value,
+        hotNew: newNews.value.hotNew ? 1 : 0, // Ensure Boolean handling
+      }),
+    });
+
+    if (response.ok) {
+      const addedNews = await response.json();
+      News.value.push({ ...newNews.value, id: addedNews.id });
+      showModalAddnews.value = false;
+
+      // Reset form fields
+      newNews.value = { title: '', image: '', author: '', description: '', summerize: '', hotNew: false };
+    } else {
+      console.error('Failed to add news');
+    }
+  } catch (error) {
+    console.error('Error adding news:', error);
+  }
+};
+
+
+const toggleSelectAll = () => {
+  News.value.forEach(news => news.selected = selectAll.value);
+};
+
+watch(() => News.value.map(news => news.selected), (newValues) => {
+  selectAll.value = newValues.every(Boolean);
+}, { deep: true });
 
 const askDelete = (id, name) => {
   showModal.value = true;
@@ -111,43 +182,37 @@ const askDelete = (id, name) => {
   deleteName.value = name;
 };
 
-
 const cancelDelete = () => {
   showModal.value = false;
   deleteId.value = null;
   deleteName.value = null;
 };
 
-
 const confirmDelete = async () => {
   try {
     const response = await fetch('/api/news_DELETE', {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: deleteId.value }),
     });
 
-    const result = await response.json();
-
     if (response.ok) {
-
       News.value = News.value.filter(news => news.id !== deleteId.value);
-      console.log('News deleted successfully');
+      NewsNum.value = News.value.length; // Update count
+      showModal.value = false;
     } else {
-      console.error('Failed to delete news:', result.error);
+      console.error('Failed to delete news');
     }
   } catch (error) {
     console.error('Error deleting news:', error);
   } finally {
-    showModal.value = false;
     deleteId.value = null;
   }
 };
 
 onMounted(fetchNews);
 </script>
+
 <style scoped>
 .table-head-text-container {
   display: flex;
@@ -165,7 +230,6 @@ onMounted(fetchNews);
 }
 
 .add-news-btn {
-
   all: unset;
   cursor: pointer;
   border: #4E6D16 solid 3px;
@@ -177,17 +241,12 @@ onMounted(fetchNews);
   transition: ease-out 0.2s;
   color: #4E6D16;
   font-weight: 600;
-
-
 }
 
 .add-news-btn:hover {
   color: white;
   background-color: #4E6D16;
-
-
 }
-
 
 .add-news-btn:active {
   border: #364b10 solid 3px;
@@ -199,14 +258,10 @@ onMounted(fetchNews);
   padding: 1rem;
 }
 
-
 .table-container {
   display: flex;
   justify-content: center;
-
-
 }
-
 
 .item-list-table {
   width: 90%;
@@ -217,7 +272,6 @@ onMounted(fetchNews);
   overflow: hidden;
   transition: all 0.3s ease;
 }
-
 
 .item-list-table thead {
   background-color: #2c3e50;
@@ -233,11 +287,9 @@ onMounted(fetchNews);
   letter-spacing: 1px;
 }
 
-
 .item-list-table tr {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-
 
 .item-list-table td {
   padding: 12px;
@@ -246,7 +298,6 @@ onMounted(fetchNews);
   font-size: 14px;
 }
 
-
 .items-id {
   display: flex;
   align-items: center;
@@ -254,58 +305,35 @@ onMounted(fetchNews);
 }
 
 .items-id input {
-  margin-right: 10px;
+  margin: 0;
 }
-
-
-.action-buttons {
-  display: flex;
-  gap: 12px;
-}
-
 
 .edit-btn,
 .delete-btn {
-  padding: 10px 16px;
-  font-size: 14px;
-  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  margin: 0.2rem;
+  border-radius: 5px;
+  transition: 0.3s;
 }
 
-
 .edit-btn {
-  background-color: #27ae60;
+  background-color: #4E6D16;
   color: white;
-  border: none;
+}
+
+.delete-btn {
+  background-color: red;
+  color: white;
 }
 
 .edit-btn:hover {
-  background-color: #2ecc71;
-  transform: scale(1.05);
-}
-
-
-.delete-btn {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
+  background-color: #6F8C28;
 }
 
 .delete-btn:hover {
-  background-color: #c0392b;
-  transform: scale(1.05);
+  background-color: #D84E5E;
 }
-
-
-.item-list-table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 
 .modal-overlay {
   position: fixed;
@@ -313,47 +341,49 @@ onMounted(fetchNews);
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
 }
 
 .modal-actions {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
 }
 
 .confirm-btn,
 .cancel-btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: 0.2s;
 }
 
 .confirm-btn {
-  background-color: #27ae60;
+  background-color: #4E6D16;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #D84E5E;
   color: white;
 }
 
 .confirm-btn:hover {
-  background-color: #2ecc71;
-}
-
-.cancel-btn {
-  background-color: #e74c3c;
-  color: white;
+  background-color: #6F8C28;
 }
 
 .cancel-btn:hover {
-  background-color: #c0392b;
+  background-color: #F86F70;
 }
 </style>
