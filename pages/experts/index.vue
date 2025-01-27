@@ -12,7 +12,7 @@
 
 <style scoped>
 .navcontainer {
-  width: 100vw;
+  width: 100%;
   height: 100px;
   border: rgb(255, 255, 255) solid 2px;
 }

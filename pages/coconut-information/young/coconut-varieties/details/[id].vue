@@ -35,7 +35,7 @@
     <p>กำลังโหลดข้อมูล...</p>
   </div>
 
-  <Footer />
+
 </template>
 
 <script>
