@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
         if (event.req.method === 'POST') {
             const body = await readBody(event);
-            const { title, description, author, upload_date, image } = body;
+            const { title, description, author, upload_date, image, hot_new, summerize } = body;
 
             if (!title || !author || !upload_date) {
                 return { error: 'Title, author, and upload date are required.' };
@@ -37,13 +37,13 @@ export default defineEventHandler(async (event) => {
 
             try {
                 // Remove the 'data:image/png;base64,' prefix before decoding
-                const imageData = image.split(',')[1]; 
+                const imageData = image.split(',')[1];
                 const imageBuffer = Buffer.from(imageData, 'base64');
                 const mimeType = detectMimeType(imageBuffer);
 
                 const [result] = await connection.execute(
-                    `INSERT INTO new (title, description, author, upload_date, image) VALUES (?, ?, ?, ?, ?)`,
-                    [title, description, author, upload_date, imageBuffer]
+                    `INSERT INTO new (title, description, author, upload_date, image,hot_new,summerize) VALUES (?,?, ?, ?, ?, ?,?)`,
+                    [title, description, author, upload_date, imageBuffer, hot_new, summerize]
                 );
 
                 return {

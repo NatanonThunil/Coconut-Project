@@ -18,6 +18,7 @@
           </th>
           <th>Title</th>
           <th>Author</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -30,6 +31,10 @@
           </td>
           <td>{{ news.title }}</td>
           <td>{{ news.author }}</td>
+          <td
+            :style="(news.status == 0) ? 'font-size:1.2rem; font-weight: 700; color: #ffce54;  text-shadow: 1px 1px 2px black, -1px -1px 2px black,1px -1px 2px black, -1px 1px 2px black,0px 1px 4px black,0px -1px 4px black,1px 0px 4px black,-1px 0px 4px black;' : 'font-size:1.2rem; font-weight: 700; color: #DFF169;  text-shadow: 1px 1px 2px black, -1px -1px 2px black,1px -1px 2px black, -1px 1px 2px black,0px 1px 4px black,0px -1px 4px black,1px 0px 4px black,-1px 0px 4px black;'">
+            {{ (news.status == 0) ? 'Pending' :
+              'Published' }}</td>
           <td class="action-buttons">
             <button @click="editItem(news)" class="edit-btn">Edit</button>
             <button @click="askDelete(news.id, news.title)" class="delete-btn">Delete</button>
@@ -56,29 +61,51 @@
 
 
   <div v-if="showModalAddnews" class="modal-overlay">
-    <form class="modal" @submit.prevent="addNews">
+    <form class="modal-add" @submit.prevent="addNews">
       <h2>เพิ่มข่าว</h2>
+      <div style="height: 2px; width: 100%; background-color: #4E6D16; margin: 1rem 0rem;"></div>
       <div class="modal-content">
-        <label >พาดหัวข่าว</label>
-        <input v-model="newNews.title" placeholder="Enter title" required />
-        <br>
-        <label>รองรับรูปภาพขนาดมากสุด 4GB</label>
-        <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader" />
-        <br>
-        <label>ชื่อผู้เขียน </label>
-        <input v-model="newNews.author" placeholder="Enter author name" required />
-        <br>
-        <label style="display: none;">Upload Date</label>
-        <input v-model="newNews.upload_date" type="date" style="display: none;" />
-        <br>
-        <label>เป็นข่าวใหญ่</label>
-        <input v-model="newNews.hotNew" type="checkbox" />
-        <br>
-        <label>Description</label><br>
-        <textarea v-model="newNews.description" placeholder="Enter description"></textarea>
-        <br>
-        <label>Summary</label><br>
-        <textarea v-model="newNews.summerize" placeholder="Enter summary"></textarea>
+        <section>
+          <label>พาดหัวข่าว </label>
+          <input class="add-text-input" v-model="newNews.title" placeholder="Enter title" required />
+          <br> <label>ชื่อผู้เขียน </label>
+          <input class="add-text-input" v-model="newNews.author" placeholder="Enter author name" required />
+          <br>
+          <label>รองรับรูปภาพ PNG, JPG และJPEG</label>
+          <div class="image-upload-container">
+            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+              @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
+              <img v-if="!newNews.image" src="@/assets/icon/upload.svg" draggable="false">
+              <h2 v-if="!newNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
+
+              <!-- Image Preview -->
+              <div v-if="newNews.image" class="image-preview">
+                <img :src="newNews.image" alt="Uploaded Image" class="preview-image" />
+                <button class="remove-btn" @click="removeImage">X</button>
+              </div>
+
+              <!-- Hidden File Input -->
+              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader"
+                ref="fileInput" />
+
+              <!-- Browse Button -->
+              <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
+            </div>
+          </div>
+        </section>
+        <section>
+          <label style="display: none;">Upload Date</label>
+          <input v-model="newNews.upload_date" type="date" style="display: none;" />
+
+          <label>เป็นข่าวใหญ่</label>
+          <input v-model="newNews.hot_new" type="checkbox" />
+          <br>
+          <label>Description</label><br>
+          <textarea v-model="newNews.description" placeholder="Enter description"></textarea>
+          <br>
+          <label>Summary</label><br>
+          <textarea v-model="newNews.summerize" placeholder="Enter summary"></textarea>
+        </section>
       </div>
 
       <div class="modal-actions">
@@ -87,7 +114,54 @@
       </div>
     </form>
   </div>
+  <div v-if="showModalEdit" class="modal-overlay">
+    <form class="modal-edit" @submit.prevent="updateNews">
+      <h2>Edit News</h2>
+      <div class="modal-content">
+        <div class="mod-sl">
+          <label>Title</label>
+          <input  v-model="currentEditNews.title" placeholder="Enter title" required />
+          <br>
+          <label>Author</label>
+          <input  v-model="currentEditNews.author" placeholder="Enter author name" required />
+          <br>
+          <label>Upload Image</label>
+          <div class="image-upload-container">
+            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+              @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
+              <img v-if="!currentEditNews.image" src="@/assets/icon/upload.svg" draggable="false">
+              <h2 v-if="!currentEditNews.image">Drag file here or click to select</h2>
+              <div v-if="currentEditNews.image" class="image-preview">
+                <img :src="currentEditNews.image" alt="Uploaded Image" class="preview-image" />
+                <button class="remove-btn" @click="removeImage">X</button>
+              </div>
+              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader"
+                ref="fileInput" />
+              <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
+            </div>
+          </div>
 
+          <label>Upload Date</label>
+          <input v-model="currentEditNews.upload_date" type="date" />
+        </div>
+
+        <div class="mod-sr"><label>Is Hot News?</label>
+          <input v-model="currentEditNews.hot_new" type="checkbox" />
+          <br>
+          <label>Description</label>
+          <textarea v-model="currentEditNews.description" placeholder="Enter description"></textarea>
+          <br>
+          <label>Summary</label>
+          <textarea v-model="currentEditNews.summerize" placeholder="Enter summary"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="confirm-btn">Save Changes</button>
+        <button type="button" @click="cancelEdit" class="cancel-btn">Cancel</button>
+      </div>
+    </form>
+  </div>
   <div style="height: 5rem;"></div>
 </template>
 
@@ -97,14 +171,18 @@ definePageMeta({
 });
 
 import { ref, onMounted, watch } from 'vue';
-
+const isDragging = ref(false);
+const fileInput = ref(null);
 const News = ref([]);
 const NewsNum = ref(0);
-const showModalAddnews = ref(false);
+const showModalAddnews = ref(true);
 const selectAll = ref(false);
 const showModal = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
+const showModalEdit = ref(false);
+const currentEditNews = ref(null);
+
 const newNews = ref({
   title: '',
   image: '',
@@ -114,7 +192,48 @@ const newNews = ref({
   summerize: '',
   hot_new: false
 });
+const editItem = (news) => {
+  showModalEdit.value = true;
+  currentEditNews.value = { ...news };  // Copy the current news to a temporary object
+};
 
+// Function to handle the form submission for editing
+const updateNews = async () => {
+  if (!currentEditNews.value.title || !currentEditNews.value.author || !currentEditNews.value.image) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/news_rest', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...currentEditNews.value,
+        hot_new: currentEditNews.value.hot_new ? 1 : 0,  // Ensure Boolean handling
+      }),
+    });
+
+    if (response.ok) {
+      const updatedNews = await response.json();
+      const index = News.value.findIndex(news => news.id === updatedNews.id);
+      if (index !== -1) {
+        News.value[index] = updatedNews;  // Replace old news with updated news
+      }
+      showModalEdit.value = false;  // Close modal
+    } else {
+      console.error('Failed to update news');
+    }
+  } catch (error) {
+    console.error('Error updating news:', error);
+  }
+};
+
+// Function to cancel the editing
+const cancelEdit = () => {
+  showModalEdit.value = false;
+  currentEditNews.value = null;
+};
 const fetchNews = async () => {
   try {
     const response = await $fetch('/api/news_table');
@@ -127,15 +246,35 @@ const fetchNews = async () => {
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      newNews.value.image = reader.result; // Base64 encoding (includes `data:image/png;base64,`)
-    };
-    reader.readAsDataURL(file);
-  }
+  processFile(file);
+};
+const handleDragDrop = (event) => {
+  const file = event.dataTransfer.files[0];
+  processFile(file);
 };
 
+const processFile = (file) => {
+  if (!file) return;
+
+  // Check file type
+  if (!file.type.startsWith('image/')) {
+    alert('Please upload an image file (JPEG/PNG)');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    newNews.value.image = reader.result; // Store Base64 encoded image
+  };
+  reader.readAsDataURL(file);
+};
+const removeImage = () => {
+  newNews.value.image = '';
+};
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
 const addNews = async () => {
   if (!newNews.value.title || !newNews.value.author || !newNews.value.image) {
     alert('Please fill in all required fields.');
@@ -214,6 +353,124 @@ onMounted(fetchNews);
 </script>
 
 <style scoped>
+.mod-sl,
+.mod-sr {
+  display: flex;
+  flex-direction: column;
+}
+.modal-add .modal-content {
+  display: flex;
+  justify-content: center;
+}
+.modal-add .modal-content section {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-add .modal-content {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.modal-add .modal-content section textarea {
+ 
+  resize: none;
+  height: 8rem;
+  width: 24rem;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.add-text-input , .modal-add .modal-content section textarea {
+  border-radius: 10px;
+ border: 2px solid #4E6D16;
+ padding: 0.5rem; 
+}
+
+
+
+.image-input-drag-n-drop-container {
+  padding: 2rem;
+  max-width: 28rem;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  outline: 3px dashed #4E6D16;
+  color: #4E6D16;
+  border-radius: 10px;
+  margin: 1rem;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+
+.image-input-drag-n-drop-container.dragover {
+  background-color: rgba(78, 109, 22, 0.1);
+}
+
+.image-input-drag-n-drop-container input {
+  display: none;
+}
+
+.image-input-drag-n-drop-container img {
+  aspect-ratio: 1;
+  height: 8rem;
+}
+
+.browse-btn {
+  cursor: pointer;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  background-color: #4E6D16;
+  color: white;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.browse-btn:hover {
+  background-color: #6F8C28;
+}
+
+.image-preview {
+  position: relative;
+  height: fit-content;
+  width: fit-content;
+}
+
+.preview-image {
+
+  height: fit-content;
+  width: fit-content;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  outline: 2px white solid;
+
+  color: white;
+  border: none;
+  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.remove-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
 .table-head-text-container {
   display: flex;
   flex-direction: column;
@@ -345,6 +602,15 @@ onMounted(fetchNews);
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-add {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  min-width: 400px;
+  width: 60%;
+
 }
 
 .modal {
