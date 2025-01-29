@@ -1,7 +1,7 @@
 <template>
-  <div class="navcontainer">
+ 
     <Navbar selecto="expert" />
-  </div>
+  
   <h3 class="header-content">ผู้เชี่ยวชาญ</h3>
   <div class="header-container">
     <h1>ผู้เชี่ยวชาญ</h1>

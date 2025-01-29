@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Filter options -->
+
     <ul class="homeeventfiltercontainer">
       <li
         class="filtli train"
@@ -56,7 +56,7 @@
         :to="`/experts/details/${expert.id}`"
       >
         <div class="event-card-image">
-          <img :src="expert.image || 'https://placehold.co/600x400'" alt="Expert Image" draggable="false" />
+          <img :src="expert.image ||'https://placehold.co/600x400'" alt="Expert Image" draggable="false" />
         </div>
         <div class="event-card-text">
           <p class="event-title">{{ expert.name }}</p>

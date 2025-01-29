@@ -13,6 +13,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/i18n": "npm:@nuxtjs/i18n-edge",
     "@nuxtjs/proxy": "^2.1.0",
+    "@vueuse/core": "^12.5.0",
     "@vueuse/head": "^2.0.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
@@ -31,6 +32,7 @@
     "nuxt": "^3.14.1592",
     "nuxt-app": "file:",
     "path": "^0.12.7",
+    "swiper": "^11.2.1",
     "vue": "latest",
     "vue-router": "latest"
   },

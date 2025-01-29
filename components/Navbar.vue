@@ -294,7 +294,7 @@ nuxt-link:hover {
   top: 0;
 
   z-index: 1000;
-  box-shadow: rgba(0, 0, 0, 0.6) 0rem 1rem 2rem;
+  box-shadow: rgba(0, 0, 0, 0.6) 0rem 0rem 1.5rem;
 
   transition: 0.3s ease-in-out;
 }

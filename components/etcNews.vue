@@ -1,5 +1,5 @@
 <template>
-    <NuxtLinkLocale :to="url" class="Big-card">
+    <NuxtLinkLocale :to="url" :class="[isHotnews ? 'HotCard' : '', 'Big-card']">
         <div class="big-hot-news-image-container"><img :src="image" /></div>
         <div class="big-hot-news-details-container">
             <h2>{{ title }}</h2>
@@ -22,11 +22,17 @@ export default {
             type: String
         }, date: {
             type: String
-        },
+        }, isHotnews: {
+            type: Boolean
+        }
     }
 }</script>
 
 <style scoped>
+.HotCard {
+    outline: solid #A6AB82 8px ;
+}
+
 a {
     color: black;
 }
@@ -56,11 +62,13 @@ a {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
     transition: 0.3s ease-in-out;
 }
+
 .Big-card:hover {
     transform: scale(1.05);
     outline: #4E6D16 3px solid;
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.8);
 }
+
 .Big-card:hover .big-hot-news-image-container img {
     transform: scale(1.05);
 }

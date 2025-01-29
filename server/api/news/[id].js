@@ -1,11 +1,10 @@
 import mysql from 'mysql2/promise';
-import { dbConfig } from '../config/poom_db_config';
+import { dbConfig } from '../../config/poom_db_config';
 
 const pool = mysql.createPool(dbConfig);
 
 const createConnection = async () => {
-    const connection = await pool.getConnection();
-    return connection;
+    return pool.getConnection();
 };
 
 const detectMimeType = (imageBuffer) => {
@@ -13,8 +12,9 @@ const detectMimeType = (imageBuffer) => {
     switch (signature) {
         case '89504e47': return 'image/png';
         case 'ffd8ffe0': return 'image/jpeg';
+        case 'ffd8ffe1': return 'image/jpeg';
         case '47494638': return 'image/gif';
-        default: return 'image/jpeg';
+        default: return 'unknown';
     }
 };
 
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
         if (event.req.method === 'PUT') {
             const body = await readBody(event);
-            const { id, title, description, author, upload_date, image, hot_new, summerize } = body;
+            const { id, title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
             if (!id) {
                 return { error: 'News ID is required for updating.' };
@@ -47,24 +47,32 @@ export default defineEventHandler(async (event) => {
                 values.push(author);
             }
             if (upload_date) {
+                const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' '); 
                 updateFields.push('upload_date = ?');
-                values.push(upload_date);
+                values.push(formattedDate);
             }
-            if (hot_new !== undefined) {
+            if (typeof hot_new !== 'undefined') { 
                 updateFields.push('hot_new = ?');
-                values.push(hot_new);
+                values.push(hot_new ? 1 : 0); 
             }
             if (summerize) {
                 updateFields.push('summerize = ?');
                 values.push(summerize);
             }
+            if (typeof status !== 'undefined') { 
+                updateFields.push('status = ?');
+                values.push(status ? 1 : 0);
+            }
 
             if (image) {
                 try {
-                    // Remove 'data:image/png;base64,' prefix before decoding
                     const imageData = image.split(',')[1];
                     const imageBuffer = Buffer.from(imageData, 'base64');
                     const mimeType = detectMimeType(imageBuffer);
+
+                    if (mimeType === 'unknown') {
+                        return { error: 'Invalid image format.' };
+                    }
 
                     updateFields.push('image = ?');
                     values.push(imageBuffer);
@@ -83,7 +91,7 @@ export default defineEventHandler(async (event) => {
             const [result] = await connection.execute(query, values);
 
             if (result.affectedRows === 0) {
-                return { error: 'No news found with the given ID.' };
+                return { error: 'No news found with the given ID or no changes made.' };
             }
 
             return {
