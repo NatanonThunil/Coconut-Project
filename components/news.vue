@@ -54,10 +54,10 @@ const fetchNews = async () => {
     newsItems.value = response;
 
 
-    hotNews.value = newsItems.value.find((news) => news.hot_new) || null;
+    hotNews.value = newsItems.value.find((news) => news.hot_new &&news.status) || null;
 
 
-    regularNews.value = newsItems.value.filter((news) => !news.hot_new).slice(0, 2);
+    regularNews.value = newsItems.value.filter((news) => !news.hot_new&&news.status).slice(0, 2);
   } catch (error) {
     console.error('Error fetching news:', error);
   } finally {
