@@ -37,9 +37,17 @@
                     <td
                         :style="[!news.hot_new ? 'font-size:1.2rem; font-weight: 700; color: red;' : 'font-size:1.2rem; font-weight: 700; color: green;  ', 'text-align: center,']">
                         {{ news.hot_new ? "✓" : "✕" }}</td>
-                    <td
+                        <td>
+    <label class="status-toggle">
+        <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
+        <img class="eyesicon" :src="news.status ? eye : eyeBlink" alt="Visibility Icon" />
+    </label>
+</td>
+
+
+                    <!-- <td
                         :style="(news.status == 0) ? 'font-size:1.2rem; font-weight: 700; color: #ffce54; text-shadow: 1px 1px 2px black;' : 'font-size:1.2rem; font-weight: 700; color: #DFF169; text-shadow: 1px 1px 2px black;'">
-                        {{ (news.status == 0) ? 'Pending' : 'Published' }}</td>
+                        {{ (news.status == 0) ? 'Pending' : 'Published' }}</td> -->
                     <td class="action-buttons">
                         <button @click="editItem(news)" class="edit-btn">Edit</button>
                         <button @click="askDelete(news.id, news.title)" class="delete-btn">Delete</button>
@@ -62,7 +70,7 @@
         </div>
     </div>
     <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
-        <form class="modal-add" >
+        <form class="modal-add">
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
             <div class="divider"></div>
             <div class="modal-content">
@@ -110,7 +118,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-
+import eye from '@/assets/icon/eye-alt-svgrepo-com.svg'
+import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg'
 const News = ref([]);
 const NewsNum = ref(0);
 const selectAll = ref(false);
@@ -132,8 +141,36 @@ const currentNews = ref({
     upload_date: new Date().toISOString().split('T')[0],
     status: false,
 });
+
+const toggleStatus = async (news) => {
+    try {
+        // Optimistically update the UI
+        const newStatus = !news.status;
+
+        // Send update request to the backend
+        const response = await fetch(`/api/news/${news.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...news,status: newStatus ? 1 : 0 }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update news status.');
+        }
+
+        // Update status only after successful response
+        news.status = newStatus;
+
+       
+    } catch (error) {
+        alert('Error updating news status.');
+        console.error(error);
+    }
+};
+
+
 const triggerFileInput = () => {
-  fileInput.value.click();
+    fileInput.value.click();
 };
 const fetchNews = async () => {
     try {
@@ -204,13 +241,13 @@ const submitNews = async (publish) => {
     }
 
     try {
-      
+
         currentNews.value.upload_date = new Date(currentNews.value.upload_date)
             .toISOString()
             .slice(0, 19)
             .replace('T', ' ');
 
-       
+
         const isUpdate = !!currentNews.value.id;
         const method = isUpdate ? 'PUT' : 'POST';
         const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news_rest';
@@ -241,13 +278,13 @@ const submitNews = async (publish) => {
         const data = await response.json();
 
         if (isUpdate) {
-            
+
             const index = News.value.findIndex((news) => news.id === currentNews.value.id);
             if (index !== -1) {
                 News.value[index] = { ...payload, id: currentNews.value.id };
             }
         } else {
-         
+
             News.value.push({ ...payload, id: data.id });
             NewsNum.value = News.value.length;
         }
@@ -329,6 +366,29 @@ onMounted(fetchNews);
 </script>
 
 <style scoped>
+.status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.status-toggle input {
+    display: none;
+    /* Hide default checkbox */
+}
+
+.eyesicon {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.eyesicon:hover {
+    opacity: 0.7;
+}
+
 .modal-actions {
     margin-top: 1.5rem;
     display: flex;

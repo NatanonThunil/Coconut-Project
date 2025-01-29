@@ -3,27 +3,13 @@ import { dbConfig } from '../../config/poom_db_config';
 
 const pool = mysql.createPool(dbConfig);
 
-const createConnection = async () => {
-    return pool.getConnection();
-};
-
-const detectMimeType = (imageBuffer) => {
-    const signature = imageBuffer.slice(0, 4).toString('hex');
-    switch (signature) {
-        case '89504e47': return 'image/png';
-        case 'ffd8ffe0': return 'image/jpeg';
-        case 'ffd8ffe1': return 'image/jpeg';
-        case '47494638': return 'image/gif';
-        default: return 'unknown';
-    }
-};
-
 export default defineEventHandler(async (event) => {
     let connection;
     try {
-        connection = await createConnection();
+        connection = await pool.getConnection();
 
         if (event.req.method === 'PUT') {
+            // Read request body
             const body = await readBody(event);
             const { id, title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
@@ -47,32 +33,28 @@ export default defineEventHandler(async (event) => {
                 values.push(author);
             }
             if (upload_date) {
-                const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' '); 
+                const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' ');
                 updateFields.push('upload_date = ?');
                 values.push(formattedDate);
             }
-            if (typeof hot_new !== 'undefined') { 
+            if (typeof hot_new !== 'undefined') {
                 updateFields.push('hot_new = ?');
-                values.push(hot_new ? 1 : 0); 
+                values.push(hot_new ? 1 : 0);
             }
             if (summerize) {
                 updateFields.push('summerize = ?');
                 values.push(summerize);
             }
-            if (typeof status !== 'undefined') { 
+            if (typeof status !== 'undefined') {
                 updateFields.push('status = ?');
                 values.push(status ? 1 : 0);
             }
 
+            // Handling image upload
             if (image) {
                 try {
-                    const imageData = image.split(',')[1];
+                    const imageData = image.split(',')[1]; // Extract base64 data
                     const imageBuffer = Buffer.from(imageData, 'base64');
-                    const mimeType = detectMimeType(imageBuffer);
-
-                    if (mimeType === 'unknown') {
-                        return { error: 'Invalid image format.' };
-                    }
 
                     updateFields.push('image = ?');
                     values.push(imageBuffer);
@@ -94,16 +76,53 @@ export default defineEventHandler(async (event) => {
                 return { error: 'No news found with the given ID or no changes made.' };
             }
 
-            return {
-                message: 'News updated successfully',
-                id: id,
-            };
-        } else {
-            return { error: 'Method Not Allowed' };
+            return { message: 'News updated successfully', id: id };
+
+        } else if (event.req.method === 'GET') {
+            // Fetch all news
+            const [rows] = await connection.execute('SELECT id, title, description, author, upload_date, hot_new, summerize, status FROM new');
+            return rows;
+
+        } else if (event.req.method === 'POST') {
+            // Insert new news article
+            const body = await readBody(event);
+            const { title, description, author, upload_date, image, hot_new, summerize, status } = body;
+
+            if (!title || !author) {
+                return { error: 'Title and author are required.' };
+            }
+
+            const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' ');
+            const query = 'INSERT INTO new (title, description, author, upload_date, image, hot_new, summerize, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            const values = [title, description, author, formattedDate, image, hot_new ? 1 : 0, summerize, status ? 1 : 0];
+
+            const [result] = await connection.execute(query, values);
+
+            return { message: 'News added successfully', id: result.insertId };
+
+        } else if (event.req.method === 'DELETE') {
+            // Delete news
+            const body = await readBody(event);
+            const { id } = body;
+
+            if (!id) {
+                return { error: 'News ID is required for deletion.' };
+            }
+
+            const query = 'DELETE FROM new WHERE id = ?';
+            const [result] = await connection.execute(query, [id]);
+
+            if (result.affectedRows === 0) {
+                return { error: 'No news found with the given ID.' };
+            }
+
+            return { message: 'News deleted successfully', id: id };
         }
 
+        return { error: 'Method Not Allowed' };
+
     } catch (error) {
-        console.error('Error handling news update request:', error);
+        console.error('Error handling news request:', error);
         return { error: error.message || 'Failed to handle request' };
     } finally {
         if (connection) connection.release();

@@ -39,7 +39,7 @@
   <section class="news-etc">
     <etcNews v-for="news in regularNews" :key="news.id" :url="`/news/details/${news.id}`"
       :image="news.image || 'https://via.placeholder.com/1280x720'" :title="news.title || ''"
-      :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new"/>
+      :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />
   </section>
 </template>
 
@@ -58,10 +58,15 @@ const fetchNews = async () => {
     newsItems.value = response;
 
     hotNews.value = newsItems.value.find((news) => news.hot_new && news.status) || null;
-    regularNews.value = [
-      ...newsItems.value.filter((news) => !news.hot_new && news.status),
-      ...newsItems.value.filter((news) => news.hot_new && news.status).slice(3),
-    ];
+
+
+    regularNews.value = newsItems.value
+      .filter((news) => news.status) // Only include published news
+      .filter((news, index, array) => {
+        // Keep first 3 hot news separate; the rest go into regular news
+        return !news.hot_new || array.filter(n => n.hot_new && n.status).indexOf(news) >= 3;
+      })
+      .sort((a, b) => b.id - a.id); // Sort everything by newest ID first
 
 
   } catch (error) {
@@ -70,6 +75,7 @@ const fetchNews = async () => {
     loading.value = false;
   }
 };
+
 
 onMounted(fetchNews);
 </script>

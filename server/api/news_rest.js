@@ -1,13 +1,15 @@
 import mysql from 'mysql2/promise';
 import { dbConfig } from '../config/poom_db_config';
 
+
 const pool = mysql.createPool(dbConfig);
 
+
 const createConnection = async () => {
-    const connection = await pool.getConnection();
-    return connection;
+    return await pool.getConnection();
 };
 
+// Function to detect the MIME type of the image (for safety)
 const detectMimeType = (imageBuffer) => {
     const signature = imageBuffer.slice(0, 4).toString('hex');
     switch (signature) {
@@ -25,40 +27,45 @@ export default defineEventHandler(async (event) => {
 
         if (event.req.method === 'POST') {
             const body = await readBody(event);
-            const { title, description, author, upload_date, image, hot_new } = body;
+            const { title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
-            if (!title || !author || !upload_date) {
-                return { error: 'Title, author, and upload date are required.' };
+        
+            if (!title) {
+                return { error: 'Title is required.' };
             }
-
+            if (!author) {
+                return { error: 'Author is required.' };
+            }
+            if (!upload_date) {
+                return { error: 'Upload date is required.' };
+            }
             if (!image) {
                 return { error: 'Image is required.' };
             }
+            if (typeof status !== 'number') {
+                return { error: 'Status must be a number (0 or 1).' };
+            }
 
             try {
-                // Remove the 'data:image/png;base64,' prefix before decoding
-                const imageData = image.split(',')[1]; 
+               
+                const imageData = image.split(',')[1];
                 const imageBuffer = Buffer.from(imageData, 'base64');
-                const mimeType = detectMimeType(imageBuffer);
 
+            
                 const [result] = await connection.execute(
-                    `INSERT INTO new (title, description, author, upload_date, image, hot_new) VALUES (?, ?, ?, ?, ?,?)`,
-                    [title, description, author, upload_date, imageBuffer, hot_new]
+                    `INSERT INTO new (title, description, author, upload_date, image, hot_new, summerize, status) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [title, description, author, upload_date, imageBuffer, hot_new ? 1 : 0, summerize, status]
                 );
 
-                return {
-                    message: 'News added successfully',
-                    id: result.insertId,
-                };
+                return { message: 'News added successfully', id: result.insertId };
             } catch (err) {
-                return { error: 'Invalid image format.' };
+                return { error: 'Invalid image format or database error.' };
             }
         } else {
             return { error: 'Method Not Allowed' };
         }
-
     } catch (error) {
-        console.error('Error handling news API request:', error);
         return { error: error.message || 'Failed to handle request' };
     } finally {
         if (connection) connection.release();
