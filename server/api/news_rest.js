@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
         if (event.req.method === 'POST') {
             const body = await readBody(event);
-            const { title, description, author, upload_date, image } = body;
+            const { title, description, author, upload_date, image, hot_new } = body;
 
             if (!title || !author || !upload_date) {
                 return { error: 'Title, author, and upload date are required.' };
@@ -42,8 +42,8 @@ export default defineEventHandler(async (event) => {
                 const mimeType = detectMimeType(imageBuffer);
 
                 const [result] = await connection.execute(
-                    `INSERT INTO new (title, description, author, upload_date, image) VALUES (?, ?, ?, ?, ?)`,
-                    [title, description, author, upload_date, imageBuffer]
+                    `INSERT INTO new (title, description, author, upload_date, image, hot_new) VALUES (?, ?, ?, ?, ?,?)`,
+                    [title, description, author, upload_date, imageBuffer, hot_new]
                 );
 
                 return {

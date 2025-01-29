@@ -3,118 +3,74 @@ import { dbConfig } from "../config/poom_db_config";
 
 const pool = mysql.createPool(dbConfig);
 
-const createConnection = async () => {
-  const connection = await pool.getConnection();
-  return connection;
-};
-
-const imageToBuffer = (imageData) => {
-  try {
-    return Buffer.from(imageData, "base64");
-  } catch (error) {
-    throw new Error("Invalid image data. Unable to convert to buffer.");
-  }
-};
-
-const detectMimeType = (imageBuffer) => {
-  const signature = imageBuffer.slice(0, 4).toString("hex");
+const detectMimeType = (buffer) => {
+  const signature = buffer.toString("hex", 0, 4);
   switch (signature) {
-    case "89504e47":
-      return "image/png";
+    case "89504e47": return "image/png";
     case "ffd8ffe0":
     case "ffd8ffe1":
-    case "ffd8ffe2":
-      return "image/jpeg";
-    case "47494638":
-      return "image/gif";
-    default:
-      return "application/octet-stream"; // Default for unknown types
+    case "ffd8ffe2": return "image/jpeg";
+    case "47494638": return "image/gif";
+    default: return "application/octet-stream";
   }
 };
 
 export default defineEventHandler(async (event) => {
   let connection;
   try {
-    connection = await createConnection();
+    connection = await pool.getConnection();
+    const id = event.context.params?.id || null;
 
-    if (event.req.method === "GET") {
-      const [rows] = await connection.execute("SELECT * FROM expert ORDER BY id DESC");
+    const query = `
+      SELECT e.*, 
+             COALESCE(
+               JSON_ARRAYAGG(JSON_QUOTE(t.tag_name)), 
+               JSON_ARRAY()
+             ) AS expert_tags_id
+      FROM expert e 
+      LEFT JOIN tags_expert t 
+      ON JSON_CONTAINS(e.expert_tags_id, CAST(t.id AS JSON), '$')
+      ${id ? 'WHERE e.id = ?' : ''}
+      GROUP BY e.id;
+    `;
 
-      const experts = rows.map((expert) => {
-        let imageBase64 = null;
-        if (expert.image) {
-          const mimeType = detectMimeType(expert.image);
-          imageBase64 = `data:${mimeType};base64,${expert.image.toString(
-            "base64"
-          )}`;
-        }
+    const [rows] = id ? await connection.execute(query, [id]) : await connection.execute(query);
 
-        return {
-          ...expert,
-          image: imageBase64,
-        };
-      });
-
-      return experts;
-    } else if (event.req.method === "POST") {
-      const body = await readBody(event);
-
-      const {
-        name,
-        address,
-        description,
-        expert_tags_id,
-        phoneNumber,
-        gmail,
-        image,
-        type,
-      } = body;
-
-      // Basic validation
-      if (!name || !address || !description || !expert_tags_id || !phoneNumber || !gmail || !image ||!type) {
-        return { error: "All fields are required." };
-      }
-
-      const imageBuffer = imageToBuffer(image);
-      const mimeType = detectMimeType(imageBuffer);
-
-      if (!["image/png", "image/jpeg", "image/gif"].includes(mimeType)) {
-        return { error: "Unsupported image format. Use PNG, JPEG, or GIF." };
-      }
-
-      const [result] = await connection.execute(
-        `INSERT INTO expert 
-          (image, name, address, description, expert_tags_id, phoneNumber, gmail) 
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          imageBuffer,
-          name,
-          address,
-          description,
-          expert_tags_id,
-          phoneNumber,
-          gmail,
-          type,
-        ]
-      );
-
-      return {
-        message: "Expert added successfully.",
-        id: result.insertId,
-      };
-    } else {
-      return { error: "Method Not Allowed" };
+    if (rows.length === 0) {
+      return { error: "Expert not found" };
     }
+
+    const experts = rows.map((expert) => {
+      console.log("Expert Tags (Before Parsing):", expert.expert_tags_id);
+    
+      if (expert.image) {
+        const mimeType = detectMimeType(expert.image);
+        expert.image = `data:${mimeType};base64,${expert.image.toString("base64")}`;
+      }
+    
+      try {
+        if (typeof expert.expert_tags_id === 'string') {
+          expert.expert_tags_id = JSON.parse(expert.expert_tags_id);
+        } else if (!Array.isArray(expert.expert_tags_id)) {
+          console.warn("Unexpected expert_tags_id format, defaulting to empty array.");
+          expert.expert_tags_id = [];
+        }
+      } catch (error) {
+        console.error("Error parsing expert_tags_id JSON:", error);
+        expert.expert_tags_id = [];
+      }
+    
+      return expert;
+    });
+    
+
+    return id ? experts[0] : experts;
   } catch (error) {
-    console.error("Error handling expert API request:", error);
-    return { error: "An unexpected error occurred. Please try again later." };
+    console.error("Error fetching expert data:", error);
+    return { error: "An error occurred while fetching expert data" };
   } finally {
     if (connection) {
-      try {
-        connection.release();
-      } catch (releaseError) {
-        console.error("Error releasing database connection:", releaseError);
-      }
+      connection.release();
     }
   }
 });

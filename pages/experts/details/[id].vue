@@ -1,162 +1,176 @@
 <template>
-    <Navbar selecto="experts" />
+  <Navbar selecto="expert" />
+  <div style="height: 10rem;"></div>
   
-    <!-- Loader -->
-    <div v-if="!expert && !error" class="loading">
-      <p>Loading expert data...</p>
-    </div>
-  
-    <!-- Error -->
-    <div v-if="error" class="error">
-      <p>{{ error }}</p>
-    </div>
-  
-    <!-- Expert Image -->
-    <div class="image-container" v-if="expert">
-      <div class="blur-background" :style="{ backgroundImage: `url(${expert?.image || tlImage})` }"></div>
-      <img :src="expert?.image || tlImage" class="img" alt="Expert Image" draggable="false">
-    </div>
-  
-    <!-- Expert Details -->
-    <h1 class="text-center" v-if="expert">{{ expert?.name }}</h1>
-  
-    <div class="brief-details" v-if="expert">
-      <div class="toline">
-        <div class="expert-head">ที่อยู่</div>: <div class="expert-main-detail">{{ expert?.address || 'N/A' }}</div>
-      </div>
-      <div class="toline">
-        <div class="expert-head">เบอร์โทรศัพท์</div>: <div class="expert-main-detail">{{ expert?.phoneNumber || 'N/A' }}</div>
-      </div>
-      <div class="toline">
-        <div class="expert-head">แท็ก</div>: 
-        <div class="expert-main-detail">
-          {{ Array.isArray(expert?.expert_tags_id)
-            ? expert.expert_tags_id.join(", ")
-            : expert?.expert_tags_id || "N/A" }}
+  <!-- Loader -->
+  <div v-if="!expert && !error" class="loading">
+    <p>กำลังโหลดข้อมูลผู้เชี่ยวชาญ...</p>
+  </div>
+
+  <!-- Error -->
+  <div v-if="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Expert Profile Section -->
+  <div class="expert-container" v-if="expert">
+    <div class="expert-content">
+      <img :src="expert?.image || tlImage" class="expert-image" alt="Expert Image" draggable="false">
+
+      <div class="expert-details">
+        <h1 class="expert-name">{{ expert?.name }}</h1>
+
+        <div class="info">
+          <p><strong>ที่อยู่:</strong> {{ expert?.address || 'N/A' }}</p>
+          <p><strong>ติดต่อ:</strong> {{ expert?.gmail || 'N/A' }}</p>
+          <p>Facebook | Twitter</p>
         </div>
+
+        <div class="tags">
+          <p><strong>แท็ก:</strong></p>
+          <div v-if="expert?.expert_tags_id && expert.expert_tags_id.length">
+            <span v-for="(tag, index) in expert.expert_tags_id" :key="index" class="tag">
+              {{ tag }}
+            </span>
+          </div>
+          <p v-else>ไม่มีแท็ก</p>
+        </div>
+
+        <p class="description">
+          <strong>คำอธิบาย:</strong> {{ expert?.description || 'ไม่มีคำอธิบาย' }}
+        </p>
       </div>
     </div>
-  
-    <div class="divider" v-if="expert"></div>
-    <h2 class="w-3/5 mx-auto mb-4" v-if="expert">คำอธิบาย</h2>
-    <p class="w-3/5 mx-auto mb-4" v-if="expert">{{ expert?.description || 'ไม่มีคำอธิบาย' }}</p>
-    
-    <SeeAllButton text="ดูผู้เชี่ยวชาญอื่นๆ" link="/experts" v-if="expert" />
-  </template>
-  
-  <script>
-  import { useHead } from "@vueuse/head";
-  import tlImage from "@/assets/img/tl.png";
-  
-  export default {
-    data() {
-      return {
-        expert: null,
-        error: null,
-        tlImage,
-      };
-    },
-    async mounted() {
-      const cid = this.$route.params.id;
-      console.log("Fetching expert details for ID:", cid);
-  
-      try {
-        const response = await fetch(`/api/expert`);
-        if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
-        const data = await response.json();
-        console.log("API Response:", data);
-  
-        this.expert = data.find((expert) => expert.id === parseInt(cid)) || null;
-        console.log("Selected Expert:", this.expert);
-  
-        if (this.expert) {
-          this.updateHead();
-        } else {
-          this.error = "Expert not found. Please check the ID.";
+
+    <button class="back-button" @click="$router.push('/experts')">กลับ</button>
+  </div>
+</template>
+
+<script>
+import { useHead } from "@vueuse/head";
+import tlImage from "@/assets/img/tl.png";
+
+export default {
+  data() {
+    return {
+      expert: null,
+      error: null,
+      tlImage,
+    };
+  },
+  async mounted() {
+    const cid = this.$route.params.id;
+    try {
+      const response = await fetch(`/api/expert`);
+      if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
+      const data = await response.json();
+      this.expert = data.find((expert) => expert.id === parseInt(cid)) || null;
+
+      // Ensure expert tags are properly formatted
+      if (this.expert && typeof this.expert.expert_tags_id === 'string') {
+        try {
+          this.expert.expert_tags_id = JSON.parse(this.expert.expert_tags_id);
+        } catch (error) {
+          console.error("Error parsing expert_tags_id in frontend:", error);
+          this.expert.expert_tags_id = [];
         }
-      } catch (error) {
-        console.error("Error fetching expert details:", error);
-        this.error = "Failed to load expert data. Please try again later.";
+      }
+
+      if (this.expert) {
+        this.updateHead();
+      } else {
+        this.error = "ไม่พบข้อมูลผู้เชี่ยวชาญ กรุณาตรวจสอบหมายเลขอีกครั้ง";
+      }
+    } catch (error) {
+      this.error = "ไม่สามารถโหลดข้อมูลผู้เชี่ยวชาญได้ กรุณาลองใหม่อีกครั้ง";
+    }
+  },
+  methods: {
+    updateHead() {
+      if (this.expert) {
+        useHead({
+          title: `🥥 Expert - ${this.expert.name}`,
+          meta: [
+            {
+              name: "description",
+              content: `ข้อมูลเกี่ยวกับ ${this.expert.name || "ผู้เชี่ยวชาญ"}.`,
+            },
+          ],
+        });
       }
     },
-    methods: {
-      updateHead() {
-        if (this.expert) {
-          useHead({
-            title: `🥥 Coconut - ${this.expert.name}`,
-            meta: [
-              {
-                name: "description",
-                content: `Detailed information about ${this.expert.name || "expert"}.`,
-              },
-            ],
-          });
-        }
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .loading,
-  .error {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.2rem;
-    color: #777;
-  }
-  
-  .brief-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: inherit;
-  }
-  
-  .toline {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .toline .expert-head {
-    font-weight: 700;
-    width: 8rem;
-  }
-  
-  .image-container {
-    position: relative;
-    width: 100%;
-    height: 32rem;
-    background-color: #4E6D16;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .image-container .blur-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-size: cover;
-    background-position: center;
-    filter: blur(10px);
-    z-index: 0;
-  }
-  
-  .image-container img {
-    z-index: 1;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .divider {
-    height: 3px;
-    width: 60%;
-    background-color: #4E6D16;
-    margin: 1rem auto;
-    border-radius: 1px;
-  }
-  </style>
-  
+  },
+};
+</script>
+
+<style scoped>
+.expert-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.expert-content {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  max-width: 900px;
+}
+
+.expert-image {
+  width: 300px;
+  border-radius: 10px;
+  border: 2px solid #4E6D16;
+  aspect-ratio: 2.5/3;
+  object-fit: cover;
+}
+
+.expert-details {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.expert-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4E6D16;
+}
+
+.tags {
+  margin-top: 1rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0.3rem;
+  border: 1px solid #4E6D16;
+  border-radius: 20px;
+  font-weight: bold;
+  background-color: #E9F5DC;
+  color: #4E6D16;
+}
+
+.description {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.back-button {
+  margin-top: 2rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #4E6D16;
+  background: transparent;
+  color: #4E6D16;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.back-button:hover {
+  background: #4E6D16;
+  color: white;
+}
+</style>
