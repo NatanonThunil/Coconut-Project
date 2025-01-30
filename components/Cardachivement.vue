@@ -31,23 +31,36 @@ export default {
 .achivement-card {
   display: flex;
   flex-direction: column; /* Stack children vertically */
-  gap: 16px;
+  gap: 10px;
   /* border: 1px solid black; */
   padding: 16px; /* Added padding for overall spacing */
   /* border-radius: 8px; */
-  height: 30%;
+  height: 10%;
   width: 75%;
   margin-left:12%;
   margin-top: 3%;
-  box-shadow: 4px 4px 12px rgba(0,0,0,0.3)
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+  transition: ease-in-out 0.3s;
+
+}
+.achivement-card:hover {
+  transform: scale(1.01);
 
 }
 
+
 .achivement-main-detail {
+  overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    word-wrap: break-word; 
+    word-break: break-word; 
   font-size: 24px;
   font-weight: bold;
   color: #333;
   padding: 8px 16px;
+  max-height: 7rem;
   border-bottom: 1px solid #f0f0f0;
   margin-left: 1.5%;
 }
@@ -73,8 +86,16 @@ export default {
 }
 
 .achivement-image {
+  overflow: hidden;
+  height: 20rem;
   order: 0; /* Ensure this stays first in the layout */
   flex: 1; /* Occupy 50% of the width */
+}
+
+.achivement-image img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .achivement-detail {

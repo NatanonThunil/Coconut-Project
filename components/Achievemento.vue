@@ -1,13 +1,13 @@
 <template>
     <NuxtLinkLocale :to="url" class="f-banner" :style="{ backgroundColor: inputColor }">
-
+        <div class="f-banner-image-container">
+            <img :src="picture" alt="banner image" loading="lazy" draggable="false">
+        </div>
         <div class="f-banner-text-container">
             <h1 class="f-banner-title">{{ title }}</h1>
             <p class="f-banner-text">{{ text }}</p>
         </div>
-        <div class="f-banner-image-container">
-            <img :src="picture" alt="banner image" loading="lazy" draggable="false">
-        </div>
+        
 
     </NuxtLinkLocale>
 </template>
@@ -58,7 +58,7 @@ export default {
     background-color: #A6AB82;
     width: 80%;
     margin: 1rem;
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
     transition: 0.3s ease-in-out;
     flex-direction: row;
 }
@@ -72,7 +72,7 @@ export default {
     display: flex;
     justify-content: center;
     height: 100%;
-    width: 70%;
+    width: 50%;
 }
 
 .f-banner .f-banner-image-container img {
@@ -82,7 +82,7 @@ export default {
 }
 
 .f-banner .f-banner-text-container {
-    max-width: 30%;
+    max-width: 50%;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -99,7 +99,7 @@ export default {
     -webkit-line-clamp: 4;
     padding-left: 1rem;
     text-overflow: ellipsis;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #333;
 
 }
@@ -108,10 +108,11 @@ export default {
 .f-banner .f-banner-text-container h1 {
     max-width: 100%;
     overflow: hidden;
+    font-size: 1.4rem;
     color: black;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     text-overflow: ellipsis;
 
 }

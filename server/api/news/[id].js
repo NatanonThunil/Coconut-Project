@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
         connection = await pool.getConnection();
 
         if (event.req.method === 'PUT') {
-            // Read request body
             const body = await readBody(event);
             const { id, title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
@@ -50,11 +49,14 @@ export default defineEventHandler(async (event) => {
                 values.push(status ? 1 : 0);
             }
 
-            // Handling image upload
+            // Handling image upload properly
             if (image) {
                 try {
-                    const imageData = image.split(',')[1]; // Extract base64 data
-                    const imageBuffer = Buffer.from(imageData, 'base64');
+                    const base64Data = image.split(',')[1]; // Extract base64 content
+                    if (!base64Data) {
+                        return { error: 'Invalid image format.' };
+                    }
+                    const imageBuffer = Buffer.from(base64Data, 'base64');
 
                     updateFields.push('image = ?');
                     values.push(imageBuffer);
@@ -80,11 +82,21 @@ export default defineEventHandler(async (event) => {
 
         } else if (event.req.method === 'GET') {
             // Fetch all news
-            const [rows] = await connection.execute('SELECT id, title, description, author, upload_date, hot_new, summerize, status FROM new');
-            return rows;
+            const [rows] = await connection.execute(
+                'SELECT id, title, description, author, upload_date, image, hot_new, summerize, status FROM new'
+            );
+
+            // Convert binary image data to base64
+            const newsWithImages = rows.map(row => {
+                if (row.image) {
+                    row.image = `data:image/jpeg;base64,${row.image.toString('base64')}`;
+                }
+                return row;
+            });
+
+            return newsWithImages;
 
         } else if (event.req.method === 'POST') {
-            // Insert new news article
             const body = await readBody(event);
             const { title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
@@ -93,15 +105,28 @@ export default defineEventHandler(async (event) => {
             }
 
             const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' ');
+            let imageBuffer = null;
+
+            if (image) {
+                try {
+                    const base64Data = image.split(',')[1]; // Extract base64 content
+                    if (!base64Data) {
+                        return { error: 'Invalid image format.' };
+                    }
+                    imageBuffer = Buffer.from(base64Data, 'base64');
+                } catch (err) {
+                    return { error: 'Invalid image format.' };
+                }
+            }
+
             const query = 'INSERT INTO new (title, description, author, upload_date, image, hot_new, summerize, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [title, description, author, formattedDate, image, hot_new ? 1 : 0, summerize, status ? 1 : 0];
+            const values = [title, description, author, formattedDate, imageBuffer, hot_new ? 1 : 0, summerize, status ? 1 : 0];
 
             const [result] = await connection.execute(query, values);
 
             return { message: 'News added successfully', id: result.insertId };
 
         } else if (event.req.method === 'DELETE') {
-            // Delete news
             const body = await readBody(event);
             const { id } = body;
 
