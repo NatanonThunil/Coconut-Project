@@ -103,7 +103,7 @@ export default {
       const response = await fetch('/api/events_table');
       if (!response.ok) throw new Error('Failed to fetch events');
       const data = await response.json();
-      this.events = Array.isArray(data) ? data : [];
+      this.events = Array.isArray(data) ? data.filter(event => event.status === 1) : [];
       this.filterEvents();
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -157,10 +157,10 @@ export default {
         this.pageInput = this.currentPage;
       }
     },
-    formatDate(date) {
-      // Add your date formatting logic here
-      return new Date(date).toLocaleDateString();
-    },
+    // formatDate(date) {
+    //   // Add your date formatting logic here
+    //   return new Date(date).toLocaleDateString();
+    // },
   },
 };
 </script>

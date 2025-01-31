@@ -82,7 +82,7 @@ export default {
             const response = await fetch(`/api/events_table`);
             if (!response.ok) throw new Error('Failed to fetch event details');
             const data = await response.json();
-            this.event = data.find(event => event.id === parseInt(cid)) || null;
+            this.event = data.find(event => (event.id === parseInt(cid) ) && event.status)|| null;
 
             if (this.event) {
                 this.updateHead();

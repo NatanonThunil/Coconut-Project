@@ -41,6 +41,7 @@
         </p>
       </div>
     </div>
+    
 
     <button class="back-button" @click="$router.push('/experts')">กลับ</button>
   </div>
@@ -64,7 +65,7 @@ export default {
       const response = await fetch(`/api/expert`);
       if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
       const data = await response.json();
-      this.expert = data.find((expert) => expert.id === parseInt(cid)) || null;
+      this.expert = data.find((expert) => (expert.id === parseInt(cid))&& expert.status) || null;
 
       // Ensure expert tags are properly formatted
       if (this.expert && typeof this.expert.expert_tags_id === 'string') {

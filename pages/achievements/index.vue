@@ -20,9 +20,7 @@ const Achievements = ref([]);
 const fetchAchievements = async () => {
   try {
     const response = await $fetch('/api/achievements_table');
-    Achievements.value = response.map((achievement) => ({
-      ...achievement,
-    }));
+    Achievements.value = response.filter(achievement => achievement.status === 1);
   } catch (e) {
     console.error(e);
   }

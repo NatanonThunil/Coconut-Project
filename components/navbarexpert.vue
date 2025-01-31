@@ -91,7 +91,7 @@ export default {
         .filter((expert) =>
           expert.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
-        .filter((expert) => expert.category === this.selectedFilter)
+        .filter((expert) => expert.category === this.selectedFilter && expert.status)
         .slice(0, 4);
     },
   },
