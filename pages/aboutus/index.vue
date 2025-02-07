@@ -8,6 +8,7 @@
   </div>
 
   <div class="a">
+    <ContentHeader contexto="ผลงาน" />
     <section>
       <div class="achivement-container">
         <HomeFootBanner
@@ -26,16 +27,7 @@
   </div>
 
   <ContentHeader contexto="คณะทำงาน" />
-  <div class="cards-container">
-    <Card
-      v-for="employee in employees"
-      :key="employee.id"
-      :title="employee.name || 'ชื่อ'"
-      :image="employee.image || 'รูป'"
-      :description="employee.description || 'ไม่มีข้อความ'"
-      :url="'/aboutus/employees/details/' + employee.id"
-    ></Card>
-  </div>
+  
 
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
   <div class="cards-container">
@@ -65,8 +57,16 @@
 
 <script>
 import axios from "axios";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export default {
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
   data() {
     return {
       members: [], // Stores the fetched member data

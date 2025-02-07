@@ -91,7 +91,7 @@ export default {
     filteredEvents() {
       if (!this.events || this.events.length === 0) return [];
       return this.events
-        .filter((event) => event.event_category === this.selectedFilter)
+        .filter((event) => event.event_category === (this.selectedFilter))
         .slice(0, 8);
     },
   },
@@ -147,6 +147,14 @@ export default {
 
 
 <style scoped>
+.swiper {
+
+  width:100%;
+  
+}
+.swiper-wrapper{
+  justify-content: center !important;
+}
 .btn-4-swiper {
   all: unset;
   cursor: pointer;

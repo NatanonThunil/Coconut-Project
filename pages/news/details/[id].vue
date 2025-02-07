@@ -15,6 +15,7 @@
         <div class="news-summary"v-if="news.summerize">
             <h2>สรุป</h2>
             <p style=" display: flex; flex-direction: row;"><img class="unyapragard" src="/assets/icon/double-quotes.png" >{{ news.summerize }}<img src="/assets/icon/double-quotes.png" alt="" class="unyapragardl"></p>
+            <!--   -->
         </div>
         <div v-else></div>
         <div style="height: 3px; background-color:#4E6D16 ; margin: 1rem;"></div>
@@ -58,7 +59,7 @@ export default {
             if (!response.ok) throw new Error('Failed to fetch news details');
             
             const data = await response.json();
-            this.news = data.find(news => (news.id === parseInt(cid))&&(news.status === 1)) || null;
+            this.news = data.find(news => (news.id === parseInt(cid))&&(news.status)) || null;
             this.loading = false;
         } catch (error) {
             console.error('Error fetching news details:', error);
@@ -138,10 +139,14 @@ export default {
     background-color: #d5dba5;
     border-radius: 10px;
     color: black;
-    padding: 1rem;
+    padding: 2rem;
     margin: 1rem 0rem;
     font-size: 1.5rem;
 }
+
+/* .news-summary p{
+    text-align: justify;
+} */
 .error {
     color: red;
 }

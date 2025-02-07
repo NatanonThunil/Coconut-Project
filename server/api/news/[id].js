@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
         } else if (event.req.method === 'GET') {
             // Fetch all news
             const [rows] = await connection.execute(
-                'SELECT id, title, description, author, upload_date, image, hot_new, summerize, status FROM new'
+                'SELECT id, title, description, author, upload_date, image, hot_new, summerize, status FROM new '
             );
 
             // Convert binary image data to base64
