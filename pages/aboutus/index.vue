@@ -27,32 +27,17 @@
   </div>
 
   <ContentHeader contexto="คณะทำงาน" />
+
+
+  <Aboutusslide apiEndPoint ="/api/employees_table" />
+
   
 
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <div class="cards-container">
-    <Card
-      v-for="achievements in achievements"
-      :key="achievements.id"
-      :title="achievements.name || 'ชื่อ'"
-      :image="achievements.image || 'รูป'"
-      :description="achievements.description || 'ไม่มีข้อความ'"
-      :url="'/aboutus/employees/details/' + achievements.id"
-    ></Card>
-  </div>
+  <Aboutusslide apiEndPoint ="/api/employees_table" />
 
   <ContentHeader contexto="สมาชิก" />
-  <div class="cards-container">
-    <Card
-      v-for="member in members"
-      :key="member.id"
-      :title="member.name || 'ชื่อ'"
-      :image="member.image || 'รูป'"
-      :description="member.description || 'ไม่มีข้อความ'"
-      :url="'/aboutus/employees/details/' + members.id"
-    ></Card>
-  </div>
-  <div style="height: 5rem"></div>
+  <Aboutusslide apiEndPoint ="/api/members_table" />
 </template>
 
 <script>
@@ -61,11 +46,20 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Cardemployees from "~/components/Aboutusslide.vue";
+import Aboutusslide from "~/components/Aboutusslide.vue";
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
+    Cardemployees,
+  },
+   props: {
+    employees: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -90,6 +84,8 @@ export default {
         this.members = membersResponse.data.slice(0, 3);
         this.employees = employeesResponse.data.slice(0, 3); // Only show top 3 employees
         this.achievements = achievementsResponse.data.slice(0, 2); // Only show top 2 achievements
+
+        console.log("Employees Data:", this.employees);
       } catch (error) {
         console.error("Error fetching data:", error.message || error);
       }

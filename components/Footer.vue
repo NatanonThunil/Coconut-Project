@@ -8,6 +8,8 @@
             <li><strong>{{$t('Email')}} :</strong> info@yourwebsite.com</li>
             <li><strong>{{$t('Phone')}} :</strong> +66 123 456 789</li>
             <li><strong>{{$t('Address')}} :</strong> 123 Coconut Street, Coconut City, Thailand</li>
+            <li><strong>{{$t('Footer')}}:</strong> Department of Horticulture, Faculty of Agriculture at Kamphaeng Saen, Kasetsart University, Kamphaeng Saen Campus, Nakhon Pathom 73140 </li>
+
           </ul>
         </div>
         

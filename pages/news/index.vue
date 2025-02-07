@@ -57,17 +57,17 @@ const fetchNews = async () => {
     const response = await $fetch('/api/news_table');
     newsItems.value = response;
 
+    // Find the most recent hot news
     hotNews.value = newsItems.value.find((news) => news.hot_new && news.status) || null;
 
-
+    // Sort by `upload_date` DESC (newest first)
     regularNews.value = newsItems.value
       .filter((news) => news.status) // Only include published news
       .filter((news, index, array) => {
         // Keep first 3 hot news separate; the rest go into regular news
         return !news.hot_new || array.filter(n => n.hot_new && n.status).indexOf(news) >= 3;
       })
-      .sort((a, b) => b.id - a.id); // Sort everything by newest ID first
-
+      .sort((a, b) => new Date(b.upload_date) - new Date(a.upload_date)); // Sort by upload_date
 
   } catch (error) {
     console.error('Error fetching news:', error);
@@ -75,6 +75,7 @@ const fetchNews = async () => {
     loading.value = false;
   }
 };
+
 
 
 onMounted(fetchNews);

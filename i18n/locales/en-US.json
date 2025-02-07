@@ -25,6 +25,7 @@
   "PrivacyPolicy": "Privacy Policy",
   "FollowUs": "Follow Us",
   "Facebook": "Facebook",
+  "Footer":"Department of Horticulture, Faculty of Agriculture at Kamphaeng Saen, Kasetsart University, Kamphaeng Saen Campus, Nakhon Pathom 73140",
   "Twitter": "Twitter",
   "Instagram": "Instagram",
   "LinkedIn": "LinkedIn",
@@ -41,5 +42,8 @@
   "All": "All",
   "SearchbyName": "Search by name...",
   "No events found": "Events not found",
-  "News & Events": "Announcements"
+  "News & Events": "Announcements",
+  "Farmer":"Farmer",
+  "Private":"Private Sector",
+  "Academic":"Academic"
 }

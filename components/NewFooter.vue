@@ -8,13 +8,7 @@
         <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
         <section class="ft-contract-us">
             <h1>{{ $t("ContactUs") }}</h1>
-            <div class="ft-contract">123 Coconut Street, Coconut City, Thailand</div>
-            <div class="ft-contract">095-XXX-XXXX</div>
-            <div class="ft-contract">
-                <NuxtLinkLocale
-                    to="https://mail.google.com/mail/u/0/#inbox?compose=jrjtXGkqQnCvCPNbHsmHBpRFXdJfZjgxklnKvWGnLzWkbnCjWkPJCpWMHGkLJLnSQklqxGbb">
-                    ImCoconut@gmail.com</NuxtLinkLocale>
-            </div>
+            <div class="ft-contract">{{$t('Footer')}}</div>
         </section>
         <section class="cpr">
             <div>Copyright © Coconut KnowledgeHub

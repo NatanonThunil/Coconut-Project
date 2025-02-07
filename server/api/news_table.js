@@ -8,7 +8,7 @@ export default defineEventHandler(async () => {
     connection = await mysql.createConnection(dbConfig);
 
     // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM `new` ORDER BY id DESC');
+    const [rows] = await connection.execute('SELECT * FROM `new` ORDER BY upload_date DESC, id ASC;');
 
     // console.log('Fetched rows:', rows); // Debugging log
 

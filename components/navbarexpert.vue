@@ -7,21 +7,21 @@
         :class="{ selecto: selectedFilter === 'farmer' }"
         @click="selectedFilter = 'farmer'"
       >
-        Farmer
+        {{$t('Farmer')}}
       </li>
       <li
         class="filtli private"
         :class="{ selecto: selectedFilter === 'private' }"
         @click="selectedFilter = 'private'"
       >
-        Private
+        {{$t('Private')}}
       </li>
       <li
         class="filtli academic"
         :class="{ selecto: selectedFilter === 'academic' }"
         @click="selectedFilter = 'academic'"
       >
-        Academic
+        {{$t('Academic')}}
       </li>
     </ul>
 
