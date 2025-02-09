@@ -18,7 +18,6 @@
         :space-between="10"
         ref="mySwiper"
         :slides-per-group="4"
-        :pagination="true"
         :breakpoints="{
           480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
           768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
@@ -27,24 +26,8 @@
         }"
       >
         <SwiperSlide v-for="(employee, index) in employees" :key="index">
-          <NuxtLinkLocale :to="`/employees/details/${employee.id}`" class="employee-card">
-            <div class="employee-card-image">
-              <img :src="employee.image || 'https://placehold.co/600x400'" alt="Employee Image" draggable="false" />
-            </div>
-            <div class="employee-card-text">
-              <p class="employee-title">{{ employee.name }}</p>
-              <div class="employee-card-date">
-                <img src="@/assets/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
-                <p class="employee-date">{{ formatDate(employee.hire_date) }}</p>
-              </div>
-              <div :class="['employee-card-status', getStatusClass(employee)]">
-                <span v-if="getStatusText(employee) === 'Active'">{{ $t("Active") }}</span>
-                <span v-else-if="getStatusText(employee) === 'Upcoming'">{{ $t("Upcoming") }}</span>
-                <span v-else-if="getStatusText(employee) === 'Retired'">{{ $t("Retired") }}</span>
-                <span v-else>{{ $t("Error") }}</span>
-              </div>
-            </div>
-          </NuxtLinkLocale>
+          <aboutusCard :url="`/employees/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="employee.name" :description="employee.description"/>
+          
         </SwiperSlide>
       </Swiper>
     </div>
@@ -59,9 +42,12 @@
 
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
+import noimageHandle from '@/assets/img/no-image-handle.png';
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import AboutusCard from "./aboutusCard.vue";
 
 export default {
   props:{
@@ -126,7 +112,14 @@ export default {
       return "error";
     },
   },
+  computed: {
+  getEmployeeImage() {
+    return (image) => image ? image : noimageHandle;
+  }
+}
+
 };
+
 </script>
 
 <style scoped>

@@ -1,49 +1,53 @@
 <template>
   <Navbar selecto="expert" />
-  <div style="height: 10rem;"></div>
-  
-  <!-- Loader -->
-  <div v-if="!expert && !error" class="loading">
-    <p>กำลังโหลดข้อมูลผู้เชี่ยวชาญ...</p>
-  </div>
+  <div class="all-container">
+    <div style="height: 10rem;"></div>
 
-  <!-- Error -->
-  <div v-if="error" class="error">
-    <p>{{ error }}</p>
-  </div>
+    <!-- Loader -->
+    <div v-if="!expert && !error" class="loading">
+      <p>กำลังโหลดข้อมูลผู้เชี่ยวชาญ...</p>
+    </div>
 
-  <!-- Expert Profile Section -->
-  <div class="expert-container" v-if="expert">
-    <div class="expert-content">
-      <img :src="expert?.image || tlImage" class="expert-image" alt="Expert Image" draggable="false">
+    <!-- Error -->
+    <div v-if="error" class="error">
+      <p>{{ error }}</p>
+    </div>
 
-      <div class="expert-details">
-        <h1 class="expert-name">{{ expert?.name }}</h1>
+    <!-- Expert Profile Section -->
+    <div class="expert-container" v-if="expert">
+      <div class="expert-content">
+        <img :src="expert?.image || tlImage" class="expert-image" alt="Expert Image" draggable="false">
 
-        <div class="info">
-          <p><strong>ที่อยู่:</strong> {{ expert?.address || 'N/A' }}</p>
-          <p><strong>ติดต่อ:</strong> {{ expert?.gmail || 'N/A' }}</p>
-          <p>Facebook | Twitter</p>
-        </div>
+        <div class="expert-details">
+          <h1 class="expert-name">{{ expert?.name }}</h1>
 
-        <div class="tags">
-          <p><strong>แท็ก:</strong></p>
-          <div v-if="expert?.expert_tags_id && expert.expert_tags_id.length">
-            <span v-for="(tag, index) in expert.expert_tags_id" :key="index" class="tag">
-              {{ tag }}
-            </span>
+          <div class="info">
+            <p><strong>ที่อยู่:</strong> {{ expert?.address || 'N/A' }}</p>
+            <p><strong>ติดต่อ:</strong> {{ expert?.gmail || 'N/A' }}</p>
+            <p>Facebook | Twitter</p>
           </div>
-          <p v-else>ไม่มีแท็ก</p>
-        </div>
 
-        <p class="description">
-          <strong>คำอธิบาย:</strong> {{ expert?.description || 'ไม่มีคำอธิบาย' }}
-        </p>
+          <div class="tags">
+            <p><strong>แท็ก:</strong></p>
+            <div v-if="expert?.expert_tags_id && expert.expert_tags_id.length">
+              <span v-for="(tag, index) in expert.expert_tags_id" :key="index" class="tag">
+                {{ tag }}
+              </span>
+            </div>
+            <p v-else>ไม่มีแท็ก</p>
+          </div>
+
+          <p class="description">
+            <strong>คำอธิบาย:</strong> {{ expert?.description || 'ไม่มีคำอธิบาย' }}
+          </p>
+        </div>
+      </div>
+      <div style="height: 5rem;"></div>
+
+      <div class="back-btn-container">
+        <SeeAllButton text="ดูผู้เชี่ยวชาญคนอื่น" link="/experts" />
       </div>
     </div>
-    
-
-    <button class="back-button" @click="$router.push('/experts')">กลับ</button>
   </div>
 </template>
 
@@ -65,7 +69,7 @@ export default {
       const response = await fetch(`/api/expert`);
       if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
       const data = await response.json();
-      this.expert = data.find((expert) => (expert.id === parseInt(cid))&& expert.status) || null;
+      this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;
 
       // Ensure expert tags are properly formatted
       if (this.expert && typeof this.expert.expert_tags_id === 'string') {
@@ -105,6 +109,11 @@ export default {
 </script>
 
 <style scoped>
+
+.back-btn-container {
+  width: 30%;
+}
+
 .expert-container {
   display: flex;
   flex-direction: column;

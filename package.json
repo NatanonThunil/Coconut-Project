@@ -13,6 +13,25 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/i18n": "npm:@nuxtjs/i18n-edge",
     "@nuxtjs/proxy": "^2.1.0",
+    "@tiptap/extension-blockquote": "^2.11.5",
+    "@tiptap/extension-bold": "^2.11.5",
+    "@tiptap/extension-bullet-list": "^2.11.5",
+    "@tiptap/extension-code": "^2.11.5",
+    "@tiptap/extension-code-block": "^2.11.5",
+    "@tiptap/extension-color": "^2.11.5",
+    "@tiptap/extension-heading": "^2.11.5",
+    "@tiptap/extension-highlight": "^2.11.5",
+    "@tiptap/extension-image": "^2.11.5",
+    "@tiptap/extension-italic": "^2.11.5",
+    "@tiptap/extension-link": "^2.11.5",
+    "@tiptap/extension-ordered-list": "^2.11.5",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/extension-text-align": "^2.11.5",
+    "@tiptap/extension-text-style": "^2.11.5",
+    "@tiptap/extension-underline": "^2.11.5",
+    "@tiptap/pm": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "@tiptap/vue-3": "^2.11.5",
     "@vueuse/head": "^2.0.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
@@ -36,6 +55,7 @@
     "vue-router": "latest"
   },
   "devDependencies": {
-    "nuxt-primevue": "^3.0.0"
+    "nuxt-primevue": "^3.0.0",
+    "sass-embedded": "^1.83.4"
   }
 }

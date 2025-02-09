@@ -6,20 +6,14 @@
   <div class="header-container">
     <h1>{{ $t("AboutUs") }}</h1>
   </div>
-
+  <p class="kumnum">นี่คือคำอธิบายเกี่ยวกับ Coconut Knowledge Hub เว็ปที่รวบรวม ข้อมูลเกี่ยวกับพันธุ์มะพร้าวทั่วทั้งประเทศ รวมไปถึงขั้นตอนการแปลรูป และส่งออก</p>
   <div class="a">
-    <ContentHeader contexto="ผลงาน" />
+    <ContentHeader contexto="ผลงานของเรา" />
     <section>
       <div class="achivement-container">
-        <HomeFootBanner
-          v-for="achievement in achievements"
-          :key="achievement.id"
-          :text="achievement.description || 'No description'"
-          :title="achievement.title || 'No Title'"
-          color="#C5D944"
-          :picture="achievement.image || 'No image'"
-          :url="'/achievements/details/' + achievement.id || '404'"
-        />
+        <HomeFootBanner v-for="achievement in achievements" :key="achievement.id"
+          :text="achievement.description || 'No description'" :title="achievement.title || 'No Title'" color="#C5D944"
+          :picture="achievement.image || 'No image'" :url="'/achievements/details/' + achievement.id || '404'" />
       </div>
 
       <SeeAllButton text="ผลงานทั้งหมด" link="/achievements" />
@@ -29,15 +23,17 @@
   <ContentHeader contexto="คณะทำงาน" />
 
 
-  <Aboutusslide apiEndPoint ="/api/employees_table" />
+  <Aboutusslide apiEndPoint="/api/employees_table" />
+  <SeeAllButton text="คณะทำงานทั้งหมด" link="/employees" />
 
-  
 
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <Aboutusslide apiEndPoint ="/api/employees_table" />
-
+  <Aboutusslide apiEndPoint="/api/employees_table" />
+  <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/employees" />
   <ContentHeader contexto="สมาชิก" />
-  <Aboutusslide apiEndPoint ="/api/members_table" />
+  <Aboutusslide apiEndPoint="/api/members_table" />
+  <SeeAllButton text="สมาชิกทั้งหมด" link="/employees" />
+  <div style="height: 3rem;"></div>
 </template>
 
 <script>
@@ -55,7 +51,7 @@ export default {
     SwiperSlide,
     Cardemployees,
   },
-   props: {
+  props: {
     employees: {
       type: Array,
       required: true,
@@ -95,7 +91,18 @@ export default {
 </script>
 
 <style scoped>
-/* Updated and cleaned styles */
+.kumnum{
+ 
+  display: flex;
+ 
+  text-align: center;
+  justify-self: center;
+  justify-content: center;
+  font-size: clamp(1rem, 1vw, 1.5rem); 
+ 
+  width: clamp(1rem, 70%, 1000px);
+  height: auto;
+}
 .navcontainer {
   width: 100%;
   height: 100px;

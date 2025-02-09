@@ -35,7 +35,7 @@
 
 .coconut-v-card:hover .coconut-v-img-frame img {
     
-    transform: scale(1.3);
+    transform: scale(1.05);
 }
 
 .coconut-v-card:active {
@@ -54,6 +54,7 @@
 
 .coconut-v-card .coconut-v-img-frame img {
     height: 100%;
+    width: 100%;
     object-fit: cover;
     transition: ease-in-out 0.2s;
 }

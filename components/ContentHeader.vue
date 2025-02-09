@@ -51,7 +51,7 @@ watch(() => props.contexto, updateTextWidth);
 .headtext {
     color: #4E6D16;
     font-weight: bolder;
-    font-size: 40px;
+    font-size: clamp(30px,3vw ,40px);
     margin: 0rem 2rem;
 }
 

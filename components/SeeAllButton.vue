@@ -25,6 +25,7 @@ export default {
     display: flex;
     justify-self: center;
     justify-content: center;
+    text-align: center;
     margin: 2rem;
     width: 80%;
     align-self: center;
@@ -32,7 +33,7 @@ export default {
     background-color: transparent;
     color: #4e6d16;
     padding: 10px 20px;
-    font-size: 26px;
+    font-size: clamp(10px, 2vw ,26px);
     font-weight: bold;
     border: none;
     border-radius: 30px;
