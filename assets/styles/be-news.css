@@ -1,6 +1,6 @@
-
 .status-toggle {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 8px;
     cursor: pointer;
@@ -8,10 +8,10 @@
 
 .status-toggle input {
     display: none;
-    /* Hide default checkbox */
 }
 
 .eyesicon {
+
     width: 2rem;
     height: 2rem;
     cursor: pointer;
@@ -22,12 +22,82 @@
     opacity: 0.7;
 }
 
+.icon-center {
+    display: flex;
+    justify-content: center;
+}
+
 .modal-actions {
     margin-top: 1.5rem;
+    gap: 1rem;
     display: flex;
     justify-self: center;
-    width: 40%;
+    width: auto;
     justify-content: space-evenly;
+
+}
+.admin-content{
+    display: flex;
+    height: 100dvh;
+    
+}
+.admin-content-l{
+    display: flex;
+    
+
+  
+}
+.admin-content-r {
+    
+    margin-left: 250px; /* This ensures content is pushed to the right */
+    
+  }
+.checkbox-id-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.item-list-table th:nth-child(1),
+.item-list-table td:nth-child(1) {
+
+    display: table-cell;
+   
+    width: 5%;
+}
+
+.item-list-table th:nth-child(2),
+.item-list-table td:nth-child(2) {
+    width: 30%;
+}
+
+.item-list-table th:nth-child(3),
+.item-list-table td:nth-child(3) {
+    width: 15%;
+}
+
+.item-list-table th:nth-child(4),
+.item-list-table td:nth-child(4) {
+    width: 10%;
+    text-align: center;
+}
+
+.item-list-table th:nth-child(5),
+.item-list-table td:nth-child(5) {
+    width: 10%;
+}
+
+.item-list-table th:nth-child(6),
+.item-list-table td:nth-child(6) {
+   
+    width: 5%;
+
+}
+
+.item-list-table th:nth-child(7),
+.item-list-table td:nth-child(7) {
+    width: 8%;
 }
 
 .mod-sl,
@@ -41,22 +111,31 @@
     justify-content: center;
 }
 
-.modal-add .modal-content section {
+.modal-add .modal-content section:nth-child(1) {
+    width: 40%;
     display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+
+.modal-add .modal-content section:nth-child(2) {
+    gap: 0.5rem;
+    display: flex;
+    width: 60%;
     flex-direction: column;
 }
 
 .modal-add .modal-content {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: 0rem 2rem;
 }
 
 .modal-add .modal-content section textarea {
 
     resize: none;
     height: 8rem;
-    width: 24rem;
+    width: auto;
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -85,7 +164,10 @@
     transition: background-color 0.3s ease;
     position: relative;
 }
-
+.news-check-publish{
+    display: flex;
+    gap: 1.5rem;
+}
 
 .image-input-drag-n-drop-container.dragover {
     background-color: rgba(78, 109, 22, 0.1);
@@ -159,6 +241,23 @@
     width: 90%;
 }
 
+.item-list-table thead,
+.item-list-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.item-list-table tbody {
+    max-height: 70dvh;
+    overflow-y: auto;
+    display: block;
+}
+.item-list-table tbody tr td p{
+    width: 2rem;
+    text-align: center;
+}
+
 .add-btn-container {
     display: flex;
     justify-content: end;
@@ -167,9 +266,64 @@
     padding: 1rem;
     gap: 1.5rem;
 }
+.published-news-btn {
+    word-wrap: nowrap;
+    all: unset;
+    font-size: clamp(0.8rem,1.2vw ,1rem);
+    cursor: pointer;
+    border: #7eb9af solid 3px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: ease-out 0.2s;
+    color: white;
+    background-color: #7eb9af;
+    font-weight: 600;
+}
+
+.published-news-btn:hover {
+    color: white;
+    background-color: #599c91;
+}
+
+.published-news-btn:active {
+    border: #569187 solid 3px;
+    background-color: #569187;
+    box-shadow: outset 0px 0px 0px 3px white;
+}
+.unpublished-news-btn {
+    word-wrap: nowrap;
+    all: unset;
+    font-size: clamp(0.8rem,1.2vw ,1rem);
+    cursor: pointer;
+    border: #7eb9af solid 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: ease-out 0.2s;
+    color: #7eb9af;
+    font-weight: 600;
+}
+
+.unpublished-news-btn:hover {
+    color: white;
+    background-color: #569187;
+}
+
+.unpublished-news-btn:active {
+    border: #569187 solid 3px;
+    background-color: #569187;
+    box-shadow: outset 0px 0px 0px 3px white;
+}
 
 .add-news-btn {
+    word-wrap: nowrap;
     all: unset;
+    font-size: clamp(0.8rem,1.2vw ,1rem);
     cursor: pointer;
     border: #4E6D16 solid 3px;
     border-radius: 10px;
@@ -178,7 +332,8 @@
     padding: 0.5rem 2rem;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
     transition: ease-out 0.2s;
-    color: #4E6D16;
+    color: white;
+    background-color: #4E6D16;
     font-weight: 600;
 }
 
@@ -210,19 +365,19 @@
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
+    table-layout: fixed;
 }
 
 .item-list-table thead {
-    background-color: #2c3e50;
-    color: white;
+    background-color: #DADADA;
+    color: black;
 }
 
 .item-list-table th {
-    padding: 15px;
+    padding: 15px 0px;
     text-align: left;
     font-weight: bold;
     font-size: 16px;
-    text-transform: uppercase;
     letter-spacing: 1px;
 }
 
@@ -231,6 +386,7 @@
 }
 
 .item-list-table td {
+  
     padding: 12px;
     text-align: left;
     color: #555;
@@ -247,31 +403,40 @@
     margin: 0;
 }
 
+.edit-btn img,
+.delete-btn img {
+    height: 1.5rem;
+}
+
 .edit-btn,
 .delete-btn {
+    all: unset;
     cursor: pointer;
     padding: 0.5rem 1rem;
     margin: 0.2rem;
-    border-radius: 5px;
-    transition: 0.3s;
+
+    transition: 0.3s ease-in-out;
 }
 
 .edit-btn {
-    background-color: #4E6D16;
+    transition: 0.3s ease-in-out;
+    background-color: transparent;
     color: white;
 }
 
 .delete-btn {
-    background-color: red;
+    transition: 0.3s ease-in-out;
+    background-color: transparent;
     color: white;
 }
 
-.edit-btn:hover {
-    background-color: #6F8C28;
+.edit-btn:hover img {
+
+    transform: scale(1.2);
 }
 
-.delete-btn:hover {
-    background-color: #D84E5E;
+.delete-btn:hover img {
+    transform: scale(1.2)
 }
 
 .modal-overlay {
@@ -290,8 +455,9 @@
     background: white;
     padding: 2rem;
     border-radius: 10px;
-    min-width: 400px;
-    width: 60%;
+    overflow-y: scroll;
+    max-height: 80dvh;
+    width: clamp(300px, 60%, 60%);
 
 }
 
@@ -303,11 +469,7 @@
     width: 100%;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: space-between;
-}
-
+.confirme-btn,
 .confirm-btn,
 .cancel-btn {
     padding: 0.5rem 1rem;
@@ -315,6 +477,17 @@
     border: none;
     border-radius: 5px;
     transition: 0.2s;
+}
+.confirme-btn {
+    background-color: transparent;
+   outline: #4E6D16 3px solid;
+    color: #4E6D16;
+}
+
+.confirme-btn:active {
+    background-color: rgba(0, 0, 0, 0.2);
+   outline: #4E6D16 3px solid;
+    color: #4E6D16;
 }
 
 .confirm-btn {
@@ -333,4 +506,99 @@
 
 .cancel-btn:hover {
     background-color: #F86F70;
+}
+
+.hotnews-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Label Styles */
+.hotnews-toggle-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Switch Container */
+.hotnews-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+}
+
+/* Hide default checkbox */
+.hotnews-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Toggle Background */
+.hotnews-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+/* Circle inside Toggle */
+.hotnews-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Checked State */
+input:checked+.hotnews-slider {
+    background-color: #4E6D16;
+}
+
+input:checked+.hotnews-slider:before {
+    transform: translateX(18px);
+}
+
+@media screen and (max-width: 1750px) {
+
+    .item-list-table th:nth-child(3),
+    .item-list-table td:nth-child(3) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+
+    .item-list-table th:nth-child(2),
+    .item-list-table td:nth-child(2) {
+        width: 10%;
+    }
+}
+
+@media screen and (max-width: 1052px) {
+    .modal-add .modal-content {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .modal-add .modal-content section:nth-child(1) {
+        width: 100%;
+    }
+
+    .modal-add .modal-content section:nth-child(2) {
+        width: 100%;
+    }
 }

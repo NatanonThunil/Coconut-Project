@@ -11,7 +11,7 @@ export default defineEventHandler(async () => {
     // Fetch all news from the database
     const [rows] = await connection.execute('SELECT * FROM employee');
 
-    console.log('Fetched rows:', rows); // Debugging log
+   
 
     if (rows.length === 0) {
       return { message: 'No members available.' };

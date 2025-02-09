@@ -1,121 +1,156 @@
 <template>
-    <div style="height: 5rem;"></div>
-    <div class="table-head-text-container">
-        <h1>จัดการข่าว</h1>
-        <p>มีข่าวทั้งหมด {{ NewsNum }}</p>
-    </div>
-    <div class="add-btn-container">
-        <button class="add-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-        <button class="add-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-        <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
-    </div>
-
-    <div class="table-container">
-        <table class="item-list-table">
-            <thead>
-                <tr>
-                    <th class="items-id">
-                        <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" />
-                        <span>ID</span>
-                    </th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Hotnews</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody v-if="News.length">
-                <tr v-for="news in News" :key="news.id">
-                    <td class="items-id">
-                        <input type="checkbox" v-model="news.selected" />
-                        <p>{{ news.id }}</p>
-                    </td>
-                    <td>{{ news.title }}</td>
-                    <td>{{ news.author }}</td>
-                    <td :style="{ color: news.hot_new ? 'green' : 'red', fontWeight: '700' }">
-                        {{ news.hot_new ? "✓" : "✕" }}
-                    </td>
-                    <td>
-                        <label class="status-toggle">
-                            <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
-                            <img class="eyesicon" :src="news.status ? eye : eyeBlink" alt="Visibility Icon" />
-                        </label>
-                    </td>
-                    <td class="action-buttons">
-                        <button @click="editItem(news)" class="edit-btn">Edit</button>
-                        <button @click="askDelete(news.id, news.title)" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div v-if="showModal" class="modal-overlay">
-        <div class="modal">
-            <div class="text-alert-container">
-                <span>ต้องการที่จะ <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span></span>
-                <p>" {{ deleteName }} "</p>
+    <div class="admin-content">
+        <section class="admin-content-l">
+            <Adminsidebar />
+        </section>
+        <section class="admin-content-r">
+            <div style="height: 5rem;"></div>
+            <div class="table-head-text-container">
+                <h1>จัดการข่าว</h1>
+                <p>มีข่าวทั้งหมด {{ NewsNum }}</p>
             </div>
-            <div class="modal-actions">
-                <button @click="confirmDelete" class="confirm-btn">Yes</button>
-                <button @click="cancelDelete" class="cancel-btn">No</button>
+            <div class="add-btn-container">
+                <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
+                <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
+                        Checked
+                        Publish</button>
+                    <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+                </div>
+                <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
             </div>
-        </div>
-    </div>
 
-    <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
-        <form class="modal-add" @submit.prevent>
-            <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
-            <div class="divider"></div>
-            <div class="modal-content">
-                <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
-                    <label>ชื่อผู้เขียน</label>
-                    <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name" required />
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
-                    <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
-                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleDragDrop">
-                            <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
-                            <div v-if="currentNews.image" class="image-preview">
-                                <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
-                                <button class="remove-btn" @click="removeImage">X</button>
-                            </div>
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
-                                class="file-uploader" ref="fileInput" />
-                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
-                        </div>
+            <div class="table-container">
+                <table class="item-list-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="checkbox-id-container">
+                                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                                    <span>ID</span>
+                                </div>
+                            </th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Hotnews</th>
+                            <th>Create date</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody v-if="filteredNews.length">
+                        <tr v-for="news in filteredNews" :key="news.id">
+                            <td>
+                                <div class="checkbox-id-container">
+                                    <input type="checkbox" v-model="news.selected" />
+                                    <p>{{ news.id }}</p>
+                                </div>
+                            </td>
+                            <td>{{ news.title }}</td>
+                            <td>{{ news.author }}</td>
+                            <td :style="{ color: news.hot_new ? 'green' : 'red', fontWeight: '700' }">
+                                {{ news.hot_new ? "✓" : "✕" }}
+                            </td>
+                            <td>{{ formatDate(news.upload_date) }}</td>
+                            <td>
+                                <label class="status-toggle">
+                                    <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
+                                    <img class="eyesicon" :src="news.status ? eye : eyeBlink" alt="Visibility Icon" />
+                                </label>
+                            </td>
+                            <td class="action-buttons">
+                                <button @click="editItem(news)" class="edit-btn"><img src="@/assets/icon/pen.png"
+                                        alt=""></button>
+                                <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
+                                        src="@/assets/icon/trash.png" alt=""></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-if="showModal" class="modal-overlay">
+                <div class="modal">
+                    <div class="text-alert-container">
+                        <span>ต้องการที่จะ <span
+                                style="color: red; font-size: larger; font-weight: bolder;">ลบ</span></span>
+                        <p>" {{ deleteName }} "</p>
                     </div>
-                </section>
-                <section>
-                    <label>เป็นข่าวใหญ่</label>
-                    <input v-model="currentNews.hot_new" type="checkbox" />
-                    <label>Description</label>
-                    <TiptapEditor v-model="currentNews.description" />
-                    <label>Summary</label>
-                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
-                </section>
+                    <div class="modal-actions">
+                        <button @click="confirmDelete" class="confirm-btn">Yes</button>
+                        <button @click="cancelDelete" class="cancel-btn">No</button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="confirm-btn" @click.prevent="submitNews(false)">{{ showModalEdit ? 'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitNews(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
-                <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
+
+            <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
+                <form class="modal-add" @submit.prevent>
+                    <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+                    <div class="divider"></div>
+                    <div class="modal-content">
+                        <section>
+                            <label>พาดหัวข่าว</label>
+                            <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title"
+                                required />
+                            <label>ชื่อผู้เขียน</label>
+                            <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
+                                required />
+                            <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
+                            <div class="image-upload-container">
+                                <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                                    @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+                                    @drop.prevent="handleDragDrop">
+                                    <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
+                                    <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
+                                    <div v-if="currentNews.image" class="image-preview">
+                                        <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
+                                        <button class="remove-btn" @click="removeImage">X</button>
+                                    </div>
+                                    <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                                        class="file-uploader" ref="fileInput" />
+                                    <button type="button" class="browse-btn" @click="triggerFileInput">Browse
+                                        File</button>
+                                </div>
+                            </div>
+                        </section>
+                        <section>
+                            <div class="hotnews-toggle-container">
+                                <label class="hotnews-toggle-label">เป็นข่าวใหญ่</label>
+                                <label class="hotnews-switch">
+                                    <input v-model="currentNews.hot_new" type="checkbox">
+                                    <span class="hotnews-slider"></span>
+                                </label>
+                            </div>
+                            <label>Description</label>
+                            <TiptapEditor v-model="currentNews.description" />
+                            <label>Summary</label>
+                            <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                        </section>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="confirme-btn" @click.prevent="submitNews(false)">{{ showModalEdit ?
+                            'Update without publish' : 'Add without publish' }}</button>
+                        <button type="button" class="confirm-btn" @click.prevent="submitNews(true)">{{ showModalEdit ?
+                            'Update & Publish' : 'Add & Publish' }}</button>
+                        <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
             </div>
-        </form>
+            <div style="height: 5rem;"></div>
+        </section>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+definePageMeta({
+  layout: "admin",
+});
+import { ref, onMounted, computed } from 'vue';
 import eye from '@/assets/icon/eye-alt-svgrepo-com.svg'
 import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg'
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import '@/assets/styles/be-news.css';
+const searchQuery = ref('');
 const News = ref([]);
 const NewsNum = ref(0);
 const selectAll = ref(false);
@@ -139,6 +174,14 @@ const currentNews = ref({
     status: false,
 });
 
+const filteredNews = computed(() => {
+    return News.value.filter(news =>
+        news.id.toString().includes(searchQuery.value) ||
+        news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        news.upload_date.includes(searchQuery.value)
+    );
+});
 const toggleStatus = async (news) => {
     try {
         // Optimistically update the UI
@@ -364,6 +407,4 @@ const toggleSelectAll = () => {
 };
 </script>
 
-<style scoped>
-/* Your custom styles here */
-</style>
+<style scoped></style>

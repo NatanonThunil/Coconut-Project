@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 import { Editor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import Bold from "@tiptap/extension-bold";
@@ -19,10 +19,19 @@ const editor = ref(
   })
 );
 
-watch(() => props.modelValue, (newValue) => {
-  if (editor.value.getHTML() !== newValue) {
-    editor.value.commands.setContent(newValue, false);
+// Watch for external model changes
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (editor.value.getHTML() !== newValue) {
+      editor.value.commands.setContent(newValue, false);
+    }
   }
+);
+
+// Cleanup when component is destroyed
+onBeforeUnmount(() => {
+  editor.value.destroy();
 });
 </script>
 
@@ -30,14 +39,26 @@ watch(() => props.modelValue, (newValue) => {
   <div class="tiptap-container">
     <!-- Toolbar -->
     <div class="toolbar">
-      <button @click="editor.chain().focus().toggleBold().run()" :class="{ active: editor.isActive('bold') }">
-        B
+      <button 
+        @click="editor.chain().focus().toggleBold().run()" 
+        :class="{ active: editor.isActive('bold') }"
+        title="Bold (Ctrl+B)"
+      >
+        <span class="icon">B</span>
       </button>
-      <button @click="editor.chain().focus().toggleItalic().run()" :class="{ active: editor.isActive('italic') }">
-        I
+      <button 
+        @click="editor.chain().focus().toggleItalic().run()" 
+        :class="{ active: editor.isActive('italic') }"
+        title="Italic (Ctrl+I)"
+      >
+        <span class="icon">I</span>
       </button>
-      <button @click="editor.chain().focus().toggleUnderline().run()" :class="{ active: editor.isActive('underline') }">
-        U
+      <button 
+        @click="editor.chain().focus().toggleUnderline().run()" 
+        :class="{ active: editor.isActive('underline') }"
+        title="Underline (Ctrl+U)"
+      >
+        <span class="icon">U</span>
       </button>
     </div>
 
@@ -47,34 +68,68 @@ watch(() => props.modelValue, (newValue) => {
 </template>
 
 <style scoped>
+/* Container */
 .tiptap-container {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
   max-width: 100%;
+  background: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Toolbar */
 .toolbar {
   display: flex;
-  gap: 5px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 10px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button {
-  padding: 5px 10px;
-  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
   background: white;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background: #f0f0f0;
 }
 
 button.active {
-  background: #ddd;
+  background: #4caf50;
+  color: white;
+}
+
+button .icon {
+  font-size: 18px;
   font-weight: bold;
 }
 
+/* Editor Content */
 .editor-content {
-  min-height: 150px;
-  border-top: 1px solid #ccc;
-  padding: 8px;
+  overflow-y: auto;
+  min-height: 120px;
+  max-height: 200px;
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
+
+.editor-content:focus-visible {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
 </style>

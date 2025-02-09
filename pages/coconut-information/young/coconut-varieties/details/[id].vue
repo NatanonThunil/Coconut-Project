@@ -28,7 +28,7 @@
     </div>
 
     <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
-    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-varieties" />
+    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/young/coconut-varieties" />
   </div>
 
   <div v-else class="loading-container">
