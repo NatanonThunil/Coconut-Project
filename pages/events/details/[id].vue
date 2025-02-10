@@ -130,6 +130,7 @@ export default {
 }
 
 .image-container {
+    padding-top: 6rem;
     position: relative;
     width: 100%;
     height: 32rem;

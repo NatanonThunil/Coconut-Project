@@ -11,12 +11,16 @@
             </div>
             <div class="add-btn-container">
                 <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
-                <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
-                        Checked
-                        Publish</button>
-                    <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+                
+                    <div class="news-check-publish"><button class="published-news-btn"
+                            @click="bulkUpdateStatus(true)">All
+                            Checked
+                            Publish</button>
+                        <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked
+                            Unpublish</button>
+                    
+                    <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
                 </div>
-                <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
             </div>
 
             <div class="table-container">
@@ -25,7 +29,8 @@
                         <tr>
                             <th>
                                 <div class="checkbox-id-container">
-                                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                        class="checkbox-decorate" />
                                     <span>ID</span>
                                 </div>
                             </th>
@@ -59,10 +64,11 @@
                                 </label>
                             </td>
                             <td class="action-buttons">
-                                <button @click="editItem(news)" class="edit-btn"><img src="@/assets/icon/pen.png"
-                                        alt=""></button>
-                                <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
-                                        src="@/assets/icon/trash.png" alt=""></button>
+                                <div class="action-btn-container"> <button @click="editItem(news)" class="edit-btn"><img
+                                            src="@/assets/icon/pen.png" alt=""></button>
+                                    <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
+                                            src="@/assets/icon/trash.png" alt=""></button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -143,7 +149,7 @@
 
 <script setup>
 definePageMeta({
-  layout: "admin",
+    layout: "admin",
 });
 import { ref, onMounted, computed } from 'vue';
 import eye from '@/assets/icon/eye-alt-svgrepo-com.svg'
@@ -184,10 +190,10 @@ const filteredNews = computed(() => {
 });
 const toggleStatus = async (news) => {
     try {
-        // Optimistically update the UI
+
         const newStatus = !news.status;
 
-        // Send update request to the backend
+
         const response = await fetch(`/api/news/${news.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -280,24 +286,26 @@ const submitNews = async (publish) => {
     }
 
     try {
+        
+        const userTime = new Date();
+        const bangkokOffset = 7 * 60 * 60 * 1000;
+        const bangkokTime = new Date(userTime.getTime() + bangkokOffset);
 
-        currentNews.value.upload_date = new Date(currentNews.value.upload_date)
+        currentNews.value.upload_date = bangkokTime
             .toISOString()
             .slice(0, 19)
-            .replace('T', ' ');
-
+            .replace('T', ' '); 
 
         const isUpdate = !!currentNews.value.id;
         const method = isUpdate ? 'PUT' : 'POST';
         const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news_rest';
-
 
         const payload = {
             id: currentNews.value.id,
             title: currentNews.value.title,
             description: currentNews.value.description,
             author: currentNews.value.author,
-            upload_date: currentNews.value.upload_date,
+            upload_date: currentNews.value.upload_date, 
             status: publish ? 1 : 0,
             hot_new: currentNews.value.hot_new,
             summerize: currentNews.value.summerize,
@@ -323,13 +331,15 @@ const submitNews = async (publish) => {
 
         showModalAddnews.value = false;
         showModalEdit.value = false;
-        fetchNews(); // refresh news list
+        fetchNews(); 
 
     } catch (error) {
         alert('Error while submitting news.');
         console.error(error);
     }
 };
+
+
 
 const closeModal = () => {
     showModalAddnews.value = false;

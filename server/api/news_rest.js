@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
             const body = await readBody(event);
             const { title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
-            // ✅ Ensure required fields are provided
+            
             if (!title || !author || !upload_date) {
                 return { error: 'Title, author, and upload date are required.' };
             }
@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
             let imageBuffer = null;
             if (image) {
                 try {
-                    const base64Data = image.split(',')[1]; // Extract base64 content
+                    const base64Data = image.split(',')[1]; 
                     imageBuffer = Buffer.from(base64Data, 'base64');
                 } catch (err) {
                     return { error: 'Invalid image format.' };
@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
             const formattedDate = new Date(upload_date).toISOString().slice(0, 19).replace('T', ' ');
 
-            // ✅ Store `description` as raw HTML (Tiptap output)
+            
             const query = `
                 INSERT INTO new (title, description, author, upload_date, image, hot_new, summerize, status) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)

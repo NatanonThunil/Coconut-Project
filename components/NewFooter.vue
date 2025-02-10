@@ -11,7 +11,7 @@
             <div class="ft-contract">{{$t('Footer')}}</div>
         </section>
         <section class="cpr">
-            <div>Copyright © Coconut KnowledgeHub
+            <div>Copyright © Coconut Knowledge Hub
                 สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง</div>
         </section>
 
@@ -85,10 +85,10 @@ export default {
 
 .cpr {
     border-radius: 1px;
-    margin-top: 1rem;
+
     width: 100%;
   
-    padding: 1rem;
+    padding: 0.5rem;
     color: white;
 }
 

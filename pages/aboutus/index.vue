@@ -10,11 +10,7 @@
   <div class="a">
     <ContentHeader contexto="ผลงานของเรา" />
     <section>
-      <div class="achivement-container">
-        <HomeFootBanner v-for="achievement in achievements" :key="achievement.id"
-          :text="achievement.description || 'No description'" :title="achievement.title || 'No Title'" color="#C5D944"
-          :picture="achievement.image || 'No image'" :url="'/achievements/details/' + achievement.id || '404'" />
-      </div>
+      <Aboutusslide apiEndPoint="/api/achievements_table" title="title"/>
 
       <SeeAllButton text="ผลงานทั้งหมด" link="/achievements" />
     </section>
@@ -25,8 +21,6 @@
 
   <Aboutusslide apiEndPoint="/api/employees_table" />
   <SeeAllButton text="คณะทำงานทั้งหมด" link="/employees" />
-
-
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
   <Aboutusslide apiEndPoint="/api/employees_table" />
   <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/employees" />

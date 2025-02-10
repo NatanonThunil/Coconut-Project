@@ -84,6 +84,7 @@ const navigateTo = (path) => {
   transition: 0.3s;
   font-weight: 500;
   text-align: center;
+  background-color: #ceeee8;
 }
 
 .menu li:hover,

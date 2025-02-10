@@ -2,9 +2,9 @@
   <div class="navcontainer">
     <Navbar selecto="expert" />
   </div>
-  <h3 class="header-content">ผู้เชี่ยวชาญ</h3>
+  <h3 class="header-content">{{ $t('Expert') }}</h3>
   <div class="header-container">
-    <h1>ผู้เชี่ยวชาญ</h1>
+    <h1>{{ $t('Experts') }}</h1>
   </div>
 
   <navbarexpert />

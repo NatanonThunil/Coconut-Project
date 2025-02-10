@@ -26,7 +26,7 @@
         }"
       >
         <SwiperSlide v-for="(employee, index) in employees" :key="index">
-          <aboutusCard :url="`/employees/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="employee.name" :description="employee.description"/>
+          <aboutusCard :url="`/employees/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="getTitle(employee)" :description="employee.description"/>
           
         </SwiperSlide>
       </Swiper>
@@ -55,7 +55,13 @@ export default {
       type:String,
       required:true,
 
-    },
+    },title:{
+      type:String,
+ 
+
+    }
+
+    
     
   },
   components: {
@@ -72,6 +78,9 @@ export default {
     this.fetchEmployees();
   },
   methods: {
+    getTitle(employee) {
+      return this.title && employee[this.title] ? employee[this.title] : employee.name;
+    },
     goPrev() {
       this.$refs.mySwiper.$el.swiper.slidePrev();
     },
@@ -111,6 +120,8 @@ export default {
       if (retireDate < currentDate) return "retired";
       return "error";
     },
+  },title(s){
+
   },
   computed: {
   getEmployeeImage() {

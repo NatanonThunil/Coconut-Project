@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar selecto="home" />
-    <TagLine taglinetext="This is Coconut KnowledgeHub TagLine" />
+    <TagLine taglinetext="This is Coconut Knowledge Hub TagLine" />
     
     <ContentHeader :contexto="$t('News')" />
    
