@@ -50,6 +50,7 @@ export default {
 }
 
 .card-content-container {
+    cursor: pointer;
     background-color: white;
     height: 23rem;
     width: 22rem;

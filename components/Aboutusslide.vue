@@ -26,7 +26,7 @@
         }"
       >
         <SwiperSlide v-for="(employee, index) in employees" :key="index">
-          <aboutusCard :url="`/employees/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="getTitle(employee)" :description="employee.description"/>
+          <aboutusCard :url="`/aboutus/${lurl}/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="getTitle(employee)" :description="employee.description"/>
           
         </SwiperSlide>
       </Swiper>
@@ -59,6 +59,8 @@ export default {
       type:String,
  
 
+    },lurl:{
+      type:String,
     }
 
     
@@ -81,6 +83,9 @@ export default {
     getTitle(employee) {
       return this.title && employee[this.title] ? employee[this.title] : employee.name;
     },
+    getPath(){
+      return this.lurl
+    },
     goPrev() {
       this.$refs.mySwiper.$el.swiper.slidePrev();
     },
@@ -100,33 +105,16 @@ export default {
         this.isLoading = false;
       }
     },
-    getStatusText(employee) {
-      const currentDate = new Date();
-      const hireDate = new Date(employee.hire_date);
-      const retireDate = new Date(employee.retire_date);
+   
 
-      if (hireDate <= currentDate && retireDate >= currentDate) return "Active";
-      if (hireDate > currentDate) return "Upcoming";
-      if (retireDate < currentDate) return "Retired";
-      return "Error";
-    },
-    getStatusClass(employee) {
-      const currentDate = new Date();
-      const hireDate = new Date(employee.hire_date);
-      const retireDate = new Date(employee.retire_date);
 
-      if (hireDate <= currentDate && retireDate >= currentDate) return "active";
-      if (hireDate > currentDate) return "upcoming";
-      if (retireDate < currentDate) return "retired";
-      return "error";
-    },
-  },title(s){
 
   },
   computed: {
   getEmployeeImage() {
     return (image) => image ? image : noimageHandle;
   }
+  
 }
 
 };

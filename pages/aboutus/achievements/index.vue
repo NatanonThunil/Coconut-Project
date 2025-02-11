@@ -5,7 +5,7 @@
   <h3 class="header-content">{{ $t("Achievement") }}</h3>
   <div class="card-achivments-container">
     <Achievemento v-for="achievement in Achievements" :key="achievement.id" :picture="achievement.image || 'https://placehold.co/600x400'"
-    :title="achievement.title" :text="achievement.description" :url="'/achievements/details/'+achievement.id" color="white"/>
+    :title="achievement.title" :text="achievement.description" :url="'/aboutus/achievements/details/'+achievement.id" color="white"/>
     <!-- <Cardachivement v-for="achievement in Achievements" :key="achievement.id" :image="achievement.image"
       :title="achievement.title" :details="achievement.description" :url="'/achievements/details/'+achievement.id"/> -->
   </div>

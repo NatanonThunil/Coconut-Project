@@ -10,23 +10,23 @@
   <div class="a">
     <ContentHeader contexto="ผลงานของเรา" />
     <section>
-      <Aboutusslide apiEndPoint="/api/achievements_table" title="title"/>
+      <Aboutusslide apiEndPoint="/api/achievements_table" title="title" lurl="achievements"/>
 
-      <SeeAllButton text="ผลงานทั้งหมด" link="/achievements" />
+      <SeeAllButton text="ผลงานทั้งหมด" link="/aboutus/achievements" />
     </section>
   </div>
 
   <ContentHeader contexto="คณะทำงาน" />
 
 
-  <Aboutusslide apiEndPoint="/api/employees_table" />
-  <SeeAllButton text="คณะทำงานทั้งหมด" link="/employees" />
+  <Aboutusslide apiEndPoint="/api/employees_table" lurl="employees"/>
+  <SeeAllButton text="คณะทำงานทั้งหมด" link="/aboutus/employees" />
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <Aboutusslide apiEndPoint="/api/employees_table" />
-  <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/employees" />
+  <Aboutusslide apiEndPoint="/api/employees_table" lurl="benefitandservice"/>
+  <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/aboutus/benefitandservice" />
   <ContentHeader contexto="สมาชิก" />
-  <Aboutusslide apiEndPoint="/api/members_table" />
-  <SeeAllButton text="สมาชิกทั้งหมด" link="/employees" />
+  <Aboutusslide apiEndPoint="/api/members_table" lurl="members"/>
+  <SeeAllButton text="สมาชิกทั้งหมด" link="/aboutus/members" />
   <div style="height: 3rem;"></div>
 </template>
 
