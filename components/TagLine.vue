@@ -40,8 +40,8 @@ export default {
             ...data.headline,
             text: data.headline.text || "No tagline available.",
             text_en: data.headline.text_en || "No tagline available.",
-            x: data.headline.x || 50,
-            y: data.headline.y || 50,
+            x: data.headline.x || 0,
+            y: data.headline.y || 0,
             image: data.headline.image || "/img/tl.png",
           };
         } else {
