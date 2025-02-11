@@ -5,9 +5,8 @@
     </div>
     <nav class="menu">
       <ul>
-        <li v-for="(item, index) in menuItems" :key="index" 
-            :class="{ 'active': activeItem === item.path }"
-            @click="navigateTo(item.path)">
+        <li v-for="(item, index) in menuItems" :key="index" :class="{ 'active': activeItem === item.path }"
+          @click="navigateTo(item.path)">
           <span>{{ item.label }}</span>
         </li>
       </ul>
@@ -24,6 +23,7 @@ const router = useRouter();
 const activeItem = ref(router.currentRoute.value.path);
 
 const menuItems = [
+  { label: "จัดการ เฮดไลน์", path: "/backend/tagline-edit" },
   { label: "จัดการข่าว", path: "/backend/news" },
   { label: "จัดการกิจกรรม", path: "/backend/events" },
   { label: "จัดการช่องค้นหา", path: "/backend/search" },
@@ -42,7 +42,8 @@ const navigateTo = (path) => {
   width: 250px;
   height: 100vh;
   background-color: #B6E3DB;
-  position: fixed; /* Keeps it fixed on the left */
+  position: fixed;
+  /* Keeps it fixed on the left */
   top: 0;
   left: 0;
   display: flex;

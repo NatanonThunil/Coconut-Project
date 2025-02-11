@@ -21,7 +21,7 @@ const props = defineProps({
 
     </div>
   </div>
-  <Footer />
+
 </template>
 
 <style scoped>

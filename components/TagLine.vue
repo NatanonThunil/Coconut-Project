@@ -1,32 +1,59 @@
 <template>
-  <div class="hero-bar" :style="{ backgroundImage: `url(${heado.image})` }">
+  <div class="hero-bar" 
+    :style="{ 
+      backgroundImage: `url(${heado.image})`, 
+      backgroundAttachment: isFixed ? 'fixed' : 'scroll' 
+    }">
+    
     <div class="overlay"></div>
 
-    <h1 
+    <div 
       v-if="heado.text" 
-      :style="{ top: `${heado.y}px`, left: `${heado.x}px` }"
-    >
-      {{ locale === "th" ? heado.text : heado.text_en }}
-    </h1>
+      ref="taglineRef"
+      :style="{ 
+        top: `${heado.y ?? 0}%`, 
+        left: `calc(${heado.x ?? 0}% - ${textWidth / 2}px)` 
+      }"
+      class="tagline-text"
+      v-html="locale === 'th' ? heado.text : heado.text_en">
+    </div>
+
     <h1 v-else>Loading tagline...</h1>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 export default {
-  setup() {
+  props: {
+    isFixed: {
+      type: Boolean,
+      default: false, 
+    }
+  },
+  setup(props) {
+    const taglineRef = ref(null);
+    const textWidth = ref(0);
     const { locale } = useI18n();
+    
     const heado = ref({
       text: "Loading...",
       text_en: "",
-      x: 0, 
-      y: 0, 
+      x: 50, 
+      y: 50, 
       image: "/img/tl.png",
     });
 
+
+    const updateTextWidth = () => {
+      if (taglineRef.value) {
+        textWidth.value = taglineRef.value.getBoundingClientRect().width;
+      }
+    };
+
+  
     const fetchTagline = async () => {
       try {
         const response = await fetch("/api/headline");
@@ -35,15 +62,19 @@ export default {
         const data = await response.json();
         console.log("API Response:", data);
 
-        if (data.success && data.headline) {
+        if (data.headline) {
           heado.value = {
             ...data.headline,
             text: data.headline.text || "No tagline available.",
             text_en: data.headline.text_en || "No tagline available.",
-            x: data.headline.x || 0,
-            y: data.headline.y || 0,
+            x: data.headline.x ?? 50, 
+            y: data.headline.y ?? 50, 
             image: data.headline.image || "/img/tl.png",
           };
+
+          
+          await nextTick();
+          updateTextWidth();
         } else {
           console.warn("Headline not found:", data.message);
           heado.value.text = "No tagline available.";
@@ -56,7 +87,12 @@ export default {
 
     onMounted(fetchTagline);
 
-    return { heado, locale };
+ 
+    watchEffect(() => {
+      updateTextWidth();
+    });
+
+    return { heado, locale, isFixed: props.isFixed, taglineRef, textWidth };
   },
 };
 </script>
@@ -65,10 +101,9 @@ export default {
 .hero-bar {
   position: relative;
   width: 100%;
-  height: 70dvh;
+  height: 80vh;
   background-size: cover;
-  background-position: top center;
-  background-attachment: fixed;
+  background-position: center;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
@@ -79,20 +114,21 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: 1;
-  background: black;
-  animation: fadeInOverlay 0.5s ease-in-out forwards;
+  background: rgba(0, 0, 0, 0.4); 
 }
 
-h1 {
+
+.tagline-text {
   position: absolute;
   color: white;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
-  font-size: 2.5em;
   text-align: center;
+  transform: translateY(-50%);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
-  z-index: 2;
+  max-width: 600px;
+  width: auto;
+  white-space: nowrap; 
 }
 
 @keyframes fadeInText {
@@ -103,15 +139,6 @@ h1 {
   100% {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@keyframes fadeInOverlay {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.4;
   }
 }
 </style>

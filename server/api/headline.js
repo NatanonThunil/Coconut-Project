@@ -7,7 +7,7 @@ export default defineEventHandler(async () => {
     let connection;
     try {
         connection = await pool.getConnection();
-        const [rows] = await connection.execute('SELECT * FROM `tag_line` LIMIT 1');
+        const [rows] = await connection.execute('SELECT * FROM `tag_line` WHERE id = 1');
 
         if (!rows.length) {
             console.error("Database Query: No rows found in `tag_line` table.");
@@ -22,10 +22,10 @@ export default defineEventHandler(async () => {
             imageBase64 = `data:${mimeType};base64,${headline.image.toString('base64')}`;
         }
 
-        console.log("API Returning:", headline.text ); // Debugging log
+     
 
         return {
-            success: true,
+           
             headline: {
                 id: headline.id,
                 title: headline.title,
