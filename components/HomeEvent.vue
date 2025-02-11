@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="homeeventfiltercontainer">
+    <div class="homeevent-container-container"><ul class="homeeventfiltercontainer">
       <li class="filtli train" :class="{ selecto: selectedFilter === 'educate' }" @click="selectedFilter = 'educate'">
         {{ $t('Educate') }}
       </li>
@@ -12,7 +12,7 @@
         {{ $t('Other') }}
       </li>
     </ul>
-
+</div>
     <div class="event-slider-container"><button @click="goPrev" class="btn-4-swiper"><</button>
           <!-- Loading State -->
           <div class="event-card-section" v-if="isLoading" loading="lazy">
@@ -147,6 +147,11 @@ export default {
 
 
 <style scoped>
+.homeevent-container-container{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 .swiper {
 
   width:100%;

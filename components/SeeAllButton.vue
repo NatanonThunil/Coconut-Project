@@ -1,7 +1,7 @@
-<template >
+<template ><div class="button-container">
     <NuxtLinkLocale :to="link" class="news-button" >
      {{ text }}
-    </NuxtLinkLocale>
+    </NuxtLinkLocale></div>
 </template>
 
 <script>
@@ -20,6 +20,14 @@ export default {
 </script>
 
 <style scoped>
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .news-button {
     overflow: hidden;
     display: flex;
