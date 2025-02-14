@@ -1,7 +1,7 @@
 <template>
   <div class="hero-bar" 
     :style="{ 
-      backgroundImage: `url(${heado.image})`, 
+      backgroundImage: `url(${heado.image || Taglineimg})`, 
       backgroundAttachment: isFixed ? 'fixed' : 'scroll' 
     }">
     
@@ -25,7 +25,7 @@
 <script>
 import { ref, onMounted, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
-
+import Taglineimg from "@/assets/img/tl.png"
 export default {
   props: {
     isFixed: {
@@ -36,6 +36,7 @@ export default {
   setup(props) {
     const taglineRef = ref(null);
     const textWidth = ref(0);
+    const textHeight = ref(0);
     const { locale } = useI18n();
     
     const heado = ref({
@@ -43,7 +44,7 @@ export default {
       text_en: "",
       x: 50, 
       y: 50, 
-      image: "/img/tl.png",
+      image: "@/assets/img/tl.png",
     });
 
 
@@ -69,7 +70,7 @@ export default {
             text_en: data.headline.text_en || "No tagline available.",
             x: data.headline.x ?? 50, 
             y: data.headline.y ?? 50, 
-            image: data.headline.image || "/img/tl.png",
+            image: data.headline.image || "_nuxt/assets/img/tl.png",
           };
 
           
@@ -108,6 +109,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: FadeInImage 0.3s ease-in-out forwards;
 }
 
 .overlay {
@@ -138,6 +140,17 @@ export default {
   }
   100% {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInImage {
+  0% {
+  
+    transform: scale(1.1);
+  }
+  100% {
+  
     transform: scale(1);
   }
 }

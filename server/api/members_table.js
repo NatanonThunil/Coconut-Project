@@ -11,7 +11,7 @@ export default defineEventHandler(async () => {
     connection = await mysql.createConnection(dbConfig);
 
     // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM member');
+    const [rows] = await connection.execute('SELECT * FROM member WHERE status = 1');
 
     console.log('Fetched rows:', rows); // Debugging log
 
