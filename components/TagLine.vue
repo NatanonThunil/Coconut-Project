@@ -1,8 +1,17 @@
 <template>
+<<<<<<< HEAD
   <div class="hero-bar" :style="{
     backgroundImage: `url(${heado.image})`,
     backgroundAttachment: isFixed ? 'fixed' : 'scroll'
   }">
+=======
+  <div class="hero-bar" 
+    :style="{ 
+      backgroundImage: `url(${heado.image || Taglineimg})`, 
+      backgroundAttachment: isFixed ? 'fixed' : 'scroll' 
+    }">
+    
+>>>>>>> e6785138610f6c35817bce4af87ef6137cec03ed
     <div class="overlay"></div>
 
     <div v-if="heado.text" ref="taglineRef" :style="{
@@ -17,6 +26,7 @@
 <script setup>
 import { ref, onMounted, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+<<<<<<< HEAD
 
 defineProps({
   isFixed: {
@@ -24,6 +34,29 @@ defineProps({
     default: false,
   }
 });
+=======
+import Taglineimg from "@/assets/img/tl.png"
+export default {
+  props: {
+    isFixed: {
+      type: Boolean,
+      default: false, 
+    }
+  },
+  setup(props) {
+    const taglineRef = ref(null);
+    const textWidth = ref(0);
+    const textHeight = ref(0);
+    const { locale } = useI18n();
+    
+    const heado = ref({
+      text: "Loading...",
+      text_en: "",
+      x: 50, 
+      y: 50, 
+      image: "@/assets/img/tl.png",
+    });
+>>>>>>> e6785138610f6c35817bce4af87ef6137cec03ed
 
 const taglineRef = ref(null);
 const textHeight = ref(0);
@@ -38,12 +71,56 @@ const heado = ref({
   image: "/img/tl.png",
 });
 
+<<<<<<< HEAD
 const updateTextHW = () => {
   if (taglineRef.value) {
     const rect = taglineRef.value.getBoundingClientRect();
     textWidth.value = rect.width;
     textHeight.value = rect.height;
   }
+=======
+  
+    const fetchTagline = async () => {
+      try {
+        const response = await fetch("/api/headline");
+        if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
+
+        const data = await response.json();
+        console.log("API Response:", data);
+
+        if (data.headline) {
+          heado.value = {
+            ...data.headline,
+            text: data.headline.text || "No tagline available.",
+            text_en: data.headline.text_en || "No tagline available.",
+            x: data.headline.x ?? 50, 
+            y: data.headline.y ?? 50, 
+            image: data.headline.image || "_nuxt/assets/img/tl.png",
+          };
+
+          
+          await nextTick();
+          updateTextWidth();
+        } else {
+          console.warn("Headline not found:", data.message);
+          heado.value.text = "No tagline available.";
+        }
+      } catch (error) {
+        console.error("Error fetching headline:", error);
+        heado.value.text = "Failed to load tagline.";
+      }
+    };
+
+    onMounted(fetchTagline);
+
+ 
+    watchEffect(() => {
+      updateTextWidth();
+    });
+
+    return { heado, locale, isFixed: props.isFixed, taglineRef, textWidth };
+  },
+>>>>>>> e6785138610f6c35817bce4af87ef6137cec03ed
 };
 
 
@@ -100,6 +177,7 @@ watchEffect(updateTextHW);
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: FadeInImage 0.3s ease-in-out forwards;
 }
 
 .overlay {
@@ -129,6 +207,17 @@ watchEffect(updateTextHW);
   }
   100% {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInImage {
+  0% {
+  
+    transform: scale(1.1);
+  }
+  100% {
+  
     transform: scale(1);
   }
 }
