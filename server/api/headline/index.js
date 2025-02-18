@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { dbConfig } from '../config/poom_db_config';
+import { dbConfig } from '@/server/config/poom_db_config';
 
 const pool = mysql.createPool(dbConfig);
 
@@ -22,13 +22,13 @@ export default defineEventHandler(async () => {
             imageBase64 = `data:${mimeType};base64,${headline.image.toString('base64')}`;
         }
 
-     
+
 
         return {
-           
+
             headline: {
                 id: headline.id,
-                title: headline.title,
+
                 text: headline.text || "Default tagline",  // Ensure fallback
                 text_en: headline.text_en || '',
                 x: headline.x,

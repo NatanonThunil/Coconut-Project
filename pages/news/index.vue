@@ -92,7 +92,7 @@ onMounted(fetchNews);
   height: auto;
   grid-template-columns: repeat(3, 1fr);
   padding: 1rem;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 

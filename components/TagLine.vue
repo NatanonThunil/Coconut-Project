@@ -1,107 +1,99 @@
 <template>
-  <div class="hero-bar" 
-    :style="{ 
-      backgroundImage: `url(${heado.image})`, 
-      backgroundAttachment: isFixed ? 'fixed' : 'scroll' 
-    }">
-    
+  <div class="hero-bar" :style="{
+    backgroundImage: `url(${heado.image})`,
+    backgroundAttachment: isFixed ? 'fixed' : 'scroll'
+  }">
     <div class="overlay"></div>
 
-    <div 
-      v-if="heado.text" 
-      ref="taglineRef"
-      :style="{ 
-        top: `${heado.y ?? 0}%`, 
-        left: `calc(${heado.x ?? 0}% - ${textWidth / 2}px)` 
-      }"
-      class="tagline-text"
-      v-html="locale === 'th' ? heado.text : heado.text_en">
+    <div v-if="heado.text" ref="taglineRef" :style="{
+      top: `calc(${heado.y ?? 0}% - ${textHeight / 2}px)`,
+      left: `calc(${heado.x ?? 0}% - ${textWidth / 2}px)`
+    }" class="tagline-text" v-html="locale === 'th' ? heado.text : heado.text_en">
     </div>
-
     <h1 v-else>Loading tagline...</h1>
   </div>
 </template>
 
-<script>
-import { ref, onMounted, watchEffect, nextTick } from "vue";
+<script setup>
+import { ref, onMounted, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
-export default {
-  props: {
-    isFixed: {
-      type: Boolean,
-      default: false, 
-    }
-  },
-  setup(props) {
-    const taglineRef = ref(null);
-    const textWidth = ref(0);
-    const { locale } = useI18n();
-    
-    const heado = ref({
-      text: "Loading...",
-      text_en: "",
-      x: 50, 
-      y: 50, 
-      image: "/img/tl.png",
-    });
+defineProps({
+  isFixed: {
+    type: Boolean,
+    default: false,
+  }
+});
 
+const taglineRef = ref(null);
+const textHeight = ref(0);
+const textWidth = ref(0);
+const { locale } = useI18n();
 
-    const updateTextWidth = () => {
-      if (taglineRef.value) {
-        textWidth.value = taglineRef.value.getBoundingClientRect().width;
-      }
-    };
+const heado = ref({
+  text: "Loading...",
+  text_en: "",
+  x: 50,
+  y: 50,
+  image: "/img/tl.png",
+});
 
-  
-    const fetchTagline = async () => {
-      try {
-        const response = await fetch("/api/headline");
-        if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
-
-        const data = await response.json();
-        console.log("API Response:", data);
-
-        if (data.headline) {
-          heado.value = {
-            ...data.headline,
-            text: data.headline.text || "No tagline available.",
-            text_en: data.headline.text_en || "No tagline available.",
-            x: data.headline.x ?? 50, 
-            y: data.headline.y ?? 50, 
-            image: data.headline.image || "/img/tl.png",
-          };
-
-          
-          await nextTick();
-          updateTextWidth();
-        } else {
-          console.warn("Headline not found:", data.message);
-          heado.value.text = "No tagline available.";
-        }
-      } catch (error) {
-        console.error("Error fetching headline:", error);
-        heado.value.text = "Failed to load tagline.";
-      }
-    };
-
-    onMounted(fetchTagline);
-
- 
-    watchEffect(() => {
-      updateTextWidth();
-    });
-
-    return { heado, locale, isFixed: props.isFixed, taglineRef, textWidth };
-  },
+const updateTextHW = () => {
+  if (taglineRef.value) {
+    const rect = taglineRef.value.getBoundingClientRect();
+    textWidth.value = rect.width;
+    textHeight.value = rect.height;
+  }
 };
+
+
+const fetchTagline = async () => {
+  try {
+    const response = await fetch("/api/headline");
+    if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
+
+    const data = await response.json();
+    console.log("API Response:", data);
+
+    if (data.headline) {
+      heado.value = {
+        ...data.headline,
+        text: data.headline.text || "No tagline available.",
+        text_en: data.headline.text_en || "No tagline available.",
+        x: data.headline.x ?? 50,
+        y: data.headline.y ?? 50,
+        image: data.headline.image || "/img/tl.png",
+      };
+
+      await nextTick();
+      updateTextHW();
+    } else {
+      console.warn("Headline not found:", data.message);
+      heado.value.text = "No tagline available.";
+    }
+  } catch (error) {
+    console.error("Error fetching headline:", error);
+    heado.value.text = "Failed to load tagline.";
+  }
+};
+
+
+watch(locale, async () => {
+  await nextTick(); 
+  updateTextHW();
+});
+
+onMounted(fetchTagline);
+watchEffect(updateTextHW);
 </script>
+
 
 <style scoped>
 .hero-bar {
   position: relative;
   width: 100%;
   height: 80vh;
+  aspect-ratio: 8/3;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -114,9 +106,8 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4); 
+  background: rgba(0, 0, 0, 0.4);
 }
-
 
 .tagline-text {
   position: absolute;
@@ -128,7 +119,7 @@ export default {
   animation: fadeInText 1s ease-out 0.5s forwards;
   max-width: 600px;
   width: auto;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 @keyframes fadeInText {

@@ -8,8 +8,7 @@ export default defineEventHandler(async () => {
     // Create a connection to MySQL database
     connection = await mysql.createConnection(dbConfig);
 
-    // Fetch all news from the database
-    const [rows] = await connection.execute('SELECT * FROM employee');
+    const [rows] = await connection.execute('SELECT * FROM employee WHERE status = 1');
 
    
 

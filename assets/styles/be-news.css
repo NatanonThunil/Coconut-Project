@@ -5,7 +5,10 @@
     gap: 8px;
     cursor: pointer;
 }
-
+.rotate {
+    transform: rotate(180deg);
+    
+  }
 .status-toggle input {
     display: none;
 }
@@ -58,6 +61,18 @@
     align-items: center;
     width: 100%;
 }
+.checkbox-id-container div{
+    display: flex;gap: 0.5rem;
+}
+
+.checkbox-id-container button div{
+    transition: ease-in-out 0.3s;
+}
+
+.checkbox-id-container button{
+    all: unset;
+    cursor: pointer;
+}
 
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
@@ -91,7 +106,7 @@
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
    
-    width: 5%;
+    width: 6%;
 
 }
 
@@ -381,11 +396,12 @@
 }
 
 .item-list-table th {
-    padding: 15px 0px;
+    padding: 15px 1rem;
     text-align: left;
     font-weight: bold;
     font-size: 16px;
     letter-spacing: 1px;
+    outline: solid black 1px;
 }
 
 .item-list-table tr {

@@ -27,19 +27,34 @@
                             <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
                                 class="checkbox-decorate" />
                             <span>ID</span>
+                            <button @click="toggleSort('id')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button>
                         </div>
                     </th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Hotnews</th>
-                    <th>Create date</th>
-                    <th>Status</th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Title<button @click="toggleSort('title')"><div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div></button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Author<button @click="toggleSort('author')"><div :class="{'rotate': sortBy === 'author' && sortDirection === -1}">▲</div></button></div>
+                        </div>
+                    </th>
+                    <th><div class="checkbox-id-container">
+                            <div>Hot news <button @click="toggleSort('hot_new')"><div :class="{'rotate': sortBy === 'hot_new' && sortDirection === -1}">▲</div></button></div>
+                        </div></th>
+                    <th><div class="checkbox-id-container">
+                            <div>Create date <button @click="toggleSort('upload_date')"><div :class="{'rotate': sortBy === 'upload_date' && sortDirection === -1}">▲</div></button></div>
+                        </div></th>
+                    <th><div class="checkbox-id-container">
+                            <div>Status <button @click="toggleSort('status')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button></div>
+                        </div></th>
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody v-if="filteredNews.length">
-                <tr v-for="news in filteredNews" :key="news.id">
+            <tbody v-if="filteredSortedNews.length">
+                <tr v-for="news in filteredSortedNews" :key="news.id">
                     <td>
                         <div class="checkbox-id-container">
                             <input type="checkbox" v-model="news.selected" />
@@ -149,6 +164,8 @@ import eye from '@/assets/icon/eye-alt-svgrepo-com.svg'
 import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg'
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import '@/assets/styles/be-news.css';
+
+const apiEndpoint = 'news';
 const searchQuery = ref('');
 const News = ref([]);
 const NewsNum = ref(0);
@@ -160,7 +177,8 @@ const showModalAddnews = ref(false);
 const showModalEdit = ref(false);
 const isDragging = ref(false);
 const fileInput = ref(null);
-
+const sortBy = ref(null);
+const sortDirection = ref(1);
 const currentNews = ref({
     id: null,
     title: '',
@@ -173,21 +191,14 @@ const currentNews = ref({
     status: false,
 });
 
-const filteredNews = computed(() => {
-    return News.value.filter(news =>
-        news.id.toString().includes(searchQuery.value) ||
-        news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        news.upload_date.includes(searchQuery.value)
-    );
-});
+
 const toggleStatus = async (news) => {
     try {
 
         const newStatus = !news.status;
 
 
-        const response = await fetch(`/api/news/${news.id}`, {
+        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
@@ -212,7 +223,7 @@ const triggerFileInput = () => {
 };
 const fetchNews = async () => {
     try {
-        const response = await $fetch('/api/news_table');
+        const response = await $fetch(`/api/${apiEndpoint}`);
         News.value = response.map(news => ({ ...news, selected: false }));
         NewsNum.value = News.value.length;
     } catch (error) {
@@ -239,6 +250,37 @@ const editItem = (news) => {
 };
 
 
+const filteredSortedNews = computed(() => {
+  let filtered = News.value.filter(news =>
+    news.id.toString().includes(searchQuery.value) ||
+    news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    news.upload_date.includes(searchQuery.value)
+  );
+  
+  if (sortBy.value) {
+    filtered.sort((a, b) => {
+      let valA = a[sortBy.value];
+      let valB = b[sortBy.value];
+      
+      if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+      if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
+      if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
+      if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
+      return 0;
+    });
+  }
+  return filtered;
+});
+
+const toggleSort = (column) => {
+  if (sortBy.value === column) {
+    sortDirection.value *= -1;
+  } else {
+    sortBy.value = column;
+    sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
+  }
+};
 
 
 const openAddNewsModal = () => {
