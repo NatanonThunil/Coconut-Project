@@ -118,7 +118,7 @@ watchEffect(updateTextHW);
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
-  max-width: 600px;
+  font-size: x-large;
   width: auto;
   white-space: nowrap;
 }
