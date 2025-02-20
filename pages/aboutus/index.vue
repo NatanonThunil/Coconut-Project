@@ -58,29 +58,8 @@ export default {
       achievements: [], // Stores the fetched achievement data
     };
   },
-  mounted() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      try {
-        const [membersResponse, employeesResponse, achievementsResponse] =
-          await Promise.all([
-            axios.get("/api/members_table"), // Assuming no changes needed for members table
-            axios.get("/api/employees_table"), // Updated to the correct table name
-            axios.get("/api/achievements_table"), // Assuming no changes needed for achievements table
-          ]);
-
-        this.members = membersResponse.data.slice(0, 3);
-        this.employees = employeesResponse.data.slice(0, 3); // Only show top 3 employees
-        this.achievements = achievementsResponse.data.slice(0, 2); // Only show top 2 achievements
-
-        console.log("Employees Data:", this.employees);
-      } catch (error) {
-        console.error("Error fetching data:", error.message || error);
-      }
-    },
-  },
+ 
+  
 };
 </script>
 

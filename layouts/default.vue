@@ -4,12 +4,12 @@
     <div v-if="isLoading" class="loading-container">
       <DotLottieVue 
         v-if="lottieLoaded" 
-        style="height: 200px; width: 200px" 
+        style="height: 300px; width: 300px" 
         autoplay 
         loop 
         :src="loadingAnimation"
       />
-      <p v-else>Loading...</p>
+      <p v-else style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
     </div>
 
 
@@ -63,9 +63,7 @@ export default {
   },
 };
 </script>
-
 <style scoped>
-
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -73,5 +71,21 @@ export default {
   align-items: center;
   height: 100vh;
   background: #f8f8f8;
+}
+
+.loading-container p {
+  font-size: 1.5rem;
+  color: #555;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+/* Bouncing animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
 </style>

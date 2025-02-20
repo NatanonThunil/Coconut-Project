@@ -8,7 +8,7 @@ export default defineEventHandler(async () => {
 
     connection = await mysql.createConnection(dbConfig);
 
-    const [rows] = await connection.execute('SELECT * FROM employee WHERE status = 1 WHERE status = 1');
+    const [rows] = await connection.execute('SELECT * FROM employee WHERE status = 1 ');
 
    
 

@@ -48,5 +48,11 @@
   "Academic":"Academic",
   "All Employees":"Employees",
   "All Member":"Member",
-  "Benefit and service":"Benefit and Service"
+  "Benefit and service":"Benefit and Service",
+  "expertsadvice":"Expert's Advice",
+  "searchByQ":"Search by question...",
+  "Qs" :"Questions",
+  "seeAllQs" :"See All Questions",
+  "seeAllEsA" :"See All Expert's Advice"
+ 
 }

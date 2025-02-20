@@ -26,8 +26,12 @@ const menuItems = [
   { label: "จัดการ เฮดไลน์", path: "/backend/tagline-edit" },
   { label: "จัดการข่าว", path: "/backend/news" },
   { label: "จัดการกิจกรรม", path: "/backend/events" },
-  { label: "จัดการช่องค้นหา", path: "/backend/search" },
-  { label: "จัดการหมวดหมู่หัวข้อ", path: "/backend/categories" },
+  { label: "จัดการผลงาน", path: "/backend/achievements" },
+  { label: "จัดการคณะทำงาน", path: "/backend/employees" },
+  { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
+  { label: "จัดการสมาชิก", path: "/backend/members" },
+  { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
+  { label: "จัดการผู้เชี่ยวชาญ", path: "/backend/experts" },
   { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
 ];
 
