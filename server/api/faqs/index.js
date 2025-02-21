@@ -3,10 +3,25 @@ import { dbConfig } from '@/server/config/poom_db_config';
 
 const pool = mysql.createPool(dbConfig);
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
     let connection;
     try {
         connection = await pool.getConnection();
+        const method = event.req.method;
+
+        if (method === 'PUT') {
+            const body = await readBody(event);
+            const { ids, status } = body;
+
+            if (!Array.isArray(ids) || typeof status !== 'boolean') {
+                return { success: false, message: 'Invalid input.' };
+            }
+
+            const query = 'UPDATE faq SET status = ? WHERE id IN (?)';
+            const [result] = await connection.execute(query, [status ? 1 : 0, ids]);
+
+            return { success: true, affectedRows: result.affectedRows };
+        }
 
         const [rows] = await connection.execute('SELECT * FROM `faq`');
 
@@ -16,7 +31,6 @@ export default defineEventHandler(async () => {
         }
 
         return {
-            
             faqs: rows.map(faq => ({
                 id: faq.id,
                 question: faq.question,

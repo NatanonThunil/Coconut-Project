@@ -1,7 +1,13 @@
 import { useI18n } from 'vue-i18n';  // Make sure to import the useI18n if you are using Vue I18n
 
 export const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    const toBangkokTime = (dateStr) => {
+        const date = new Date(dateStr);
+        const bangkokOffset = 7 * 60 * 60 * 1000;
+        return new Date(date.getTime() + bangkokOffset);
+    };
+
+    const date = toBangkokTime(dateString);
     if (isNaN(date)) return 'Invalid Date';
 
     const MonthsInThai = [
@@ -16,11 +22,9 @@ export const formatDate = (dateString) => {
 
     const { locale } = useI18n();
 
-    
     let month = "";
     let year = date.getFullYear();
     const day = date.getDate();
-
 
     if (locale.value === "th") {
         month = MonthsInThai[date.getMonth()];

@@ -43,12 +43,29 @@
         </ul>
       </li>
 
-      <li :class="{ Selected: selecto === 'coconutdata' }">
+      <!-- <li :class="{ Selected: selecto === 'coconutdata' }">
         <NuxtLinkLocale to="/coconut-information">
           <img class="btn-icons"
             :src="selecto === 'coconutdata' ? '/_nuxt/assets/icon/w/database.svg' : '/_nuxt/assets/icon/database.svg'"
             alt="ข้อมูลมะพร้าว" />{{ $t('CoconutInfo') }}
         </NuxtLinkLocale>
+      </li> -->
+
+      <li :class="[{ Selected: ((selecto === 'coconutdata') ) }, 'nnedd']">
+        <p class="img-dd-adjust">
+          <img class="btn-icons"
+            :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+            alt="ข้อมูลมะพร้าว" />
+            {{ $t('CoconutInfo') }} <span> ▼</span>
+        </p>
+        <ul class="dropdown">
+          <li>
+            <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
+          </li>
+          <li>
+            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+          </li>
+        </ul>
       </li>
       <li :class="{ Selected: selecto === 'expert' }">
         <NuxtLinkLocale to="/experts">

@@ -53,8 +53,8 @@
 
     <div class="divider"></div>
     <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">คำอธิบาย</h2>
-    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">{{ event?.description ||
-        'ไม่มีคำอธิบาย' }}</p>
+    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="event?.description ||
+        'ไม่มีคำอธิบาย'"></p>
     <SeeAllButton text="ดูกิจกรรมอื่นๆ" link="/events" />
 
 </template>
@@ -82,7 +82,7 @@ export default {
             const response = await fetch(`/api/events_table`);
             if (!response.ok) throw new Error('Failed to fetch event details');
             const data = await response.json();
-            this.event = data.find(event => (event.id === parseInt(cid) ) && event.status)|| null;
+            this.event = data.find(event => (event.id === parseInt(cid)) && event.status) || null;
 
             if (this.event) {
                 this.updateHead();

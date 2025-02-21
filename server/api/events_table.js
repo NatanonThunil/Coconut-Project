@@ -9,9 +9,9 @@ export default defineEventHandler(async () => {
     const events = rows.map((event) => {
       let imageBase64 = null;
       if (event.image) {
-        // Determine the MIME type by checking the first few bytes of the image
+      
         const imageBuffer = Buffer.from(event.image);
-        let mimeType = 'image/jpeg'; // Default to JPEG
+        let mimeType = 'image/jpeg'; 
 
         if (
           imageBuffer[0] === 0x89 &&
@@ -19,7 +19,7 @@ export default defineEventHandler(async () => {
           imageBuffer[2] === 0x4E &&
           imageBuffer[3] === 0x47
         ) {
-          mimeType = 'image/png'; // PNG file signature
+          mimeType = 'image/png'; 
         }
 
         imageBase64 = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
@@ -33,7 +33,7 @@ export default defineEventHandler(async () => {
 
     await connection.end();
 
-    return events;  // Return events directly
+    return events; 
   } catch (error) {
     console.error('Error fetching events:', error);
     return { error: 'Failed to fetch events' };

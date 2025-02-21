@@ -91,7 +91,7 @@ watchEffect(updateTextHW);
 <style scoped>
 .hero-bar {
   position: relative;
-  width: 100%;
+  
   height: 80vh;
   aspect-ratio: 8/3;
   background-size: cover;
@@ -118,7 +118,7 @@ watchEffect(updateTextHW);
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
-  font-size: x-large;
+  font-size: clamp(1rem, 1.1vw, 2rem); /* Corrected clamp function */
   width: auto;
   white-space: nowrap;
 }

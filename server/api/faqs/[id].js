@@ -9,14 +9,9 @@ export default defineEventHandler(async (event) => {
         connection = await pool.getConnection();
         const method = event.req.method;
         const id = event.context.params.id;
-        if (!id) {
-            return { error: 'FAQ ID is required.' };
-        }
+
         if (method === 'GET') {
-            const [rows] = await connection.execute(
-                'SELECT * FROM faq WHERE id = ?',
-                [id]
-            );
+            const [rows] = await connection.execute('SELECT * FROM faq WHERE id = ?', [id]);
 
             if (rows.length === 0) {
                 return { error: 'FAQ not found.' };
@@ -25,20 +20,15 @@ export default defineEventHandler(async (event) => {
             return { success: true, faq: rows[0] };
 
         } else if (method === 'PUT') {
-            // Update an existing FAQ
             const body = await readBody(event);
-            const { question, answer, status } = body;
+            const { question, answer, question_en, answer_en, status, isadvice } = body;
 
             if (!question || !answer) {
                 return { error: 'Question and answer are required.' };
             }
 
-            const query = `
-                UPDATE faq
-                SET question = ?, answer = ?, status = ? ,isadvice = ?
-                WHERE id = ?
-            `;
-            const values = [question, answer, status ? 1 : 0, id];
+            const query = 'UPDATE faq SET question = ?, answer = ?, question_en = ?, answer_en = ?, status = ?, isadvice = ? WHERE id = ?';
+            const values = [question, answer, question_en, answer_en, status ? 1 : 0, isadvice ? 1 : 0, id];
 
             const [result] = await connection.execute(query, values);
             if (result.affectedRows === 0) {
@@ -48,7 +38,6 @@ export default defineEventHandler(async (event) => {
             return { message: 'FAQ updated successfully', id };
 
         } else if (method === 'DELETE') {
-            // Delete an FAQ by ID
             const query = 'DELETE FROM faq WHERE id = ?';
             const [result] = await connection.execute(query, [id]);
 
@@ -57,6 +46,22 @@ export default defineEventHandler(async (event) => {
             }
 
             return { message: 'FAQ deleted successfully', id };
+
+        } else if (method === 'POST') {
+            const body = await readBody(event);
+            const { question, answer, question_en, answer_en, status, isadvice } = body;
+
+            if (!question || !answer) {
+                return { error: 'Question and answer are required.' };
+            }
+
+            const query = 'INSERT INTO faq (question, answer, question_en, answer_en, status, isadvice) VALUES (?, ?, ?, ?, ?, ?)';
+            const values = [question, answer, question_en, answer_en, status ? 1 : 0, isadvice ? 1 : 0];
+
+            const [result] = await connection.execute(query, values);
+            const newId = result.insertId;
+
+            return { message: 'FAQ added successfully', id: newId };
 
         } else {
             return { error: 'Method not allowed.' };
