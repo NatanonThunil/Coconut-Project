@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import { dbConfig } from '@/server/config/poom_db_config';
+import { readBody } from 'h3';
 
 const pool = mysql.createPool(dbConfig);
 
@@ -7,31 +8,15 @@ export default defineEventHandler(async (event) => {
     let connection;
     try {
         connection = await pool.getConnection();
-        const method = event.req.method;
 
-        if (method === 'PUT') {
-            const body = await readBody(event);
-            const { ids, status } = body;
+        if (event.req.method === 'GET') {
+            const [rows] = await connection.execute('SELECT * FROM `faq`');
 
-            if (!Array.isArray(ids) || typeof status !== 'boolean') {
-                return { success: false, message: 'Invalid input.' };
+            if (rows.length === 0) {
+                return { message: 'No FAQs available.' };
             }
 
-            const query = 'UPDATE faq SET status = ? WHERE id IN (?)';
-            const [result] = await connection.execute(query, [status ? 1 : 0, ids]);
-
-            return { success: true, affectedRows: result.affectedRows };
-        }
-
-        const [rows] = await connection.execute('SELECT * FROM `faq`');
-
-        if (!rows.length) {
-            console.warn("Database Query: No active FAQs found.");
-            return { success: false, message: 'No active FAQs available.' };
-        }
-
-        return {
-            faqs: rows.map(faq => ({
+            const faqs = rows.map((faq) => ({
                 id: faq.id,
                 question: faq.question,
                 answer: faq.answer,
@@ -39,12 +24,29 @@ export default defineEventHandler(async (event) => {
                 answer_en: faq.answer_en,
                 status: faq.status,
                 isadvice: faq.isadvice
-            }))
-        };
+            }));
 
+            return { faqs };
+
+        } else if (event.req.method === 'POST') {
+            const body = await readBody(event);
+            const { question, answer, question_en, answer_en, status, isadvice } = body;
+
+            if (!question || !answer) {
+                return { error: 'Question and answer are required.' };
+            }
+
+            const query = 'INSERT INTO faq (question, answer, question_en, answer_en, status, isadvice) VALUES (?, ?, ?, ?, ?, ?)';
+            const values = [question, answer, question_en, answer_en, status ? 1 : 0, isadvice ? 1 : 0];
+
+            const [result] = await connection.execute(query, values);
+            const newId = result.insertId;
+
+            return { message: 'FAQ added successfully', id: newId };
+        }
     } catch (error) {
-        console.error('Error fetching FAQs:', error);
-        return { success: false, error: 'Failed to fetch FAQs' };
+        console.error('Error handling FAQ:', error);
+        return { error: 'Failed to handle FAQ' };
     } finally {
         if (connection) connection.release();
     }

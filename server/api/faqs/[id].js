@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import { dbConfig } from '@/server/config/poom_db_config';
+import { readBody } from 'h3';
 
 const pool = mysql.createPool(dbConfig);
 

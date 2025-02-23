@@ -9,6 +9,8 @@ import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Heading from "@tiptap/extension-heading";
 import Link from "@tiptap/extension-link";
+import Color from "@tiptap/extension-color";
+import TextStyle from "@tiptap/extension-text-style";
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
@@ -16,21 +18,23 @@ const editor = ref(null);
 
 onMounted(async () => {
   editor.value = new Editor({
-    extensions: [
-      StarterKit.configure({ heading: false }),
-      Bold,
-      Italic,
-      Underline,
-      Image.configure({ allowBase64: true }),
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Heading.configure({ levels: [1, 2, 3] }),
-      Link.configure({ openOnClick: true }),
-    ],
-    content: props.modelValue || "",
-    onUpdate: ({ editor }) => {
-      emit("update:modelValue", editor.getHTML());
-    },
-  });
+  extensions: [
+    StarterKit.configure({ heading: false }),
+    Bold,
+    Italic,
+    Underline,
+    Image.configure({ allowBase64: true }),
+    TextAlign.configure({ types: ["heading", "paragraph"] }),
+    Heading.configure({ levels: [1, 2, 3] }),
+    Link.configure({ openOnClick: true }),
+    TextStyle, // 👉 Required for color
+    Color.configure({ types: ["textStyle"] }), // Use with TextStyle
+  ],
+  content: props.modelValue || "",
+  onUpdate: ({ editor }) => {
+    emit("update:modelValue", editor.getHTML());
+  },
+});
 
   await nextTick(); // Ensures UI updates properly before accessing editor
 });
@@ -69,8 +73,20 @@ const setTextAlign = (alignment) => {
 
 const addLink = () => {
   const url = prompt("Enter URL");
-  if (url) editor.value.chain().focus().setLink({ href: url }).run();
+  if (url) {
+    editor.value.chain().focus().extendMarkRange('link').setLink({ href: url }).setUnderline().setItalic().run();
+  }
 };
+
+const changeColor = (color) => {
+  const isActive = editor.value?.isActive("textStyle", { color });
+
+  editor.value?.chain().focus()
+    .setColor(isActive ? null : color)
+    .run();
+};
+
+
 </script>
 
 <template>
@@ -96,19 +112,21 @@ const addLink = () => {
       <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }" title="Align Left">
         <span class="icon">⬅</span>
       </button>
-      <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center' }) }" title="Align Center">
+      <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center'}) }" title="Align Center">
         <span class="icon">⬆</span>
       </button>
       <button @click="setTextAlign('right')" :class="{ active: editor?.isActive({ textAlign: 'right' }) }" title="Align Right">
         <span class="icon">➡</span>
       </button>
+      <input type="color" @input="e => changeColor(e.target.value)" title="Text Color" />
+
+
     </div>
     <EditorContent v-if="editor" :editor="editor" class="editor-content" />
   </div>
 </template>
 
 <style scoped>
-
 .tiptap-container {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -125,6 +143,7 @@ const addLink = () => {
   padding: 6px;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
 }
 button,
 .upload-btn {
@@ -146,17 +165,17 @@ button.active {
   background: #4caf50;
   color: white;
 }
-.editor-content h1 {
+.editor-content:focus h1 {
   font-size: 3rem !important;
   font-weight: bold;
   margin: 0;
 }
-.editor-content h2 {
+.editor-content:focus h2 {
   font-size: 2.5rem;
   font-weight: bold;
   margin: 0;
 }
-.editor-content h3 {
+.editor-content:focus h3 {
   font-size: 2rem;
   font-weight: bold;
   margin: 0;
@@ -165,14 +184,35 @@ button.active {
   overflow-y: auto;
   min-height: 150px;
   max-height: 250px;
-  padding: 10px;
+
   background: white;
   border-radius: 4px;
   border: 1px solid #ccc;
+}
+.editor-content img {
+  display: block;
+  margin: 0 auto;
+}
+.editor-content a {
+  text-decoration: underline;
+  font-style: italic;
 }
 .editor-content:focus-visible {
   outline: none;
   border-color: #4caf50;
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  button,
+  .upload-btn {
+    width: 100%;
+    text-align: left;
+  }
 }
 </style>

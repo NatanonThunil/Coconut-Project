@@ -52,18 +52,21 @@
       </li> -->
 
       <li :class="[{ Selected: ((selecto === 'coconutdata') ) }, 'nnedd']">
-        <p class="img-dd-adjust">
+        <NuxtLinkLocale style="padding: 0px;" to="/coconut-information"><p class="img-dd-adjust">
           <img class="btn-icons"
-            :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+            :src="selecto === 'coconutdata' || selecto === 'pest' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
             alt="ข้อมูลมะพร้าว" />
             {{ $t('CoconutInfo') }} <span> ▼</span>
-        </p>
+        </p></NuxtLinkLocale>
         <ul class="dropdown">
           <li>
             <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Events') }}</NuxtLinkLocale>
+          </li>
+          <li>
+            <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Events') }}</NuxtLinkLocale>
           </li>
         </ul>
       </li>
@@ -292,6 +295,7 @@ nuxt-link:hover {
   display: flex;
   padding: 10px 15px;
   ;
+  text-wrap: nowrap;
   width: 100%;
   align-items: center;
 }

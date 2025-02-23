@@ -18,6 +18,15 @@
 
   .coconut-green-text{
     color: #4E6D16;
+
+    
+}
+.tiptap.ProseMirror {
+  min-height: 150px; 
+  height: auto; 
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box; 
 }
 
   

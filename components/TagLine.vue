@@ -79,7 +79,7 @@ const fetchTagline = async () => {
 
 
 watch(locale, async () => {
-  await nextTick(); 
+  await nextTick();
   updateTextHW();
 });
 
@@ -91,8 +91,8 @@ watchEffect(updateTextHW);
 <style scoped>
 .hero-bar {
   position: relative;
-  
-  height: 80vh;
+  width: 100%;
+  height: 80dvh;
   aspect-ratio: 8/3;
   background-size: cover;
   background-position: center;
@@ -118,7 +118,8 @@ watchEffect(updateTextHW);
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
-  font-size: clamp(1rem, 1.1vw, 2rem); /* Corrected clamp function */
+  font-size: clamp(1rem, 1.1vw, 2rem);
+  /* Corrected clamp function */
   width: auto;
   white-space: nowrap;
 }
@@ -128,6 +129,7 @@ watchEffect(updateTextHW);
     opacity: 0;
     transform: scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -136,11 +138,12 @@ watchEffect(updateTextHW);
 
 @keyframes fadeInImage {
   0% {
-  
+
     transform: scale(1.1);
   }
+
   100% {
-  
+
     transform: scale(1);
   }
 }
