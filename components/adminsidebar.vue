@@ -28,10 +28,11 @@ const menuItems = [
   { label: "จัดการกิจกรรม", path: "/backend/events" },
   { label: "จัดการผลงาน", path: "/backend/achievements" },
   { label: "จัดการคณะทำงาน", path: "/backend/employees" },
-  { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
   { label: "จัดการสมาชิก", path: "/backend/members" },
-  { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
   { label: "จัดการผู้เชี่ยวชาญ", path: "/backend/experts" },
+  { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
+  { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
+
   { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
 ];
 

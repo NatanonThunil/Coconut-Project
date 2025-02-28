@@ -1,20 +1,15 @@
 <template>
-
     <div style="height: 5rem;"></div>
     <div class="table-head-text-container">
-        <h1>จัดการข่าว</h1>
-        <p>มีข่าวทั้งหมด {{ NewsNum }}</p>
+        <h1>จัดการสมาชิก</h1>
+        <p>มีสมาชิกทั้งหมด {{ membersNum }}</p>
     </div>
     <div class="add-btn-container">
-        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
-
-        <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
-                Checked
-                Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked
-                Unpublish</button>
-
-            <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
+        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
+        <div class="member-check-publish">
+            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+            <button class="add-news-btn" @click="openAddMemberModal">ADD Member</button>
         </div>
     </div>
 
@@ -27,56 +22,83 @@
                             <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
                                 class="checkbox-decorate" />
                             <span>ID</span>
-                            <button @click="toggleSort('id')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button>
+                            <button @click="toggleSort('id')">
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
+                            </button>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Title<button @click="toggleSort('title')"><div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div></button></div>
+                            <div>Name<button @click="toggleSort('name')">
+                                    <div :class="{ 'rotate': sortBy === 'name' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Author<button @click="toggleSort('author')"><div :class="{'rotate': sortBy === 'author' && sortDirection === -1}">▲</div></button></div>
+                            <div>Email<button @click="toggleSort('email')">
+                                    <div :class="{ 'rotate': sortBy === 'email' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
-                    <th><div class="checkbox-id-container">
-                            <div>Hot news <button @click="toggleSort('hot_new')"><div :class="{'rotate': sortBy === 'hot_new' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Create date <button @click="toggleSort('upload_date')"><div :class="{'rotate': sortBy === 'upload_date' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Status <button @click="toggleSort('status')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Address<button @click="toggleSort('address')">
+                                    <div :class="{ 'rotate': sortBy === 'address' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Phone Number<button @click="toggleSort('phoneNumber')">
+                                    <div :class="{ 'rotate': sortBy === 'phoneNumber' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Tags<button @click="toggleSort('tags')">
+                                    <div :class="{ 'rotate': sortBy === 'tags' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Status<button @click="toggleSort('status')">
+                                    <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody v-if="filteredSortedNews.length">
-                <tr v-for="news in filteredSortedNews" :key="news.id">
+            <tbody v-if="filteredSortedMembers.length">
+                <tr v-for="member in filteredSortedMembers" :key="member.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="news.selected" />
-                            <p>{{ news.id }}</p>
+                            <input type="checkbox" v-model="member.selected" />
+                            <p>{{ member.id }}</p>
                         </div>
                     </td>
-                    <td>{{ news.title }}</td>
-                    <td>{{ news.author }}</td>
-                    <td :style="{ color: news.hot_new ? 'green' : 'red', fontWeight: '700' }">
-                        {{ news.hot_new ? "✓" : "✕" }}
-                    </td>
-                    <td>{{ formatDate(news.upload_date) }}</td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.address }}</td>
+                    <td>{{ member.phoneNumber }}</td>
+                    
+                    <td>{{ member.tags.join(', ') }}</td>
                     <td>
                         <label class="status-toggle">
-                            <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
-                            <img class="eyesicon" :src="news.status ? eye : eyeBlink" alt="Visibility Icon" />
+                            <input type="checkbox" :checked="member.status" @change="toggleStatus(member)" />
+                            <img class="eyesicon" :src="member.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
                     <td class="action-buttons">
-                        <div class="action-btn-container"> <button @click="editItem(news)" class="edit-btn"><img
-                                    src="@/assets/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
+                        <div class="action-btn-container">
+                            <button @click="editItem(member)" class="edit-btn"><img src="@/assets/icon/pen.png"
+                                    alt=""></button>
+                            <button @click="askDelete(member.id, member.name)" class="delete-btn"><img
                                     src="@/assets/icon/trash.png" alt=""></button>
                         </div>
                     </td>
@@ -98,59 +120,79 @@
         </div>
     </div>
 
-    <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
+    <div v-if="showModalAddMember || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
-            <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+            <h2>{{ showModalEdit ? 'แก้ไขสมาชิก' : 'เพิ่มสมาชิก' }}</h2>
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
-                    <label>ชื่อผู้เขียน</label>
-                    <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
+                    <label>ชื่อ</label>
+                    <input class="add-text-input" v-model="currentMember.name" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
+                    <label>ชื่อ (อังกฤษ)</label>
+                    <input class="add-text-input" v-model="currentMember.name_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English"
                         required />
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
+                    <label>ที่อยู่</label>
+                    <input class="add-text-input" v-model="currentMember.address" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address"
+                        required />
+                    <label>ที่อยู่ (อังกฤษ)</label>
+                    <input class="add-text-input" v-model="currentMember.address_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                        placeholder="Enter address in English" required />
+                    <label>เบอร์โทร</label>
+                    <input class="add-text-input" v-model="currentMember.phoneNumber" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number"
+                        required />
+                    <label>Email</label>
+                    <input class="add-text-input" v-model="currentMember.email" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
+                    <label>คำอธิบาย</label>
+                    <textarea class="add-text-input" v-model="currentMember.description" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                        placeholder="Enter description"></textarea>
+                    <label>คำอธิบาย (อังกฤษ)</label>
+                    <textarea class="add-text-input" v-model="currentMember.description_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                        placeholder="Enter description in English"></textarea>
+                    <label>Tags</label>
+                    <div class="tags-input-container">
+                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange" @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
+                            placeholder="Add a tag" />
+                        <div class="tag" v-for="(tag, index) in currentMember.tags" :key="index">
+                            {{ tag }}
+                            <button type="button" @click="removeTag(index)">x</button>
+                        </div>
+                        
+
+                        <div v-if="filteredTags.length" class="tags-suggestions">
+                            <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
+                                {{ tag }}
+                            </div>
+                        </div>
+                    </div>
+                    <label>Image</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleDragDrop">
-                            <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
-                            <div v-if="currentNews.image" class="image-preview">
-                                <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
+                            @drop.prevent="handleFileUpload">
+                            <img v-if="!currentMember.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <h2 v-if="!currentMember.image">Drag & Drop or Click to Upload</h2>
+                            <div v-if="currentMember.image" class="image-preview">
+                                <img :src="currentMember.image" alt="Uploaded Image" class="preview-image" />
                                 <button class="remove-btn" @click="removeImage">X</button>
                             </div>
                             <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
                                 class="file-uploader" ref="fileInput" />
-                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse
-                                File</button>
+                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
                         </div>
                     </div>
                 </section>
-                <section>
-                    <div class="hotnews-toggle-container">
-                        <label class="hotnews-toggle-label">เป็นข่าวใหญ่</label>
-                        <label class="hotnews-switch">
-                            <input v-model="currentNews.hot_new" type="checkbox">
-                            <span class="hotnews-slider"></span>
-                        </label>
-                    </div>
-                    <label>Description</label>
-                    <TiptapEditor v-model="currentNews.description" />
-
-                    <label>Summary</label>
-                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
-                </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitNews(false)">{{ showModalEdit ?
+                <button type="button" class="confirme-btn" @click.prevent="submitMember(false)">{{ showModalEdit ?
                     'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitNews(true)">{{ showModalEdit ?
+                <button type="button" class="confirm-btn" @click.prevent="submitMember(true)">{{ showModalEdit ?
                     'Update & Publish' : 'Add & Publish' }}</button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
     </div>
+
+    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden>
     <div v-if="showCropper" class="cropper-container">
         <div class="cropper-wrapper">
             <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
@@ -160,8 +202,8 @@
             <button @click="cancelCrop" class="cancel-btn">Cancel</button>
         </div>
     </div>
-    <div style="height: 5rem;"></div>
 
+    <div style="height: 5rem;"></div>
 </template>
 
 <script setup>
@@ -171,242 +213,49 @@ definePageMeta({
 import { ref, onMounted, computed, nextTick } from 'vue';
 import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
-import TiptapEditor from '@/components/TiptapEditor.vue';
+import '@/assets/styles/backend_style.css';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '@/assets/styles/backend_style.css'; // Import shared CSS
 
-const apiEndpoint = 'news';
+const apiEndpoint = 'members';
 const searchQuery = ref('');
-const News = ref([]);
-const NewsNum = ref(0);
+const members = ref([]);
+const membersNum = ref(0);
 const selectAll = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
 const showModal = ref(false);
-const showModalAddnews = ref(false);
+const showModalAddMember = ref(false);
 const showModalEdit = ref(false);
-const isDragging = ref(false);
-const fileInput = ref(null);
 const sortBy = ref(null);
 const sortDirection = ref(1);
-const currentNews = ref({
+const currentMember = ref({
     id: null,
-    title: '',
+    name: '',
+    name_en: '', 
+    address: '',
+    address_en: '', 
+    phoneNumber: '',
+    email: '', 
+    description: '', 
+    description_en: '', 
+    status: 1,
+    tags: [], 
     image: '',
-    author: '',
-    description: '',
-    summerize: '',
-    hot_new: false,
-    upload_date: new Date().toISOString().split('T')[0],
-    status: false,
 });
+const newTag = ref('');
+const isDragging = ref(false);
+const fileInput = ref(null);
+const filteredTags = ref([]);
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
-
-const toggleStatus = async (news) => {
-    try {
-
-        const newStatus = !news.status;
-
-
-        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update news status.');
-        }
-
-        // Update status only after successful response
-        news.status = newStatus;
-
-
-    } catch (error) {
-        alert('Error updating news status.');
-        console.error(error);
-    }
-};
+const allTags = ref(['tag1', 'tag2', 'tag3']); // Example tags, replace with actual tags
+const originalImage = ref(''); // Store the original image before cropping
 
 const triggerFileInput = () => {
     fileInput.value.click();
-};
-const fetchNews = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
-        News.value = response.map(news => ({ ...news, selected: false }));
-        NewsNum.value = News.value.length;
-    } catch (error) {
-        alert('Error fetching news.');
-    }
-};
-
-const editItem = (news) => {
-    currentNews.value = {
-        ...news,
-        hot_new: !!news.hot_new,
-        status: !!news.status,
-        description: news.description || "", // Ensure description is set
-    };
-
-    showModalEdit.value = true; // Open modal first
-
-    // Wait for modal to fully open, then update Tiptap content
-    nextTick(() => {
-        console.log("Setting Tiptap Content:", currentNews.value.description);
-    });
-};
-
-
-const filteredSortedNews = computed(() => {
-  let filtered = News.value.filter(news =>
-    news.id.toString().includes(searchQuery.value) ||
-    news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.upload_date.includes(searchQuery.value)
-  );
-  
-  if (sortBy.value) {
-    filtered.sort((a, b) => {
-      let valA = a[sortBy.value];
-      let valB = b[sortBy.value];
-      
-      if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-      if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
-      if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-      if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
-      return 0;
-    });
-  }
-  return filtered;
-});
-
-const toggleSort = (column) => {
-  if (sortBy.value === column) {
-    sortDirection.value *= -1;
-  } else {
-    sortBy.value = column;
-    sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
-  }
-};
-
-
-const openAddNewsModal = () => {
-    currentNews.value = {
-        id: null,
-        title: '',
-        image: '',
-        author: '',
-        description: '',
-        summerize: '',
-        hot_new: false,
-        upload_date: new Date().toISOString().split('T')[0],
-        status: false,
-    };
-    showModalAddnews.value = true;
-};
-
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedNews = News.value.filter(news => news.selected);
-        if (selectedNews.length === 0) {
-            alert('No news items selected.');
-            return;
-        }
-
-        const updatePromises = selectedNews.map(news =>
-            fetch(`/api/news/${news.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...news, status: publish ? 1 : 0 })
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedNews.forEach(news => {
-            news.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected news items.`);
-    } catch {
-        alert('Failed to update news status.');
-    }
-};
-
-const submitNews = async (publish) => {
-    if (!currentNews.value.title.trim() || !currentNews.value.author.trim()) {
-        alert('Please fill in all required fields: Title and Author.');
-        return;
-    }
-
-    try {
-
-        const userTime = new Date();
-        const bangkokOffset = 7 * 60 * 60 * 1000;
-        const bangkokTime = new Date(userTime.getTime() + bangkokOffset);
-
-        currentNews.value.upload_date = bangkokTime
-            .toISOString()
-            .slice(0, 19)
-            .replace('T', ' ');
-
-        const isUpdate = !!currentNews.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news_rest';
-
-        const payload = {
-            id: currentNews.value.id,
-            title: currentNews.value.title,
-            description: currentNews.value.description,
-            author: currentNews.value.author,
-            upload_date: currentNews.value.upload_date,
-            status: publish ? 1 : 0,
-            hot_new: currentNews.value.hot_new,
-            summerize: currentNews.value.summerize,
-            image: currentNews.value.image || '',
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            throw new Error('Error saving the news.');
-        }
-
-        if (!isUpdate) {
-            currentNews.value.id = await response.json();
-            alert('News added successfully.');
-        } else {
-            alert('News updated successfully.');
-        }
-
-        showModalAddnews.value = false;
-        showModalEdit.value = false;
-        fetchNews();
-
-    } catch (error) {
-        alert('Error while submitting news.');
-        console.error(error);
-    }
-};
-
-
-
-const closeModal = () => {
-    showModalAddnews.value = false;
-    showModalEdit.value = false;
-};
-
-const removeImage = () => {
-    currentNews.value.image = '';
 };
 
 const handleDragDrop = (e) => {
@@ -418,50 +267,251 @@ const handleDragDrop = (e) => {
 
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
         const reader = new FileReader();
         reader.onload = () => {
+            originalImage.value = currentMember.value.image; // Save the original image
             croppingImage.value = reader.result;
             showCropper.value = true;
             nextTick(() => {
                 cropperInstance.value = new Cropper(cropperImage.value, {
-                    aspectRatio: 16 / 9,
-                    viewMode: 1,
-                    autoCropArea: 1,
-                    background: false,
-                    zoomable: false,
-                    movable: false,
-                    rotatable: false,
-                    scalable: false,
+                    aspectRatio: 2 / 3,
+                    viewMode: 2,
+                    autoCropArea: 1
                 });
             });
         };
         reader.readAsDataURL(file);
+    } else {
+        alert('Only JPEG and PNG files are allowed.');
     }
 };
 
 const cropImage = () => {
     if (cropperInstance.value) {
         const canvas = cropperInstance.value.getCroppedCanvas();
-        currentNews.value.image = canvas.toDataURL('image/jpeg');
+        currentMember.value.image = canvas.toDataURL('image/jpeg');
         showCropper.value = false;
         cropperInstance.value.destroy();
     }
 };
 
 const cancelCrop = () => {
+    currentMember.value.image = originalImage.value; // Restore the original image
     showCropper.value = false;
     cropperInstance.value.destroy();
 };
 
-const askDelete = (id, title) => {
+const removeImage = () => {
+    currentMember.value.image = '';
+};
+
+const toggleStatus = async (member) => {
+    try {
+        const newStatus = !member.status;
+        const response = await fetch(`/api/${apiEndpoint}/${member.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...member, status: newStatus ? 1 : 0 }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update member status.');
+        }
+
+        member.status = newStatus;
+    } catch (error) {
+        alert('Error updating member status.');
+        console.error(error);
+    }
+};
+
+const fetchMembers = async () => {
+    try {
+        const response = await $fetch(`/api/${apiEndpoint}`);
+        const membersWithTags = await Promise.all(response.map(async (member) => {
+            const tagsResponse = await fetchAllTagsForMember(member.id);
+            return { ...member, selected: false, tags: tagsResponse.map(tag => tag.text) };
+        }));
+        members.value = membersWithTags;
+        membersNum.value = members.value.length;
+    } catch (error) {
+        alert('Error fetching members.');
+        console.error('Error fetching members:', error.message, error.stack);
+    }
+};
+
+const fetchAllTagsForMember = async (memberId) => {
+    try {
+        const response = await $fetch(`/api/tags_member?member_id=${memberId}`);
+        return Array.isArray(response) ? response : [];
+    } catch (error) {
+        console.error('Error fetching tags:', error.message, error.stack);
+        alert('Error fetching tags.');
+        return [];
+    }
+};
+
+const editItem = (member) => {
+    currentMember.value = { 
+        ...member, 
+        status: !!member.status,
+        tags: [...member.tags], 
+        image: member.image || '' 
+    };
+    showModalEdit.value = true;
+};
+
+
+const filteredSortedMembers = computed(() => {
+    let filtered = members.value.filter(member =>
+        member.id.toString().includes(searchQuery.value) ||
+        member.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        member.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        member.phoneNumber.includes(searchQuery.value) ||
+        member.email.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+        member.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase())) 
+    );
+
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            let valA = a[sortBy.value];
+            let valB = b[sortBy.value];
+
+            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+            if (sortBy.value === 'name' || sortBy.value === 'address' || sortBy.value === 'email') return valA.localeCompare(valB, 'th') * sortDirection.value;
+            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
+            if (sortBy.value === 'phoneNumber') return (valA - valB) * sortDirection.value;
+            return 0;
+        });
+    }
+    return filtered;
+});
+
+const toggleSort = (column) => {
+    if (sortBy.value === column) {
+        sortDirection.value *= -1;
+    } else {
+        sortBy.value = column;
+        sortDirection.value = column === 'status' ? -1 : 1;
+    }
+};
+
+const openAddMemberModal = () => {
+    currentMember.value = {
+        id: null,
+        name: '',
+        name_en: '', 
+        address: '',
+        address_en: '',
+        phoneNumber: '',
+        email: '', 
+        description: '',
+        description_en: '',
+        status: 1,
+        tags: [],
+        image: '',
+    };
+    showModalAddMember.value = true;
+};
+
+const bulkUpdateStatus = async (publish) => {
+    try {
+        const selectedMembers = members.value.filter(member => member.selected);
+        if (selectedMembers.length === 0) {
+            alert('No members selected.');
+            return;
+        }
+
+        const updatePromises = selectedMembers.map(member =>
+            fetch(`/api/${apiEndpoint}/${member.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...member, status: publish ? 1 : 0 })
+            })
+        );
+
+        await Promise.all(updatePromises);
+
+        selectedMembers.forEach(member => {
+            member.status = publish ? 1 : 0;
+        });
+
+        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected members.`);
+    } catch {
+        alert('Failed to update member status.');
+    }
+};
+
+const submitMember = async (publish) => {
+    if (!currentMember.value.name.trim() || !currentMember.value.name_en.trim() || !currentMember.value.address.trim() || !currentMember.value.address_en.trim() || !currentMember.value.phoneNumber.trim() || !currentMember.value.email.trim()) {
+        alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
+        return;
+    }
+
+    try {
+        const isUpdate = !!currentMember.value.id;
+        const method = isUpdate ? 'PUT' : 'POST';
+        const url = isUpdate ? `/api/${apiEndpoint}/${currentMember.value.id}` : `/api/${apiEndpoint}`;
+
+        const payload = {
+            id: currentMember.value.id,
+            name: currentMember.value.name,
+            name_en: currentMember.value.name_en, 
+            address: currentMember.value.address,
+            address_en: currentMember.value.address_en, 
+            phoneNumber: currentMember.value.phoneNumber,
+            email: currentMember.value.email, 
+            description: currentMember.value.description, 
+            description_en: currentMember.value.description_en, 
+            status: publish ? 1 : 0,
+            tags: currentMember.value.tags, 
+            image: currentMember.value.image || '', 
+        };
+
+        const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error('Error saving the member.');
+        }
+
+        const result = await response.json();
+        if (!isUpdate) {
+            currentMember.value.id = result.id;
+            alert('Member added successfully.');
+        } else {
+            alert('Member updated successfully.');
+        }
+
+        showModalAddMember.value = false;
+        showModalEdit.value = false;
+        fetchMembers();
+    } catch (error) {
+        alert('Error while submitting member.');
+        console.error('Submit Member Error:', error);
+    }
+};
+
+const closeModal = () => {
+    showModalAddMember.value = false;
+    showModalEdit.value = false;
+};
+
+const askDelete = (id, name) => {
     deleteId.value = id;
-    deleteName.value = title;
+    deleteName.value = name;
     showModal.value = true;
 };
+
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/news/${deleteId.value}`, {
+        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: deleteId.value }),
@@ -471,37 +521,69 @@ const confirmDelete = async () => {
         console.log("Delete API Response:", result);
 
         if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete news.');
+            throw new Error(result.error || 'Failed to delete member.');
         }
 
-        // Update frontend list
-        News.value = News.value.filter(news => news.id !== deleteId.value);
-        NewsNum.value = News.value.length;
+        members.value = members.value.filter(member => member.id !== deleteId.value);
+        membersNum.value = members.value.length;
 
         showModal.value = false;
-        alert('News deleted successfully.');
+        alert('Member deleted successfully.');
     } catch (error) {
-        alert(`Error deleting news: ${error.message}`);
+        alert(`Error deleting member: ${error.message}`);
         console.error(error);
     } finally {
         deleteId.value = null;
     }
 };
 
-
-
 const cancelDelete = () => {
     showModal.value = false;
 };
 
+const addTag = () => {
+    if (newTag.value.trim() !== '' && !currentMember.value.tags.includes(newTag.value.trim())) {
+        currentMember.value.tags.push(newTag.value.trim());
+    }
+    newTag.value = ''; 
+    filteredTags.value = [];
+    currentMember.value = { ...currentMember.value }; 
+};
+
+const removeTag = (index) => {
+    currentMember.value.tags.splice(index, 1);
+};
+
+const filterTags = () => {
+    const prefix = newTag.value.toLowerCase();
+    filteredTags.value = allTags.value.filter(tag => tag.toLowerCase().startsWith(prefix) && !currentMember.value.tags.includes(tag));
+};
+
+const selectTag = (tag) => {
+    currentMember.value.tags.push(tag);
+    newTag.value = '';
+    filteredTags.value = [];
+};
+
+const handleInputChange = () => {
+    currentMember.value.image = currentMember.value.image; 
+};
+
+const preventFormSubmit = (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+    }
+};
+
 onMounted(() => {
-    fetchNews();
+    fetchMembers();
 });
 
 const toggleSelectAll = () => {
-    News.value.forEach(news => news.selected = selectAll.value);
+    members.value.forEach(member => member.selected = selectAll.value);
 };
 </script>
+
 
 <style scoped>
 .status-toggle {
@@ -696,12 +778,12 @@ const toggleSelectAll = () => {
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
     display: table-cell;
-    width: 5%;
+    width: 6%;
 }
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 30%;
+    width: 15%;
 }
 
 .item-list-table th:nth-child(3),
@@ -717,12 +799,12 @@ const toggleSelectAll = () => {
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
-    width: 10%;
+    width: 15%;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 6%;
+    width: 20%;
 }
 
 .item-list-table th:nth-child(7),
@@ -1223,9 +1305,9 @@ input:checked+.hotnews-slider:before {
     transform: translateX(18px);
 }
 
-@media screen and (max-width: 1750px) {
-    .item-list-table th:nth-child(3),
-    .item-list-table td:nth-child(3) {
+@media screen and (max-width: 1550px) {
+    .item-list-table th:nth-child(4),
+    .item-list-table td:nth-child(4) {
         display: none;
     }
 }

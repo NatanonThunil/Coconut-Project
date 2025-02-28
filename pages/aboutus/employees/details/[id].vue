@@ -28,17 +28,18 @@
   
             <div class="info">
               <p><strong>ที่อยู่:</strong> {{ employees?.address || "N/A" }}</p>
-              <p><strong>ติดต่อ:</strong> {{ employees?.gmail || "N/A" }}</p>
-              <p>Facebook | Twitter</p>
+              <p><strong>ติดต่อ:</strong> {{ employees?.phoneNumber || "N/A" }}</p>
+              
             </div>
   
             <div class="tags">
               <p><strong>แท็ก:</strong></p>
-              <div v-if="employees?.employees_tags_id && employees.employees_tags_id.length">
+              <div v-if="employees?.tags && employees.tags.length">
                 <span
-                  v-for="(tag, index) in employees.employees_tags_id"
+                  v-for="(tag, index) in employees.tags"
                   :key="index"
                   class="tag"
+                  @click="filterByTag(tag)"
                 >
                   {{ tag }}
                 </span>
@@ -76,25 +77,13 @@
     async mounted() {
       const cid = this.$route.params.id;
       try {
-        const response = await fetch(`/api/employees_table`);
+        const response = await fetch(`/api/employees/${cid}`);
         if (!response.ok)
           throw new Error(
             `Failed to fetch employee details: ${response.statusText}`
           );
         const data = await response.json();
-        this.employees =
-          data.find((employees) => employees.id === parseInt(cid) && employees.status) ||
-          null;
-  
-        // Ensure employees tags are properly formatted
-        if (this.employees && typeof this.employees.employees_tags_id === "string") {
-          try {
-            this.employees.employees_tags_id = JSON.parse(this.employees.employees_tags_id);
-          } catch (error) {
-            console.error("Error parsing employees_tags_id in frontend:", error);
-            this.employees.employees_tags_id = [];
-          }
-        }
+        this.employees = data || null;
   
         if (this.employees) {
           this.updateHead();
@@ -118,6 +107,9 @@
             ],
           });
         }
+      },
+      filterByTag(tag) {
+        this.$router.push({ path: '/aboutus/employees', query: { tag } });
       },
     },
   };
@@ -174,6 +166,7 @@
     font-weight: bold;
     background-color: #e9f5dc;
     color: #4e6d16;
+    cursor: pointer;
   }
   
   .description {
@@ -198,4 +191,3 @@
     color: white;
   }
   </style>
-  

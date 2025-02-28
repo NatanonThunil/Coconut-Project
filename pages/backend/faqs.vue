@@ -7,9 +7,9 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" :placeholder="config.searchPlaceholder" />
         <div class="faq-check-publish">
-            <button class="published-faq-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-faq-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-faq-btn" @click="openAddFaqModal">ADD FAQ</button>
+            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+            <button class="add-news-btn" @click="openAddFaqModal">ADD FAQ</button>
         </div>
     </div>
     <div class="table-container">
@@ -124,7 +124,7 @@
 <script setup>
 definePageMeta({ layout: "admin" });
 import { ref, onMounted, computed } from 'vue';
-import '@/assets/styles/be-faqs.css';
+import '@/assets/styles/backend_style.css'; // Import shared CSS
 import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
 
@@ -372,6 +372,90 @@ onMounted(fetchApi);
 </script>
 
 <style scoped>
+
+.published-news-btn {
+    word-wrap: nowrap;
+    all: unset;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    cursor: pointer;
+    border: #7eb9af solid 3px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: ease-out 0.2s;
+    color: white;
+    background-color: #7eb9af;
+    font-weight: 600;
+}
+
+.published-news-btn:hover {
+    color: white;
+    background-color: #599c91;
+}
+
+.published-news-btn:active {
+    border: #569187 solid 3px;
+    background-color: #569187;
+    box-shadow: outset 0px 0px 0px 3px white;
+}
+
+.unpublished-news-btn {
+    word-wrap: nowrap;
+    all: unset;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    cursor: pointer;
+    border: #7eb9af solid 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: ease-out 0.2s;
+    color: #7eb9af;
+    font-weight: 600;
+}
+
+.unpublished-news-btn:hover {
+    color: white;
+    background-color: #569187;
+}
+
+.unpublished-news-btn:active {
+    border: #569187 solid 3px;
+    background-color: #569187;
+    box-shadow: outset 0px 0px 0px 3px white;
+}
+
+.add-news-btn {
+    word-wrap: nowrap;
+    all: unset;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    cursor: pointer;
+    border: #4E6D16 solid 3px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: ease-out 0.2s;
+    color: white;
+    background-color: #4E6D16;
+    font-weight: 600;
+}
+
+.add-news-btn:hover {
+    color: white;
+    background-color: #4E6D16;
+}
+
+.add-news-btn:active {
+    border: #364b10 solid 3px;
+    background-color: #364b10;
+    box-shadow: outset 0px 0px 0px 3px white;
+}
+
 .checkbox-decorate {
     width: 1.2rem;
     height: 1.2rem;
@@ -570,7 +654,7 @@ onMounted(fetchApi);
     transition: background-color 0.3s ease;
     position: relative;
 }
-.faq-check-publish {
+.coconut-check-publish {
     display: flex;
     gap: 1.5rem;
 }
@@ -673,7 +757,7 @@ onMounted(fetchApi);
     padding: 1rem;
     gap: 1rem;
 }
-.published-faq-btn {
+.published-coconut-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -690,17 +774,17 @@ onMounted(fetchApi);
     font-weight: 600;
 }
 
-.published-faq-btn:hover {
+.published-coconut-btn:hover {
     color: white;
     background-color: #599c91;
 }
 
-.published-faq-btn:active {
+.published-coconut-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
-.unpublished-faq-btn {
+.unpublished-coconut-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -716,18 +800,18 @@ onMounted(fetchApi);
     font-weight: 600;
 }
 
-.unpublished-faq-btn:hover {
+.unpublished-coconut-btn:hover {
     color: white;
     background-color: #569187;
 }
 
-.unpublished-faq-btn:active {
+.unpublished-coconut-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
 
-.add-faq-btn {
+.add-coconut-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -744,12 +828,12 @@ onMounted(fetchApi);
     font-weight: 600;
 }
 
-.add-faq-btn:hover {
+.add-coconut-btn:hover {
     color: white;
     background-color: #4E6D16;
 }
 
-.add-faq-btn:active {
+.add-coconut-btn:active {
     border: #364b10 solid 3px;
     background-color: #364b10;
     box-shadow: outset 0px 0px 0px 3px white;

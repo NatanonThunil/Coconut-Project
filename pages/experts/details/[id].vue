@@ -29,8 +29,8 @@
 
           <div class="tags">
             <p><strong>แท็ก:</strong></p>
-            <div v-if="expert?.expert_tags_id && expert.expert_tags_id.length">
-              <span v-for="(tag, index) in expert.expert_tags_id" :key="index" class="tag">
+            <div v-if="expert?.tags && expert.tags.length">
+              <span v-for="(tag, index) in expert.tags" :key="index" class="tag">
                 {{ tag }}
               </span>
             </div>
@@ -72,12 +72,12 @@ export default {
       this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;
 
       // Ensure expert tags are properly formatted
-      if (this.expert && typeof this.expert.expert_tags_id === 'string') {
+      if (this.expert && typeof this.expert.tags === 'string') {
         try {
-          this.expert.expert_tags_id = JSON.parse(this.expert.expert_tags_id);
+          this.expert.tags = JSON.parse(this.expert.tags);
         } catch (error) {
-          console.error("Error parsing expert_tags_id in frontend:", error);
-          this.expert.expert_tags_id = [];
+          console.error("Error parsing tags in frontend:", error);
+          this.expert.tags = [];
         }
       }
 

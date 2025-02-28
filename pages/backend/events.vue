@@ -1,8 +1,8 @@
 <template>
     <div style="height: 5rem;"></div>
     <div class="table-head-text-container">
-        <h1>จัดการข่าว</h1>
-        <p>มีข่าวทั้งหมด {{ EventsNum }}</p>
+        <h1>จัดการกิจกรรม</h1>
+        <p>มีกิจกรรมทั้งหมด {{ EventsNum }}</p>
     </div>
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
@@ -167,9 +167,13 @@
 
     <input type="file" ref="fileInput" @change="handleImageUpload" accept="image/*" hidden>
     <div v-if="showCropper" class="cropper-container">
-        <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
-        <button @click="cropImage">Crop & Upload</button>
-        <button @click="cancelCrop">Cancel</button>
+        <div class="cropper-wrapper">
+            <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
+        </div>
+        <div class="cropper-actions">
+            <button @click="cropImage" class="crop-btn">Crop & Upload</button>
+            <button @click="cancelCrop" class="cancel-btn">Cancel</button>
+        </div>
     </div>
 
     <div style="height: 5rem;"></div>
@@ -185,6 +189,7 @@ import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import '@/assets/styles/backend_style.css'; // Import shared CSS
 
 const apiEndpoint = 'events';
 const searchQuery = ref('');
@@ -437,19 +442,20 @@ const handleFileUpload = (event) => {
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = () => {
-            const image = new Image();
-            image.src = reader.result;
-            image.onload = () => {
-                cropper.value = new Cropper(image, {
-                    aspectRatio: 8 / 3,
+            croppingImage.value = reader.result;
+            showCropper.value = true;
+            nextTick(() => {
+                cropperInstance.value = new Cropper(cropperImage.value, {
+                    aspectRatio: 16 / 9,
                     viewMode: 1,
                     autoCropArea: 1,
-                    crop(event) {
-                        const canvas = cropper.value.getCroppedCanvas();
-                        currentEvent.value.image = canvas.toDataURL('image/jpeg');
-                    }
+                    background: false,
+                    zoomable: false,
+                    movable: false,
+                    rotatable: false,
+                    scalable: false,
                 });
-            };
+            });
         };
         reader.readAsDataURL(file);
     }
@@ -541,7 +547,6 @@ const cancelCrop = () => {
 </script>
 
 <style scoped>
-
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -549,16 +554,123 @@ const cancelCrop = () => {
     gap: 8px;
     cursor: pointer;
 }
+
 .rotate {
     transform: rotate(180deg);
-    
-  }
+}
+
 .status-toggle input {
     display: none;
 }
 
-.eyesicon {
+.cropper-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 600px;
+}
 
+.cropper-wrapper {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.cropper-preview {
+    width: 100%;
+    height: auto;
+}
+
+.cropper-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.crop-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.crop-btn {
+    background-color: #4E6D16;
+    color: white;
+}
+
+.crop-btn:hover {
+    background-color: #6F8C28;
+}
+
+.cancel-btn {
+    background-color: #D84E5E;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #F86F70;
+}
+
+.checkbox-id-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.browse-btn:hover {
+    background-color: #6F8C28;
+}
+
+.image-preview {
+    position: relative;
+    height: fit-content;
+    width: fit-content;
+}
+
+.preview-image {
+    height: fit-content;
+    width: fit-content;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    outline: 2px white solid;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.eyesicon {
     width: 2rem;
     height: 2rem;
     cursor: pointer;
@@ -581,48 +693,52 @@ const cancelCrop = () => {
     justify-self: center;
     width: auto;
     justify-content: space-evenly;
-
 }
-.admin-content{
+
+.admin-content {
     display: flex;
     height: 100dvh;
-    
 }
-.admin-content-l{
-    display: flex;
-    
 
-  
+.admin-content-l {
+    display: flex;
 }
+
 .admin-content-r {
-    
     margin-left: 250px; /* This ensures content is pushed to the right */
-    
-  }
+}
+
 .checkbox-id-container {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
 }
-.checkbox-id-container div{
-    display: flex;gap: 0.5rem;
+
+.checkbox-id-container div {
+    display: flex;
+    gap: 0.5rem;
 }
 
-.checkbox-id-container button div{
+.checkbox-id-container button div {
     transition: ease-in-out 0.3s;
 }
 
-.checkbox-id-container button{
+.checkbox-id-container button {
     all: unset;
     cursor: pointer;
 }
 
+.item-list-table th,
+.item-list-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
-
     display: table-cell;
-   
     width: 5%;
 }
 
@@ -649,9 +765,7 @@ const cancelCrop = () => {
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-   
     width: 6%;
-
 }
 
 .item-list-table th:nth-child(7),
@@ -659,9 +773,11 @@ const cancelCrop = () => {
     display: table-cell;
     width: 8%;
 }
-.action-btn-container{
+
+.action-btn-container {
     display: flex;
 }
+
 .mod-sl,
 .mod-sr {
     display: flex;
@@ -670,7 +786,8 @@ const cancelCrop = () => {
 
 .modal-add .modal-content {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    gap: 0rem 2rem;
 }
 
 .modal-add .modal-content section:nth-child(1) {
@@ -687,14 +804,7 @@ const cancelCrop = () => {
     flex-direction: column;
 }
 
-.modal-add .modal-content {
-    display: flex;
-    flex-direction: row;
-    gap: 0rem 2rem;
-}
-
 .modal-add .modal-content section textarea {
-
     resize: none;
     height: 8rem;
     width: auto;
@@ -743,9 +853,10 @@ const cancelCrop = () => {
     transition: background-color 0.3s ease;
     position: relative;
 }
-.news-check-publish{
+
+.news-check-publish {
     display: flex;
-    gap: 1.5rem ;
+    gap: 1.5rem;
 }
 
 .image-input-drag-n-drop-container.dragover {
@@ -784,7 +895,6 @@ const cancelCrop = () => {
 }
 
 .preview-image {
-
     height: fit-content;
     width: fit-content;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -797,7 +907,6 @@ const cancelCrop = () => {
     right: 5px;
     background: rgba(0, 0, 0, 0.5);
     outline: 2px white solid;
-
     color: white;
     border: none;
     border-radius: 10px;
@@ -832,27 +941,30 @@ const cancelCrop = () => {
     overflow-y: auto;
     display: block;
 }
-.item-list-table tbody tr td p{
+
+.item-list-table tbody tr td p {
     width: 2rem;
     text-align: center;
 }
-.add-btn-container div{
+
+.add-btn-container div {
     display: flex;
     gap: 0.5rem;
 }
+
 .add-btn-container {
     display: flex;
     justify-content: end;
     justify-self: center;
-    
     width: 90%;
     padding: 1rem;
     gap: 1rem;
 }
+
 .published-news-btn {
     word-wrap: nowrap;
     all: unset;
-    font-size: clamp(0.8rem,1.2vw ,1rem);
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
     cursor: pointer;
     border: #7eb9af solid 3px;
     border-radius: 10px;
@@ -876,10 +988,11 @@ const cancelCrop = () => {
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
+
 .unpublished-news-btn {
     word-wrap: nowrap;
     all: unset;
-    font-size: clamp(0.8rem,1.2vw ,1rem);
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
     cursor: pointer;
     border: #7eb9af solid 2px;
     border-radius: 10px;
@@ -906,7 +1019,7 @@ const cancelCrop = () => {
 .add-news-btn {
     word-wrap: nowrap;
     all: unset;
-    font-size: clamp(0.8rem,1.2vw ,1rem);
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
     cursor: pointer;
     border: #4E6D16 solid 3px;
     border-radius: 10px;
@@ -970,7 +1083,6 @@ const cancelCrop = () => {
 }
 
 .item-list-table td {
-  
     padding: 12px;
     text-align: left;
     color: #555;
@@ -998,7 +1110,6 @@ const cancelCrop = () => {
     cursor: pointer;
     padding: 0.5rem 1rem;
     margin: 0.2rem;
-
     transition: 0.3s ease-in-out;
 }
 
@@ -1015,12 +1126,11 @@ const cancelCrop = () => {
 }
 
 .edit-btn:hover img {
-
     transform: scale(1.2);
 }
 
 .delete-btn:hover img {
-    transform: scale(1.2)
+    transform: scale(1.2);
 }
 
 .modal-overlay {
@@ -1042,7 +1152,6 @@ const cancelCrop = () => {
     overflow-y: scroll;
     max-height: 80dvh;
     width: clamp(300px, 60%, 60%);
-
 }
 
 .modal {
@@ -1062,15 +1171,16 @@ const cancelCrop = () => {
     border-radius: 5px;
     transition: 0.2s;
 }
+
 .confirme-btn {
     background-color: transparent;
-   outline: #4E6D16 3px solid;
+    outline: #4E6D16 3px solid;
     color: #4E6D16;
 }
 
 .confirme-btn:active {
     background-color: rgba(0, 0, 0, 0.2);
-   outline: #4E6D16 3px solid;
+    outline: #4E6D16 3px solid;
     color: #4E6D16;
 }
 
@@ -1156,7 +1266,6 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
-
     .item-list-table th:nth-child(3),
     .item-list-table td:nth-child(3) {
         display: none;
@@ -1164,7 +1273,6 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
-
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1172,13 +1280,13 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1052px) {
-    .add-btn-container{
+    .add-btn-container {
         flex-direction: column;
     }
+
     .modal-add .modal-content {
         display: flex;
         flex-direction: column;
-
     }
 
     .modal-add .modal-content section:nth-child(1) {
@@ -1202,7 +1310,7 @@ input:checked+.hotnews-slider:before {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 10px;
     position: fixed;
@@ -1210,11 +1318,145 @@ input:checked+.hotnews-slider:before {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    width: 90%;
+    max-width: 600px;
 }
 
 .cropper-preview {
     max-width: 100%;
     max-height: 400px;
     margin-bottom: 10px;
+}
+
+.tags-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background-color: #4E6D16;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tag button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tag button:hover {
+    color: #D84E5E;
+}
+
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-input-drag-n-drop-container {
+    padding: 2rem;
+    max-width: 28rem;
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    outline: 3px dashed #4E6D16;
+    color: #4E6D16;
+    border-radius: 10px;
+    margin: 1rem;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.image-input-drag-n-drop-container.dragover {
+    background-color: rgba(78, 109, 22, 0.1);
+}
+
+.image-input-drag-n-drop-container input {
+    display: none;
+}
+
+.image-input-drag-n-drop-container img {
+    aspect-ratio: 1;
+    height: 8rem;
+}
+
+.browse-btn {
+    cursor: pointer;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    background-color: #4E6D16;
+    color: white;
+    font-weight: bold;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.browse-btn:hover {
+    background-color: #6F8C28;
+}
+
+.image-preview {
+    position: relative;
+    height: fit-content;
+    width: fit-content;
+}
+
+.preview-image {
+    height: fit-content;
+    width: fit-content;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    outline: 2px white solid;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.tags-suggestions {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    position: absolute;
+    z-index: 1000;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.tags-suggestions div {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.tags-suggestions div:hover {
+    background: #f0f0f0;
 }
 </style>

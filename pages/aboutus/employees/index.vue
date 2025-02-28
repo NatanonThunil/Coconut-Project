@@ -59,6 +59,7 @@ export default {
       itemsPerPage: 30,
       pageInput: 1,
       loading: true,
+      selectedTag: this.$route.query.tag || null,
     };
   },
   computed: {
@@ -67,11 +68,13 @@ export default {
     },
     filteredEmployees() {
       const query = this.searchQuery?.toString().trim().toLowerCase() || ""; 
-      return this.employees.filter(employee =>
-        employee.name?.toLowerCase().includes(query)
-      );
+      return this.employees.filter(employee => {
+        const matchesName = employee.name?.toLowerCase().includes(query);
+        const matchesTag = this.selectedTag ? (employee.tags && employee.tags.includes(this.selectedTag)) : true;
+        return matchesName && matchesTag;
+      });
     },
-  paginatedEmployees() {
+    paginatedEmployees() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredEmployees.slice(start, start + this.itemsPerPage);
     }
@@ -84,12 +87,16 @@ export default {
     searchQuery() {
       this.currentPage = 1; 
     },
+    '$route.query.tag'(newTag) {
+      this.selectedTag = newTag;
+      this.currentPage = 1;
+    },
   },
   async mounted() {
     window.scrollTo(0, 0);
     try {
       setTimeout(async () => {
-        const response = await fetch("/api/employees_table");
+        const response = await fetch(`/api/employees${this.selectedTag ? `?tag=${this.selectedTag}` : ''}`);
         if (!response.ok) throw new Error("Failed to fetch data");
         const data = await response.json();
         this.employees = data;

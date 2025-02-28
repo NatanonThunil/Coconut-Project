@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, watchEffect, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 defineProps({
@@ -83,7 +83,15 @@ watch(locale, async () => {
   updateTextHW();
 });
 
-onMounted(fetchTagline);
+onMounted(() => {
+  fetchTagline();
+  window.addEventListener('resize', updateTextHW);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateTextHW);
+});
+
 watchEffect(updateTextHW);
 </script>
 
@@ -118,8 +126,8 @@ watchEffect(updateTextHW);
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
-  font-size: clamp(1rem, 1.1vw, 2rem);
-  /* Corrected clamp function */
+  font-size: clamp(0.5rem, 1.1vw, 2rem);
+ 
   width: auto;
   white-space: nowrap;
 }
@@ -145,6 +153,12 @@ watchEffect(updateTextHW);
   100% {
 
     transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-bar {
+    height: 60dvh;
   }
 }
 </style>
