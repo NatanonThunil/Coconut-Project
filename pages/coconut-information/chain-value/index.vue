@@ -15,7 +15,7 @@
     <!-- ดึงข้อมูลเข้า cards -->
     <div v-else class="coconut-v-cards-container">
         <swiper :slides-per-view="3" space-between="30" navigation pagination>
-            <swiper-slide v-for="coconut in filteredCoconuts" :key="coconut.id">
+            <swiper-slide v-for="coconut in paginatedCoconuts" :key="coconut.id">
                 <InformationCard :img="coconut.image || defaultImage"
                     :title="currentLocale === 'th' ? coconut.title : coconut.title"
                     :description="coconut.description || 'No description available'" />
@@ -23,6 +23,12 @@
         </swiper>
     </div>
 
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <button @click="changePage('prev')" :disabled="currentPage === 1">Previous</button>
+        <input type="number" v-model.number="pageInput" @change="goToPage" class="page-input" />
+        <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+    </div>
 </template>
 
 <script>
@@ -30,7 +36,6 @@ import { useHead } from '@vueuse/head';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import InformationCard from '@/components/InformationCard.vue';
-
 
 export default {
     components: {
@@ -54,9 +59,14 @@ export default {
         totalPages() {
             return Math.ceil(this.filteredCoconuts.length / this.itemsPerPage);
         },
-        currentLocale() { // Move this to computed
+        currentLocale() {
             const { locale } = useI18n();
             return locale.value;
+        },
+        paginatedCoconuts() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredCoconuts.slice(start, end);
         }
     },
     watch: {
@@ -154,6 +164,7 @@ export default {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
+    min-width: 300px; /* Minimum size for big cards */
 }
 
 .coconut-card:hover {
@@ -163,13 +174,24 @@ export default {
 .coconut-card img {
     width: 100%;
     height: auto;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px;
+    margin-bottom: 2rem;
 }
 
 .coconut-card .card-content {
     padding: 1rem;
     text-align: center;
+}
+
+/* Small Card Styles */
+.small-card {
+    width: 80%;
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.small-card:hover {
+    opacity: 1;
 }
 
 /* Existing Styles */
