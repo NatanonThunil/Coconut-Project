@@ -1,6 +1,6 @@
 <template>
-  <Navbar selecto="coconutdata" />
-  <page-header head="CoconutInfo" />
+    <Navbar selecto="coconutdata" />
+    <page-header head="CoconutInfo" />
     <label class="coconut-v-input">
         <img src="@/assets/icon/search.svg">
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
@@ -12,33 +12,32 @@
     </div>
 
     <!-- Loaded Content -->
-     <!-- ดึงข้อมูลเข้า cards -->
+    <!-- ดึงข้อมูลเข้า cards -->
     <div v-else class="coconut-v-cards-container">
-        <CoconutCards v-for="coconut in paginatedCoconuts" :key="coconut.id"
-            :img="coconut.image || 'https://via.placeholder.com/1280x720'"
-            :url="`/coconut-varieties/details/${coconut.id}`" :name="coconut.name_th || 'ชื่อไทย'"
-            :sci_front="coconut.sci_name_f || 'วิทย์ 1'" :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
-            :sci_back="coconut.sci_name_l || 'วิทย์ 3'" @click="goToDetails(coconut.id)" />
+        <swiper :slides-per-view="3" space-between="30" navigation pagination>
+            <swiper-slide v-for="coconut in filteredCoconuts" :key="coconut.id">
+                <InformationCard :img="coconut.image || defaultImage"
+                    :title="currentLocale === 'th' ? coconut.title : coconut.title"
+                    :description="coconut.description || 'No description available'" />
+            </swiper-slide>
+        </swiper>
     </div>
 
-    <div class="pagination">
-        <div class="pagination-line"></div>
-        <div class="pagination-controller">
-            <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
-            <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
-                class="page-input" />
-            <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
-            <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
-        </div>
-        <div class="pagination-line"></div>
-    </div>
-
-    
 </template>
 
 <script>
 import { useHead } from '@vueuse/head';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper-bundle.css';
+import InformationCard from '@/components/InformationCard.vue';
+
+
 export default {
+    components: {
+        Swiper,
+        SwiperSlide,
+        InformationCard,
+    },
     data() {
         return {
             coconuts: [],
@@ -47,18 +46,18 @@ export default {
             currentPage: 1,
             itemsPerPage: 30,
             pageInput: 1,
-            loading: true, // Initial loading state
+            loading: true,
+            defaultImage: 'https://placehold.co/600x400',
         };
     },
     computed: {
         totalPages() {
             return Math.ceil(this.filteredCoconuts.length / this.itemsPerPage);
         },
-        paginatedCoconuts() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredCoconuts.slice(start, end).filter(coconut => coconut.youngold === 'Young');
-        },
+        currentLocale() { // Move this to computed
+            const { locale } = useI18n();
+            return locale.value;
+        }
     },
     watch: {
         currentPage(newPage) {
@@ -68,15 +67,14 @@ export default {
     async mounted() {
         window.scrollTo(0, 0);
         try {
-         
             setTimeout(async () => {
-                const response = await fetch('/api/coconut');
+                const response = await fetch('/api/chain_values');
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
-                this.coconuts = data
+                this.coconuts = data;
                 this.filteredCoconuts = data;
-                this.loading = false; state
-            }, 200); 
+                this.loading = false;
+            }, 200);
         } catch (error) {
             console.error('Error fetching coconuts:', error);
         }
@@ -106,31 +104,80 @@ export default {
             }
         },
         goToDetails(id) {
-            this.$router.push(`/coconut-information/coconut-varieties/details/${id}`);
+            this.$router.push(`/coconut-information/chain-value/details/${id}`);
         },
     },
     setup() {
-        useHead(
-            {
-                title: '🥥Coconut - Varieties',
-                meta: [
-                    {
-                        name: 'description',
-                        content: 'Home page for Coconut Knowledge Hub',
-                    },
-                ],
-            },
-        );
+        useHead({
+            title: '🥥Coconut - Chain Value',
+            meta: [
+                {
+                    name: 'description',
+                    content: 'Chain Value page for Coconut Knowledge Hub',
+                },
+            ],
+        });
     },
 };
 </script>
 
 <style scoped>
+/* Swiper Styles */
+.swiper {
+    width: 100%;
+    height: 100%;
+}
 
-.context-header{
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-pagination-bullet {
+    background: #4e6d16;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #4e6d16;
+}
+
+/* CoconutCards Styles */
+.coconut-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.coconut-card:hover {
+    transform: scale(1.05);
+}
+
+.coconut-card img {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.coconut-card .card-content {
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Existing Styles */
+.context-header {
     display: flex;
     justify-self: center;
 }
+
 label.coconut-v-input {
     transition: ease-in-out 0.5s;
     display: flex;
@@ -163,7 +210,6 @@ label.coconut-v-input input {
     overflow: hidden;
     width: 90%;
 }
-
 
 @keyframes shimmer-effect {
     0% {
@@ -247,14 +293,14 @@ label.coconut-v-input input {
 }
 
 @keyframes btnexpand {
-    0%{
+    0% {
         opacity: 0;
         width: 20%;
     }
-    100%{
+
+    100% {
         opacity: 1;
         width: 60%;
     }
-    
 }
 </style>
