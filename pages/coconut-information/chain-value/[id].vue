@@ -8,6 +8,7 @@
         <img :src="coconut.image || defaultImage" alt="Coconut Image" class="coconut-image" />
         <h1>{{ coconut.title }}</h1>
         <p>{{ coconut.description }}</p>
+        <button @click="goBack" class="back-button">Back to List</button>
     </div>
 </template>
 
@@ -48,6 +49,11 @@ export default {
                 },
             ],
         });
+    },
+    methods: {
+        goBack() {
+            this.$router.push('/coconut-information/chain-value');
+        }
     },
 };
 </script>
@@ -123,5 +129,15 @@ p {
 
 .small-card:hover {
     opacity: 1;
+}
+
+.back-button {
+    padding: 0.5rem 1rem;
+    background-color: #4e6d16;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
 }
 </style>

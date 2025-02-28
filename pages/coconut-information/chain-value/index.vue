@@ -14,21 +14,15 @@
     <!-- Loaded Content -->
     <!-- ดึงข้อมูลเข้า cards -->
     <div v-else class="coconut-v-cards-container">
-        <swiper :slides-per-view="3" space-between="30" navigation pagination>
-            <swiper-slide v-for="coconut in paginatedCoconuts" :key="coconut.id">
-                <InformationCard :img="coconut.image || defaultImage"
+        <swiper :slides-per-view="3" space-between="5">
+            <swiper-slide v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id" :class="{ 'bulge-card': index === Math.floor(paginatedCoconuts.length / 2) }">
+                <InformationCard class="information-card" :img="coconut.image || defaultImage"
                     :title="currentLocale === 'th' ? coconut.title : coconut.title"
                     :description="coconut.description || 'No description available'" />
             </swiper-slide>
         </swiper>
     </div>
 
-    <!-- Pagination Controls -->
-    <div class="pagination">
-        <button @click="changePage('prev')" :disabled="currentPage === 1">Previous</button>
-        <input type="number" v-model.number="pageInput" @change="goToPage" class="page-input" />
-        <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
-    </div>
 </template>
 
 <script>
@@ -152,7 +146,34 @@ export default {
 .swiper-button-prev {
     color: #4e6d16;
 }
+.information-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    min-width: 300px; /* Minimum size for big cards */
+}
 
+.information-card:hover {
+    transform: scale(1.05);
+}
+
+.information-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.information-card .card-content {
+    padding: 1rem;
+    text-align: center;
+}
 /* CoconutCards Styles */
 .coconut-card {
     width: 100%;
@@ -324,5 +345,10 @@ label.coconut-v-input input {
         opacity: 1;
         width: 60%;
     }
+}
+
+.bulge-card {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
 }
 </style>
