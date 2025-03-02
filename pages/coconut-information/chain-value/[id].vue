@@ -140,4 +140,47 @@ p {
     cursor: pointer;
     margin-top: 1rem;
 }
+
+/* Swiper Styles */
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-pagination-bullet {
+    background: #4e6d16;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #4e6d16;
+}
+
+/* Coconut Cards Container */
+.coconut-v-cards-container {
+    height: auto;
+    width: 80%;
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 2rem;
+}
+
+/* Card Shimmer */
+.CardShimmer {
+    height: 18rem;
+    width: 15rem;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-effect 1.5s infinite;
+}
 </style>
