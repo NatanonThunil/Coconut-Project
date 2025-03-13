@@ -66,7 +66,7 @@ export default {
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/expert`);
+      const response = await fetch(`/api/experts`);
       if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
       const data = await response.json();
       this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;

@@ -1,7 +1,7 @@
 <template>
-  <div class="navcontainer">
+  <div style="height: 10rem;"></div>
     <Navbar selecto="expert" />
-  </div>
+  
   <h3 class="header-content">{{ $t('Expert') }}</h3>
   <div class="header-container">
     <h1>{{ $t('Experts') }}</h1>
