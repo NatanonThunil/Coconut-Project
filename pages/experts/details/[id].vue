@@ -30,7 +30,7 @@
           <div class="tags">
             <p><strong>แท็ก:</strong></p>
             <div v-if="expert?.tags && expert.tags.length">
-              <span v-for="(tag, index) in expert.tags" :key="index" class="tag">
+              <span v-for="(tag, index) in expert.tags" :key="index" class="tag" @click="filterByTag(tag)">
                 {{ tag }}
               </span>
             </div>
@@ -71,7 +71,6 @@ export default {
       const data = await response.json();
       this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;
 
-      // Ensure expert tags are properly formatted
       if (this.expert && typeof this.expert.tags === 'string') {
         try {
           this.expert.tags = JSON.parse(this.expert.tags);
@@ -103,6 +102,9 @@ export default {
           ],
         });
       }
+    },
+    filterByTag(tag) {
+      this.$router.push({ path: '/experts', query: { tag } });
     },
   },
 };
@@ -160,6 +162,7 @@ export default {
   font-weight: bold;
   background-color: #E9F5DC;
   color: #4E6D16;
+  cursor: pointer;
 }
 
 .description {

@@ -53,16 +53,13 @@
   "searchByQ":"Search by question...",
   "Qs" :"Questions",
   "seeAllQs" :"See All Questions",
-<<<<<<< HEAD
   "seeAllEsA" :"See All Expert's Advice",
   "Pest":"Pest",
   "Weed":"Weed",
   "Disease":"Disease",
   "Insect":"Insect",
-  "Other enemies":"Other enemies"
-=======
-  "chain_values" :"Value Chain",
-  "seeAllEsA" :"See All Expert's Advice"
->>>>>>> 0f79751057f2d0aec3981e3dd9580ec760bd9dec
+  "Other enemies":"Other enemies",
+  "chain_values" :"Value Chain"
+
  
 }

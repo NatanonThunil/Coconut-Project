@@ -55,13 +55,10 @@
   "Qs" :"คำถามทั่วไป",
   "seeAllQs" :"ดูคำถามอื่นๆ",
   "seeAllEsA" :"ดูคำแนะนำอื่นๆ",
-<<<<<<< HEAD
   "Pest":"ศัตรูพืช",
   "Weed":"วัชพืช",
   "Disease":"โรค",
   "Insect":"แมลง",
-  "Other enemies":"ศัตรูอื่นๆ"
-=======
+  "Other enemies":"ศัตรูอื่นๆ",
   "chain_values" :"การแปรรูป"
->>>>>>> 0f79751057f2d0aec3981e3dd9580ec760bd9dec
 }

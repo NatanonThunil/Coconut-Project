@@ -164,6 +164,13 @@
                             </div>
                         </div>
                     </div>
+                    <label>ประเภท</label>
+                    <select class="add-text-input" v-model="currentExpert.type" @input="handleInputChange" required>
+                        <option value="1">Type 1</option>
+                        <option value="2">Type 2</option>
+                        <option value="3">Type 3</option>
+                        <option value="4">Type 4</option>
+                    </select>
                     <label>Image</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
@@ -240,6 +247,7 @@ const currentExpert = ref({
     status: 1,
     tags: [], // Add tags property
     image: '', // Add image property
+    type: 1, // Add type property
 });
 const newTag = ref('');
 const isDragging = ref(false);
@@ -409,6 +417,7 @@ const openAddExpertModal = () => {
         status: 1,
         tags: [],
         image: '',
+        type: 1, // Add type property
     };
     showModalAddExpert.value = true;
 };
@@ -465,6 +474,7 @@ const submitExpert = async (publish) => {
             status: publish ? 1 : 0,
             tags: currentExpert.value.tags, // Include tags in payload
             image: currentExpert.value.image || '', // Include image in payload
+            type: currentExpert.value.type, // Include type in payload
         };
 
         const response = await fetch(url, {
