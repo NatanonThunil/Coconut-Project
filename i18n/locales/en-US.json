@@ -53,6 +53,11 @@
   "searchByQ":"Search by question...",
   "Qs" :"Questions",
   "seeAllQs" :"See All Questions",
-  "seeAllEsA" :"See All Expert's Advice"
+  "seeAllEsA" :"See All Expert's Advice",
+  "Pest":"Pest",
+  "Weed":"Weed",
+  "Disease":"Disease",
+  "Insect":"Insect",
+  "Other enemies":"Other enemies"
  
 }

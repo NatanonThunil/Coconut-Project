@@ -63,10 +63,10 @@
             <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Events') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Events') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
           </li>
         </ul>
       </li>

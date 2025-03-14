@@ -92,14 +92,13 @@ export default {
           expert.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
         .filter((expert) => expert.category === this.selectedFilter && expert.status)
-        .slice(0, 4);
     },
   },
   methods: {
     async fetchExperts() {
       try {
         this.isLoading = true;
-        const response = await fetch("/api/expert");
+        const response = await fetch("/api/experts");
         if (!response.ok) throw new Error("Failed to fetch experts");
         const data = await response.json();
         this.experts = data.map((expert) => ({
