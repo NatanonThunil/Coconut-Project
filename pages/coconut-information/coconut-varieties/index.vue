@@ -106,7 +106,7 @@ export default {
             }
         },
         goToDetails(id) {
-            this.$router.push(`/coconut-information/young/coconut-varieties/details/${id}`);
+            this.$router.push(`/coconut-information/coconut-varieties/details/${id}`);
         },
     },
     setup() {
