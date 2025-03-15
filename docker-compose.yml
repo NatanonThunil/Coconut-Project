@@ -1,15 +1,17 @@
 services:
-  app:
+  coconut_web:
     build: .
     ports:
       - "3000:3000"
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/code
     environment:
-      NODE_ENV: development
-      DB_HOST: ${DB_HOST}
+      DB_HOST: host.docker.internal
+      DB_PORT: 3306
+      DB_NAME: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_PORT: ${DB_PORT}
+      
+volumes:
+  mysql_data:
+    driver: local

@@ -71,6 +71,7 @@ export default {
       const data = await response.json();
       this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;
 
+      // Ensure expert tags are properly formatted
       if (this.expert && typeof this.expert.tags === 'string') {
         try {
           this.expert.tags = JSON.parse(this.expert.tags);
