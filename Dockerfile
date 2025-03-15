@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm ci
-COPY assets /app/assets
 COPY . .
 
 RUN npm run build

@@ -169,7 +169,7 @@
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
                         <option value="3">Type 3</option>
-                        <option value="4">Type 4</option>
+                        
                     </select>
                     <label>Image</label>
                     <div class="image-upload-container">

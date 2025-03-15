@@ -12,13 +12,13 @@
     <SeeAllButton :text="$t('SeeAll_Events')" link="events" />
     <ContentHeader :contexto="$t('Other')" />
     <div class="homefootbannercontainer">
-      <HomeFootBanner :title="$t('AboutUs')" :text="$t('abs_desc')" picture="~/assets/img/AboutUs.png"
+      <HomeFootBanner :title="$t('AboutUs')" :text="$t('abs_desc')" picture="/img/AboutUs.png"
         url="/AboutUs" />
 
       <HomeFootBanner :title="$t('CoconutInfo')" :text="$t('ccnif_desc')"
-        picture="~/assets/img/CoconutInformation.png" url="/coconut-information" />
+        picture="/img/CoconutInformation.jpg" url="/coconut-information" />
 
-      <HomeFootBanner :title="$t('Experts')" :text="$t('ep_desc')" picture="~/assets/img/Expert.png"
+      <HomeFootBanner :title="$t('Experts')" :text="$t('ep_desc')" picture="/img/Expert.png"
         url="/experts" />
       <div style="height: 2rem;"></div>
     </div>

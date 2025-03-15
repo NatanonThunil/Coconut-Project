@@ -1,51 +1,64 @@
 <template>
-  <Navbar selecto="expert" />
-  <div class="all-container">
-    <div style="height: 10rem;"></div>
+  <div>
+    <Navbar selecto="expert" />
+    <div class="all-container">
+      <div style="height: 10rem"></div>
 
-    <!-- Loader -->
-    <div v-if="!expert && !error" class="loading">
-      <p>กำลังโหลดข้อมูลผู้เชี่ยวชาญ...</p>
-    </div>
-
-    <!-- Error -->
-    <div v-if="error" class="error">
-      <p>{{ error }}</p>
-    </div>
-
-    <!-- Expert Profile Section -->
-    <div class="expert-container" v-if="expert">
-      <div class="expert-content">
-        <img :src="expert?.image || tlImage" class="expert-image" alt="Expert Image" draggable="false">
-
-        <div class="expert-details">
-          <h1 class="expert-name">{{ expert?.name }}</h1>
-
-          <div class="info">
-            <p><strong>ที่อยู่:</strong> {{ expert?.address || 'N/A' }}</p>
-            <p><strong>ติดต่อ:</strong> {{ expert?.gmail || 'N/A' }}</p>
-            <p>Facebook | Twitter</p>
-          </div>
-
-          <div class="tags">
-            <p><strong>แท็ก:</strong></p>
-            <div v-if="expert?.tags && expert.tags.length">
-              <span v-for="(tag, index) in expert.tags" :key="index" class="tag" @click="filterByTag(tag)">
-                {{ tag }}
-              </span>
-            </div>
-            <p v-else>ไม่มีแท็ก</p>
-          </div>
-
-          <p class="description">
-            <strong>คำอธิบาย:</strong> {{ expert?.description || 'ไม่มีคำอธิบาย' }}
-          </p>
-        </div>
+      <!-- Loader -->
+      <div v-if="!expert && !error" class="loading">
+        <p>กำลังโหลดข้อมูลผู้เชี่ยวชาญ...</p>
       </div>
-      <div style="height: 5rem;"></div>
 
-      <div class="back-btn-container">
-        <SeeAllButton text="ดูผู้เชี่ยวชาญคนอื่น" link="/experts" />
+      <!-- Error -->
+      <div v-if="error" class="error">
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Expert Profile Section -->
+      <div class="expert-container" v-if="expert">
+        <div class="expert-content">
+          <img
+            :src="expert?.image || tlImage"
+            class="expert-image"
+            alt="Expert Image"
+            draggable="false"
+          />
+
+          <div class="expert-details">
+            <h1 class="expert-name">{{ expert?.name }}</h1>
+
+            <div class="info">
+              <p><strong>ที่อยู่:</strong> {{ expert?.address || "N/A" }}</p>
+              <p><strong>ติดต่อ:</strong> {{ expert?.gmail || "N/A" }}</p>
+              <p>Facebook | Twitter</p>
+            </div>
+
+            <div class="tags">
+              <p><strong>แท็ก:</strong></p>
+              <div v-if="expert?.tags && expert.tags.length">
+                <span
+                  v-for="(tag, index) in expert.tags"
+                  :key="index"
+                  class="tag"
+                  @click="filterByTag(tag)"
+                >
+                  {{ tag }}
+                </span>
+              </div>
+              <p v-else>ไม่มีแท็ก</p>
+            </div>
+
+            <p class="description">
+              <strong>คำอธิบาย:</strong>
+              {{ expert?.description || "ไม่มีคำอธิบาย" }}
+            </p>
+          </div>
+        </div>
+        <div style="height: 5rem"></div>
+
+        <div class="back-btn-container">
+          <SeeAllButton text="ดูผู้เชี่ยวชาญคนอื่น" link="/experts" />
+        </div>
       </div>
     </div>
   </div>
@@ -67,12 +80,17 @@ export default {
     const cid = this.$route.params.id;
     try {
       const response = await fetch(`/api/experts`);
-      if (!response.ok) throw new Error(`Failed to fetch expert details: ${response.statusText}`);
+      if (!response.ok)
+        throw new Error(
+          `Failed to fetch expert details: ${response.statusText}`
+        );
       const data = await response.json();
-      this.expert = data.find((expert) => (expert.id === parseInt(cid)) && expert.status) || null;
+      this.expert =
+        data.find((expert) => expert.id === parseInt(cid) && expert.status) ||
+        null;
 
       // Ensure expert tags are properly formatted
-      if (this.expert && typeof this.expert.tags === 'string') {
+      if (this.expert && typeof this.expert.tags === "string") {
         try {
           this.expert.tags = JSON.parse(this.expert.tags);
         } catch (error) {
@@ -105,14 +123,13 @@ export default {
       }
     },
     filterByTag(tag) {
-      this.$router.push({ path: '/experts', query: { tag } });
+      this.$router.push({ path: "/experts", query: { tag } });
     },
   },
 };
 </script>
 
 <style scoped>
-
 .back-btn-container {
   width: 30%;
 }
@@ -134,7 +151,7 @@ export default {
 .expert-image {
   width: 300px;
   border-radius: 10px;
-  border: 2px solid #4E6D16;
+  border: 2px solid #4e6d16;
   aspect-ratio: 2.5/3;
   object-fit: cover;
 }
@@ -147,7 +164,7 @@ export default {
 .expert-name {
   font-size: 2rem;
   font-weight: bold;
-  color: #4E6D16;
+  color: #4e6d16;
 }
 
 .tags {
@@ -158,11 +175,11 @@ export default {
   display: inline-block;
   padding: 0.5rem 1rem;
   margin: 0.3rem;
-  border: 1px solid #4E6D16;
+  border: 1px solid #4e6d16;
   border-radius: 20px;
   font-weight: bold;
-  background-color: #E9F5DC;
-  color: #4E6D16;
+  background-color: #e9f5dc;
+  color: #4e6d16;
   cursor: pointer;
 }
 
@@ -174,9 +191,9 @@ export default {
 .back-button {
   margin-top: 2rem;
   padding: 0.8rem 2rem;
-  border: 2px solid #4E6D16;
+  border: 2px solid #4e6d16;
   background: transparent;
-  color: #4E6D16;
+  color: #4e6d16;
   font-size: 1.2rem;
   border-radius: 30px;
   cursor: pointer;
@@ -184,7 +201,7 @@ export default {
 }
 
 .back-button:hover {
-  background: #4E6D16;
+  background: #4e6d16;
   color: white;
 }
 </style>

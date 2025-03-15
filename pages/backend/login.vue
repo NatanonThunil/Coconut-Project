@@ -9,7 +9,7 @@ useHead({
   ],
 });
 definePageMeta({
-  layout: 'admin'
+  layout: 'adminLogin'
 });
 
 import { ref } from 'vue';
