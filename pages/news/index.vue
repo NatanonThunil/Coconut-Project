@@ -36,10 +36,12 @@
 
   <ContentHeader contexto="ข่าวอื่นๆ" />
 
-  <section class="news-etc">
-    <etcNews v-for="news in regularNews" :key="news.id" :url="`/news/details/${news.id}`"
-      :image="news.image || 'https://via.placeholder.com/1280x720'" :title="news.title || ''"
-      :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />
+  <section class="news-etc-container">
+    <section class="news-etc">
+      <etcNews v-for="news in regularNews" :key="news.id" :url="`/news/details/${news.id}`"
+        :image="news.image || 'https://via.placeholder.com/1280x720'" :title="news.title || ''"
+        :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />
+    </section>
   </section>
 </template>
 
@@ -83,15 +85,21 @@ onMounted(fetchNews);
 
 
 <style scoped>
+.news-etc-container {
+display: flex;
+width: 80%;
+justify-self: center;
+justify-content: center;
+}
 .news-etc {
   display: flex;
-  justify-self: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align items from left to right */
+  align-items: center;
   margin-bottom: 1rem;
-  width: 80%;
+  width: fit-content;
   height: auto;
   grid-template-columns: repeat(3, 1fr);
-  padding: 1rem;
+ 
   gap: 1.5rem;
   flex-wrap: wrap;
 }

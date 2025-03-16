@@ -2,11 +2,11 @@
 
     <div style="height: 5rem;"></div>
     <div class="table-head-text-container">
-        <h1>จัดการข่าว</h1>
-        <p>มีข่าวทั้งหมด {{ NewsNum }}</p>
+        <h1>จัดการความสำเร็จ</h1>
+        <p>มีความสำเร็จทั้งหมด {{ achievementsNum }}</p>
     </div>
     <div class="add-btn-container">
-        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
+        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผู้เขียน หรือ วันที่" />
 
         <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
                 Checked
@@ -14,7 +14,7 @@
             <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked
                 Unpublish</button>
 
-            <button class="add-news-btn" @click="openAddNewsModal">ADD Event</button>
+            <button class="add-news-btn" @click="openAddAchievementModal">ADD Achievement</button>
         </div>
     </div>
 
@@ -37,14 +37,11 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Organizer<button @click="toggleSort('organizer')"><div :class="{'rotate': sortBy === 'organizer' && sortDirection === -1}">▲</div></button></div>
+                            <div>Author<button @click="toggleSort('author')"><div :class="{'rotate': sortBy === 'author' && sortDirection === -1}">▲</div></button></div>
                         </div>
                     </th>
                     <th><div class="checkbox-id-container">
-                            <div>Date start<button @click="toggleSort('date_start')"><div :class="{'rotate': sortBy === 'date_start' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Date end<button @click="toggleSort('upload_end')"><div :class="{'rotate': sortBy === 'date_end' && sortDirection === -1}">▲</div></button></div>
+                            <div>Upload Date<button @click="toggleSort('uploadDate')"><div :class="{'rotate': sortBy === 'uploadDate' && sortDirection === -1}">▲</div></button></div>
                         </div></th>
                     <th><div class="checkbox-id-container">
                             <div>Status <button @click="toggleSort('status')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button></div>
@@ -53,28 +50,27 @@
                 </tr>
             </thead>
 
-            <tbody v-if="filteredSortedNews.length">
-                <tr v-for="news in filteredSortedNews" :key="news.id">
+            <tbody v-if="filteredSortedAchievements.length">
+                <tr v-for="achievement in filteredSortedAchievements" :key="achievement.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="news.selected" />
-                            <p>{{ news.id }}</p>
+                            <input type="checkbox" v-model="achievement.selected" />
+                            <p>{{ achievement.id }}</p>
                         </div>
                     </td>
-                    <td>{{ news.title }}</td>
-                    <td>{{ news.organizer }}</td>
-                    <td>{{ formatDate(news.date_start) }}</td>
-                    <td>{{ formatDate(news.date_end) }}</td>
+                    <td>{{ achievement.title }}</td>
+                    <td>{{ achievement.author }}</td>
+                    <td>{{ formatDate(achievement.uploadDate) }}</td>
                     <td>
                         <label class="status-toggle">
-                            <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
-                            <img class="eyesicon" :src="news.status ? eye : eyeBlink" alt="Visibility Icon" />
+                            <input type="checkbox" :checked="achievement.status" @change="toggleStatus(achievement)" />
+                            <img class="eyesicon" :src="achievement.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
                     <td class="action-buttons">
-                        <div class="action-btn-container"> <button @click="editItem(news)" class="edit-btn"><img
+                        <div class="action-btn-container"> <button @click="editItem(achievement)" class="edit-btn"><img
                                     src="@/assets/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
+                            <button @click="askDelete(achievement.id, achievement.title)" class="delete-btn"><img
                                     src="@/assets/icon/trash.png" alt=""></button>
                         </div>
                     </td>
@@ -96,29 +92,29 @@
         </div>
     </div>
 
-    <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
+    <div v-if="showModalAddAchievement || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
-            <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+            <h2>{{ showModalEdit ? 'แก้ไขความสำเร็จ' : 'เพิ่มความสำเร็จ' }}</h2>
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
+                    <label>หัวข้อ</label>
+                    <input class="add-text-input" v-model="currentAchievement.title" placeholder="Enter title" required />
                     <label>ชื่อผู้เขียน</label>
-                    <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
+                    <input class="add-text-input" v-model="currentAchievement.author" placeholder="Enter author name"
                         required />
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
-                    <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                    <label>รองรับไฟล์ PDF</label>
+                    <div class="pdf-upload-container">
+                        <div class="pdf-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleDragDrop">
-                            <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
-                            <div v-if="currentNews.image" class="image-preview">
-                                <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
-                                <button class="remove-btn" @click="removeImage">X</button>
+                            <img v-if="!currentAchievement.pdf" src="@/assets/icon/upload.svg" draggable="false" />
+                            <h2 v-if="!currentAchievement.pdf">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
+                            <div v-if="currentAchievement.pdf" class="pdf-preview">
+                                <embed :src="currentAchievement.pdf" type="application/pdf" class="preview-pdf" />
+                                <button class="remove-btn" @click="removePdf">X</button>
                             </div>
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                            <input type="file" accept="application/pdf" @change="handleFileUpload"
                                 class="file-uploader" ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse
                                 File</button>
@@ -126,24 +122,13 @@
                     </div>
                 </section>
                 <section>
-                    <div class="hotnews-toggle-container">
-                        <label class="hotnews-toggle-label">เป็นข่าวใหญ่</label>
-                        <label class="hotnews-switch">
-                            <input v-model="currentNews.hot_new" type="checkbox">
-                            <span class="hotnews-slider"></span>
-                        </label>
-                    </div>
                     <label>Description</label>
-                    <TiptapEditor v-model="currentNews.description" />
+                    <TiptapEditor v-model="currentAchievement.description" />
 
-                    <label>Summary</label>
-                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitNews(false)">{{ showModalEdit ?
-                    'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitNews(true)">{{ showModalEdit ?
+                <button type="button" class="confirm-btn" @click.prevent="submitAchievement(true)">{{ showModalEdit ?
                     'Update & Publish' : 'Add & Publish' }}</button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
@@ -157,61 +142,52 @@
 definePageMeta({
     layout: "admin",
 });
-import { ref, onMounted, computed } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg'
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg'
+import { ref, onMounted, computed, nextTick } from 'vue';
+import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import '@/assets/styles/be-news.css';
 
-const apiEndpoint = 'events';
+const apiEndpoint = 'achievements';
 const searchQuery = ref('');
-const News = ref([]);
-const NewsNum = ref(0);
+const achievements = ref([]);
+const achievementsNum = ref(0);
 const selectAll = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
 const showModal = ref(false);
-const showModalAddnews = ref(false);
+const showModalAddAchievement = ref(false);
 const showModalEdit = ref(false);
 const isDragging = ref(false);
 const fileInput = ref(null);
 const sortBy = ref(null);
 const sortDirection = ref(1);
-const currentNews = ref({
+const currentAchievement = ref({
     id: null,
     title: '',
-    image: '',
+    pdf: '',
     author: '',
     description: '',
-    summerize: '',
-    hot_new: false,
-    upload_date: new Date().toISOString().split('T')[0],
+    uploadDate: new Date().toISOString().split('T')[0],
     status: false,
 });
 
-
-const toggleStatus = async (news) => {
+const toggleStatus = async (achievement) => {
     try {
-
-        const newStatus = !news.status;
-
-
-        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
+        const newStatus = !achievement.status;
+        const response = await fetch(`/api/${apiEndpoint}/${achievement.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
+            body: JSON.stringify({ ...achievement, status: newStatus ? 1 : 0 }),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update news status.');
+            throw new Error('Failed to update achievement status.');
         }
 
-        // Update status only after successful response
-        news.status = newStatus;
-
-
+        achievement.status = newStatus;
     } catch (error) {
-        alert('Error updating news status.');
+        alert('Error updating achievement status.');
         console.error(error);
     }
 };
@@ -219,142 +195,139 @@ const toggleStatus = async (news) => {
 const triggerFileInput = () => {
     fileInput.value.click();
 };
-const fetchNews = async () => {
+
+const fetchAchievements = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
-        News.value = response.map(news => ({ ...news, selected: false }));
-        NewsNum.value = News.value.length;
+        const response = await fetch(`/api/${apiEndpoint}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch achievements.');
+        }
+        const data = await response.json();
+        achievements.value = data.achievements.map(achievement => ({ ...achievement, selected: false }));
+        achievementsNum.value = achievements.value.length;
     } catch (error) {
-        alert('Error fetching news.');
+        alert('Error fetching achievements.');
+        console.error(error);
     }
 };
 
-import { nextTick } from "vue";
-
-const editItem = (news) => {
-    currentNews.value = {
-        ...news,
-        hot_new: !!news.hot_new,
-        status: !!news.status,
-        description: news.description || "", // Ensure description is set
+const editItem = (achievement) => {
+    currentAchievement.value = {
+        ...achievement,
+        status: !!achievement.status,
+        description: achievement.description || "", // Ensure description is set
+        pdf: achievement.pdf || '', // Ensure pdf is set
     };
 
     showModalEdit.value = true; // Open modal first
 
     // Wait for modal to fully open, then update Tiptap content
     nextTick(() => {
-        console.log("Setting Tiptap Content:", currentNews.value.description);
+        console.log("Setting Tiptap Content:", currentAchievement.value.description);
     });
 };
 
+const filteredSortedAchievements = computed(() => {
+    let filtered = achievements.value.filter(achievement =>
+        achievement.id.toString().includes(searchQuery.value) ||
+        achievement.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        achievement.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        achievement.uploadDate.includes(searchQuery.value)
+    );
 
-const filteredSortedNews = computed(() => {
-  let filtered = News.value.filter(news =>
-    news.id.toString().includes(searchQuery.value) ||
-    news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.upload_date.includes(searchQuery.value)
-  );
-  
-  if (sortBy.value) {
-    filtered.sort((a, b) => {
-      let valA = a[sortBy.value];
-      let valB = b[sortBy.value];
-      
-      if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-      if (sortBy.value === 'title' || sortBy.value === 'organizer') return valA.localeCompare(valB, 'th') * sortDirection.value;
-      if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-      if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
-      return 0;
-    });
-  }
-  return filtered;
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            let valA = a[sortBy.value];
+            let valB = b[sortBy.value];
+
+            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+            if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
+            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
+            if (sortBy.value === 'uploadDate') return (new Date(valB) - new Date(valA)) * sortDirection.value;
+            return 0;
+        });
+    }
+    return filtered;
 });
 
 const toggleSort = (column) => {
-  if (sortBy.value === column) {
-    sortDirection.value *= -1;
-  } else {
-    sortBy.value = column;
-    sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
-  }
+    if (sortBy.value === column) {
+        sortDirection.value *= -1;
+    } else {
+        sortBy.value = column;
+        sortDirection.value = column === 'status' ? -1 : 1;
+    }
 };
 
-
-const openAddNewsModal = () => {
-    currentNews.value = {
+const openAddAchievementModal = () => {
+    currentAchievement.value = {
         id: null,
         title: '',
-        image: '',
+        pdf: '',
         author: '',
         description: '',
-        summerize: '',
-        hot_new: false,
-        upload_date: new Date().toISOString().split('T')[0],
+        uploadDate: new Date().toISOString().split('T')[0],
         status: false,
     };
-    showModalAddnews.value = true;
+    showModalAddAchievement.value = true;
 };
 
 const bulkUpdateStatus = async (publish) => {
     try {
-        const selectedNews = News.value.filter(news => news.selected);
-        if (selectedNews.length === 0) {
-            alert('No news items selected.');
+        const selectedAchievements = achievements.value.filter(achievement => achievement.selected);
+        if (selectedAchievements.length === 0) {
+            alert('No achievements selected.');
             return;
         }
 
-        const updatePromises = selectedNews.map(news =>
-            fetch(`/api/${apiEndpoint}/${news.id}`, {
+        const updatePromises = selectedAchievements.map(achievement =>
+            fetch(`/api/${apiEndpoint}/${achievement.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...news, status: publish ? 1 : 0 })
+                body: JSON.stringify({ ...achievement, status: publish ? 1 : 0 })
             })
         );
 
         await Promise.all(updatePromises);
 
-        selectedNews.forEach(news => {
-            news.status = publish ? 1 : 0;
+        selectedAchievements.forEach(achievement => {
+            achievement.status = publish ? 1 : 0;
         });
 
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected news items.`);
+        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
     } catch {
-        alert('Failed to update news status.');
+        alert('Failed to update achievement status.');
     }
 };
 
-const submitNews = async (publish) => {
-    if (!currentNews.value.title.trim() || !currentNews.value.author.trim()) {
+const submitAchievement = async (publish) => {
+    if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
         alert('Please fill in all required fields: Title and Author.');
         return;
     }
 
     try {
-
         const userTime = new Date();
         const bangkokOffset = 7 * 60 * 60 * 1000;
         const bangkokTime = new Date(userTime.getTime() + bangkokOffset);
 
-        currentNews.value.upload_date = bangkokTime
+        currentAchievement.value.uploadDate = bangkokTime
             .toISOString()
             .slice(0, 19)
             .replace('T', ' ');
 
-        const isUpdate = !!currentNews.value.id;
+        const isUpdate = !!currentAchievement.value.id;
         const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentNews.value.id}` : `/api/${apiEndpoint}`;
+        const url = isUpdate ? `/api/${apiEndpoint}/${currentAchievement.value.id}` : `/api/${apiEndpoint}`;
 
         const payload = {
-            id: currentNews.value.id,
-            title: currentNews.value.title,
-            description: currentNews.value.description,
-            author: currentNews.value.author,
-            upload_date: currentNews.value.upload_date,
+            id: currentAchievement.value.id,
+            title: currentAchievement.value.title,
+            description: currentAchievement.value.description,
+            author: currentAchievement.value.author,
+            uploadDate: currentAchievement.value.uploadDate,
             status: publish ? 1 : 0,
-            hot_new: currentNews.value.hot_new,
-            summerize: currentNews.value.summerize,
-            image: currentNews.value.image || '',
+            pdf: currentAchievement.value.pdf || '',
         };
 
         const response = await fetch(url, {
@@ -364,35 +337,33 @@ const submitNews = async (publish) => {
         });
 
         if (!response.ok) {
-            throw new Error('Error saving the news.');
+            throw new Error('Error saving the achievement.');
         }
 
         if (!isUpdate) {
-            currentNews.value.id = await response.json();
-            alert('News added successfully.');
+            currentAchievement.value.id = await response.json();
+            alert('Achievement added successfully.');
         } else {
-            alert('News updated successfully.');
+            alert('Achievement updated successfully.');
         }
 
-        showModalAddnews.value = false;
+        showModalAddAchievement.value = false;
         showModalEdit.value = false;
-        fetchNews();
+        fetchAchievements();
 
     } catch (error) {
-        alert('Error while submitting news.');
+        alert('Error while submitting achievement.');
         console.error(error);
     }
 };
 
-
-
 const closeModal = () => {
-    showModalAddnews.value = false;
+    showModalAddAchievement.value = false;
     showModalEdit.value = false;
 };
 
-const removeImage = () => {
-    currentNews.value.image = '';
+const removePdf = () => {
+    currentAchievement.value.pdf = '';
 };
 
 const handleDragDrop = (e) => {
@@ -404,10 +375,10 @@ const handleDragDrop = (e) => {
 
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type === 'application/pdf') {
         const reader = new FileReader();
         reader.onload = () => {
-            currentNews.value.image = reader.result;
+            currentAchievement.value.pdf = reader.result;
         };
         reader.readAsDataURL(file);
     }
@@ -430,17 +401,17 @@ const confirmDelete = async () => {
         console.log("Delete API Response:", result);
 
         if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete news.');
+            throw new Error(result.error || 'Failed to delete achievement.');
         }
 
         // Update frontend list
-        News.value = News.value.filter(news => news.id !== deleteId.value);
-        NewsNum.value = News.value.length;
+        achievements.value = achievements.value.filter(achievement => achievement.id !== deleteId.value);
+        achievementsNum.value = achievements.value.length;
 
         showModal.value = false;
-        alert('News deleted successfully.');
+        alert('Achievement deleted successfully.');
     } catch (error) {
-        alert(`Error deleting news: ${error.message}`);
+        alert(`Error deleting achievement: ${error.message}`);
         console.error(error);
     } finally {
         deleteId.value = null;
@@ -454,11 +425,11 @@ const cancelDelete = () => {
 };
 
 onMounted(() => {
-    fetchNews();
+    fetchAchievements();
 });
 
 const toggleSelectAll = () => {
-    News.value.forEach(news => news.selected = selectAll.value);
+    achievements.value.forEach(achievement => achievement.selected = selectAll.value);
 };
 </script>
 

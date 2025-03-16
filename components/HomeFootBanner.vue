@@ -45,7 +45,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .f-banner {
     cursor: pointer;
     overflow: hidden;

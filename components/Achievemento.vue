@@ -6,14 +6,12 @@
         <div class="f-banner-text-container">
             <h1 class="f-banner-title">{{ title }}</h1>
             <p class="f-banner-text">{{ text }}</p>
+            <p class="f-banner-text">by {{ author }}</p>
         </div>
-        
-
     </NuxtLinkLocale>
 </template>
 
 <script>
-
 export default {
     props: {
         text: {
@@ -36,6 +34,10 @@ export default {
         },
         titlesize:{
             type:Int32Array
+        },
+
+        author:{
+            type:String
         }
     }, computed: {
         inputColor() {
@@ -45,98 +47,60 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .f-banner {
     cursor: pointer;
-    overflow: hidden;
-    border-radius: 20px;
+
     display: flex;
-    justify-self: center;
     justify-content: space-between;
-    min-height: 12rem;
-    height: 16rem;
+    height: 25rem;
     background-color: #A6AB82;
-    width: 80%;
-    margin: 1rem;
+    width: 100%;
+    transition: ease-in-out 0.3s;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
-    transition: 0.3s ease-in-out;
-    flex-direction: row;
 }
 
 .f-banner:hover {
-    transform: scale(1.02);
-    background-color: #888c68;
+    transform: scale(1.01);
+    outline: #4E6D16 solid 2px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 8px rgba(58, 133, 43, 0.5);
 }
 
-.f-banner .f-banner-image-container {
+
+.f-banner-image-container {
     display: flex;
+    height: 25rem;
+    aspect-ratio: 1/1.414;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0.2rem;
     justify-content: center;
-    height: 100%;
-    width: 50%;
+    align-items: center;
+    transition: ease-in-out 0.3s;
+
+  
 }
 
-.f-banner .f-banner-image-container img {
-    height: 100%;
-    width: 100%;
+.f-banner-image-container img {
+    height: calc(100% - 0.4rem);
+    aspect-ratio: 1/1.414;
     object-fit: cover;
+    transition: all 0.3s;
 }
 
-.f-banner .f-banner-text-container {
-    max-width: 50%;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    text-overflow: ellipsis;
-    margin: 2rem;
+.f-banner-text-container {
+    display: flex;
+    flex: 1 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    width: 50%;
+    background-color: white;
 }
 
-.f-banner .f-banner-text-container p {
-    max-width: 100%;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    padding-left: 1rem;
-    text-overflow: ellipsis;
-    font-size: 1.2rem;
-    color: #333;
-
-}
-
-
-.f-banner .f-banner-text-container h1 {
-    max-width: 100%;
-    overflow: hidden;
-    font-size: 1.4rem;
-    color: black;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    text-overflow: ellipsis;
-
-}
-
-@media screen and (max-width: 1024px) {
-    .f-banner .f-banner-image-container {
-        width: 60%;
-    }
-
-    .f-banner .f-banner-text-container {
-        max-width: 40%;
-        -webkit-line-clamp: 3;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .f-banner .f-banner-image-container {
-        width: 50%;
-    }
-
-    .f-banner .f-banner-text-container {
-        max-width: 50%;
-        -webkit-line-clamp: 2;
-
-    }
+.f-banner-image-container:hover {
+    transform: scale(1.3);
 }
 </style>
