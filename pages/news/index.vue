@@ -10,7 +10,7 @@
   <div class="hot-news-section">
     <section class="beeg-news">
       <HotBigAllNews :url="`/news/details/${hotNews.id}`"
-        :image="hotNews.image || 'https://via.placeholder.com/600x400'" :title="hotNews.title || ''"
+        :image="hotNews.image || notfound" :title="hotNews.title || ''"
         :date="formatDate(hotNews.upload_date) || ''" v-if="hotNews" />
       <div v-else style="height:100%">
         <HotBigAllNewsShimmer />
@@ -24,7 +24,7 @@
     <section class="smol-news" v-else>
       <HotSmallAllNews
         v-for="news in newsItems.filter((news) => (news.hot_new && news.id !== hotNews?.id) && news.status).slice(0, 2)"
-        :key="news.id" :url="`/news/details/${news.id}`" :image="news.image || 'https://via.placeholder.com/1280x720'"
+        :key="news.id" :url="`/news/details/${news.id}`" :image="news.image || notfound"
         :title="news.title || ''" :date="formatDate(news.upload_date) || ''" />
     </section>
 
@@ -39,7 +39,7 @@
   <section class="news-etc-container">
     <section class="news-etc">
       <etcNews v-for="news in regularNews" :key="news.id" :url="`/news/details/${news.id}`"
-        :image="news.image || 'https://via.placeholder.com/1280x720'" :title="news.title || ''"
+        :image="news.image || notfound" :title="news.title || ''"
         :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />
     </section>
   </section>
@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-
+import notfound from '@/assets/img/News404.png';
 const newsItems = ref([]);
 const hotNews = ref(null);
 const loading = ref(true);

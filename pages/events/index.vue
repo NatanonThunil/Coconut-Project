@@ -4,13 +4,13 @@
   <h1 class="context-header">{{ $t('Events') }}</h1>
   <div style="height: 5rem;"></div>
 
-  <!-- Search Input -->
+ 
   <label class="event-v-input">
     <img src="@/assets/icon/search.svg" alt="search icon">
     <input type="text" placeholder="Search by name..." v-model="searchQuery" @input="filterEvents" />
   </label>
 
-  <!-- Filters -->
+
   <div class="all-filter-container">
     <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
       <select v-model="filter.model" class="filter-select" @change="filterEvents">
@@ -22,7 +22,7 @@
     </label>
   </div>
 
-  <!-- Events -->
+
   <div v-if="loading" class="all-event-card-container">
     <EventCardShimmer v-for="index in itemsPerPage" :key="index" />
   </div>
@@ -37,7 +37,7 @@
       :description="event.description || 'No description available'" />
   </div>
 
-  <!-- Pagination -->
+  
   <div v-if="!loading" class="pagination">
     <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
     <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
@@ -240,14 +240,12 @@ export default {
 
 .all-event-card-container {
 
-  margin: 1.8rem;
-  display: flex;
-  justify-self: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
   width: 80%;
-  min-height: 20rem;
-  gap: 1.5rem;
+  margin: 1rem auto;
+  grid-template-columns: repeat(5, 20rem);
+  grid-auto-rows: auto; 
+  gap: 15px;
 }
 
 h1.context-header {
@@ -303,4 +301,23 @@ label.event-v-input input {
 .filter-select:focus {
   border-color: #4e6d16;
 }
+@media (max-width: 1024px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(3, 20rem);
+  }
+}
+
+/* Mobile View (1-2 Columns) */
+@media (max-width: 768px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(2, 20rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(1, 20rem);
+  }
+}
+
 </style>

@@ -8,7 +8,19 @@
   </div>
 
   <!-- Merged navbarexpert content -->
-  <div>
+   <div style="height: 1rem"></div>
+    <!-- Search bar -->
+    <label class="coconut-v-input">
+      <img src="@/assets/icon/search.svg" alt="Search Icon" />
+      <input
+        type="text"
+        placeholder="ค้นหาด้วยชื่อ..."
+        v-model="searchQuery"
+        @input="filterByName"
+      />
+    </label>
+    <div style="height: 1rem"></div>
+    <div>
     <!-- Filter options -->
     <ul class="homeeventfiltercontainer">
       <li
@@ -34,17 +46,6 @@
       </li>
     </ul>
 
-    <!-- Search bar -->
-    <label class="coconut-v-input">
-      <img src="@/assets/icon/search.svg" alt="Search Icon" />
-      <input
-        type="text"
-        placeholder="ค้นหาด้วยชื่อ..."
-        v-model="searchQuery"
-        @input="filterByName"
-      />
-    </label>
-    <div style="height: 2rem"></div>
 
     <!-- Loading state -->
     <div class="event-card-section" v-if="isLoading" loading="lazy">
@@ -160,7 +161,7 @@ export default {
   text-align: center;
   margin-top: 0;
   padding-top: 20px;
-  font-size: 2rem;
+ 
 }
 .header-content {
   color: #ffffff;

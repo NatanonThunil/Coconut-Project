@@ -1,42 +1,52 @@
 <template>
     <Navbar selecto="coconutdata" />
-    <page-header head="CoconutInfo" />
+    <div style="height: 10rem;"></div>
+    <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
+    <div style="height: 5rem;"></div>
+
+    <!-- Search Input -->
     <label class="coconut-v-input">
-        <img src="@/assets/icon/search.svg">
+        <img src="@/assets/icon/search.svg" alt="search icon">
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
     </label>
 
-    <!-- Filter Container -->
-    <div class="filter-container">
-        <div class="dropdown-filter" v-for="(filter, key) in filters" :key="key">
-            <label>{{ filter.label }}</label>
-            <select v-model="filter.model" @change="filterCoconuts">
+    <!-- Filters -->
+    <div class="all-filter-container">
+        <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+            <select v-model="filter.model" class="filter-select" @change="filterCoconuts">
+                <option value="">{{ filter.label }}</option>
                 <option v-for="option in filter.options" :key="option.value" :value="option.value">
                     {{ option.text }}
                 </option>
             </select>
-        </div>
+        </label>
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="coconut-v-cards-container">
+    <div v-if="loading" class="all-event-card-container">
         <CardShimmer v-for="index in 30" :key="index" />
     </div>
-
-    <!-- Loaded Content -->
-    <!-- ดึงข้อมูลเข้า cards -->
-    <div v-else class="coconut-v-cards-container">
-        <swiper :slides-per-view="3" space-between="10" navigation loop>
-            <swiper-slide v-for="(coconut, index) in filteredCoconuts" :key="coconut.id"
-                :class="{ 'bulge-card': index === Math.floor(filteredCoconuts.length / 2) }">
-                <InformationCard class="information-card" :img="coconut.image || defaultImage"
-                    :title="currentLocale === 'th' ? coconut.title : coconut.title"
-                    :description="coconut.description || 'No description available'" />
-            </swiper-slide>
-        </swiper>
+    <div v-else-if="filteredCoconuts.length === 0" class="no-results">
+        <img src="@/assets/icon/notfound.png" draggable="false" alt="No coconuts found">
+        {{ $t('No coconuts found') }}
+    </div>
+    <div v-else class="all-event-card-container">
+        <CoconutCard v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id"
+            :image="coconut.image || defaultImage"
+            :title="currentLocale === 'th' ? coconut.title : coconut.title"
+            :description="coconut.description || 'No description available'"
+            :date="coconut.date"
+            :location="coconut.location"
+             />
     </div>
 
-
+    <!-- Pagination -->
+    <div v-if="!loading" class="pagination">
+        <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
+        <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
+        <span>{{ currentPage }} / {{ totalPages }}</span>
+        <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+    </div>
 </template>
 
 <script>
@@ -44,6 +54,7 @@ import { useHead } from '@vueuse/head';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import InformationCard from '@/components/InformationCard.vue';
+import CoconutCard from '@/components/CoconutCard.vue'; // Add this import
 import { useI18n } from 'vue-i18n'; // Add this import
 
 export default {
@@ -51,6 +62,7 @@ export default {
         Swiper,
         SwiperSlide,
         InformationCard,
+        CoconutCard, // Register the component
     },
     data() {
         return {
@@ -62,29 +74,40 @@ export default {
             filters: {
                 category: {
                     label: this.$t('Category'),
-                    model: '0', // Default to 'young-coconut'
+                    model: '', 
                     options: [
+                        
                         { value: '0', text: this.$t('Young Coconut') },
                         { value: '1', text: this.$t('Mature Coconut') },
                     ],
                 },
                 type: {
                     label: this.$t('Type'),
-                    model: '1', // Default to 'upstream'
+                    model: '', // Default to 'upstream'
                     options: [
-                        { value: '1', text: this.$t('Upstream') },
-                        { value: '2', text: this.$t('Midstream') },
-                        { value: '3', text: this.$t('Downstream') },
+                        { value: '0', text: this.$t('Upstream') },
+                        { value: '1', text: this.$t('Midstream') },
+                        { value: '2', text: this.$t('Downstream') },
                     ],
                 },
             },
+            currentPage: 1,
+            itemsPerPage: 30,
+            pageInput: 1,
         };
     },
     computed: {
         currentLocale() {
             const { locale } = useI18n(); // Correct the usage of useI18n
             return locale.value;
-        }
+        },
+        totalPages() {
+            return Math.ceil(this.filteredCoconuts.length / this.itemsPerPage);
+        },
+        paginatedCoconuts() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            return this.filteredCoconuts.slice(start, start + this.itemsPerPage);
+        },
     },
     async mounted() {
         window.scrollTo(0, 0);
@@ -111,8 +134,19 @@ export default {
                 return matchesQuery && matchesCategory && matchesType;
             });
         },
-        goToDetails(id) {
-            this.$router.push(`/coconut-information/chain-value/details/${id}`);
+        changePage(direction) {
+            if (direction === 'next' && this.currentPage < this.totalPages) {
+                this.currentPage++;
+            } else if (direction === 'prev' && this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        goToPage() {
+            if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
+                this.currentPage = this.pageInput;
+            } else {
+                this.pageInput = this.currentPage;
+            }
         },
         resetFilters() {
             this.filters.category.model = '0';
@@ -139,6 +173,36 @@ export default {
 </script>
 
 <style scoped>
+.all-filter-container {
+
+margin-top: 1rem;
+gap: 1rem;
+display: flex;
+justify-content: start;
+justify-self: center;
+width: 60%;
+}
+
+.filters-container {
+  display: flex;
+  justify-content: center;
+}
+
+.filter-dropdown {
+  width: 100%;
+}
+.filter-select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: #4e6d16;
+}
 /* Swiper Styles */
 .filter-container {
     display: flex;
@@ -234,7 +298,8 @@ export default {
 
 /* Small Card Styles */
 .small-card {
-    width: 80%;
+    width: 100%;
+    max-width: 200px;
     opacity: 0.8;
     transition: opacity 0.3s ease-in-out;
 }
@@ -450,5 +515,13 @@ label.coconut-v-input input {
     to {
         opacity: 1;
     }
+}
+
+.all-event-card-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin: 2rem;
+    justify-items: center;
 }
 </style>
