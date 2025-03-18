@@ -32,12 +32,9 @@
     </div>
     <div v-else class="all-event-card-container">
         <CoconutCard v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id"
-            :image="coconut.image || defaultImage"
-            :title="currentLocale === 'th' ? coconut.title : coconut.title"
-            :description="coconut.description || 'No description available'"
-            :date="coconut.date"
-            :location="coconut.location"
-             />
+            :image="coconut.image || defaultImage" :title="currentLocale === 'th' ? coconut.title : coconut.title"
+            :description="coconut.description || 'No description available'" :date="coconut.date"
+            :location="coconut.location" />
     </div>
 
     <!-- Pagination -->
@@ -74,9 +71,9 @@ export default {
             filters: {
                 category: {
                     label: this.$t('Category'),
-                    model: '', 
+                    model: '',
                     options: [
-                        
+
                         { value: '0', text: this.$t('Young Coconut') },
                         { value: '1', text: this.$t('Mature Coconut') },
                     ],
@@ -128,12 +125,16 @@ export default {
         filterCoconuts() {
             const query = this.searchQuery.toLowerCase();
             this.filteredCoconuts = this.coconuts.filter(coconut => {
-                const matchesQuery = coconut.name_th.toLowerCase().includes(query) || coconut.name_eng.toLowerCase().includes(query);
-                const matchesCategory = coconut.category.toString() === this.filters.category.model;
-                const matchesType = coconut.type.toString() === this.filters.type.model;
+                const nameTh = (coconut.name_th || "").toLowerCase();
+                const nameEng = (coconut.name_eng || "").toLowerCase();
+                const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
+                const matchesCategory = this.filters.category.model === '' || coconut.category.toString() === this.filters.category.model;
+                const matchesType = this.filters.type.model === '' || coconut.type.toString() === this.filters.type.model;
+
                 return matchesQuery && matchesCategory && matchesType;
             });
         },
+
         changePage(direction) {
             if (direction === 'next' && this.currentPage < this.totalPages) {
                 this.currentPage++;
@@ -175,34 +176,36 @@ export default {
 <style scoped>
 .all-filter-container {
 
-margin-top: 1rem;
-gap: 1rem;
-display: flex;
-justify-content: start;
-justify-self: center;
-width: 60%;
+    margin-top: 1rem;
+    gap: 1rem;
+    display: flex;
+    justify-content: start;
+    justify-self: center;
+    width: 60%;
 }
 
 .filters-container {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .filter-dropdown {
-  width: 100%;
+    width: 100%;
 }
+
 .filter-select {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
 }
 
 .filter-select:focus {
-  border-color: #4e6d16;
+    border-color: #4e6d16;
 }
+
 /* Swiper Styles */
 .filter-container {
     display: flex;

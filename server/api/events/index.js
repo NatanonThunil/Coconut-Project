@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
                 let imageBase64 = null;
                 if (event.image) {
                     const imageBuffer = Buffer.from(event.image);
-                    let mimeType = 'image/jpeg'; 
+                    let mimeType = 'image/jpeg';
 
                     if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
                         mimeType = 'image/png';
@@ -45,6 +45,9 @@ export default defineEventHandler(async (event) => {
                     location_url: event.location_url,
                     register_url: event.register_url,
                     event_category: event.event_category,
+                    title_en: event.title_en,
+                    description_en: event.description_en,
+                    location_name_en: event.location_name_en,
                     status: event.status
                 };
             });
@@ -52,7 +55,7 @@ export default defineEventHandler(async (event) => {
             return eventItems;
         } else if (event.req.method === 'POST') {
             const body = await readBody(event);
-            const { title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category, image, status } = body;
+            const { title, title_en, organizer, date_start, date_end, location_name, location_name_en, location_url, register_url, description, description_en, event_category, image, status } = body;
 
             const toBangkokTime = (dateStr) => {
                 const date = new Date(dateStr);
@@ -70,8 +73,8 @@ export default defineEventHandler(async (event) => {
             }
 
             const [result] = await connection.execute(
-                'INSERT INTO `event` (title, organizer, date_start, date_end, location_name, location_url, register_url, description, event_category, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, organizer, formattedDateStart, formattedDateEnd, location_name, location_url, register_url, description, event_category, imageBuffer, status]
+                'INSERT INTO `event` (title,title_en organizer, date_start, date_end, location_name,location_name_en, location_url, register_url, description,description_en, event_category, image, status) VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [title,title_en, organizer, formattedDateStart, formattedDateEnd, location_name,location_name_en, location_url, register_url, description,description_en, event_category, imageBuffer, status]
             );
 
             return { message: 'Event created successfully', eventId: result.insertId };

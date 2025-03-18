@@ -1,6 +1,9 @@
 <template>
   <Navbar selecto="coconutdata" />
-  <page-header head="CoconutInfo" />
+  <div style="height: 10rem;"></div>
+  <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
+  <div style="height: 5rem;"></div>
+
     <label class="coconut-v-input">
         <img src="@/assets/icon/search.svg">
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
@@ -57,7 +60,7 @@ export default {
         paginatedCoconuts() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.filteredCoconuts.slice(start, end).filter(coconut => coconut.youngold === 'Young');
+            return this.filteredCoconuts.slice(start, end);
         },
     },
     watch: {
