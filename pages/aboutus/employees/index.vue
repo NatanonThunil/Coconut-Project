@@ -96,7 +96,12 @@ export default {
     window.scrollTo(0, 0);
     try {
       setTimeout(async () => {
-        const response = await fetch(`/api/employees${this.selectedTag ? `?tag=${this.selectedTag}` : ''}`);
+        const response = await fetch(`/api/employees${this.selectedTag ? `?tag=${this.selectedTag}` : ''}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch data");
         const data = await response.json();
         this.employees = data;

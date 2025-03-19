@@ -103,7 +103,12 @@ export default {
     async fetchPests() {
       try {
         this.isLoading = true;
-        const response = await fetch("/api/pests");
+        const response = await fetch("/api/pests", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch pests");
 
         const data = await response.json();

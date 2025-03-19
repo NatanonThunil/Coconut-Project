@@ -177,7 +177,7 @@ const toggleStatus = async (achievement) => {
         const newStatus = !achievement.status;
         const response = await fetch(`/api/${apiEndpoint}/${achievement.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...achievement, status: newStatus ? 1 : 0 }),
         });
 
@@ -198,7 +198,12 @@ const triggerFileInput = () => {
 
 const fetchAchievements = async () => {
     try {
-        const response = await fetch(`/api/${apiEndpoint}`);
+        const response = await fetch(`/api/${apiEndpoint}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) {
             throw new Error('Failed to fetch achievements.');
         }
@@ -283,7 +288,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedAchievements.map(achievement =>
             fetch(`/api/${apiEndpoint}/${achievement.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...achievement, status: publish ? 1 : 0 })
             })
         );
@@ -332,7 +337,7 @@ const submitAchievement = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify(payload),
         });
 
@@ -393,7 +398,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

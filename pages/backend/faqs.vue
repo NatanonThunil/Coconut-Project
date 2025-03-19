@@ -215,7 +215,7 @@ const toggleStatus = async (faq) => {
         const newStatus = !faq.status;
         const response = await fetch(`/api/${config.value.apiEndpoint}/${faq.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...faq, status: newStatus ? 1 : 0 }),
         });
 
@@ -310,7 +310,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedFaqs.map(faq =>
             fetch(`/api/faqs/${faq.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...faq, status: publish ? 1 : 0 })
             })
         );
@@ -338,7 +338,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/faqs/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

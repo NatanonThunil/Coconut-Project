@@ -1,4 +1,6 @@
-<template>
+<template></template>
+
+<!-- <template>
   <div class="add-coconut-form">
     <h1>Add Coconut</h1>
     <form @submit.prevent="submitForm">
@@ -175,4 +177,4 @@ form button:hover {
 .success-message {
   color: green;
 }
-</style>
+</style> -->

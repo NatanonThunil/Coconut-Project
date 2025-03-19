@@ -32,6 +32,7 @@ const login = async () => {
   try {
     const response = await $fetch('/api/loginAdmin', {
       method: 'POST',
+      
       body: { email: email.value.trim(), password: password.value }
     });
 

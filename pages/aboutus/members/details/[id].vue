@@ -55,7 +55,7 @@
       <div style="height: 5rem"></div>
 
       <div class="back-btn-container">
-        <SeeAllButton text="ดูสมาชิกทั้งหมด" link="/members" />
+        <SeeAllButton text="ดูสมาชิกทั้งหมด" link="/aboutus/members" />
       </div>
     </div>
   </div>
@@ -76,7 +76,12 @@ export default {
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/members_table`);
+      const response = await fetch(`/api/members_table`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok)
         throw new Error(
           `Failed to fetch member details: ${response.statusText}`

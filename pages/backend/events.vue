@@ -226,7 +226,7 @@ const toggleStatus = async (event) => {
         const newStatus = !event.status;
         const response = await fetch(`/api/${apiEndpoint}/${event.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...event, status: newStatus ? 1 : 0 }),
         });
 
@@ -247,7 +247,7 @@ const triggerFileInput = () => {
 
 const fetchEvents = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         Events.value = response.map(event => ({ ...event, selected: false }));
         EventsNum.value = Events.value.length;
     } catch (error) {
@@ -340,7 +340,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedEvents.map(event =>
             fetch(`/api/${apiEndpoint}/${event.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...event, status: publish ? 1 : 0 })
             })
         );
@@ -394,7 +394,7 @@ const submitEvent = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify(payload),
         });
 
@@ -471,7 +471,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

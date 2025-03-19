@@ -30,7 +30,12 @@ export default {
     async mounted() {
         const { id } = this.$route.params;
         try {
-            const response = await fetch(`/api/chain_values/${id}`);
+            const response = await fetch(`/api/chain_values/${id}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
             if (!response.ok) throw new Error('Failed to fetch data');
             const data = await response.json();
             this.coconut = data;

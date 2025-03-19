@@ -76,7 +76,12 @@
     async mounted() {
       const cid = this.$route.params.id;
       try {
-        const response = await fetch(`/api/benefits_table`);
+        const response = await fetch(`/api/benefits_table`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok)
           throw new Error(
             `Failed to fetch benefit details: ${response.statusText}`

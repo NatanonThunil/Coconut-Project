@@ -73,7 +73,12 @@ export default {
         try {
          
             setTimeout(async () => {
-                const response = await fetch('/api/coconut');
+                const response = await fetch('/api/coconut', {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
                 this.coconuts = data

@@ -110,7 +110,12 @@ export default {
         window.scrollTo(0, 0);
         try {
             setTimeout(async () => {
-                const response = await fetch('/api/chain_values');
+                const response = await fetch('/api/chain_values', {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
                 this.coconuts = data;

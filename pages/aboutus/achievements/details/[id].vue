@@ -19,7 +19,7 @@
 
         <!-- Back Button -->
 
-        <SeeAllButton text="ดูข่าวอื่น" link="/achievement" />
+        <SeeAllButton text="ดูข่าวอื่น" link="/aboutus/achievements" />
     </div>
     <div v-else-if="loading" class="loading-container">
         <p class="loading">กำลังโหลดข้อมูล...</p>
@@ -31,8 +31,8 @@
             <div class="news-404-center-content">
                 <section class="news-404-left-section"><img src="@/assets/img/News404.png" alt="" draggable="false">
                 </section>
-                <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่ข่าว
-                    <SeeAllButton text="ดูข่าวอื่นๆ" link="/news" />
+                <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่งานนี้
+                    <SeeAllButton text="ดูข่าวอื่นๆ" link="/aboutus/achievements" />
                 </section>
             </div>
         </div>
@@ -56,7 +56,12 @@ export default {
 
         try {
 
-            const response = await fetch(`/api/achievements_table/`);
+            const response = await fetch(`/api/achievements_table/`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
             if (!response.ok) throw new Error('Failed to fetch news details');
 
             const data = await response.json();

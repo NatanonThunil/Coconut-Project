@@ -79,7 +79,12 @@ export default {
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/experts`);
+      const response = await fetch(`/api/experts`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok)
         throw new Error(
           `Failed to fetch expert details: ${response.statusText}`

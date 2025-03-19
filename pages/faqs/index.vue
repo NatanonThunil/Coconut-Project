@@ -40,7 +40,12 @@ const currentLocale = computed(() => locale.value);
 
 const fetchapi = async () => {
     try {
-        const response = await fetch('/api/faqs');
+        const response = await fetch('/api/faqs', {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

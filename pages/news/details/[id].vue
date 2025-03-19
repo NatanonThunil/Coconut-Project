@@ -65,7 +65,12 @@ export default {
 
         try {
 
-            const response = await fetch(`/api/news/` + cid);
+            const response = await fetch(`/api/news/` + cid, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
             if (!response.ok) throw new Error('Failed to fetch news details');
 
             const data = await response.json();

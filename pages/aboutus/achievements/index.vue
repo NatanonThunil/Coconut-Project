@@ -1,22 +1,16 @@
 <template>
   <Navbar selecto="aboutus" />
-  
+
   <div style="height: 10rem"></div>
   <h3 class="header-content">{{ $t("Achievement") }}</h3>
-  
+
   <div class="card-achivments-container">
-    <Achievemento 
-      v-for="achievement in Achievements" 
-      :key="achievement.id" 
-      :picture="achievement.thumbnail || 'https://placehold.co/600x400'"
-      :title="achievement.title" 
-      :text="achievement.description" 
-      :url="`/aboutus/achievements/details/${achievement.id}`" 
-      color="white"
-      :author="achievement.author"
-    />
+    <Achievemento v-for="achievement in Achievements" :key="achievement.id"
+      :picture="achievement.thumbnail || 'https://placehold.co/600x400'" :title="achievement.title"
+      :text="achievement.description" :url="`/aboutus/achievements/details/${achievement.id}`" color="white"
+      :author="achievement.author" />
   </div>
-  
+
   <div style="height: 5rem"></div>
 </template>
 
@@ -29,11 +23,16 @@ const Achievements = ref([]);
 
 const fetchAchievements = async () => {
   try {
-    const response = await fetch('/api/achievements');
+    const response = await fetch('/api/achievements', {
+      headers: {
+        "CKH": '541986Cocon',
+
+      },
+    });
     const { achievements } = await response.json();
-    
+
     const filteredAchievements = achievements.filter(achievement => achievement.status === 1);
-    
+
     // Generate thumbnails asynchronously
     await Promise.all(filteredAchievements.map(async (achievement) => {
       if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {
@@ -62,18 +61,18 @@ const generateThumbnail = async (pdfUrl) => {
     const pdf = await loadingTask.promise;
     if (!pdf.numPages) throw new Error('Invalid PDF structure');
     const page = await pdf.getPage(1);
-    
+
     const scale = 1.5;
     const viewport = page.getViewport({ scale });
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
+
     canvas.width = viewport.width;
     canvas.height = viewport.height;
 
     const renderContext = { canvasContext: context, viewport };
     await page.render(renderContext).promise;
-    
+
     return canvas.toDataURL();
   } catch (e) {
     console.error(`Error generating thumbnail for PDF: ${pdfUrl}`, e.message);
@@ -94,7 +93,7 @@ onMounted(fetchAchievements);
 .card-achivments-container {
   display: flex;
   flex-direction: column;
- width: 80%;
+  width: 80%;
   justify-content: center;
   gap: 1rem;
   margin: 0% 10%;

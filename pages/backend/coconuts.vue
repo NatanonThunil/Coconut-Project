@@ -215,7 +215,12 @@ const filteredSortedCoconuts = computed(() => {
 
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`);
+        const response = await fetch(`/api/${config.value.apiEndpoint}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
         const data = await response.json();
         apisdatas.value = Array.isArray(data.coconuts) ? data.coconuts.map(coconut => ({ ...coconut, selected: false })) : [];
@@ -232,7 +237,7 @@ const toggleStatus = async (coconut) => {
         const newStatus = !coconut.status;
         const response = await fetch(`/api/${config.value.apiEndpoint}/${coconut.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...coconut, status: newStatus ? 1 : 0 }),
         });
 
@@ -298,7 +303,7 @@ const submitCoconut = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify(payload),
         });
 
@@ -336,7 +341,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedCoconuts.map(coconut =>
             fetch(`/api/coconuts/${coconut.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...coconut, status: publish ? 1 : 0 })
             })
         );
@@ -364,7 +369,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/coconuts/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

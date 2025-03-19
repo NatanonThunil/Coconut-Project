@@ -11,6 +11,7 @@ const signUp = async () => {
   try {
     await $fetch('/api/signupAdmin', {
       method: 'POST',
+      headers: { 'CKH': '541986Cocon' },
       body: { email: email.value, password: password.value }
     });
     router.push('/backend/login');

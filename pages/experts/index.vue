@@ -117,7 +117,12 @@ export default {
     async fetchExperts() {
       try {
         this.isLoading = true;
-        const response = await fetch("/api/experts");
+        const response = await fetch("/api/experts", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch experts");
         const data = await response.json();
         this.experts = data.map((expert) => ({

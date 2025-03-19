@@ -50,7 +50,12 @@ const regularNews = ref([]);
 
 const fetchNews = async () => {
   try {
-    const response = await $fetch('/api/news_table');
+    const response = await $fetch('/api/news_table', {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
     newsItems.value = response;
 
 

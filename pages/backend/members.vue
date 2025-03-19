@@ -311,6 +311,7 @@ const toggleStatus = async (member) => {
         const newStatus = !member.status;
         const response = await fetch(`/api/${apiEndpoint}/${member.id}`, {
             method: 'PUT',
+            headers: { 'CKH': '541986Cocon' },
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...member, status: newStatus ? 1 : 0 }),
         });
@@ -426,7 +427,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedMembers.map(member =>
             fetch(`/api/${apiEndpoint}/${member.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...member, status: publish ? 1 : 0 })
             })
         );
@@ -513,7 +514,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

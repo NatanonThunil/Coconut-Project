@@ -58,7 +58,12 @@ export default {
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/pests/`);
+      const response = await fetch(`/api/pests/`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok) throw new Error(`Failed to fetch pest details: ${response.statusText}`);
       const data = await response.json();
       this.pest = data.find((pest) => (pest.id === parseInt(cid)) && status ===1) || null;

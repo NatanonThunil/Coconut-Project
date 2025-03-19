@@ -107,7 +107,12 @@ export default {
     },
     async fetchEvents() {
       try {
-        const response = await fetch("/api/events_table");
+        const response = await fetch("/api/events_table", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch events");
         const data = await response.json();
         this.events = Array.isArray(data) ? data : [];

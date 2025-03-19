@@ -317,7 +317,7 @@ const toggleStatus = async (expert) => {
         const newStatus = !expert.status;
         const response = await fetch(`/api/${apiEndpoint}/${expert.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...expert, status: newStatus ? 1 : 0 }),
         });
 
@@ -433,7 +433,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedExperts.map(expert =>
             fetch(`/api/${apiEndpoint}/${expert.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...expert, status: publish ? 1 : 0 })
             })
         );
@@ -521,7 +521,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

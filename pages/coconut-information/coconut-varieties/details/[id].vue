@@ -28,7 +28,7 @@
     </div>
 
     <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
-    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/young/coconut-varieties" />
+    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/coconut-varieties" />
   </div>
 
   <div v-else class="loading-container">
@@ -51,7 +51,12 @@ export default {
     const cid = this.$route.params.id;
 
     try {
-      const response = await fetch(`/api/coconut`);
+      const response = await fetch(`/api/coconut`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok) throw new Error('Failed to fetch coconut details');
       const data = await response.json();
       this.coconut = data.find(coconut => coconut.id === parseInt(cid)) || null;
