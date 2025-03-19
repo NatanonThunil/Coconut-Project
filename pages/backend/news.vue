@@ -188,8 +188,8 @@ const showModalAddnews = ref(false);
 const showModalEdit = ref(false);
 const isDragging = ref(false);
 const fileInput = ref(null);
-const sortBy = ref(null);
-const sortDirection = ref(1);
+const sortBy = ref('id');
+const sortDirection = ref(-1);
 const currentNews = ref({
     id: null,
     title: '',
@@ -214,7 +214,7 @@ const toggleStatus = async (news) => {
 
         const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json'  },
             
             body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
         });
@@ -327,7 +327,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedNews.map(news =>
             fetch(`/api/news/${news.id}`, {
                 method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
+                headers: { 'CKH': '541986Cocon' , 'Content-Type': 'application/json'  },
                 body: JSON.stringify({ ...news, status: publish ? 1 : 0 })
             })
         );
@@ -379,7 +379,7 @@ const submitNews = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon' , 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 

@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
         } else if (event.req.method === 'PUT') {
             const body = await readBody(event);
 
-            const { title, author, description, uploadDate, status, pdf } = body;
+            const { title, author, description, uploadDate, status, pdf , canDownload} = body;
 
             let pdfBuffer = null;
             if (pdf) {
@@ -45,9 +45,9 @@ export default defineEventHandler(async (event) => {
 
             const [result] = await connection.execute(
                 `UPDATE achievement SET 
-                    title = ?, author = ?, description = ?, uploadDate = ?, status = ?, pdf = ? 
+                    title = ?, author = ?, description = ?, uploadDate = ?, status = ?, pdf = ? , canDownload = ?
                     WHERE id = ?`,
-                [title, author, description, uploadDate, status, pdfBuffer, id]
+                [title, author, description, uploadDate, status, pdfBuffer, canDownload, id]
             );
 
             if (result.affectedRows === 0) {

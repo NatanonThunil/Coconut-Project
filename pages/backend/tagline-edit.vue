@@ -1,7 +1,8 @@
 <template>
   <div class="demo-container" @click="openImageCropper">
     <img :src="headline?.image || 'https://placehold.co/600x400'" alt="tagline image" class="hero-bar-image">
-    <div v-html="isThai? headline.text : headline.text_en" class="hero-bar-text" :style="{ top: `${headline.y}%`, left: `${headline.x}%` }"></div>
+    <div v-html="isThai ? headline.text : headline.text_en" class="hero-bar-text"
+      :style="{ top: `${headline.y}%`, left: `${headline.x}%` }"></div>
   </div>
   <form class="form-container" @submit.prevent>
     <div class="form-container-input">
@@ -65,8 +66,8 @@ const fetchHeadline = async () => {
   try {
     const response = await $fetch(`/api/${apiEndpoint}`, {
       headers: {
-       "CKH": '541986Cocon',
-       
+        "CKH": '541986Cocon',
+
       },
     });
     if (response.headline) {
@@ -130,10 +131,19 @@ const cancelCrop = () => {
 };
 
 const updateHeadline = async () => {
+  // Log the headline data to ensure the text fields are populated
+  console.log('Updating headline with:', headline.value);
+
+  // Ensure text and text_en are not null or empty
+  if (!headline.value.text || !headline.value.text_en) {
+    alert('Text fields cannot be empty');
+    return;
+  }
+
   try {
     await fetch(`/api/${apiEndpoint}/1`, {
       method: 'PUT',
-      headers: { 'CKH': '541986Cocon' },
+      headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
       body: JSON.stringify(headline.value)
     });
     alert('Headline updated successfully!');
@@ -141,6 +151,7 @@ const updateHeadline = async () => {
     console.error('Error updating headline:', error);
   }
 };
+
 
 definePageMeta({
   layout: "admin",
@@ -151,13 +162,15 @@ onMounted(() => {
 });
 </script>
 <style scoped>
-.labslider{
+.labslider {
   width: 100%;
 }
-.labeltop{
+
+.labeltop {
   display: flex;
   gap: 1rem;
 }
+
 .form-container-input {
   display: flex;
   justify-content: center;
@@ -247,7 +260,7 @@ onMounted(() => {
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: clamp(100px ,60%, 80%);
+  width: clamp(100px, 60%, 80%);
   margin: 2rem auto;
 }
 
@@ -265,11 +278,12 @@ onMounted(() => {
   background: #0056b3;
 }
 
-@media (max-width: 1550px){
-  .form-container{
+@media (max-width: 1550px) {
+  .form-container {
     width: 80%;
   }
-  .form-container-input{
+
+  .form-container-input {
     flex-direction: column;
   }
 }

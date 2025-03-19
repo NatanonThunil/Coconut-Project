@@ -4,19 +4,13 @@ export default defineEventHandler(async (event) => {
     const token = getHeader(event, 'CKH');
     const config = useRuntimeConfig();
 
-    if (!token) {
-      throw createError({ 
-        statusCode: 400, 
-        message: 'API token is missing' 
-      });
-    }
 
-    if (token !== config.apiSecret) {
+    if ((token !== config.apiSecret ) || !token) {
  
       console.warn(`Unauthorized access attempt to ${event.req.url}`);
 
       throw createError({ 
-        statusCode: 403, 
+        statusCode: 404, 
         message: 'Forbidden: Invalid API token' 
       });
     }

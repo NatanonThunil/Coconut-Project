@@ -53,7 +53,7 @@ export default {
 
     display: flex;
     justify-content: space-between;
-    height: 25rem;
+    height: 20rem;
     background-color: #A6AB82;
     width: 100%;
     transition: ease-in-out 0.3s;
@@ -70,7 +70,7 @@ export default {
 
 .f-banner-image-container {
     display: flex;
-    height: 25rem;
+    height: 20rem;
     aspect-ratio: 1/1.414;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.2);
@@ -101,6 +101,6 @@ export default {
 }
 
 .f-banner-image-container:hover {
-    transform: scale(1.3);
+    transform: scale(1.5);
 }
 </style>
