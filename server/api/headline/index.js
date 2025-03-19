@@ -4,6 +4,7 @@ import { dbConfig } from '@/server/config/poom_db_config';
 const pool = mysql.createPool(dbConfig);
 
 export default defineEventHandler(async () => {
+   
     let connection;
     try {
         connection = await pool.getConnection();

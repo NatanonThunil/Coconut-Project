@@ -63,7 +63,12 @@ const toggleEditor = () => {
 };
 const fetchHeadline = async () => {
   try {
-    const response = await $fetch(`/api/${apiEndpoint}`);
+    const response = await $fetch(`/api/${apiEndpoint}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
     if (response.headline) {
       headline.value = {
         x: response.headline.x ?? 50,
@@ -128,7 +133,7 @@ const updateHeadline = async () => {
   try {
     await fetch(`/api/${apiEndpoint}/1`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'CKH': '541986Cocon' },
       body: JSON.stringify(headline.value)
     });
     alert('Headline updated successfully!');

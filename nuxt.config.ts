@@ -1,9 +1,10 @@
 export default defineNuxtConfig({
   runtimeConfig: {
-    apiSecret: '123',
+    apiSecret: process.env.API_SECRET,
     public: {
-      apiBase: '/api'
-    }
+  
+      apiBase: process.env.API_BASE,
+    },
   },
   devtools: { enabled: false },
 

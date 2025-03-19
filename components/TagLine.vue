@@ -18,12 +18,14 @@
 import { ref, onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
+
 defineProps({
   isFixed: {
     type: Boolean,
     default: false,
   }
 });
+
 
 const taglineRef = ref(null);
 const textHeight = ref(0);
@@ -49,11 +51,16 @@ const updateTextHW = () => {
 
 const fetchTagline = async () => {
   try {
-    const response = await fetch("/api/headline");
+    const response = await fetch("/api/headline", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
     if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
 
     const data = await response.json();
-    console.log("API Response:", data);
+  
 
     if (data.headline) {
       heado.value = {
@@ -127,7 +134,7 @@ watchEffect(updateTextHW);
   opacity: 0;
   animation: fadeInText 1s ease-out 0.5s forwards;
   font-size: clamp(0.5rem, 1.1vw, 2rem);
- 
+
   width: auto;
   white-space: nowrap;
 }
