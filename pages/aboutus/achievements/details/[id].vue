@@ -1,182 +1,119 @@
 <template>
     <Navbar selecto="aboutus" />
-    <div style="height: 5rem;"></div>
-
-    <div v-if="news" class="container">
-        <img class="news-image-banner" :src="news.image || 'https://placehold.co/800x400'" alt="News Image"
-            v-if="news.image" />
-
-        <h1>{{ news.title }}</h1>
-        <p class="news-meta">
-            <span><strong>เผยแพร่เมื่อ:</strong> {{ formatDate(news.upload_date) }}</span>
-            | <span>โดย {{ news.author }}</span>
-        </p>
-
-        <div style="height: 3px; background-color:#4E6D16 ; margin: 1rem;"></div>
-
-        <!-- News Content -->
-        <div class="news-content" v-html="news.description"></div>
-
-        <!-- Back Button -->
-
-        <SeeAllButton text="ดูข่าวอื่น" link="/aboutus/achievements" />
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/aboutus">About Us</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/aboutus/achievements">Achievements</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/aboutus/achievements/details/'+this.$route.params.id">{{ achievement?.title || 'ไม่มีหัวข้อ'}}</NuxtLinkLocale>
     </div>
-    <div v-else-if="loading" class="loading-container">
-        <p class="loading">กำลังโหลดข้อมูล...</p>
-        <SeeAllButton text="ดูข่าวอื่น" link="/news" />
-    </div>
-    <!-- Error Handling -->
-    <div v-else>
-        <div class="news-404-container">
-            <div class="news-404-center-content">
-                <section class="news-404-left-section"><img src="@/assets/img/News404.png" alt="" draggable="false">
-                </section>
-                <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่งานนี้
-                    <SeeAllButton text="ดูข่าวอื่นๆ" link="/aboutus/achievements" />
-                </section>
+    <div style="height: 2rem"></div>
+    <div class="achievement-content-container">
+        <section class="achievements-pdf-container"><img :src="'https://placehold.co/600x400'" alt="" draggable="false">
+        </section>
+        <section class="achievements-text-container">
+
+            <div class="achievements-text-details-container">
+                <h1>{{ achievement?.title || 'ไม่มีหัวข้อ'}}</h1>
+                <label>
+                    <p>อัพโหลดเมื่อ {{ formatDate(achievement?.uploadDate) }}</p>
+                    <p>โดย {{ achievement?.author }}</p>
+                </label>
+                <div style="height: 1rem"></div>
+                <h3>คำอธิบาย</h3>
+                <p class="details-container">{{ achievement?.description }}</p>
             </div>
-        </div>
+            <SeeAllButton text="ดูผลงานอื่น" link="/aboutus/achievements/" />
+        </section>
     </div>
-
+    <div style="height: 2rem"></div>
 </template>
 
 <script>
-import unyaprgard from '@/assets/icon/double-quotes.png';
 export default {
     data() {
         return {
-            news: null,
-            error: null,
-            loading: true,
+            achievement: null,
+            error: null
+
         };
     },
     async mounted() {
-        this.loading = true;
         const cid = this.$route.params.id;
-
         try {
+            const response = await fetch(`/api/achievements/${cid}`, {
+                headers: { "CKH": '541986Cocon' }
+            });
 
-            const response = await fetch(`/api/achievements_table/`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-            if (!response.ok) throw new Error('Failed to fetch news details');
+            if (!response.ok) throw new Error('Failed to fetch achievement details');
 
             const data = await response.json();
-            this.news = data.find(news => (news.id === parseInt(cid)) && (news.status)) || null;
-            this.loading = false;
+            if (data.achievement) {
+                this.achievement = data.achievement;
+            } else {
+                throw new Error('Achievement not found');
+            }
+
         } catch (error) {
-            console.error('Error fetching news details:', error);
-            this.error = 'Failed to load news data. Please try again later.';
-        }
-    },
-    methods: {
-        goBack() {
-            this.$router.go(-1);
-        },
-        formatDate(dateString) {
-            if (!dateString) return 'ไม่ทราบวันที่';
-            return new Date(dateString).toLocaleDateString('th-TH', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
+            console.error('Error fetching achievement details:', error);
+            this.error = 'Failed to load achievement data. Please try again later.';
         }
     }
 }
-
 </script>
 
 <style scoped>
-.news-404-center-content {
+.details-container{
+    padding: 0.5rem;
+}
+.achievements-text-details-container label{
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(230, 228, 228);
+    padding: 1rem;
+    border-radius: 10px;
+    
+}
+.achievements-text-details-container h1{
+    font-size: 2.5rem;
+    
+}
+.achievements-text-details-container{
     display: flex;
     flex-direction: column;
-    
-    animation: fadeinblur ease-in-out 0.4s;
+    width: 85%;
+    margin: 0 auto;
+  
 }
+.achievements-text-container { 
 
-.news-404-center-content .news-404-left-section {
+    width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+
 }
 
-.news-404-center-content .news-404-left-section img {
-    height: 25rem;
+.achievements-pdf-container img {
+    aspect-ratio: 1/1.414;
+    object-fit: cover;
+    height: 70dvh;
+
+}
+
+.achievements-pdf-container {
+    padding: 0.5rem;
+    background-color: rgb(1, 1, 1, 0.2);
     border-radius: 10px;
 }
 
-.news-404-center-content .news-404-right-section {
+.achievement-content-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    font-size: 2rem;
-    font-weight: 600;
-    color: #4e6d16;
-}
-
-.news-404-container {
-    display: flex;
-    width: 100%;
-    height: calc(100dvh - 5rem);
-    justify-content: center;
-    align-items: center;
-}
-
-.loading-container {
-    display: flex;
-    justify-self: center;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100vh;
-    width: 50%;
-}
-
-.news-content {
-    font-size: 1.5rem;
-    overflow: visible;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-    word-break: break-word;
-}
-
-.container {
-    padding: 20px;
-    max-width: 1000px;
-    margin: auto;
-
-}
-
-.news-image-banner {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    margin-bottom: 15px;
-}
-
-.error {
-    color: red;
-}
-
-.loading {
-    font-size: 2.5rem;
-    color: gray;
-}
-
-@keyframes fadeinblur {
-    0% {
-        opacity: 0;
-        filter: blur(20px);
-        transform: scale(0.9);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    flex-direction: row;
+    background-color: rgb(241, 241, 241);
+    box-shadow: 0px 0px 16px rgb(0, 0, 0, 0.3);
+    padding: 1rem;
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 10px;
 }
 </style>

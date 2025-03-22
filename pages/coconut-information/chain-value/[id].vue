@@ -1,14 +1,25 @@
 <template>
     <Navbar selecto="coconutdata" />
-    <page-header head="Coconut Details" />
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('Chain Value') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/coconut-information/chain-value/'+this.$route.params.id">{{ chain_values?.title || 'No Title'}}</NuxtLinkLocale>
+    </div>
     <div v-if="loading" class="loading-container">
         <CardShimmer v-for="index in 1" :key="index" />
+        <div class="back-button shimmer"></div>
     </div>
     <div v-else class="details-container">
-        <img :src="coconut.image || defaultImage" alt="Coconut Image" class="coconut-image" />
-        <h1>{{ coconut.title }}</h1>
-        <p>{{ coconut.description }}</p>
-        <button @click="goBack" class="back-button">Back to List</button>
+        <img :src="chain_values.image || defaultImage" alt="Coconut Image" class="coconut-image" draggable =false
+         />
+        <h1>{{ chain_values.title }}</h1>
+        <p>{{ getCategoryLabel(chain_values.category) }}, {{ getTypeLabel(chain_values.type) }}</p>
+        <div class="summary-container">
+            <h2>คำอธิบาย :</h2>
+            <p>{{ chain_values.description }}</p>
+        </div>
+        <button @click="goBack" class="back-button">ดูข่าวอื่น</button>
     </div>
 </template>
 
@@ -22,7 +33,7 @@ export default {
     },
     data() {
         return {
-            coconut: null,
+            chain_values: null,
             loading: true,
             defaultImage: 'https://placehold.co/600x400',
         };
@@ -31,14 +42,13 @@ export default {
         const { id } = this.$route.params;
         try {
             const response = await fetch(`/api/chain_values/${id}`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
+                headers: {
+                    "CKH": '541986Cocon',
+                },
+            });
             if (!response.ok) throw new Error('Failed to fetch data');
             const data = await response.json();
-            this.coconut = data;
+            this.chain_values = data;
             this.loading = false;
         } catch (error) {
             console.error('Error fetching coconut details:', error);
@@ -58,6 +68,21 @@ export default {
     methods: {
         goBack() {
             this.$router.push('/coconut-information/chain-value');
+        },
+        getCategoryLabel(value) {
+            const categories = {
+                '0': this.$t('Young Coconut'),
+                '1': this.$t('Mature Coconut'),
+            };
+            return categories[value] || value;
+        },
+        getTypeLabel(value) {
+            const types = {
+                '0': this.$t('Upstream'),
+                '1': this.$t('Midstream'),
+                '2': this.$t('Downstream'),
+            };
+            return types[value] || value;
         }
     },
 };
@@ -66,23 +91,24 @@ export default {
 <style scoped>
 .loading-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
 .details-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 6rem auto;
+
 }
 
 .coconut-image {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 2rem;
+    max-height: 400px;
+    object-fit: cover;
+    margin-bottom: 15px;
 }
 
 h1 {
@@ -90,102 +116,63 @@ h1 {
     margin-bottom: 1rem;
 }
 
-p {
+.publish-info {
     font-size: 1rem;
-    text-align: center;
+    color: #666;
+    margin-bottom: 1rem;
 }
 
-/* CoconutCards Styles */
-.coconut-card {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out;
-    min-width: 300px; /* Minimum size for big cards */
-}
-
-.coconut-card:hover {
-    transform: scale(1.05);
-}
-
-.coconut-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-}
-
-.coconut-card .card-content {
+.summary-container {
+    background-color: #d9e8c5;
     padding: 1rem;
-    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    width: 100%;
 }
 
-/* Small Card Styles */
-.small-card {
-    width: 80%;
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+.summary-container h2 {
+    margin: 0;
+    font-size: 1.5rem;
 }
 
-.small-card:hover {
-    opacity: 1;
+.summary-container p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+p {
+    padding: 20px;
+    max-width: 1000px;
+    font-size: 1rem;
+    margin: auto;
+
 }
 
 .back-button {
-    padding: 0.5rem 1rem;
-    background-color: #4e6d16;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 1rem;
-}
-
-/* Swiper Styles */
-.swiper {
-    width: 100%;
-    height: 100%;
-}
-
-.swiper-slide {
     display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.swiper-pagination-bullet {
-    background: #4e6d16;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
+    margin: 2rem auto;
+    padding: 0.8rem 2rem;
+    border: 2px solid #4e6d16;
+    background: transparent;
     color: #4e6d16;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s ease;
 }
 
-/* Coconut Cards Container */
-.coconut-v-cards-container {
-    height: auto;
-    width: 80%;
-    display: flex;
-    justify-self: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin: 2rem;
-}
-
-/* Card Shimmer */
-.CardShimmer {
-    height: 18rem;
-    width: 15rem;
-    border-radius: 20px;
+.shimmer {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
-    animation: shimmer-effect 1.5s infinite;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 </style>

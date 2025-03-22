@@ -1,6 +1,11 @@
 <template>
-  <div style="height: 10rem;"></div>
+ 
   <Navbar selecto="expert" />
+  <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/experts">{{ $t('Expert') }}</NuxtLinkLocale>
+    </div>
   
   <h3 class="header-content">{{ $t('Expert') }}</h3>
   <div class="header-container">

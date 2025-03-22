@@ -1,8 +1,10 @@
 <template>
   <Navbar selecto="news" />
-
-  <div style="height: 10rem;"></div>
-  <h3 class="header-content">{{ $t("News") }}</h3>
+  <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+    </div>
   <h1 class="context-header">{{ $t("News") }}</h1>
   <div style="height: 5rem;"></div>
 
@@ -97,13 +99,13 @@ justify-self: center;
 justify-content: center;
 }
 .news-etc {
-  display: flex;
+  display: grid;
   justify-content: flex-start; /* Align items from left to right */
   align-items: center;
   margin-bottom: 1rem;
   width: fit-content;
   height: auto;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, auto);
  
   gap: 1.5rem;
   flex-wrap: wrap;

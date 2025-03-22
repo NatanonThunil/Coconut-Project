@@ -1,6 +1,10 @@
 <template>
     <Navbar selecto="coconutdata" />
-    <div style="height: 10rem;"></div>
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('Chain Value') }}</NuxtLinkLocale>/
+    </div>
     <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
     <div style="height: 5rem;"></div>
 
@@ -31,10 +35,15 @@
         {{ $t('No coconuts found') }}
     </div>
     <div v-else class="all-event-card-container">
-        <CoconutCard v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id"
-            :image="coconut.image || defaultImage" :title="currentLocale === 'th' ? coconut.title : coconut.title"
-            :description="coconut.description || 'No description available'" :date="coconut.date"
-            :location="coconut.location" />
+        <router-link v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id" :to="`/coconut-information/chain-value/${coconut.id}`">
+            <CoconutCard
+                :image="coconut.image || defaultImage"
+                :title="currentLocale === 'th' ? coconut.title : coconut.title"
+                :description="coconut.description || 'No description available'"
+                :date="coconut.date"
+                :location="coconut.location"
+            />
+        </router-link>
     </div>
 
     <!-- Pagination -->

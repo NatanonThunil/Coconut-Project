@@ -165,14 +165,17 @@ const filterEvents = () => {
 
   // Apply sorting based on the selected option
   if (sortBy === 'newest') {
-    filteredList = filteredList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
   } else if (sortBy === 'oldest') {
-    filteredList = filteredList.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
   }
 
   // Apply downloadable filter if selected
-  if (downloadable) {
-    filteredList = filteredList.filter(achievement => achievement.canDownload === downloadable);
+  if (downloadable === '1') {
+    filteredList = filteredList.filter(achievement => achievement.canDownload === 1);
+  }else if (downloadable === '0') {
+    filteredList = filteredList.filter(achievement => achievement.canDownload === 0);
+
   }
 
   return filteredList;

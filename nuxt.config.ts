@@ -1,4 +1,10 @@
+
 export default defineNuxtConfig({
+  
+  ssr: false,
+  devServer: {
+    port: 5000,
+  },  
   runtimeConfig: {
     apiSecret: process.env.API_SECRET,
     public: {

@@ -1,5 +1,11 @@
 <template>
     <Navbar selecto="home" />
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ news?.title || 'No Title'}}</NuxtLinkLocale>
+    </div>
     <div style="height: 5rem;"></div>
 
     <div v-if="news" class="container">

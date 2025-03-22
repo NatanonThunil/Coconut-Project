@@ -1,299 +1,330 @@
 <template>
-  <div style="height: calc(100dvh - 10rem);">
-    <Navbar selecto="pest" />
+  <Navbar selecto="pests" />
+  <div style="height: 10rem"></div>
+  <h1 class="context-header">{{ $t("Pest") }}</h1>
+  <div style="height: 5rem"></div>
 
-    <h3 class="header-content">{{ $t("pest") }}</h3>
-    <div class="header-container">
-      <h1>{{ $t("Pest") }}</h1>
+  <label class="pest-v-input">
+    <img src="@/assets/icon/search.svg" alt="search icon" />
+    <input type="text" :placeholder="currentLocale === 'th' ? 'ค้นหา...' : 'Search...'" v-model="searchQuery"
+      @input="filterPests" />
+  </label>
+
+  <div class="all-filter-container">
+    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+      <select v-model="filter.model" class="filter-select" @change="filterPests">
+        <option value="">{{ filter.label }}</option>
+        <option v-for="option in filter.options" :key="option.value" :value="option.value">
+          {{ option.text }}
+        </option>
+      </select>
+    </label>
+  </div>
+
+  <div class="grid-container">
+    <div v-if="loading" class="all-pest-card-container">
+      <PestCardShimmer v-for="index in itemsPerPage" :key="index" />
     </div>
-
-    <!-- Search Bar (Centered) -->
-    <div class="search-container">
-      <label class="coconut-v-input">
-        <img src="@/assets/icon/search.svg" alt="Search Icon" />
-        <input
-          type="text"
-          placeholder="ค้นหาด้วยชื่อ..."
-          v-model="searchQuery"
-        />
-      </label>
+    <div v-else-if="paginatedPests.length === 0" class="no-results">
+      <img src="@/assets/icon/notfound.png" draggable="false" alt="No pests found" />
+      {{ $t("No pests found") }}
     </div>
-
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-      <button>{{ $t("All") }}</button>
-
-      <button>{{ $t("Insect") }}</button>
-
-      <button>{{ $t("Disease") }}</button>
-
-      <button>{{ $t("Weed") }}</button>
-
-      <button>{{ $t("Other enemies") }}</button>
+    <div v-else class="all-pest-card-container">
+      <PestCards v-for="pest in paginatedPests" :key="pest.id" :url="`/pests/details/${pest.id}`"
+        :image="pest.image || 'https://placehold.co/600x400'" :title="currentLocale === 'th'
+            ? pest.title || 'No title provided'
+            : pest.title_en || 'No English title provided'
+          " :datestart="formatDate(pest.date_start) || 'No date provided'" :location="currentLocale === 'th'
+            ? pest.location_name || 'Unknown'
+            : pest.location_name_en || 'No English location provided'
+          " :description="currentLocale === 'th'
+            ? pest.description || 'No description available'
+            : pest.description_en || 'No description available'
+          " />
     </div>
+  </div>
 
-    <div style="height: 2rem"></div>
-
-    <!-- Loading state -->
-    <div class="event-card-section" v-if="isLoading">
-      <div style="display: flex; gap: 2rem; flex-direction: row">
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-      </div>
+  <div class="pagination">
+    <div class="pagination-line"></div>
+    <div class="pagination-controller">
+      <button @click="changePage('prev')" :disabled="currentPage === 1">
+        กลับ
+      </button>
+      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+        class="page-input" />
+      <span style="display: flex; align-self: center">จาก {{ totalPages }}</span>
+      <button @click="changePage('next')" :disabled="currentPage === totalPages">
+        ถัดไป
+      </button>
     </div>
-
-    <!-- Render pest data -->
-    <div
-      class="event-card-section"
-      v-if="!isLoading && filteredPests.length > 0"
-    >
-      <NuxtLink
-        v-for="(pest, index) in filteredPests"
-        :key="index"
-        class="event-card"
-        :to="`/coconut-information/pest/details/${pest.id}`"
-      >
-        <div class="event-card-image">
-          <img
-            :src="pest.image || 'https://placehold.co/600x400'"
-            alt="Pest Image"
-            draggable="false"
-          />
-        </div>
-        <div class="event-card-text">
-          <p class="event-title">{{ pest.name }}</p>
-          <div class="event-card-date">
-            <img
-              src="@/assets/icon/calenda.svg"
-              alt="Calendar Icon"
-              draggable="false"
-            />
-            <p class="event-date">{{ pest.sci_name }}</p>
-          </div>
-        </div>
-      </NuxtLink>
-    </div>
-
-    <!-- No data found -->
-    <div class="no-events" v-if="!isLoading && filteredPests.length === 0">
-      <p>No pests found.</p>
-    </div>
+    <div class="pagination-line"></div>
   </div>
 </template>
 
 <script>
+import nfi from "@/assets/img/News404.png";
+import { computed, reactive } from "vue";
+import { useI18n } from "vue-i18n";
+
 export default {
+  setup() {
+    const { locale, t } = useI18n();
+    const currentLocale = computed(() => locale.value);
+
+    const filters = reactive({
+      category: {
+        label: computed(() => t("category")),
+        model: "",
+        options: [
+          { value: "Young-coconut", text: computed(() => t("Young-coconut")) },
+          { value: "Old-coconut", text: computed(() => t("Old-coconut")) },
+        ],
+      },
+      status: {
+        label: computed(() => t("All")),
+        model: "",
+        options: [
+          { value: "1", text: computed(() => t("Pest")) },
+          { value: "2", text: computed(() => t("Weed")) },
+          { value: "3", text: computed(() => t("Disease")) },
+          { value: "4", text: computed(() => t("Insect")) },
+          { value: "5", text: computed(() => t("Other enemies")) },
+        ],
+      },
+    });
+
+    return { currentLocale, filters };
+  },
   data() {
     return {
       pests: [],
-      isLoading: true,
+      filteredPests: [],
       searchQuery: "",
+      loading: true,
+      currentPage: 1,
+      itemsPerPage: 30,
+      pageInput: 1,
     };
   },
   computed: {
-    filteredPests() {
-      return this.pests.filter((pest) =>
-        pest.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+    totalPages() {
+      return Math.ceil(this.filteredPests.length / this.itemsPerPage);
     },
+    paginatedPests() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredPests.slice(start, start + this.itemsPerPage);
+    },
+  },
+  async mounted() {
+    window.scrollTo(0, 0);
+    try {
+      const response = await fetch("/api/pests", {
+        headers: {
+          CKH: "541986Cocon",
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch pests");
+      const data = await response.json();
+      this.pests = Array.isArray(data)
+        ? data.filter((pest) => pest.status === 1)
+        : [];
+      this.filterPests();
+    } catch (error) {
+      console.error("Error fetching pests:", error);
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
-    async fetchPests() {
-      try {
-        this.isLoading = true;
-        const response = await fetch("/api/pests", {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-        if (!response.ok) throw new Error("Failed to fetch pests");
+    filterPests() {
+      const Category = filters.value.find(filter => filter.label === 'Sort By').model;
+      const status = filters.value.find(filter => filter.label === 'Downloadable').model;
 
-        const data = await response.json();
+      let filteredList = filteredAchievements.value;
 
-        this.pests = data.filter((pest) => pest.status === 1);
-      } catch (error) {
-        console.error("Error fetching pests:", error);
-        this.pests = [];
-      } finally {
-        this.isLoading = false;
+      // Apply sorting based on the selected option
+      if (sortBy === 'newest') {
+        filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
+      } else if (sortBy === 'oldest') {
+        filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
+      }
+
+      // Apply downloadable filter if selected
+      if (downloadable === '1') {
+        filteredList = filteredList.filter(achievement => achievement.canDownload === 1);
+      } else if (downloadable === '0') {
+        filteredList = filteredList.filter(achievement => achievement.canDownload === 0);
+
+      }
+      this.currentPage = 1;
+      return filteredList;
+
+      
+    },
+
+    changePage(direction) {
+      if (direction === "next" && this.currentPage < this.totalPages) {
+        this.currentPage++;
+      } else if (direction === "prev" && this.currentPage > 1) {
+        this.currentPage--;
       }
     },
-  },
-  mounted() {
-    this.fetchPests();
+    goToPage() {
+      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
+        this.currentPage = this.pageInput;
+      } else {
+        this.pageInput = this.currentPage;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-/* Centering the search bar */
-.search-container {
+.pagination {
   display: flex;
   justify-content: center;
-  margin: 1.5rem 0;
-}
-
-/* Navigation Buttons */
-.nav-buttons {
-  display: flex;
-  justify-content: center;
+  align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  padding-bottom: 1rem;
+  margin: 2rem;
 }
 
-.nav-buttons a {
-  text-decoration: none;
-}
-
-.nav-buttons button {
+.pagination button {
+  padding: 0.5rem 1rem;
   background-color: #4e6d16;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s ease-in-out;
-  min-width: 120px;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination .page-input {
+  width: 3rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0.3rem;
+}
+
+.pagination .pagination-line {
+  width: fit-content;
+  min-width: 20%;
+  height: 4px;
+  background-color: #4e6d16;
+}
+
+.pagination-controller {
+  justify-content: center;
+  display: flex;
+  justify-content: space-around;
+  width: 20rem;
+}
+
+.no-results {
+  text-align: center;
+  flex-direction: column;
+  font-size: 3rem;
+  color: #777;
+  min-height: 30rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-results img {
+  height: 10rem;
+  margin: 2rem;
+  opacity: 0.5;
+}
+
+.all-filter-container {
+  margin-top: 1rem;
+  gap: 1rem;
+  display: flex;
+  justify-content: start;
+  justify-self: center;
+  width: 60%;
+}
+
+.all-pest-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
+  max-width: calc(5 * 20rem + 4 * 15px);
+  gap: 15px;
+  width: 80%;
+  justify-content: center;
+  margin: 1rem auto;
+}
+
+h1.context-header {
   text-align: center;
 }
 
-.nav-buttons button:hover {
-  background-color: #3a5111;
-}
-
-/* Search Bar */
-label.coconut-v-input {
+label.pest-v-input {
   transition: ease-in-out 0.5s;
   display: flex;
-  justify-content: center;
+  justify-self: center;
   width: 60%;
   height: 3rem;
   outline: 3px solid #4e6d16;
   border-radius: 10px;
   overflow: hidden;
-  cursor: text;
 }
 
-label.coconut-v-input:hover {
+label.pest-v-input:hover {
   outline: 4px solid #4e6d16;
 }
 
-label.coconut-v-input img {
-  display: flex;
+label.pest-v-input img {
   align-self: center;
   padding-left: 0.5rem;
   width: 10%;
   height: 2rem;
 }
 
-label.coconut-v-input input {
+label.pest-v-input input {
   all: unset;
   padding-left: 1rem;
-  padding-right: 1rem;
-  overflow: hidden;
   width: 90%;
 }
 
-/* No Data Found */
-.no-events {
+.filters-container {
   display: flex;
   justify-content: center;
-  margin: 10rem;
 }
 
-/* Event Card Section */
-.event-card-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+.filter-dropdown {
   width: 100%;
-  padding: 1rem;
 }
 
-/* Event Card */
-.event-card {
-  all: unset;
+.filter-select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
   cursor: pointer;
-  overflow: hidden;
-  min-width: 16rem;
-  flex: 1 1 calc(25% - 1rem);
-  max-width: 22rem;
-  height: 22rem;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
-  background-color: white;
-  transition: ease-in-out 0.4s;
-  display: flex;
-  flex-direction: column;
 }
 
-.event-card:hover {
-  outline: #4e6d16 solid 3px;
-  transform: scale(1.05);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+.filter-select:focus {
+  border-color: #4e6d16;
 }
 
-.event-card .event-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: ease-in-out 0.2s;
+@media (max-width: 1024px) {
+  .all-pest-card-container {
+    grid-template-columns: repeat(2, 20rem);
+  }
 }
 
-.event-card:hover .event-card-image {
-  transform: scale(1.1);
-}
-
-.event-card-image {
-  width: 100%;
-  height: 60%;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.5);
-}
-
-.event-card-text {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  height: 40%;
-}
-
-.event-title {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  text-overflow: ellipsis;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-.navcontainer {
-  width: 100%;
-  height: 100px;
-  border: rgb(255, 255, 255) solid 2px;
-}
-.header-container {
-  border: rgb(255, 255, 255) solid 3px;
-  text-align: center;
-  margin-top: 0;
-  padding-top: 20px;
-  font-size: 2rem;
-}
-.header-content {
-  color: #ffffff;
-  margin-left: 2%;
-  font-weight: 300;
+/* Mobile View (1-2 Columns) */
+@media (max-width: 691px) {
+  .all-pest-card-container {
+    grid-template-columns: repeat(1, 20rem);
+  }
 }
 </style>
