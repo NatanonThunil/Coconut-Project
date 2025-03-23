@@ -2,8 +2,8 @@
     <Navbar selecto="aboutus" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        <NuxtLinkLocale to="/aboutus">About Us</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/aboutus/achievements">Achievements</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/aboutus">{{ $t("AboutUs") }}</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/aboutus/achievements">{{ $t("Achievements") }}</NuxtLinkLocale>/
         <NuxtLinkLocale :to="'/aboutus/achievements/details/'+this.$route.params.id">{{ achievement?.title || 'ไม่มีหัวข้อ'}}</NuxtLinkLocale>
     </div>
     <div style="height: 2rem"></div>
@@ -13,7 +13,7 @@
         <section class="achievements-text-container">
 
             <div class="achievements-text-details-container">
-                <h1>{{ achievement?.title || 'ไม่มีหัวข้อ'}}</h1>
+                <h1>{{ (currentLocale ==="th")?  achievement?.title : achievement?.title_en}}</h1>
                 <label>
                     <p>อัพโหลดเมื่อ {{ formatDate(achievement?.uploadDate) }}</p>
                     <p>โดย {{ achievement?.author }}</p>
@@ -29,6 +29,10 @@
 </template>
 
 <script>
+
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
 export default {
     data() {
         return {
