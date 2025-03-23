@@ -1,330 +1,536 @@
 <template>
-  <Navbar selecto="pests" />
-  <div style="height: 10rem"></div>
-  <h1 class="context-header">{{ $t("Pest") }}</h1>
-  <div style="height: 5rem"></div>
+    <Navbar selecto="pestdata" />
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest Information') }}</NuxtLinkLocale>/
+    </div>
+    <h1 class="context-header">{{ $t('PestInfo') }}</h1>
+    <div style="height: 5rem;"></div>
 
-  <label class="pest-v-input">
-    <img src="@/assets/icon/search.svg" alt="search icon" />
-    <input type="text" :placeholder="currentLocale === 'th' ? 'ค้นหา...' : 'Search...'" v-model="searchQuery"
-      @input="filterPests" />
-  </label>
-
-  <div class="all-filter-container">
-    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
-      <select v-model="filter.model" class="filter-select" @change="filterPests">
-        <option value="">{{ filter.label }}</option>
-        <option v-for="option in filter.options" :key="option.value" :value="option.value">
-          {{ option.text }}
-        </option>
-      </select>
+    <!-- Search Input -->
+    <label class="coconut-v-input">
+        <img src="@/assets/icon/search.svg" alt="search icon">
+        <input type="text" placeholder="Search by name..." v-model="searchQuery" @input="filterPests" />
     </label>
-  </div>
 
-  <div class="grid-container">
-    <div v-if="loading" class="all-pest-card-container">
-      <PestCardShimmer v-for="index in itemsPerPage" :key="index" />
+    <!-- Filters -->
+    <div class="all-filter-container">
+        <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+            <select v-model="filter.model" class="filter-select" @change="filterPests">
+                <option value="">{{ filter.label }}</option>
+                <option v-for="option in filter.options" :key="option.value" :value="option.value">
+                    {{ option.text }}
+                </option>
+            </select>
+        </label>
     </div>
-    <div v-else-if="paginatedPests.length === 0" class="no-results">
-      <img src="@/assets/icon/notfound.png" draggable="false" alt="No pests found" />
-      {{ $t("No pests found") }}
-    </div>
-    <div v-else class="all-pest-card-container">
-      <PestCards v-for="pest in paginatedPests" :key="pest.id" :url="`/pests/details/${pest.id}`"
-        :image="pest.image || 'https://placehold.co/600x400'" :title="currentLocale === 'th'
-            ? pest.title || 'No title provided'
-            : pest.title_en || 'No English title provided'
-          " :datestart="formatDate(pest.date_start) || 'No date provided'" :location="currentLocale === 'th'
-            ? pest.location_name || 'Unknown'
-            : pest.location_name_en || 'No English location provided'
-          " :description="currentLocale === 'th'
-            ? pest.description || 'No description available'
-            : pest.description_en || 'No description available'
-          " />
-    </div>
-  </div>
 
-  <div class="pagination">
-    <div class="pagination-line"></div>
-    <div class="pagination-controller">
-      <button @click="changePage('prev')" :disabled="currentPage === 1">
-        กลับ
-      </button>
-      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
-        class="page-input" />
-      <span style="display: flex; align-self: center">จาก {{ totalPages }}</span>
-      <button @click="changePage('next')" :disabled="currentPage === totalPages">
-        ถัดไป
-      </button>
+    <!-- Loading State -->
+    <div v-if="loading" class="all-event-card-container">
+        <CardShimmer v-for="index in 30" :key="index" />
     </div>
-    <div class="pagination-line"></div>
-  </div>
+    <div v-else-if="filteredPests.length === 0" class="no-results">
+        <img src="@/assets/icon/notfound.png" draggable="false" alt="No pests found">
+        {{ $t('No pests found') }}
+    </div>
+    <div v-else class="all-event-card-container">
+        <router-link v-for="(pest, index) in paginatedPests" :key="pest.id" :to="`/coconut-information/pest/${pest.id}`">
+            <PestCard
+                :image="pest.image || defaultImage"
+                :title="currentLocale === 'th' ? pest.name : pest.name_en"
+                :description="pest.sci_name || 'No description available'"
+            />
+        </router-link>
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="!loading" class="pagination">
+        <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
+        <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
+        <span>{{ currentPage }} / {{ totalPages }}</span>
+        <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+    </div>
 </template>
 
 <script>
-import nfi from "@/assets/img/News404.png";
-import { computed, reactive } from "vue";
-import { useI18n } from "vue-i18n";
+import { useHead } from '@vueuse/head';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper-bundle.css';
+import PestCard from '@/components/PestCard.vue'; // Add this import
+import { useI18n } from 'vue-i18n'; // Add this import
 
 export default {
-  setup() {
-    const { locale, t } = useI18n();
-    const currentLocale = computed(() => locale.value);
-
-    const filters = reactive({
-      category: {
-        label: computed(() => t("category")),
-        model: "",
-        options: [
-          { value: "Young-coconut", text: computed(() => t("Young-coconut")) },
-          { value: "Old-coconut", text: computed(() => t("Old-coconut")) },
-        ],
-      },
-      status: {
-        label: computed(() => t("All")),
-        model: "",
-        options: [
-          { value: "1", text: computed(() => t("Pest")) },
-          { value: "2", text: computed(() => t("Weed")) },
-          { value: "3", text: computed(() => t("Disease")) },
-          { value: "4", text: computed(() => t("Insect")) },
-          { value: "5", text: computed(() => t("Other enemies")) },
-        ],
-      },
-    });
-
-    return { currentLocale, filters };
-  },
-  data() {
-    return {
-      pests: [],
-      filteredPests: [],
-      searchQuery: "",
-      loading: true,
-      currentPage: 1,
-      itemsPerPage: 30,
-      pageInput: 1,
-    };
-  },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.filteredPests.length / this.itemsPerPage);
+    components: {
+        Swiper,
+        SwiperSlide,
+        PestCard, // Register the component
     },
-    paginatedPests() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredPests.slice(start, start + this.itemsPerPage);
+    data() {
+        return {
+            pests: [],
+            filteredPests: [],
+            searchQuery: '',
+            loading: true,
+            defaultImage: 'https://placehold.co/600x400',
+            filters: {
+                category: {
+                    label: this.$t('Category'),
+                    model: '',
+                    options: [
+                        { value: '0', text: this.$t('Insect') },
+                        { value: '1', text: this.$t('Disease') },
+                    ],
+                },
+                type: {
+                    label: this.$t('Type'),
+                    model: '',
+                    options: [
+                        { value: '0', text: this.$t('Common') },
+                        { value: '1', text: this.$t('Rare') },
+                    ],
+                },
+            },
+            currentPage: 1,
+            itemsPerPage: 30,
+            pageInput: 1,
+        };
     },
-  },
-  async mounted() {
-    window.scrollTo(0, 0);
-    try {
-      const response = await fetch("/api/pests", {
-        headers: {
-          CKH: "541986Cocon",
+    computed: {
+        currentLocale() {
+            const { locale } = useI18n(); // Correct the usage of useI18n
+            return locale.value;
         },
-      });
-      if (!response.ok) throw new Error("Failed to fetch pests");
-      const data = await response.json();
-      this.pests = Array.isArray(data)
-        ? data.filter((pest) => pest.status === 1)
-        : [];
-      this.filterPests();
-    } catch (error) {
-      console.error("Error fetching pests:", error);
-    } finally {
-      this.loading = false;
-    }
-  },
-  methods: {
-    filterPests() {
-      const Category = filters.value.find(filter => filter.label === 'Sort By').model;
-      const status = filters.value.find(filter => filter.label === 'Downloadable').model;
-
-      let filteredList = filteredAchievements.value;
-
-      // Apply sorting based on the selected option
-      if (sortBy === 'newest') {
-        filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
-      } else if (sortBy === 'oldest') {
-        filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
-      }
-
-      // Apply downloadable filter if selected
-      if (downloadable === '1') {
-        filteredList = filteredList.filter(achievement => achievement.canDownload === 1);
-      } else if (downloadable === '0') {
-        filteredList = filteredList.filter(achievement => achievement.canDownload === 0);
-
-      }
-      this.currentPage = 1;
-      return filteredList;
-
-      
+        totalPages() {
+            return Math.ceil(this.filteredPests.length / this.itemsPerPage);
+        },
+        paginatedPests() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            return this.filteredPests.slice(start, start + this.itemsPerPage);
+        },
     },
+    async mounted() {
+        window.scrollTo(0, 0);
+        try {
+            setTimeout(async () => {
+                const response = await fetch('/api/pests', {
+                    headers: {
+                        "CKH": '541986Cocon',
+                    },
+                });
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                this.pests = data;
+                this.filteredPests = data;
+                this.loading = false;
+            }, 200);
+        } catch (error) {
+            console.error('Error fetching pests:', error);
+        }
+    },
+    methods: {
+        filterPests() {
+            const query = this.searchQuery.toLowerCase();
+            this.filteredPests = this.pests.filter(pest => {
+                const nameTh = (pest.name_th || "").toLowerCase();
+                const nameEng = (pest.name_eng || "").toLowerCase();
+                const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
+                const matchesCategory = this.filters.category.model === '' || pest.category.toString() === this.filters.category.model;
+                const matchesType = this.filters.type.model === '' || pest.type.toString() === this.filters.type.model;
 
-    changePage(direction) {
-      if (direction === "next" && this.currentPage < this.totalPages) {
-        this.currentPage++;
-      } else if (direction === "prev" && this.currentPage > 1) {
-        this.currentPage--;
-      }
+                return matchesQuery && matchesCategory && matchesType;
+            });
+        },
+
+        changePage(direction) {
+            if (direction === 'next' && this.currentPage < this.totalPages) {
+                this.currentPage++;
+            } else if (direction === 'prev' && this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        goToPage() {
+            if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
+                this.currentPage = this.pageInput;
+            } else {
+                this.pageInput = this.currentPage;
+            }
+        },
+        resetFilters() {
+            this.filters.category.model = '0';
+            this.filters.type.model = '1';
+            this.filterPests();
+        },
+        clearSearch() {
+            this.searchQuery = '';
+            this.filterPests();
+        }
     },
-    goToPage() {
-      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
-        this.currentPage = this.pageInput;
-      } else {
-        this.pageInput = this.currentPage;
-      }
+    setup() {
+        useHead({
+            title: '🥥Coconut - Pest Information',
+            meta: [
+                {
+                    name: 'description',
+                    content: 'Pest Information page for Coconut Knowledge Hub',
+                },
+            ],
+        });
     },
-  },
 };
 </script>
 
 <style scoped>
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin: 2rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  background-color: #4e6d16;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.pagination .page-input {
-  width: 3rem;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 0.3rem;
-}
-
-.pagination .pagination-line {
-  width: fit-content;
-  min-width: 20%;
-  height: 4px;
-  background-color: #4e6d16;
-}
-
-.pagination-controller {
-  justify-content: center;
-  display: flex;
-  justify-content: space-around;
-  width: 20rem;
-}
-
-.no-results {
-  text-align: center;
-  flex-direction: column;
-  font-size: 3rem;
-  color: #777;
-  min-height: 30rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.no-results img {
-  height: 10rem;
-  margin: 2rem;
-  opacity: 0.5;
-}
-
 .all-filter-container {
-  margin-top: 1rem;
-  gap: 1rem;
-  display: flex;
-  justify-content: start;
-  justify-self: center;
-  width: 60%;
-}
-
-.all-pest-card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
-  max-width: calc(5 * 20rem + 4 * 15px);
-  gap: 15px;
-  width: 80%;
-  justify-content: center;
-  margin: 1rem auto;
-}
-
-h1.context-header {
-  text-align: center;
-}
-
-label.pest-v-input {
-  transition: ease-in-out 0.5s;
-  display: flex;
-  justify-self: center;
-  width: 60%;
-  height: 3rem;
-  outline: 3px solid #4e6d16;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-label.pest-v-input:hover {
-  outline: 4px solid #4e6d16;
-}
-
-label.pest-v-input img {
-  align-self: center;
-  padding-left: 0.5rem;
-  width: 10%;
-  height: 2rem;
-}
-
-label.pest-v-input input {
-  all: unset;
-  padding-left: 1rem;
-  width: 90%;
+    margin-top: 1rem;
+    gap: 1rem;
+    display: flex;
+    justify-content: start;
+    justify-self: center;
+    width: 60%;
 }
 
 .filters-container {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .filter-dropdown {
-  width: 100%;
+    width: 100%;
 }
 
 .filter-select {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
 }
 
 .filter-select:focus {
-  border-color: #4e6d16;
+    border-color: #4e6d16;
 }
 
-@media (max-width: 1024px) {
-  .all-pest-card-container {
-    grid-template-columns: repeat(2, 20rem);
-  }
+/* Swiper Styles */
+.filter-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    padding: 0rem 20%;
+    gap: 1rem;
+    margin: 1rem 0;
 }
 
-/* Mobile View (1-2 Columns) */
-@media (max-width: 691px) {
-  .all-pest-card-container {
-    grid-template-columns: repeat(1, 20rem);
-  }
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-pagination-bullet {
+    background: #4e6d16;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #4e6d16;
+}
+
+.information-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    min-width: 300px;
+    /* Minimum size for big cards */
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.information-card:hover {
+    transform: scale(1.05);
+}
+
+.information-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.information-card .card-content {
+    padding: 1rem;
+    text-align: center;
+}
+
+/* PestCards Styles */
+.pest-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    min-width: 300px;
+    /* Minimum size for big cards */
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.pest-card:hover {
+    transform: scale(1.05);
+}
+
+.pest-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.pest-card .card-content {
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Small Card Styles */
+.small-card {
+    width: 100%;
+    max-width: 200px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.small-card:hover {
+    opacity: 1;
+}
+
+/* Existing Styles */
+.context-header {
+    display: flex;
+    justify-self: center;
+}
+
+label.coconut-v-input {
+    transition: ease-in-out 0.5s;
+    display: flex;
+    justify-self: center;
+    width: 60%;
+    height: 3rem;
+    outline: 3px solid #4e6d16;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: text;
+    animation: btnexpand 0.5s ease-in-out forwards;
+}
+
+label.coconut-v-input:hover {
+    outline: 4px solid #4e6d16;
+}
+
+label.coconut-v-input img {
+    display: flex;
+    align-self: center;
+    padding-left: 0.5rem;
+    width: 10%;
+    height: 2rem;
+}
+
+label.coconut-v-input input {
+    all: unset;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    overflow: hidden;
+    width: 90%;
+}
+
+@keyframes shimmer-effect {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.coconut-v-cards-container {
+    height: auto;
+    width: 80%;
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 2rem;
+}
+
+.CardShimmer {
+    height: 18rem;
+    width: 15rem;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer-effect 1.5s infinite;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    background-color: #4e6d16;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .page-input {
+    width: 3rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.3rem;
+}
+
+.pagination .pagination-line {
+    width: fit-content;
+    min-width: 20%;
+    height: 4px;
+    background-color: #4e6d16;
+}
+
+.pagination-controller {
+    justify-content: center;
+    display: flex;
+    justify-content: space-around;
+    width: 20rem;
+}
+
+@media (max-width: 662px) {
+    .coconut-v-cards-container {
+        width: 90%;
+    }
+}
+
+@keyframes btnexpand {
+    0% {
+        opacity: 0;
+        width: 20%;
+    }
+
+    100% {
+        opacity: 1;
+        width: 60%;
+    }
+}
+
+.bulge-card {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Filter Container Styles */
+.homeeventfiltercontainer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.filtli {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.filtli.selecto {
+    background-color: #4e6d16;
+    color: white;
+}
+
+.filtli:hover {
+    background-color: #4e6d16;
+    color: white;
+}
+
+/* New Filter Styles */
+.filtli.upstream {
+    background-color: #e0f7fa;
+}
+
+.filtli.midstream {
+    background-color: #ffecb3;
+}
+
+.filtli.downstream {
+    background-color: #ffe0b2;
+}
+
+.filtli.young-coconut {
+    background-color: #c8e6c9;
+}
+
+.filtli.mature-coconut {
+    background-color: #d1c4e9;
+}
+
+/* Dropdown Filter Styles */
+.dropdown-filter {
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.dropdown-filter select {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* Fade-in effect for cards */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.all-event-card-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin: 2rem;
+    justify-items: center;
 }
 </style>

@@ -1,21 +1,23 @@
 <template>
-  <div class="locale-switcher">
-    <label class="switch">
-      <input type="checkbox" @change="changeLocale" :checked="locale === 'th'" />
-      <span class="slider round">
-        <span class="switch-text left">EN</span>
-        <span class="switch-text right">TH</span>
-      </span>
-    </label>
-  </div>
-
-  <button v-show="Ismobile" class="mobile-language-change" @click="changeLocale">
-    <div class="text-btn-container">
-      <div :class="{ activeMobile: locale === 'th' }">TH</div>
-      <div>/</div>
-      <div :class="{ activeMobile: locale === 'en' }">EN</div>
+  <div :class="$attrs.class">
+    <div class="locale-switcher">
+      <label class="switch">
+        <input type="checkbox" @change="changeLocale" :checked="locale === 'th'" />
+        <span class="slider round">
+          <span class="switch-text left">EN</span>
+          <span class="switch-text right">TH</span>
+        </span>
+      </label>
     </div>
-  </button>
+
+    <button v-show="Ismobile" class="mobile-language-change" @click="changeLocale">
+      <div class="text-btn-container">
+        <div :class="{ activeMobile: locale === 'th' }">TH</div>
+        <div>/</div>
+        <div :class="{ activeMobile: locale === 'en' }">EN</div>
+      </div>
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -33,6 +35,19 @@ const changeLocale = () => {
   const lang = locale.value === 'th' ? 'en' : 'th';
   setLocale(lang);
 };
+</script>
+
+<script>
+export default {
+  name: 'Langswitch',
+  inheritAttrs: false,
+  props: {
+    Ismobile: {
+      type: Boolean,
+      default: false
+    }
+  }
+}
 </script>
 
 <style scoped>
