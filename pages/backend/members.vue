@@ -329,7 +329,7 @@ const toggleStatus = async (member) => {
 
 const fetchMembers = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         const membersWithTags = await Promise.all(response.map(async (member) => {
             const tagsResponse = await fetchAllTagsForMember(member.id);
             return { ...member, selected: false, tags: tagsResponse.map(tag => tag.text) };
@@ -344,7 +344,7 @@ const fetchMembers = async () => {
 
 const fetchAllTagsForMember = async (memberId) => {
     try {
-        const response = await $fetch(`/api/tags_member?member_id=${memberId}`);
+        const response = await $fetch(`/api/tags_member?member_id=${memberId}`,{headers: { 'CKH': '541986Cocon' },});
         return Array.isArray(response) ? response : [];
     } catch (error) {
         console.error('Error fetching tags:', error.message, error.stack);
@@ -472,7 +472,7 @@ const submitMember = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'CKH': '541986Cocon' , 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 

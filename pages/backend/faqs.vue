@@ -197,7 +197,7 @@ const filteredSortedFaqs = computed(() => {
 
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`);
+        const response = await fetch(`/api/${config.value.apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
         const data = await response.json();
         apisdatas.value = Array.isArray(data.faqs) ? data.faqs.map(faq => ({ ...faq, selected: false })) : [];
@@ -271,7 +271,7 @@ const submitFaq = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'CKH': '541986Cocon' , 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 

@@ -518,7 +518,7 @@ const toggleStatus = async (employee) => {
 
 const fetchEmployees = async () => {
   try {
-    const response = await $fetch(`/api/${apiEndpoint}`);
+    const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
     const employeesWithTags = await Promise.all(
       response.map(async (employee) => {
         const tagsResponse = await fetchAllTagsForEmployee(employee.id);
@@ -541,7 +541,7 @@ const fetchAllTagsForEmployee = async (employeeId) => {
   try {
     const response = await $fetch(
       `/api/tags_employee?employee_id=${employeeId}`
-    );
+    ,{headers: { 'CKH': '541986Cocon' },});
     return Array.isArray(response) ? response : [];
   } catch (error) {
     console.error("Error fetching tags:", error.message, error.stack);

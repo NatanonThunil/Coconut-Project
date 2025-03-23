@@ -334,7 +334,7 @@ const toggleStatus = async (expert) => {
 
 const fetchExperts = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         const expertsWithTags = await Promise.all(response.map(async (expert) => {
             const tagsResponse = await fetchAllTagsForExpert(expert.id);
             return { ...expert, selected: false, tags: tagsResponse.map(tag => tag.text) };
@@ -349,7 +349,7 @@ const fetchExperts = async () => {
 
 const fetchAllTagsForExpert = async (expertId) => {
     try {
-        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`);
+        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`,{headers: { 'CKH': '541986Cocon' },});
         return Array.isArray(response) ? response : [];
     } catch (error) {
         console.error('Error fetching tags:', error.message, error.stack);
@@ -479,7 +479,7 @@ const submitExpert = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
