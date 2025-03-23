@@ -1,16 +1,20 @@
 <template>
-  <div class="navcontainer">
+ 
     <Navbar selecto="aboutus" />
-  </div>
-  <h3 class="header-content">{{ $t("Address") }}</h3>
-  <div class="header-container">
-    <h1>{{ $t("AboutUs") }}</h1>
-  </div>
+
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        
+        <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>
+    </div>
+  <h1 class="context-header">{{ $t('AboutUs') }}</h1>
+  <div style="height: 2rem;"></div>
+
   <p class="kumnum">นี่คือคำอธิบายเกี่ยวกับ Coconut Knowledge Hub เว็ปที่รวบรวม ข้อมูลเกี่ยวกับพันธุ์มะพร้าวทั่วทั้งประเทศ รวมไปถึงขั้นตอนการแปลรูป และส่งออก</p>
   <div class="a">
     <ContentHeader contexto="ผลงานของเรา" />
     <section>
-      <Aboutusslide apiEndPoint="/api/achievements_table" title="title" lurl="achievements"/>
+      <AboutusslidePdf apiEndPoint="/api/achievements_table" title="title" lurl="achievements"/>
 
       <SeeAllButton text="ผลงานทั้งหมด" link="/aboutus/achievements" />
     </section>

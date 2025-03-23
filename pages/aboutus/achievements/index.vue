@@ -3,17 +3,15 @@
 
   <div style="height: 8rem"></div>
   <div class="faqs-path">
-    <NuxtLinkLocale to="/aboutus">About Us</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus/achievements">Achievements</NuxtLinkLocale>
+    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/aboutus/achievements">{{ $t('Achievement') }}</NuxtLinkLocale>
   </div>
   <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t("Achievement") }}</h1>
   <div style="height: 5rem"></div>
   <div style="height: 1rem"></div>
-  <frontesearch :placeholder="$t('searchByQ')" v-model:search="searchQuery" />
+  <frontesearch :placeholder="'ค้นหาด้วยชื่องาน...'" v-model:search="searchQuery" />
 
-
-  <!-- Filters -->
   <div class="all-filter-container">
     <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
       <select v-model="filter.model" class="filter-select" @change="filterEvents">
@@ -30,7 +28,7 @@
   <!-- Achievements Display -->
   <div class="card-achivments-container">
     <Achievemento v-for="achievement in paginatedAchievements" :key="achievement.id"
-      :picture="achievement.thumbnail || 'https://placehold.co/600x400'" :title="achievement.title"
+      :picture="achievement.thumbnail || noimageHandle" :title="achievement.title"
       :text="achievement.description" :url="`/aboutus/achievements/details/${achievement.id}`" color="white"
       :author="achievement.author" />
   </div>
@@ -52,10 +50,13 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
 import { ref, onMounted, computed, watch } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import 'pdfjs-dist/legacy/build/pdf.worker';
-
+import noimageHandle from '@/assets/img/no-image-handle.png';
 const Achievements = ref([]);
 const searchQuery = ref("");
 const currentPage = ref(1);
@@ -71,17 +72,9 @@ const filters = ref([
       { value: 'oldest', text: 'Oldest' },
     ],
   },
-  {
-    label: 'Downloadable',
-    model: '',
-    options: [
-      { value: '1', text: 'Can Download' },
-      { value: '0', text: 'Cannot Download' },
-    ],
-  },
 ]);
 
-// Fetch achievements data
+
 const fetchAchievements = async () => {
   try {
     const response = await fetch('/api/achievements', {
@@ -93,7 +86,6 @@ const fetchAchievements = async () => {
 
     const filteredAchievements = achievements.filter(achievement => achievement.status === 1);
 
-    // Generate thumbnails asynchronously
     await Promise.all(filteredAchievements.map(async (achievement) => {
       if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {
         achievement.thumbnail = await generateThumbnail(achievement.pdf);
@@ -159,7 +151,6 @@ const filteredAchievements = computed(() => {
 // Handle the filters applied
 const filterEvents = () => {
   const sortBy = filters.value.find(filter => filter.label === 'Sort By').model;
-  const downloadable = filters.value.find(filter => filter.label === 'Downloadable').model;
 
   let filteredList = filteredAchievements.value;
 
@@ -168,14 +159,6 @@ const filterEvents = () => {
     filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
   } else if (sortBy === 'oldest') {
     filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
-  }
-
-  // Apply downloadable filter if selected
-  if (downloadable === '1') {
-    filteredList = filteredList.filter(achievement => achievement.canDownload === 1);
-  }else if (downloadable === '0') {
-    filteredList = filteredList.filter(achievement => achievement.canDownload === 0);
-
   }
 
   return filteredList;
@@ -213,9 +196,6 @@ const goToPage = () => {
 onMounted(fetchAchievements);
 </script>
 
-
-
-
 <style scoped>
 .filter-dropdown {
   width: 100%;
@@ -231,29 +211,12 @@ onMounted(fetchAchievements);
 }
 
 .all-filter-container {
-
   margin-top: 1rem;
   gap: 1rem;
   display: flex;
   justify-content: start;
   justify-self: center;
   width: 60%;
-}
-
-.all-event-card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
-  max-width: calc(5 * 20rem + 4 * 15px);
-  gap: 15px;
-  width: 80%;
-  justify-content: center;
-  margin: 1rem auto;
-}
-
-.header-content {
-  color: #aca8a8;
-  margin-left: 2%;
-  font-weight: 300;
 }
 
 .card-achivments-container {

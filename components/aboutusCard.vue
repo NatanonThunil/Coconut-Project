@@ -1,6 +1,6 @@
 <template>
     <NuxtLinkLocale :to="url" class="card-content-container">
-        <div class="people-image-container"><img :src="image" alt=""></div>
+        <div :class="ispdf? 'pdf-image-container':'people-image-container'"><img :src="image" alt=""></div>
         <div class="people-details-container">
             <h3 class="coconut-green-text">{{ name }}</h3>
             <p>{{ description }}</p>
@@ -27,7 +27,10 @@ export default {
             type: String,
             required: true,
 
-        },
+        }, ispdf: {
+            type: Boolean,
+            required: false,
+        }
 
     }
 }
@@ -40,13 +43,15 @@ export default {
     overflow: hidden;
     padding: 1rem;
 }
+
 .people-details-container h3,
 .people-details-container p {
-    
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    max-width: 100%; /* Adjust as needed */
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    /* Adjust as needed */
 }
 
 .card-content-container {
@@ -60,6 +65,37 @@ export default {
 
 }
 
+.card-pdf-content-container {
+    cursor: pointer;
+    background-color: white;
+    height: 23rem;
+    width: 22rem;
+    border-radius: 10px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+
+}
+.card-content-container .pdf-image-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 75%;
+    background-color: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+
+}
+
+.card-content-container:hover .pdf-image-container img {
+    transform: scale(1.05);
+}
+
+.card-content-container .pdf-image-container img {
+    aspect-ratio: 1/1.414;
+ 
+    height: 100%;
+    transition: ease-in-out 0.3s;
+    object-fit: cover;
+}
 .card-content-container .people-image-container {
     width: 100%;
     height: 75%;
