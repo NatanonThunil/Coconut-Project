@@ -216,10 +216,7 @@ const filteredSortedCoconuts = computed(() => {
 const fetchApi = async () => {
     try {
         const response = await fetch(`/api/${config.value.apiEndpoint}`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
+      headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
     });
         if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
         const data = await response.json();
@@ -235,22 +232,31 @@ const fetchApi = async () => {
 const toggleStatus = async (coconut) => {
     try {
         const newStatus = !coconut.status;
-        const response = await fetch(`/api/${config.value.apiEndpoint}/${coconut.id}`, {
+        coconut.status = newStatus ? 1 : 0;
+
+        
+        const updatedCoconut = { ...coconut, status: newStatus };
+
+   
+        const response = await fetch(`/api/coconuts/${coconut.id}`, {
             method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...coconut, status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedCoconut), 
         });
 
         if (!response.ok) {
             throw new Error('Failed to update coconut status.');
         }
 
+        // If the update is successful, the image will remain intact.
         coconut.status = newStatus;
     } catch (error) {
         alert('Error updating coconut status.');
         console.error(error);
     }
 };
+
+
 
 const openAddCoconutModal = () => {
     currentCoconut.value = {
@@ -303,7 +309,7 @@ const submitCoconut = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -341,7 +347,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedCoconuts.map(coconut =>
             fetch(`/api/coconuts/${coconut.id}`, {
                 method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
+                headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...coconut, status: publish ? 1 : 0 })
             })
         );
@@ -369,7 +375,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/coconuts/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

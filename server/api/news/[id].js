@@ -1,5 +1,3 @@
-
-
 import mysql from 'mysql2/promise';
 import { dbConfig } from '../../config/poom_db_config';
 
@@ -10,6 +8,7 @@ export default defineEventHandler(async (event) => {
     try {
         connection = await pool.getConnection();
 
+        // Handle the PUT method for updating news
         if (event.req.method === 'PUT') {
             const body = await readBody(event);
             const { id, title, description, author, upload_date, image, hot_new, summerize, status } = body;
@@ -30,7 +29,10 @@ export default defineEventHandler(async (event) => {
             if (result.affectedRows === 0) return { error: 'No news found or no changes made.' };
 
             return { message: 'News updated successfully', id };
-        } else if (event.req.method === 'POST') {
+
+        } 
+        // Handle the POST method for adding news
+        else if (event.req.method === 'POST') {
             const body = await readBody(event);
             const { title, description, author, upload_date, image, hot_new, summerize, status } = body;
 
@@ -44,8 +46,9 @@ export default defineEventHandler(async (event) => {
 
             const [result] = await connection.execute(query, values);
             return { message: 'News added successfully', id: result.insertId };
-        } else if (event.req.method === 'GET') {
-            // Fetch all news
+        } 
+        // Handle the GET method for fetching news
+        else if (event.req.method === 'GET') {
             const [rows] = await connection.execute(
                 'SELECT id, title, description, author, upload_date, image, hot_new, summerize, status FROM new '
             );
@@ -59,42 +62,42 @@ export default defineEventHandler(async (event) => {
             });
 
             return newsWithImages;
+        } 
+        // Handle the DELETE method for deleting news
+        else if (event.req.method === 'DELETE') {
+            // Extract `id` from URL params instead of body
+            const { id } = event.context.params; // `id` is in URL parameters
 
-        } else if (event.req.method === 'DELETE') {
-            const body = await readBody(event);
-            console.log("Received DELETE Request:", body); // Log incoming request body
-        
-            const { id } = body;
-        
+            console.log("Received DELETE Request: ID =", id); // Log incoming request ID
+
             if (!id) {
                 setResponseStatus(event, 400);
                 return { error: 'News ID is required for deletion.' };
             }
-        
+
             try {
                 console.log("Attempting to delete news with ID:", id);
                 const query = 'DELETE FROM new WHERE id = ?';
                 const [result] = await connection.execute(query, [id]);
-        
+
                 console.log("Delete Query Result:", result);
-        
+
                 if (result.affectedRows === 0) {
                     setResponseStatus(event, 404);
                     return { error: 'No news found with the given ID.' };
                 }
-        
+
                 setResponseHeader(event, 'Content-Type', 'application/json');
                 setResponseStatus(event, 200);
                 return { message: 'News deleted successfully', id };
-        
+
             } catch (error) {
                 console.error("Error deleting news:", error);
                 setResponseStatus(event, 500);
                 return { error: 'Internal server error' };
             }
         }
-        
-        
+
     } finally {
         if (connection) connection.release();
     }

@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
                 imageBase64 = `data:${mimeType};base64,${coconut.image.toString('base64')}`;
             }
 
-            return { coconut: { ...coconut, image: imageBase64 } }; // Ensure the response is structured
+            return { coconut: { ...coconut, image: imageBase64 } };
 
         } else if (event.req.method === 'PUT') {
             const body = await readBody(event);
@@ -50,22 +50,41 @@ export default defineEventHandler(async (event) => {
             const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image, status } = body;
 
             let imageBuffer = null;
+            // Only update the image if it's provided
             if (image) {
                 imageBuffer = imageToBuffer(image);
             }
 
-            const [result] = await connection.execute(
-                `UPDATE coconut SET 
-                    description = ?, origin = ?, name_eng = ?, name_th = ?, sci_name_f = ?, sci_name_m = ?, sci_name_l = ?, characteristics = ?, youngold = ?, image = ?, status = ? 
-                    WHERE id = ?`,
-                [description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, imageBuffer, status, id]
-            );
+            // Update query only modifies fields where data is available (e.g., status or image)
+            const query = `
+                UPDATE coconut SET 
+                    description = ?, 
+                    origin = ?, 
+                    name_eng = ?, 
+                    name_th = ?, 
+                    sci_name_f = ?, 
+                    sci_name_m = ?, 
+                    sci_name_l = ?, 
+                    characteristics = ?, 
+                    youngold = ?, 
+                    status = ?,
+                    image = COALESCE(?, image) 
+                WHERE id = ?
+            `;
+
+            // Use `COALESCE()` to ensure the image is only updated if a new image is provided.
+            const values = [
+                description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, 
+                characteristics, youngold, status, imageBuffer, id
+            ];
+
+            const [result] = await connection.execute(query, values);
 
             if (result.affectedRows === 0) {
                 return { error: 'Coconut not found or no changes made' };
             }
 
-            return { message: 'Coconut updated' };
+            return { message: 'Coconut updated successfully' };
 
         } else if (event.req.method === 'DELETE') {
             const [result] = await connection.execute('DELETE FROM coconut WHERE id = ?', [id]);
@@ -74,7 +93,7 @@ export default defineEventHandler(async (event) => {
                 return { error: 'Coconut not found' };
             }
 
-            return { message: 'Coconut deleted' };
+            return { message: 'Coconut deleted successfully' };
 
         } else {
             return { error: 'Method Not Allowed' };

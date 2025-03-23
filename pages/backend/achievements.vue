@@ -175,22 +175,38 @@ const currentAchievement = ref({
 const toggleStatus = async (achievement) => {
     try {
         const newStatus = !achievement.status;
+        achievement.status = newStatus ? 1 : 0;
+
+        // Fix for date formatting issue
+        const formattedDate = new Date(achievement.uploadDate).toISOString().slice(0, 19).replace('T', ' ');
+
         const response = await fetch(`/api/${apiEndpoint}/${achievement.id}`, {
             method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...achievement, status: newStatus ? 1 : 0 }),
+            headers: {
+                'CKH': '541986Cocon',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...achievement,
+                status: newStatus,
+                uploadDate: formattedDate 
+            }),
         });
 
         if (!response.ok) {
+            achievement.status = newStatus ? 0 : 1;
             throw new Error('Failed to update achievement status.');
         }
 
-        achievement.status = newStatus;
+        const updatedAchievement = await response.json();
+        console.log('Updated achievement:', updatedAchievement);
+
     } catch (error) {
         alert('Error updating achievement status.');
         console.error(error);
     }
 };
+
 
 const triggerFileInput = () => {
     fileInput.value.click();
@@ -199,11 +215,10 @@ const triggerFileInput = () => {
 const fetchAchievements = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
+            headers: {
+                "CKH": '541986Cocon',
+            },
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch achievements.');
         }
@@ -226,7 +241,6 @@ const editItem = (achievement) => {
 
     showModalEdit.value = true; // Open modal first
 
-    // Wait for modal to fully open, then update Tiptap content
     nextTick(() => {
         console.log("Setting Tiptap Content:", currentAchievement.value.description);
     });
@@ -276,7 +290,6 @@ const openAddAchievementModal = () => {
     };
     showModalAddAchievement.value = true;
 };
-
 const bulkUpdateStatus = async (publish) => {
     try {
         const selectedAchievements = achievements.value.filter(achievement => achievement.selected);
@@ -285,25 +298,39 @@ const bulkUpdateStatus = async (publish) => {
             return;
         }
 
-        const updatePromises = selectedAchievements.map(achievement =>
-            fetch(`/api/${apiEndpoint}/${achievement.id}`, {
+        // Loop through selected achievements and format uploadDate
+        const updatePromises = selectedAchievements.map(achievement => {
+            // Format the date to 'YYYY-MM-DD HH:MM:SS' before sending
+            const formattedDate = new Date(achievement.uploadDate).toISOString().slice(0, 19).replace('T', ' ');
+
+            return fetch(`/api/${apiEndpoint}/${achievement.id}`, {
                 method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...achievement, status: publish ? 1 : 0 })
-            })
-        );
+                headers: {
+                    'CKH': '541986Cocon',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...achievement,
+                    status: publish ? 1 : 0,
+                    uploadDate: formattedDate,  // Ensure correct date format
+                }),
+            });
+        });
 
         await Promise.all(updatePromises);
 
+        // Update the local state after success
         selectedAchievements.forEach(achievement => {
             achievement.status = publish ? 1 : 0;
         });
 
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
-    } catch {
+    } catch (error) {
         alert('Failed to update achievement status.');
+        console.error(error);
     }
 };
+
 
 const submitAchievement = async (publish) => {
     if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
@@ -337,7 +364,7 @@ const submitAchievement = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -394,11 +421,12 @@ const askDelete = (id, title) => {
     deleteName.value = title;
     showModal.value = true;
 };
+
 const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
+            headers: { 'CKH': '541986Cocon','Content-Type': 'application/json'  },
             body: JSON.stringify({ id: deleteId.value }),
         });
 
@@ -409,7 +437,6 @@ const confirmDelete = async () => {
             throw new Error(result.error || 'Failed to delete achievement.');
         }
 
-        // Update frontend list
         achievements.value = achievements.value.filter(achievement => achievement.id !== deleteId.value);
         achievementsNum.value = achievements.value.length;
 
@@ -423,8 +450,6 @@ const confirmDelete = async () => {
     }
 };
 
-
-
 const cancelDelete = () => {
     showModal.value = false;
 };
@@ -437,5 +462,3 @@ const toggleSelectAll = () => {
     achievements.value.forEach(achievement => achievement.selected = selectAll.value);
 };
 </script>
-
-<style scoped></style>

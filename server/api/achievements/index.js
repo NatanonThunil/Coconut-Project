@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
         } else if (event.req.method === 'POST') {
             const body = await readBody(event);
 
-            const { title, author, description, uploadDate, status, pdf, canDownload } = body;
+            const { title, author, description, uploadDate, status, pdf } = body;
 
             if (!pdf) {
                 return { error: 'PDF is required.' };
@@ -47,9 +47,9 @@ export default defineEventHandler(async (event) => {
 
             const [result] = await connection.execute(
                 `INSERT INTO achievement
-                    (title, author, description, uploadDate, status, pdf , canDownload) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [title, author, description, uploadDate, status, pdfBuffer, canDownload]
+                    (title, author, description, uploadDate, status, pdf ) 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
+                [title, author, description, uploadDate, status, pdfBuffer]
             );
 
             return {
