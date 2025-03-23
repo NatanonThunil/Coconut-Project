@@ -1,43 +1,43 @@
 <template>
-  <Navbar selecto="pest" />
-  <div class="all-container">
-    <div style="height: 10rem;"></div>
+  <div>
+    <Navbar selecto="pest" />
+    <div class="all-container">
+      <div style="height: 10rem;"></div>
 
-    <!-- Loader -->
-    <div v-if="!pest && !error" class="loading">
-      <p>กำลังโหลดข้อมูลศัตรูพืช...</p>
-    </div>
-
-    <!-- Error -->
-    <div v-if="error" class="error">
-      <p>{{ error }}</p>
-    </div>
-
-    <!-- Pest Profile Section -->
-    <div class="pest-container" v-if="pest">
-      <div class="pest-content">
-        <img :src="pest?.image || tlImage" class="pest-image" alt="Pest Image" draggable="false">
-
-        <div class="pest-details">
-          <h1 class="pest-name">{{ pest?.name }}</h1>
-
-          <div class="info">
-            <p><strong>ที่อยู่:</strong> {{ pest?.address || 'N/A' }}</p>
-            <p><strong>ติดต่อ:</strong> {{ pest?.gmail || 'N/A' }}</p>
-            <p>Facebook | Twitter</p>
-          </div>
-
-          
-
-          <p class="description">
-            <strong>คำอธิบาย:</strong> {{ pest?.description || 'ไม่มีคำอธิบาย' }}
-          </p>
-        </div>
+      <!-- Loader -->
+      <div v-if="!pest && !error" class="loading">
+        <p>กำลังโหลดข้อมูลศัตรูพืช...</p>
       </div>
-      <div style="height: 5rem;"></div>
 
-      <div class="back-btn-container">
-        <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/pest" />
+      <!-- Error -->
+      <div v-if="error" class="error">
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Pest Profile Section -->
+      <div class="pest-container" v-if="pest">
+        <div class="pest-content">
+          <img :src="pest?.image || tlImage" class="pest-image" alt="Pest Image" draggable="false">
+          
+          <div class="pest-details">
+            <h1 class="pest-name">{{ pest?.name }}</h1>
+            <div class="info">
+              <p><strong>ที่อยู่:</strong> {{ pest?.address || 'N/A' }}</p>
+              <p><strong>ติดต่อ:</strong> {{ pest?.gmail || 'N/A' }}</p>
+              <p>Facebook | Twitter</p>
+            </div>
+            
+            <p class="description">
+              <strong>คำอธิบาย:</strong> {{ pest?.description || 'ไม่มีคำอธิบาย' }}
+            </p>
+          </div>
+        </div>
+
+        <div style="height: 5rem;"></div>
+
+        <div class="back-btn-container">
+          <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/pest" />
+        </div>
       </div>
     </div>
   </div>
@@ -56,18 +56,16 @@ export default {
     };
   },
   async mounted() {
-    const cid = this.$route.params.id;
+    const cid = this.$route.params.id; // Get the pest ID from the URL
     try {
       const response = await fetch(`/api/pests/`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
+        headers: {
+          "CKH": '541986Cocon',
+        },
+      });
       if (!response.ok) throw new Error(`Failed to fetch pest details: ${response.statusText}`);
       const data = await response.json();
-      this.pest = data.find((pest) => (pest.id === parseInt(cid)) && status ===1) || null;
-
+      this.pest = data.find((pest) => pest.id === parseInt(cid) && pest.status === 1) || null;
 
       if (this.pest) {
         this.updateHead();
@@ -97,6 +95,7 @@ export default {
 </script>
 
 <style scoped>
+/* Your styles here */
 
 .back-btn-container {
   width: 30%;

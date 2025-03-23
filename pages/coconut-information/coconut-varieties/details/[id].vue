@@ -1,177 +1,166 @@
 <template>
-  <Navbar selecto="coconutdata" />
-  <div style="height: 10rem;"></div>
+  <Navbar selecto="pest" />
+  <div class="all-container">
+    <div style="height: 10rem;"></div>
 
-  <div v-if="coconut" class="coconut-detail-container">
-    <div class="row-top">
-      <div class="coconut-detail-img">
-        <img :src="coconut.image || 'https://via.placeholder.com/1280x720'" alt="Coconut Image" />
-      </div>
-      <div class="coconut-detail-info">
-        <h2>{{ coconut.name_th || 'ชื่อไทย' }}</h2>
-        <p><strong>ชื่ออังกฤษ :</strong> {{ coconut.name_eng || 'ไม่มีข้อมูล' }}</p>
-        <p><strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut.sci_name_f }} {{ coconut.sci_name_m }} {{ coconut.sci_name_l }}
-        </p>
-        <p><strong>ประเภท :</strong>
-          {{ coconut.youngold === 'Old' ? 'มะพร้าวแก่' : (coconut.youngold === 'Young' ? 'มะพร้าวอ่อน' :
-          'ข้อมูลไม่ระบุ') }}
-        </p>
-        <p><strong>ถิ่นกำเนิด :</strong></p>
-        <p class="origin-desc">{{ coconut.origin || 'ไม่มีข้อมูล' }}</p>
-      </div>
+    <div v-if="!pest && !error" class="loading">
+      <p>กำลังโหลดข้อมูลศัตรูพืช...</p>
     </div>
 
-    <div class="deta-below">
-      <p><strong>ลักษณะเฉพาะ :</strong></p>
-      <p class="origin-desc">{{ coconut.characteristics || 'ไม่มีข้อมูล' }}</p>
-
+    <div v-if="error" class="error">
+      <p>{{ error }}</p>
     </div>
 
-    <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
-    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/coconut-varieties" />
+    <div class="pest-container" v-if="pest">
+      <div class="pest-content">
+        <img :src="pest?.image || tlImage" class="pest-image" alt="Pest Image" draggable="false">
+
+        <div class="pest-details">
+          <h1 class="pest-name">{{ pest?.name }}</h1>
+
+          <div class="info">
+            <p><strong>ที่อยู่:</strong> {{ pest?.address || 'N/A' }}</p>
+            <p><strong>ติดต่อ:</strong> {{ pest?.gmail || 'N/A' }}</p>
+            <p>Facebook | Twitter</p>
+          </div>
+
+          <p class="description">
+            <strong>คำอธิบาย:</strong> {{ pest?.description || 'ไม่มีคำอธิบาย' }}
+          </p>
+        </div>
+      </div>
+      <div style="height: 5rem;"></div>
+
+      <div class="back-btn-container">
+        <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/pest" />
+      </div>
+    </div>
   </div>
-
-  <div v-else class="loading-container">
-    <p>กำลังโหลดข้อมูล...</p>
-  </div>
-
-
 </template>
 
 <script>
-import { useHead } from '@vueuse/head';
+import { useHead } from "@vueuse/head";
+import tlImage from "@/assets/img/tl.png";
 
 export default {
   data() {
     return {
-      coconut: null,
+      pest: null,
+      error: null,
+      tlImage,
     };
   },
   async mounted() {
     const cid = this.$route.params.id;
-
     try {
-      const response = await fetch(`/api/coconut`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-      if (!response.ok) throw new Error('Failed to fetch coconut details');
-      const data = await response.json();
-      this.coconut = data.find(coconut => coconut.id === parseInt(cid)) || null;
-
-
-      useHead({
-        title: `🥥 Coconut - ${this.coconut ? this.coconut.name_th : 'Details'}`,
-        meta: [
-          {
-            name: 'description',
-            content: `Detailed information about ${this.coconut?.name_th || 'coconut'} varieties.`,
-          },
-        ],
+      const response = await fetch(`/api/pests/`, {
+        headers: {
+          CKH: '541986Cocon',
+        },
       });
+      if (!response.ok) throw new Error(`Failed to fetch pest details: ${response.statusText}`);
+      const data = await response.json();
+      this.pest = data.find((pest) => pest.id === parseInt(cid) && pest.status === 1) || null;
+
+      if (this.pest) {
+        this.updateHead();
+      } else {
+        this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
+      }
     } catch (error) {
-      console.error('Error fetching coconut details:', error);
+      this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
     }
+  },
+  methods: {
+    updateHead() {
+      if (this.pest) {
+        useHead({
+          title: `🥥 Pest - ${this.pest.name}`,
+          meta: [
+            {
+              name: "description",
+              content: `ข้อมูลเกี่ยวกับ ${this.pest.name || "ศัตรูพืช"}.`,
+            },
+          ],
+        });
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.context-header {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
+.back-btn-container {
+  width: 30%;
 }
 
-.row-top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.deta-below {
-  padding: 0 15rem;
-}
-
-.deta-below p {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.coconut-detail-container {
+.pest-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 2rem;
-  width: 80%;
-  margin: auto;
+  align-items: center;
+  padding: 2rem;
 }
 
-.coconut-detail-img {
-  background-color: black;
-  width: 25rem;
-  height: 25rem;
-  border-radius: 10px;
+.pest-content {
   display: flex;
-  justify-content: center;
-  overflow: hidden;
+  gap: 2rem;
+  align-items: center;
+  max-width: 900px;
 }
 
-.coconut-detail-img img {
-  height: 100%;
+.pest-image {
+  width: 300px;
+  border-radius: 10px;
+  border: 2px solid #4E6D16;
+  aspect-ratio: 2.5/3;
   object-fit: cover;
 }
 
-.coconut-detail-info {
-  max-width: 1000px;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.coconut-detail-info h2 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.coconut-detail-info p {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-p.origin-desc {
-  width: 100%;
+.pest-details {
   font-size: 1.2rem;
-  max-height: 10rem;
-  margin-bottom: 0.5rem;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  color: #333;
 }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50vh;
-  font-size: 1.5rem;
+.pest-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4E6D16;
 }
 
-@media (max-width: 900px) {
-  .coconut-detail-container {
-    width: 95%;
-  }
+.tags {
+  margin-top: 1rem;
 }
 
-@media (max-width: 762px) {
-  .row-top {
-    flex-direction: column;
-    align-items: center;
-  }
+.tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0.3rem;
+  border: 1px solid #4E6D16;
+  border-radius: 20px;
+  font-weight: bold;
+  background-color: #E9F5DC;
+  color: #4E6D16;
+}
 
-  .deta-below {
-    padding: 0 2rem;
-  }
+.description {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.back-button {
+  margin-top: 2rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #4E6D16;
+  background: transparent;
+  color: #4E6D16;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.back-button:hover {
+  background: #4E6D16;
+  color: white;
 }
 </style>
