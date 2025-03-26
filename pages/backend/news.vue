@@ -119,11 +119,20 @@
     <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+            <div class="lang-toggle">
+                <button type="button" @click="toggleLang">
+                    Switch to {{ activeLang? 'English' : 'Thai' }}
+                </button>
+            </div>
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
+                    <label v-show="activeLang">พาดหัวข่าว</label>
+                    <input v-show="activeLang" class="add-text-input" v-model="currentNews.title"
+                        placeholder="Enter title" required />
+                    <label v-show="!activeLang">พาดหัวข่าว Eng</label>
+                    <input v-show="!activeLang" class="add-text-input" v-model="currentNews.title_en"
+                        placeholder="Enter title" required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
                         required />
@@ -154,10 +163,13 @@
                         </label>
                     </div>
                     <label>Description</label>
-                    <TiptapEditor v-model="currentNews.description" />
-
-                    <label>Summary</label>
-                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <TiptapEditor v-show="activeLang" v-model="currentNews.description" />
+                    <TiptapEditor v-show="!activeLang" v-model="currentNews.description_en" />
+                    <label v-show="activeLang">สรุป</label>
+                    <textarea v-show="activeLang" v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <label v-show="!activeLang">สรุป Eng</label>
+                    <textarea v-show="!activeLang" v-model="currentNews.summerize_en"
+                        placeholder="Enter summary"></textarea>
                 </section>
             </div>
             <div class="modal-actions">
@@ -211,10 +223,13 @@ const sortDirection = ref(-1);
 const currentNews = ref({
     id: null,
     title: '',
+    title_en: '',
     image: '',
     author: '',
     description: '',
+    description_en: '',
     summerize: '',
+    summerize_en: '',
     hot_new: false,
     upload_date: new Date().toISOString().split('T')[0],
     status: false,
@@ -223,6 +238,10 @@ const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
+const activeLang = ref(true);
+const toggleLang = () => {
+    activeLang.value = activeLang.value === true ? false : true;
+};
 
 const toggleStatus = async (news) => {
     try {
@@ -323,10 +342,13 @@ const openAddNewsModal = () => {
     currentNews.value = {
         id: null,
         title: '',
+        title_en: '',
         image: '',
         author: '',
         description: '',
+        description_en: '',
         summerize: '',
+        summerize_en: '',
         hot_new: false,
         upload_date: new Date().toISOString().split('T')[0],
         status: false,
@@ -381,17 +403,20 @@ const submitNews = async (publish) => {
 
         const isUpdate = !!currentNews.value.id;
         const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news_rest';
+        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news';
 
         const payload = {
             id: currentNews.value.id,
             title: currentNews.value.title,
+            title_en: currentNews.value.title_en,
             description: currentNews.value.description,
+            description_en: currentNews.value.description_en,
             author: currentNews.value.author,
             upload_date: currentNews.value.upload_date,
             status: publish ? 1 : 0,
             hot_new: currentNews.value.hot_new,
             summerize: currentNews.value.summerize,
+            summerize_en: currentNews.value.summerize_en,
             image: currentNews.value.image || '',
         };
 
@@ -487,9 +512,9 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 
+            headers: {
                 'CKH': '541986Cocon',
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json'
             }
             // No body needed for DELETE request, just pass the `id` in the URL
         });
@@ -533,6 +558,33 @@ const toggleSelectAll = () => {
 </script>
 
 <style scoped>
+
+.lang-toggle {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.lang-toggle button {
+  background-color: #4E6D16;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.lang-toggle button:hover {
+  background-color: #3c5213;
+  transform: scale(1.05);
+}
+
+.lang-toggle button:active {
+  transform: scale(0.98);
+}
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -926,7 +978,8 @@ const toggleSelectAll = () => {
 }
 
 .item-list-table tbody {
-    max-height: 70dvh;
+    min-height: 40dvh;
+    max-height: 55dvh;
     overflow-y: auto;
     display: block;
 }

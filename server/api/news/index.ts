@@ -1,21 +1,19 @@
-import mysql from 'mysql2/promise';
-import { dbConfig } from '../../config/poom_db_config';
-
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
     let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
+        connection = event.context.$scriptdb;
+
         const [rows] = await connection.execute('SELECT * FROM `new`');
 
         if (rows.length === 0) {
             return { message: 'No news available.' };
         }
 
-        const newsItems = rows.map((news) => {
+        const newsItems = rows.map((news: any) => {
             let imageBase64 = null;
             if (news.image) {
                 const imageBuffer = Buffer.from(news.image);
-                let mimeType = 'image/jpeg'; 
+                let mimeType = 'image/jpeg';
 
                 if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
                     mimeType = 'image/png';
@@ -27,7 +25,7 @@ export default defineEventHandler(async () => {
             return {
                 ...news,
                 image: imageBase64,
-                description: news.description, 
+                description: news.description,
             };
         });
 
@@ -35,9 +33,5 @@ export default defineEventHandler(async () => {
     } catch (error) {
         console.error('Error fetching news:', error);
         return { error: 'Failed to fetch news' };
-    } finally {
-        if (connection) {
-            await connection.end();
-        }
     }
 });

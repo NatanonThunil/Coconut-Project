@@ -34,6 +34,7 @@ const menuItems = [
   { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
 
   { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
+  { label: "จัดการฟุตเตอร์", path: "/backend/footer" },
 ];
 
 const navigateTo = (path) => {

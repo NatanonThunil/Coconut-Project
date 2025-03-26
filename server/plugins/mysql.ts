@@ -10,10 +10,10 @@ try {
 
 nitroApp.hooks.hook('request', (event) => {
   event.context.$scriptdb = mysql.createPool({
-    host: '85.31.224.65',
-    user: 'coconutkukps',
-    password: 'Coconut@kukps2025',
-    database: 'coconutknowledgehub',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
