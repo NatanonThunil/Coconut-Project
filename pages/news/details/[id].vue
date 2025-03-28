@@ -70,21 +70,26 @@ export default {
         const cid = this.$route.params.id;
 
         try {
+            if (!cid) throw new Error('Missing news ID parameter');
 
-            const response = await fetch(`/api/news/` + cid, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-            if (!response.ok) throw new Error('Failed to fetch news details');
+            const response = await fetch(`/api/news/${cid}`, {
+                headers: {
+                    "CKH": '541986Cocon',
+                },
+            });
+
+            if (!response.ok) {
+                console.error('API Response Error:', response.status, response.statusText);
+                throw new Error('Failed to fetch news details');
+            }
 
             const data = await response.json();
-            this.news = data.find(news => (news.id === parseInt(cid)) && (news.status)) || null;
+            this.news = data.status ? data : null; // Ensure the news item has a valid status
             this.loading = false;
         } catch (error) {
-            console.error('Error fetching news details:', error);
+            console.error('Error fetching news details:', error.message);
             this.error = 'Failed to load news data. Please try again later.';
+            this.loading = false;
         }
     },
     methods: {

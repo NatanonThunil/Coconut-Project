@@ -10,8 +10,10 @@
     <div class="achievement-content-container">
         <section class="achievements-pdf-container">
             <img v-if="achievement?.thumbnail" :src="achievement?.thumbnail" alt="" draggable="false" />
-            <!-- If no thumbnail, use a placeholder or a fallback image -->
             <img v-else :src="'https://placehold.co/600x400'" alt="" draggable="false" />
+            <button @click="previousPage" :disabled="currentPage <= 1">previous</button>
+            {{ currentPage }}/{{ totalPages }}
+            <button @click="nextPage" :disabled="currentPage >= totalPages">next</button>
         </section>
         <section class="achievements-text-container">
             <div class="achievements-text-details-container">
@@ -34,11 +36,17 @@
 import { ref } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 
+// Set the worker source for pdf.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
 export default {
     data() {
         return {
             achievement: null,
-            error: null
+            error: null,
+            pdfInstance: null,
+            currentPage: 1,
+            totalPages: 0,
         };
     },
     async mounted() {
@@ -53,9 +61,8 @@ export default {
             const data = await response.json();
             if (data.achievement) {
                 this.achievement = data.achievement;
-                // Check if it's a PDF and generate thumbnail if so
                 if (this.achievement.pdf) {
-                    this.achievement.thumbnail = await this.generatePdfThumbnail(this.achievement.pdf);
+                    await this.loadPdf(this.achievement.pdf);
                 }
             } else {
                 throw new Error('Achievement not found');
@@ -70,13 +77,19 @@ export default {
         formatDate(date) {
             return new Date(date).toLocaleDateString();
         },
-        // Method to generate a PDF thumbnail
-        async generatePdfThumbnail(pdfUrl) {
+        async loadPdf(pdfUrl) {
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfUrl);
-                const pdf = await loadingTask.promise;
-                const page = await pdf.getPage(1); // Get the first page
-
+                this.pdfInstance = await loadingTask.promise;
+                this.totalPages = this.pdfInstance.numPages;
+                await this.renderPage(this.currentPage);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+            }
+        },
+        async renderPage(pageNumber) {
+            try {
+                const page = await this.pdfInstance.getPage(pageNumber);
                 const scale = 1.5;
                 const viewport = page.getViewport({ scale });
                 const canvas = document.createElement('canvas');
@@ -87,14 +100,25 @@ export default {
                 const renderContext = { canvasContext: context, viewport };
                 await page.render(renderContext).promise;
 
-                return canvas.toDataURL(); // Return the generated image as a data URL
+                this.achievement.thumbnail = canvas.toDataURL();
             } catch (error) {
-                console.error('Error generating PDF thumbnail:', error);
-                return null;
+                console.error('Error rendering page:', error);
             }
-        }
+        },
+        async previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                await this.renderPage(this.currentPage);
+            }
+        },
+        async nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+                await this.renderPage(this.currentPage);
+            }
+        },
     }
-}
+};
 </script>
 
 <style scoped>

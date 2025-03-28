@@ -34,6 +34,11 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
+                            <div>Image</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
                             <div>Title<button @click="toggleSort('title')">
                                     <div :class="{ 'rotate': sortBy === 'title' && sortDirection === -1 }">▲</div>
                                 </button></div>
@@ -75,9 +80,12 @@
                 <tr v-for="news in filteredSortedNews" :key="news.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="news.selected" />
+                            <input type="checkbox" v-model="news.selected" class="checkbox-decorate" />
                             <p>{{ news.id }}</p>
                         </div>
+                    </td>
+                    <td>
+                        <img v-if="news.image" :src="news.image" alt="News Image" class="news-image" />
                     </td>
                     <td>{{ news.title }}</td>
                     <td>{{ news.author }}</td>
@@ -85,6 +93,7 @@
                         {{ news.hot_new ? "✓" : "✕" }}
                     </td>
                     <td>{{ formatDate(news.upload_date) }}</td>
+                    
                     <td>
                         <label class="status-toggle">
                             <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
@@ -245,28 +254,32 @@ const toggleLang = () => {
 
 const toggleStatus = async (news) => {
     try {
-
         const newStatus = !news.status;
 
+        // Send only the fields required for updating the status
+        const payload = { status: newStatus ? 1 : 0 };
 
         const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
             headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-
-            body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
+            const errorBody = await response.text();
+            console.error('Failed to update news status:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
+            });
             throw new Error('Failed to update news status.');
         }
 
         // Update status only after successful response
         news.status = newStatus;
-
-
     } catch (error) {
         alert('Error updating news status.');
-        console.error(error);
+        console.error('Error in toggleStatus:', error);
     }
 };
 
@@ -778,40 +791,49 @@ const toggleSelectAll = () => {
 
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
-    display: table-cell;
-    width: 5%;
+    width: 6%;
 }
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 30%;
+    width: 8%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-    width: 15%;
+    width: 20%;
+    max-width: max-content;
 }
 
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    text-align: center;
+    
 }
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
     width: 10%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 6%;
+    width: 12%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-    display: table-cell;
     width: 8%;
+    text-align: center;
+    
+}
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+    width: 8%;
+    text-align: center;
+    
 }
 
 .action-btn-container {
@@ -1309,20 +1331,42 @@ input:checked+.hotnews-slider:before {
 
 @media screen and (max-width: 1750px) {
 
-    .item-list-table th:nth-child(3),
-    .item-list-table td:nth-child(3) {
+    .item-list-table th:nth-child(4),
+    .item-list-table td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1500px) {
+
+    .item-list-table th:nth-child(2),
+    .item-list-table td:nth-child(2) {
         display: none;
     }
 }
 
 @media screen and (max-width: 1440px) {
 
-    .item-list-table th:nth-child(2),
-    .item-list-table td:nth-child(2) {
-        width: 10%;
-    }
+.item-list-table th:nth-child(3),
+.item-list-table td:nth-child(3) {
+    width: 18%;
 }
 
+}
+@media screen and (max-width: 1306px) {
+
+.item-list-table th:nth-child(5),
+.item-list-table td:nth-child(5) {
+    display: none;
+}
+}
+@media screen and (max-width: 1130px) {
+
+.item-list-table th:nth-child(6),
+.item-list-table td:nth-child(6) {
+    display: none;
+}
+}
 @media screen and (max-width: 1052px) {
     .add-btn-container {
         flex-direction: column;
@@ -1340,6 +1384,10 @@ input:checked+.hotnews-slider:before {
     .modal-add .modal-content section:nth-child(2) {
         width: 100%;
     }
+    .item-list-table th:nth-child(3),
+.item-list-table td:nth-child(3) {
+    width: 10%;
+}
 }
 
 @media screen and (max-width: 865px) {
@@ -1518,5 +1566,19 @@ input:checked+.hotnews-slider:before {
     border-color: #6F8C28;
     box-shadow: 0 0 5px rgba(111, 140, 40, 0.5);
     outline: none;
+}
+
+.news-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.checkbox-decorate {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: #4E6D16;
 }
 </style>

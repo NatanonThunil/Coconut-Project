@@ -11,6 +11,7 @@
     </NuxtLinkLocale>
 </template>
 <script>
+
 export default{
 props:{
     url:{
