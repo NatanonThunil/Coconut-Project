@@ -69,5 +69,10 @@
   "Registration": "เข้าร่วมกิจกรรม",
   "Description": "คำอธิบาย",
   "Back to All Events": "ดูกิจกรรมอื่นๆ",
-   "Achievements": "ผลงาน"
+   "Achievements": "ผลงาน",
+    "upload" : "อัพโหลดเมื่อ",
+    "By" : "โดย",
+    "Next": "ถัดไป",
+    "Previous": "ก่อนหน้า",
+    "SeeAllAchievements": "ดูผลงานทั้งหมด"
 }

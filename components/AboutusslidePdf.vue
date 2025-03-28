@@ -23,7 +23,7 @@
           }"
         >
           <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
-            <aboutusCard
+            <aboutusCardPdf
               :url="`/aboutus/${lurl}/details/${employee.id}`"
               :image="employee.pdfImage "
               :name="getTitle(employee)"

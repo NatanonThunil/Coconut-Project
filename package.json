@@ -58,6 +58,7 @@
     "pdfjs-dist": "^5.0.375",
     "swiper": "^11.2.1",
     "vue": "latest",
+    "vue-pdf-embed": "^2.1.2",
     "vue-router": "latest"
   },
   "devDependencies": {
