@@ -170,13 +170,13 @@
           <td class="action-buttons">
             <div class="action-btn-container">
               <button @click="editItem(employee)" class="edit-btn">
-                <img src="@/assets/icon/pen.png" alt="" />
+                <img src="/icon/pen.png" alt="" />
               </button>
               <button
                 @click="askDelete(employee.id, employee.name)"
                 class="delete-btn"
               >
-                <img src="@/assets/icon/trash.png" alt="" />
+                <img src="/icon/trash.png" alt="" />
               </button>
             </div>
           </td>
@@ -322,7 +322,7 @@
             >
               <img
                 v-if="!currentEmployee.image"
-                src="@/assets/icon/upload.svg"
+                src="/icon/upload.svg"
                 draggable="false"
               />
               <h2 v-if="!currentEmployee.image">
@@ -401,10 +401,8 @@ definePageMeta({
   layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from "vue";
-import eye from "@/assets/icon/eye-alt-svgrepo-com.svg";
-import eyeBlink from "@/assets/icon/eye-slash-alt-svgrepo-com.svg";
-import "@/assets/styles/backend_style.css";
-import Cropper from "cropperjs";
+import eye from "/icon/eye-alt-svgrepo-com.svg";
+import eyeBlink from "/icon/eye-slash-alt-svgrepo-com.svg";
 import "cropperjs/dist/cropper.css";
 
 const apiEndpoint = "employees";

@@ -43,7 +43,7 @@
   
   <script>
   import { Swiper, SwiperSlide } from "swiper/vue";
-  import noimageHandle from '@/assets/img/no-image-handle.png';
+  import noimageHandle from '/img/no-image-handle.png';
   import "swiper/css";
   import "swiper/css/navigation";
   import "swiper/css/pagination";

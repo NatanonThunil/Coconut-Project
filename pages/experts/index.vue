@@ -16,7 +16,7 @@
    <div style="height: 1rem"></div>
     <!-- Search bar -->
     <label class="coconut-v-input">
-      <img src="@/assets/icon/search.svg" alt="Search Icon" />
+      <img src="/icon/search.svg" alt="Search Icon" />
       <input
         type="text"
         placeholder="ค้นหาด้วยชื่อ..."
@@ -76,7 +76,7 @@
         <div class="event-card-text">
           <p class="event-title">{{ expert.name }}</p>
           <div class="event-card-date">
-            <img src="@/assets/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
+            <img src="/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
             <p class="event-date">{{ expert.description }}</p>
           </div>
         </div>

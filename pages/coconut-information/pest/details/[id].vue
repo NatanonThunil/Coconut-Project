@@ -45,7 +45,7 @@
 
 <script>
 import { useHead } from "@vueuse/head";
-import tlImage from "@/assets/img/tl.png";
+import tlImage from "/img/tl.png";
 
 export default {
   data() {

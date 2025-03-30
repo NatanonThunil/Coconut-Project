@@ -50,7 +50,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import notfound from '@/assets/img/News404.png';
+import notfound from '/img/News404.png';
 const newsItems = ref([]);
 const hotNews = ref(null);
 const loading = ref(true);

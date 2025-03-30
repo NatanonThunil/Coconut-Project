@@ -10,7 +10,7 @@
 
     <!-- Search Input -->
     <label class="coconut-v-input">
-        <img src="@/assets/icon/search.svg" alt="search icon">
+        <img src="/icon/search.svg" alt="search icon">
         <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
     </label>
 
@@ -31,7 +31,7 @@
         <CardShimmer v-for="index in 30" :key="index" />
     </div>
     <div v-else-if="filteredCoconuts.length === 0" class="no-results">
-        <img src="@/assets/icon/notfound.png" draggable="false" alt="No coconuts found">
+        <img src="/icon/notfound.png" draggable="false" alt="No coconuts found">
         {{ $t('No coconuts found') }}
     </div>
     <div v-else class="all-event-card-container">

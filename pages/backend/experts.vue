@@ -96,10 +96,10 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(expert)" class="edit-btn"><img src="@/assets/icon/pen.png"
+                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png"
                                     alt=""></button>
                             <button @click="askDelete(expert.id, expert.name)" class="delete-btn"><img
-                                    src="@/assets/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -176,7 +176,7 @@
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleFileUpload">
-                            <img v-if="!currentExpert.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
                             <div v-if="currentExpert.image" class="image-preview">
                                 <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
@@ -216,10 +216,8 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
-import '@/assets/styles/backend_style.css';
-import Cropper from 'cropperjs';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import 'cropperjs/dist/cropper.css';
 
 const apiEndpoint = 'experts';

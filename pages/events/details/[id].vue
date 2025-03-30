@@ -69,9 +69,9 @@
 <script>
 import { useI18n } from 'vue-i18n';
 import { useHead } from '@vueuse/head';
-import calendarIcon from '@/assets/icon/calenda.svg';
-import locationIcon from '@/assets/icon/location.png';
-import tlImage from '@/assets/img/tl.png';
+import calendarIcon from '/icon/calenda.svg';
+import locationIcon from '/icon/location.png';
+import tlImage from '/img/tl.png';
 
 export default {
     setup() {

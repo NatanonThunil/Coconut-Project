@@ -13,7 +13,7 @@
 
   <!-- Search Input -->
   <label class="coconut-v-input">
-    <img src="@/assets/icon/search.svg" alt="search icon" />
+    <img src="/icon/search.svg" alt="search icon" />
     <input
       type="text"
       placeholder="Search by name..."
@@ -48,7 +48,7 @@
   </div>
   <div v-else-if="filteredPests.length === 0" class="no-results">
     <img
-      src="@/assets/icon/notfound.png"
+      src="/icon/notfound.png"
       draggable="false"
       alt="No pests found"
     />

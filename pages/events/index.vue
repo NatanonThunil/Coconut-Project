@@ -10,7 +10,7 @@
 
 
   <label class="event-v-input">
-    <img src="@/assets/icon/search.svg" alt="search icon">
+    <img src="/icon/search.svg" alt="search icon">
     <input type="text" :placeholder="(currentLocale === 'th') ?'ค้นหาด้วยชื่อกิจกรรม...':'Search by Event`s name...' " v-model="searchQuery" @input="filterEvents" />
   </label>
 
@@ -32,7 +32,7 @@
       <EventCardShimmer v-for="index in itemsPerPage" :key="index" />
     </div>
     <div v-else-if="paginatedEvents.length === 0" class="no-results">
-      <img src="@/assets/icon/notfound.png" draggable="false" alt="No events found">
+      <img src="/icon/notfound.png" draggable="false" alt="No events found">
       {{ $t('No events found') }}
     </div>
     <div v-else class="all-event-card-container">
@@ -60,7 +60,7 @@
 
 
 <script>
-import nfi from '@/assets/img/News404.png';
+import nfi from '/img/News404.png';
 import { computed, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 

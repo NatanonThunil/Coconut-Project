@@ -5,7 +5,7 @@
     <div style="height: 5rem;"></div>
   
     <label class="coconut-v-input">
-      <img src="@/assets/icon/search.svg" />
+      <img src="/icon/search.svg" />
       <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
     </label>
   

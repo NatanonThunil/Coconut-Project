@@ -102,9 +102,9 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container"> <button @click="editItem(news)" class="edit-btn"><img
-                                    src="@/assets/icon/pen.png" alt=""></button>
+                                    src="/icon/pen.png" alt=""></button>
                             <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
-                                    src="@/assets/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -150,7 +150,7 @@
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleDragDrop">
-                            <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentNews.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
                             <div v-if="currentNews.image" class="image-preview">
                                 <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
@@ -208,12 +208,12 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '@/assets/styles/backend_style.css'; // Import shared CSS
+
 
 const apiEndpoint = 'news';
 const searchQuery = ref('');

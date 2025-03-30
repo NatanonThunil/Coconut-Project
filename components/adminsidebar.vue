@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import icon from '@/assets/logo/CKH.png'
+import icon from '/logo/CKH.png'
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 

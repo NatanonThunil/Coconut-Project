@@ -12,11 +12,11 @@ export default defineEventHandler(async (event) => {
         }
 
         if (method === 'GET') {
-            // Handle GET request
+    
             const query = 'SELECT * FROM new';
             const [rows] = await connection.execute(query);
 
-            // Convert image buffer to base64 string
+
             const processedRows = rows.map((row: { image: { toString: (arg0: string) => any; }; }) => ({
                 ...row,
                 image: row.image ? `data:image/jpeg;base64,${row.image.toString('base64')}` : null,
@@ -24,11 +24,11 @@ export default defineEventHandler(async (event) => {
 
             return processedRows;
         } else if (method === 'POST') {
-            // Handle POST request
+     
             const body = await readBody(event);
             const { title, description, title_en, description_en, author, image, hot_new, summerize, summerize_en, status } = body;
 
-            // Validate required fields
+
             if (!title || !author || typeof status === 'undefined') {
                 setResponseStatus(event, 400);
                 return { error: 'Missing required fields: title, author, or status.' };
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
 
             const imageBuffer = image ? Buffer.from(image.split(',')[1], 'base64') : null;
 
-            // Generate current timestamp for upload_date
+        
             const uploadDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             const query = `

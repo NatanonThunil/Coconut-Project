@@ -70,7 +70,7 @@ const validateInputs = () => {
 <template>
   <div class="be-bg-cl">
     <div class="login-form-container">
-      <img src="@/assets/logo/CKH-round.ico" draggable="false" alt="Logo">
+      <img src="logo/CKH-round.ico" draggable="false" alt="Logo">
       <h2 class="login-title">เข้าสู่ระบบหลังบ้าน</h2>
       <p class="login-subtitle">Please enter your credentials to continue</p>
       <div> <input v-model="email" type="email" placeholder="Email" />

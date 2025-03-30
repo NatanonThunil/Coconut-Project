@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar" id="nav-header">
     <a class="logo" href="/">
-      <img class="btn-icons" src="~/assets/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
+      <img class="btn-icons" src="/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
     </a>
     <ul class="main-menu">
       <li :class="{ Selected: selecto === 'aboutus' }">

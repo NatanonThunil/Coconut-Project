@@ -1,8 +1,8 @@
 <template>
   <label class="search-v-input">
-    <img src="@/assets/icon/search.svg" />
+    <img src="/icon/search.svg" />
     <input
-    type="text"
+      type="text"
       :placeholder="placeholder"
       v-model="searchText"
       @input="emitSearch"
@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import scopeico from '/assets/icon/search.svg';
+import scopeico from '/icon/search.svg';
 
 const props = defineProps({
   placeholder: {

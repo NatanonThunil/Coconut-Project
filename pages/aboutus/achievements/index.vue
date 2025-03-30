@@ -56,7 +56,7 @@ const currentLocale = computed(() => locale.value);
 import { ref, onMounted, computed, watch } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import 'pdfjs-dist/legacy/build/pdf.worker';
-import noimageHandle from '@/assets/img/no-image-handle.png';
+import noimageHandle from '/img/no-image-handle.png';
 const Achievements = ref([]);
 const searchQuery = ref("");
 const currentPage = ref(1);

@@ -6,8 +6,6 @@ let pool;
 try {
 
 
-// Log to confirm the plugin is loaded
-
 nitroApp.hooks.hook('request', (event) => {
   event.context.$scriptdb = mysql.createPool({
     host: process.env.DB_HOST,

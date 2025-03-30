@@ -41,7 +41,7 @@
                   <div class="event-card-text">
                     <p class="event-title">{{ event.title }}</p>
                     <div class="event-card-date">
-                      <img src="@/assets/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
+                      <img src="/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
                       <p class="event-date">{{ formatDate(event.date_start) }}</p>
                     </div>
                     <div :class="['event-card-status', getStatusClass(event)]">

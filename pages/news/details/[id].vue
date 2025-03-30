@@ -22,7 +22,7 @@
         <div class="news-summary" v-if="news.summerize">
             <h2>สรุป</h2>
             <p style=" display: flex; flex-direction: row;"><img class="unyapragard"
-                    src="/assets/icon/double-quotes.png">{{ news.summerize }}<img src="/assets/icon/double-quotes.png"
+                    src="/icon/double-quotes.png">{{ news.summerize }}<img src="/icon/double-quotes.png"
                     alt="" class="unyapragardl"></p>
             <!--   -->
         </div>
@@ -44,7 +44,7 @@
     <div v-else>
         <div class="news-404-container">
             <div class="news-404-center-content">
-                <section class="news-404-left-section"><img src="@/assets/img/News404.png" alt="" draggable="false">
+                <section class="news-404-left-section"><img src="/img/News404.png" alt="" draggable="false">
                 </section>
                 <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่ข่าว
                     <SeeAllButton text="ดูข่าวอื่นๆ" link="/news" />
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import unyaprgard from '@/assets/icon/double-quotes.png';
+import unyaprgard from '/icon/double-quotes.png';
 export default {
     data() {
         return {

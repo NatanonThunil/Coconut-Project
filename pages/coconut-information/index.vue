@@ -39,10 +39,10 @@
 
 <script>
 
-import coconutIcon from "@/assets/icon/coconut.png";
-import harvestIcon from "@/assets/icon/harvest.png";
-import washIcon from "@/assets/icon/wash.png";
-import exportIcon from "@/assets/icon/export.png";
+import coconutIcon from "/icon/coconut.png";
+import harvestIcon from "/icon/harvest.png";
+import washIcon from "/icon/wash.png";
+import exportIcon from "/icon/export.png";
 
 export default {
   data() {

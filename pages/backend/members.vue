@@ -55,7 +55,6 @@
                                 </button></div>
                         </div>
                     </th>
-                    
                     <th>
                         <div class="checkbox-id-container">
                             <div>Tags<button @click="toggleSort('tags')">
@@ -86,7 +85,7 @@
                     <td>{{ member.email }}</td>
                     <td>{{ member.address }}</td>
                     <td>{{ member.phoneNumber }}</td>
-                    
+
                     <td>{{ member.tags.join(', ') }}</td>
                     <td>
                         <label class="status-toggle">
@@ -96,10 +95,9 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(member)" class="edit-btn"><img src="@/assets/icon/pen.png"
-                                    alt=""></button>
+                            <button @click="editItem(member)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
                             <button @click="askDelete(member.id, member.name)" class="delete-btn"><img
-                                    src="@/assets/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -127,36 +125,40 @@
             <div class="modal-content">
                 <section>
                     <label>ชื่อ</label>
-                    <input class="add-text-input" v-model="currentMember.name" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
+                    <input class="add-text-input" v-model="currentMember.name" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
                     <label>ชื่อ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentMember.name_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English"
-                        required />
+                    <input class="add-text-input" v-model="currentMember.name_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
                     <label>ที่อยู่</label>
-                    <input class="add-text-input" v-model="currentMember.address" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address"
-                        required />
+                    <input class="add-text-input" v-model="currentMember.address" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
                     <label>ที่อยู่ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentMember.address_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter address in English" required />
+                    <input class="add-text-input" v-model="currentMember.address_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
                     <label>เบอร์โทร</label>
-                    <input class="add-text-input" v-model="currentMember.phoneNumber" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number"
-                        required />
+                    <input class="add-text-input" v-model="currentMember.phoneNumber" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
                     <label>Email</label>
-                    <input class="add-text-input" v-model="currentMember.email" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
+                    <input class="add-text-input" v-model="currentMember.email" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
                     <label>คำอธิบาย</label>
-                    <textarea class="add-text-input" v-model="currentMember.description" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter description"></textarea>
+                    <textarea class="add-text-input" v-model="currentMember.description" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description"></textarea>
                     <label>คำอธิบาย (อังกฤษ)</label>
-                    <textarea class="add-text-input" v-model="currentMember.description_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                    <textarea class="add-text-input" v-model="currentMember.description_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit"
                         placeholder="Enter description in English"></textarea>
                     <label>Tags</label>
                     <div class="tags-input-container">
-                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange" @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
+                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange"
+                            @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
                             placeholder="Add a tag" />
                         <div class="tag" v-for="(tag, index) in currentMember.tags" :key="index">
                             {{ tag }}
                             <button type="button" @click="removeTag(index)">x</button>
                         </div>
-                        
+
 
                         <div v-if="filteredTags.length" class="tags-suggestions">
                             <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
@@ -169,7 +171,7 @@
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleFileUpload">
-                            <img v-if="!currentMember.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentMember.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentMember.image">Drag & Drop or Click to Upload</h2>
                             <div v-if="currentMember.image" class="image-preview">
                                 <img :src="currentMember.image" alt="Uploaded Image" class="preview-image" />
@@ -211,10 +213,8 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
-import '@/assets/styles/backend_style.css';
-import Cropper from 'cropperjs';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import 'cropperjs/dist/cropper.css';
 
 const apiEndpoint = 'members';
@@ -232,15 +232,15 @@ const sortDirection = ref(1);
 const currentMember = ref({
     id: null,
     name: '',
-    name_en: '', 
+    name_en: '',
     address: '',
-    address_en: '', 
+    address_en: '',
     phoneNumber: '',
-    email: '', 
-    description: '', 
-    description_en: '', 
+    email: '',
+    description: '',
+    description_en: '',
     status: 1,
-    tags: [], 
+    tags: [],
     image: '',
 });
 const newTag = ref('');
@@ -329,7 +329,7 @@ const toggleStatus = async (member) => {
 
 const fetchMembers = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
+        const response = await $fetch(`/api/${apiEndpoint}`, { headers: { 'CKH': '541986Cocon' }, });
         const membersWithTags = await Promise.all(response.map(async (member) => {
             const tagsResponse = await fetchAllTagsForMember(member.id);
             return { ...member, selected: false, tags: tagsResponse.map(tag => tag.text) };
@@ -344,7 +344,7 @@ const fetchMembers = async () => {
 
 const fetchAllTagsForMember = async (memberId) => {
     try {
-        const response = await $fetch(`/api/tags_member?member_id=${memberId}`,{headers: { 'CKH': '541986Cocon' },});
+        const response = await $fetch(`/api/tags_member?member_id=${memberId}`, { headers: { 'CKH': '541986Cocon' }, });
         return Array.isArray(response) ? response : [];
     } catch (error) {
         console.error('Error fetching tags:', error.message, error.stack);
@@ -354,11 +354,11 @@ const fetchAllTagsForMember = async (memberId) => {
 };
 
 const editItem = (member) => {
-    currentMember.value = { 
-        ...member, 
+    currentMember.value = {
+        ...member,
         status: !!member.status,
-        tags: [...member.tags], 
-        image: member.image || '' 
+        tags: [...member.tags],
+        image: member.image || ''
     };
     showModalEdit.value = true;
 };
@@ -370,8 +370,8 @@ const filteredSortedMembers = computed(() => {
         member.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         member.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         member.phoneNumber.includes(searchQuery.value) ||
-        member.email.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-        member.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase())) 
+        member.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        member.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase()))
     );
 
     if (sortBy.value) {
@@ -402,11 +402,11 @@ const openAddMemberModal = () => {
     currentMember.value = {
         id: null,
         name: '',
-        name_en: '', 
+        name_en: '',
         address: '',
         address_en: '',
         phoneNumber: '',
-        email: '', 
+        email: '',
         description: '',
         description_en: '',
         status: 1,
@@ -458,21 +458,21 @@ const submitMember = async (publish) => {
         const payload = {
             id: currentMember.value.id,
             name: currentMember.value.name,
-            name_en: currentMember.value.name_en, 
+            name_en: currentMember.value.name_en,
             address: currentMember.value.address,
-            address_en: currentMember.value.address_en, 
+            address_en: currentMember.value.address_en,
             phoneNumber: currentMember.value.phoneNumber,
-            email: currentMember.value.email, 
-            description: currentMember.value.description, 
-            description_en: currentMember.value.description_en, 
+            email: currentMember.value.email,
+            description: currentMember.value.description,
+            description_en: currentMember.value.description_en,
             status: publish ? 1 : 0,
-            tags: currentMember.value.tags, 
-            image: currentMember.value.image || '', 
+            tags: currentMember.value.tags,
+            image: currentMember.value.image || '',
         };
 
         const response = await fetch(url, {
             method,
-            headers: {'CKH': '541986Cocon' , 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -546,9 +546,9 @@ const addTag = () => {
     if (newTag.value.trim() !== '' && !currentMember.value.tags.includes(newTag.value.trim())) {
         currentMember.value.tags.push(newTag.value.trim());
     }
-    newTag.value = ''; 
+    newTag.value = '';
     filteredTags.value = [];
-    currentMember.value = { ...currentMember.value }; 
+    currentMember.value = { ...currentMember.value };
 };
 
 const removeTag = (index) => {
@@ -567,7 +567,7 @@ const selectTag = (tag) => {
 };
 
 const handleInputChange = () => {
-    currentMember.value.image = currentMember.value.image; 
+    currentMember.value.image = currentMember.value.image;
 };
 
 const preventFormSubmit = (event) => {
@@ -638,7 +638,8 @@ const toggleSelectAll = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -745,7 +746,8 @@ const toggleSelectAll = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -1307,6 +1309,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1550px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
@@ -1314,6 +1317,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1340,6 +1344,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
