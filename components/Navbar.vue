@@ -276,8 +276,12 @@ nuxt-link:hover {
 }
 
 .navbar {
-
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  margin-top: 0.5%;
   width: 100%;
+  border-radius: 15px;
+  width: 95%;
   background-color: #dbdbdb;
   color: rgb(0, 0, 0);
   display: flex;
@@ -296,13 +300,12 @@ nuxt-link:hover {
 }
 
 .navbar.scrolled {
+  margin: 0;
   background-color: #dbdbdb;
   position: fixed;
-  margin-left: 2.5%;
-  margin-right: 2.5%;
-  margin-top: 1.5%;
-  width: 95%;
-  border-radius: 15px;
+  border-radius: 0px;
+  width: 100%;
+  
 
 
 }

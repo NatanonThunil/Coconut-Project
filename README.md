@@ -1,16 +1,27 @@
-# โหลด Docker
-
-[Docker Desktop](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module&_gl=1*euk4rm*_gcl_au*MTg2MjQyNTUzNy4xNzQxOTM4MDg3*_ga*MTk0NDE5MjUyMy4xNzQxOTM4MDg3*_ga_XJWPQMJYHQ*MTc0MjAxMzMyNi4zLjEuMTc0MjAxNTY1My41OS4wLjA.)
-
-# รัน Docker Compose
-รันครั้งแรก ให้มัน set enviroments ก่อน
- ```bash
- docker-compose up -d --build 
-```
-รันหลังจากครั้งแรก
+# อัพเดท 30 Mar. 2025
+### ที่ต้องไปเพิ่มเอง 
+คำสั่ง Query สำหรับ SQL
 ```bash
- docker-compose up 
- ```
+USE coconutknowledgehub;
+SET SQL_SAFE_UPDATES = 0;
+UPDATE `tag_line`
+SET `image` = NULL;
+SET SQL_SAFE_UPDATES = 1;
+ALTER TABLE `tag_line`
+MODIFY COLUMN `image` VARCHAR(255);
 
-ตอนนี้ ใช้ DB เดียวกับที่มีในเครื่อง
-อนาคตต้องทำให้มันรันใน image
+```
+
+เพิ่มใน .env
+```bash
+LOADING_TIME_MOCK = 1000 /// 1 วิ
+```
+## รายระเอียด Update
+- ```tag_line``` ใน SQL ให้เปลียน type ชอง image จาก ```MEDIUMBLOB``` เป็น ```VARCHAR(255)```
+- เพิ่ม ```LOADING_TIME_MOCK``` ใน ```.env``` ไว้จำลองเวลาโหลด 
+- เพิ่ม API ```upload``` ไว้สำหรับเพิ่มไฟล์รูปไปเก็บตำแหนงที่ต้องการ
+- แก้ API ```id``` ของ ```headline``` เพิ่ม method ```GET``` และ ลบ index ของ headline
+- แก้ Componets ```TagLine``` ให้แสดงผลตามปกติ และ ปรับขนาดให้ตรงตามที่ Crop ในหน้าหลังบ่าน
+- แก้ ```Navbar``` สลับยืดหด (จาก Comments พรี่ๆ)
+- แก้ ```Lottie``` ให้ทำงานปกติ
+โดย [Poom](https://github.com/WasitpolKuekkong)

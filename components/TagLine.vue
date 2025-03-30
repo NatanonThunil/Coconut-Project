@@ -1,8 +1,9 @@
 <template>
-  <div class="hero-bar" :style="{
-    backgroundImage: `url(${heado.image})`,
-    backgroundAttachment: isFixed ? 'fixed' : 'scroll'
-  }">
+  <div class="hero-bar">
+    <div class="background" :style="{
+      backgroundImage: `url(${heado.image})`,
+      backgroundAttachment: isFixed ? 'fixed' : 'scroll'
+    }"></div>
     <div class="overlay"></div>
 
     <div v-if="heado.text" ref="taglineRef" :style="{
@@ -13,7 +14,6 @@
     <h1 v-else>Loading tagline...</h1>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
@@ -26,7 +26,7 @@ defineProps({
   }
 });
 
-
+const apibase = useRuntimeConfig().public.apiBase;
 const taglineRef = ref(null);
 const textHeight = ref(0);
 const textWidth = ref(0);
@@ -51,16 +51,19 @@ const updateTextHW = () => {
 
 const fetchTagline = async () => {
   try {
-    const response = await fetch("/api/headline", {
+    const response = await fetch(`${apibase}/headline/1`, {
       headers: {
-       "CKH": '541986Cocon',
-       
+        "CKH": '541986Cocon',
       },
     });
     if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
 
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Invalid response format: Expected JSON");
+    }
+
     const data = await response.json();
-  
 
     if (data.headline) {
       heado.value = {
@@ -69,7 +72,7 @@ const fetchTagline = async () => {
         text_en: data.headline.text_en || "No tagline available.",
         x: data.headline.x ?? 50,
         y: data.headline.y ?? 50,
-        image: data.headline.image || "/img/tl.png",
+        image: data.headline.image || "/img/tl.png", // Ensure fallback image
       };
 
       await nextTick();
@@ -107,15 +110,21 @@ watchEffect(updateTextHW);
 .hero-bar {
   position: relative;
   width: 100%;
-  height: 80dvh;
   aspect-ratio: 8/3;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: FadeInImage 0.3s ease-in-out forwards;
+  overflow: hidden; 
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%; 
+  background-size: contain; 
+  background-position: top center;
+  background-repeat: no-repeat;
+  z-index: -2;
 }
 
 .overlay {
@@ -123,8 +132,8 @@ watchEffect(updateTextHW);
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
 }
-
 .tagline-text {
   position: absolute;
   color: white;

@@ -36,16 +36,17 @@ export default {
     DotLottieVue, 
   },
   setup() {
+
+    const loading_time = useRuntimeConfig().public.LoadingTimeMock ; 
     const isLoading = ref(true);
     const lottieLoaded = ref(false);
     const loadingAnimation = ref("");
 
     const preloadLottie = async () => {
       try {
-        const response = await fetch(new URL("@/assets/img/loading.lottie", import.meta.url).href);
-        if (!response.ok) throw new Error("Failed to preload Lottie animation");
-        loadingAnimation.value = await response.url;
-        lottieLoaded.value = true; 
+        const lottieUrl = new URL("@/assets/load/loading.lottie", import.meta.url).href;
+        loadingAnimation.value = lottieUrl; 
+        lottieLoaded.value = true;
       } catch (error) {
         console.error("Lottie preload error:", error);
       }
@@ -56,7 +57,7 @@ export default {
       await preloadLottie(); 
       setTimeout(() => {
         isLoading.value = false;
-      }, 800); // 
+      }, loading_time); // Use the updated variable
     });
 
     return { isLoading, lottieLoaded, loadingAnimation };

@@ -49,7 +49,7 @@
 import { ref, onMounted, nextTick } from 'vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-
+const apibase = useRuntimeConfig().public.apiBase;
 const apiEndpoint = 'headline';
 const headline = ref({ x: 50, y: 50, image: '', text: 'กำลังโหลด...', text_en: '-' });
 const fileInput = ref(null);
@@ -64,10 +64,9 @@ const toggleEditor = () => {
 };
 const fetchHeadline = async () => {
   try {
-    const response = await $fetch(`/api/${apiEndpoint}`, {
+    const response = await $fetch(`${apibase}/${apiEndpoint}/1`, { // Corrected endpoint
       headers: {
         "CKH": '541986Cocon',
-
       },
     });
     if (response.headline) {
@@ -131,24 +130,52 @@ const cancelCrop = () => {
 };
 
 const updateHeadline = async () => {
-  // Log the headline data to ensure the text fields are populated
   console.log('Updating headline with:', headline.value);
 
-  // Ensure text and text_en are not null or empty
   if (!headline.value.text || !headline.value.text_en) {
     alert('Text fields cannot be empty');
     return;
   }
 
   try {
-    await fetch(`/api/${apiEndpoint}/1`, {
+    let imagePath = headline.value.image;
+
+    // Check if a new image is provided
+    if (headline.value.image.startsWith('data:image')) {
+      const base64Image = headline.value.image.split(',')[1];
+      const imageName = `herobar_${Date.now()}.jpg`;
+      imagePath = `/img/herobar/${imageName}`;
+
+      // Save the image to the server
+      const uploadResponse = await fetch(`${apibase}/upload`, {
+        method: 'POST',
+        headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Image, path: imagePath }),
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload image');
+      }
+    }
+
+    // Update the headline with the image path
+    headline.value.image = imagePath;
+
+    const updateResponse = await fetch(`${apibase}/${apiEndpoint}/1`, {
       method: 'PUT',
       headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-      body: JSON.stringify(headline.value)
+      body: JSON.stringify(headline.value),
     });
+
+    if (!updateResponse.ok) {
+      throw new Error('Failed to update headline');
+    }
+
     alert('Headline updated successfully!');
+    await fetchHeadline(); // Refresh the data
   } catch (error) {
     console.error('Error updating headline:', error);
+    alert('An error occurred while updating the headline. Please try again.');
   }
 };
 
