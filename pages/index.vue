@@ -34,7 +34,7 @@ export default {
 
   setup() {
     useHead({
-      title: '🥥Coconut - Home',
+      title: 'Coconut - Home',
       meta: [
         {
           name: 'description',

@@ -1,39 +1,34 @@
 <template>
   <Navbar selecto="coconutdata" />
-  <page-header head="CoconutInfo" />
+  <div style="height: 100dvh;">
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+      <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
 
-  <div class="tog-btn-container">
-    <div class="locale-switcher">
-      <label class="switch">
-        <input type="checkbox" @change="changeLocale" :checked='cocontype' />
-        <span class="slider round">
-          <span class="switch-text left">EN</span>
-          <span class="switch-text right">TH</span>
-        </span>
-      </label>
     </div>
-  </div>
-  <div style="height: 5rem;"></div>
+    <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
+    <div style="height: 8rem"></div>
 
 
-  <div class="coconut-info-selection">
-    <div class="fadeinanim" v-for="(item, index) in pagesel" :key="index">
-      <NuxtLinkLocale :to="'/coconut-information/' + (cocontype? 'young' : 'old') + item.link "
-        class="coconut-info-selection-items">
-        <img :src="item.icon" style="height: 50%; width: 50%;" />
-        <p>{{ $t(item.label) }}</p>
-        <div class="card-desc-container">
-          <p>{{ $t(item.desc) }}</p>
-          <p :class="[cocontype ? 'oyt-y' : 'oyt-o', 'oyt']">{{ cocontype ? $t('Young-coconut') : $t('Old-coconut') }}
-          </p>
-        </div>
-      </NuxtLinkLocale>
+
+
+    <div class="coconut-info-selection">
+      <div class="fadeinanim" v-for="(item, index) in pagesel" :key="index">
+        <NuxtLinkLocale :to="'/coconut-information' + item.link" class="coconut-info-selection-items">
+          <img :src="item.icon" style="height: 50%; width: 50%;" />
+          <p>{{ $t(item.label) }}</p>
+          <div class="card-desc-container">
+            <p>{{ $t(item.desc) }}</p>
+
+
+          </div>
+        </NuxtLinkLocale>
+      </div>
     </div>
+
+    <div style="height: 5rem;"></div>
+
   </div>
-
-  <div style="height: 5rem;"></div>
-
-
 
 </template>
 
@@ -49,14 +44,11 @@ export default {
     return {
       cocontype: true,
       dropdownOpen: false,
-      coconutType: "Young",
-      coconutOptions: [
-        { label: "Young-coconut", value: "Young" },
-        { label: "Old-coconut", value: "Old" },
-      ],
+
       pagesel: [
-        { label: "Coconut-varieties", icon: coconutIcon, link: "/coconut-varieties/", desc: "พันธุ์" },
-        { label: "Upstream", icon: harvestIcon, link: "/upstream/", desc: "ขั้นตอนการผลิดของ" },
+        { label: "Coconut-varieties", icon: coconutIcon, link: "/coconut-varieties/", desc: "ดูพันธุ์มะพร้าว" },
+        { label: "Pest", icon: harvestIcon, link: "/pest/", desc: "ดูศัตรูพืชของมะพร้าว" },
+        { label: "chain_values", icon: harvestIcon, link: "/value-chain/", desc: "ดูขั้นตอนการแปรรูป และส่งออก" },
         // { label: "Midstream", icon: washIcon, link: "/midstream/", desc: "การแปรรูป" },
         // { label: "Downstream", icon: exportIcon, link: "/downstream/", desc: "การส่งออก" },
       ],
@@ -78,168 +70,6 @@ export default {
 </script>
 
 <style scoped>
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 5rem;
-  height: 3rem;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #4E6D16;
-  transition: 0.4s;
-  border-radius: 10px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 2.5rem;
-  width: 50%;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 5px;
-}
-
-input:checked+.slider {
-  background-color: #4E6D16;
-}
-
-input:checked+.slider:before {
-  transform: translateX(32px);
-}
-
-.switch-text {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  font-weight: bold;
-  color: #4E6D16;
-  transition: 0.3s ease;
-  pointer-events: none;
-}
-
-.left {
-  left: 16px;
-  opacity: 1;
-}
-
-.right {
-  right: 12px;
-  opacity: 1;
-  color: white;
-}
-
-input:checked+.slider .left {
-  opacity: 1;
-  color: white;
-  left: 12px;
-}
-
-input:checked+.slider .right {
-  opacity: 1;
-  color: #4E6D16;
-  right: 16px;
-}
-
-.mobile-language-change {
-  all: unset;
-  display: flex;
-  justify-content: center;
-  padding: 0.45rem;
-  height: 100%;
-  width: 100%;
-  transition: transform 0.3s ease;
-}
-
-.mobile-language-change:hover {
-  transform: scale(1.05);
-}
-
-.mobile-language-change .text-btn-container {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  transition: 0.3 ease-in-out;
-
-}
-
-.mobile-language-change .text-btn-container div {
-  transition: 0.3 ease-in-out;
-
-}
-
-
-.activeMobile {
-  color: #4E6D16;
-  font-weight: 700;
-  transform: scale(1.5);
-
-
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 1039px) {
-  .locale-switcher {
-    display: none;
-  }
-}
-
-.tog-btn-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.cocon-tog-btn {
-  all: unset;
-  display: flex;
-  cursor: pointer;
-  transition: ease-in-out 0.3s;
-  outline: 3px #4E6D16 solid;
-  border-radius: 10px;
-  padding: 0.5rem 2rem;
-}
-
-.cocon-tog-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
-}
-
-.oyt-y {
-  color: #4E6D16;
-}
-
-.oyt-o {
-  color: #5f3b13;
-}
-
 .fadeinanim:hover a .card-desc-container {
 
   opacity: 1;
@@ -396,7 +226,7 @@ input:checked+.slider .right {
 
 .coconut-info-selection {
   display: flex;
-  flex-wrap: wrap;
+
   gap: 2rem;
   justify-self: center;
   justify-content: center;
@@ -454,7 +284,7 @@ input:checked+.slider .right {
   }
 }
 
-@media (max-width: 857px) {
+@media (max-width: 1100px) {
   .coconut-info-selection .coconut-info-selection-items {
     height: 16rem;
     width: 16rem;
@@ -462,11 +292,36 @@ input:checked+.slider .right {
   }
 }
 
-@media (max-width: 697px) {
+@media (max-width: 890px) {
   .coconut-info-selection .coconut-info-selection-items {
     height: 14rem;
     width: 14rem;
     font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 780px) {
+  .coconut-info-selection .coconut-info-selection-items {
+    height: 12rem;
+    width: 12rem;
+    font-size: 1rem;
+  }
+
+  .card-desc-container p {
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 780px) {
+  .coconut-info-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fadeinanim {
+    width: 12rem;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <Navbar selecto="pest" />
+  <Navbar selecto="pests" />
   <div style="height: 8rem"></div>
   <div class="faqs-path">
     <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/

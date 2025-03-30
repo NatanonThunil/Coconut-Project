@@ -24,5 +24,6 @@ LOADING_TIME_MOCK = 1000 /// 1 วิ
 - แก้ Componets ```TagLine``` ให้แสดงผลตามปกติ และ ปรับขนาดให้ตรงตามที่ Crop ในหน้าหลังบ่าน
 - แก้ ```Navbar``` สลับยืดหด (จาก Comments พรี่ๆ)
 - แก้ ```Lottie``` ให้ทำงานปกติ
+- ตกแต่ง ```Coconut Information```
 
 โดย [Poom](https://github.com/WasitpolKuekkong)

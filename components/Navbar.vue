@@ -12,7 +12,7 @@
       </li>
 
 
-      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events')) }, 'nnedd']">
+      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events') ) }, 'nnedd']">
         <p class="img-dd-adjust">
           <img class="btn-icons"
             :src="selecto === 'news' || selecto === 'events' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
@@ -30,10 +30,10 @@
       </li>
 
 
-      <li :class="[{ Selected: ((selecto === 'coconutdata')) }, 'nnedd']">
+      <li :class="[{ Selected: ((selecto === 'coconutdata') || (selecto === 'pests')) }, 'nnedd']">
         <p class="img-dd-adjust">
           <img class="btn-icons"
-            :src="selecto === 'coconutdata' || selecto === 'pest' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
+            :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
             alt="ข้อมูลมะพร้าว" />
           {{ $t('CoconutInfo') }} <span> ▼</span>
         </p>
@@ -45,7 +45,7 @@
             <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('chain_values') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('chain_values') }}</NuxtLinkLocale>
           </li>
         </ul>
       </li>

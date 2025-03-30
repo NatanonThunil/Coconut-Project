@@ -99,9 +99,7 @@
     justify-self: center;
   }
   
-  .faqs-path {
-    font-size: 1.2rem;
-  }
+ 
   
   .faq-container {
     display: flex;
@@ -115,9 +113,7 @@
     cursor: pointer;
   }
   
-  .faqs-path {
-    font-weight: bold;
-  }
+
   
   .faqs-container {
     display: flex;
@@ -125,10 +121,7 @@
     flex-wrap: wrap;
   }
   
-  .faq-container h1 {
-    font-size: 2rem;
-    font-weight: bold;
-  }
+
   
   .faq-container p {
     font-size: 1.2rem;
