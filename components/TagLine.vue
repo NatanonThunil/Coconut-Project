@@ -176,5 +176,10 @@ watchEffect(updateTextHW);
   .hero-bar {
     height: 60dvh;
   }
+  .background {
+    background-size: cover; 
+    height: 100%;
+    background-position: center top;
+  }
 }
 </style>
