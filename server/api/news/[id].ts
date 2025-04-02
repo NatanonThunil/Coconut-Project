@@ -29,9 +29,9 @@ export default defineEventHandler(async (event) => {
             }
 
             let newsItem = rows[0];
-            if (newsItem.image) {
-                newsItem.image = `data:image/jpeg;base64,${newsItem.image.toString('base64')}`;
-            }
+            // if (newsItem.image) {
+            //     newsItem.image = `data:image/jpeg;base64,${newsItem.image.toString('base64')}`;
+            // }
 
             return newsItem;
         } else if (method === 'PUT') {

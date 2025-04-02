@@ -1,3 +1,29 @@
+# อัพเดท 2 Apr. 2025
+### ที่ต้องไปเพิ่มเอง 
+คำสั่ง Query สำหรับ SQL
+```bash
+USE coconutknowledgehub;
+SET SQL_SAFE_UPDATES = 0;
+UPDATE `new`
+SET `image` = NULL;
+SET SQL_SAFE_UPDATES = 1;
+ALTER TABLE `new`
+MODIFY COLUMN `image` VARCHAR(255);
+
+```
+
+
+## รายระเอียด Update
+- เปลี่ยนไฟล์ Dir สำหรับเก็บรูปภาพ อยู่ที่ ```public/images/ ```
+- แก้ API ของ news เปลี่ยนไปใช้รูปใน Public
+- แก้ `.gitignore` ให้ไม่เอารูไปด้วย
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
+
 # อัพเดท 30 Mar. 2025
 ### ที่ต้องไปเพิ่มเอง 
 คำสั่ง Query สำหรับ SQL

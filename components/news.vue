@@ -6,9 +6,9 @@
         <img :src="hotNews.image" alt="Hot News Image" draggable="false" />
       </div>
       <div class="hot-news-text">
-        <h2>{{ (currentLocale === 'th')? hotNews.title:hotNews.title_en }}</h2>
+        <h2>{{ (currentLocale === 'th') ? hotNews.title : hotNews.title_en }}</h2>
         <div style="height: 1rem;"></div>
-        <p>{{ (currentLocale === 'th')? hotNews.summerize : hotNews.summerize_en }}</p>
+        <p>{{ (currentLocale === 'th') ? hotNews.summerize : hotNews.summerize_en }}</p>
         <div style="height: 1rem;"></div>
         <p style="display: flex; justify-content: flex-end;">{{ formatDate(hotNews.upload_date) }}</p>
       </div>
@@ -20,19 +20,17 @@
         @click="$router.push('/news/details/' + news.id)">
         <img :src="news.image" alt="News Image" draggable="false" />
         <div class="news-text-container">
-          <h2>{{ (currentLocale === 'th')? news.title : news.title_en }}</h2>
+          <h2>{{ (currentLocale === 'th') ? news.title : news.title_en }}</h2>
           <p>{{ formatDate(news.upload_date) }}</p>
         </div>
       </div>
     </div>
-
 
     <div v-else-if="loading" class="loading-shimmer">
       <div class="shimmer-item"></div>
       <div class="shimmer-item"></div>
       <div class="shimmer-item"></div>
     </div>
-
 
     <div v-else>
       <p>No news available.</p>
@@ -41,10 +39,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-const { locale } = useI18n();
 
+const { locale } = useI18n();
 const currentLocale = computed(() => locale.value);
 const newsItems = ref([]);
 const hotNews = ref(null);
@@ -56,15 +54,14 @@ const fetchNews = async () => {
     const response = await $fetch('/api/news', {
       headers: {
         "CKH": '541986Cocon',
-
       },
     });
-    newsItems.value = response;
+    
+    // Sort news items by highest id first (assuming higher id means more recent)
+    newsItems.value = response.sort((a, b) => b.id - a.id);
 
-
+    // Filter and assign hot news and regular news accordingly
     hotNews.value = newsItems.value.find((news) => news.hot_new && news.status) || null;
-
-
     regularNews.value = newsItems.value.filter((news) => !news.hot_new && news.status).slice(0, 2);
   } catch (error) {
     console.error('Error fetching news:', error);
@@ -72,7 +69,6 @@ const fetchNews = async () => {
     loading.value = false;
   }
 };
-
 
 onMounted(fetchNews);
 </script>

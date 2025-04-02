@@ -6,7 +6,7 @@
         <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
         <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ news?.title || 'No Title'}}</NuxtLinkLocale>
     </div>
-    <div style="height: 5rem;"></div>
+    
 
     <div v-if="news" class="container">
         <img class="news-image-banner" :src="news.image || 'https://placehold.co/800x400'" alt="News Image"
