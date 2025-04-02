@@ -144,8 +144,10 @@ const updateHeadline = async () => {
     if (headline.value.image.startsWith('data:image')) {
       const base64Image = headline.value.image.split(',')[1];
       const imageName = `herobar_${Date.now()}.jpg`;
-      imagePath = `/img/herobar/${imageName}`;
+      imagePath = `/images/${imageName}`;
 
+      // check image
+      console.log('Image path:', imagePath);
       // Save the image to the server
       const uploadResponse = await fetch(`${apibase}/upload`, {
         method: 'POST',

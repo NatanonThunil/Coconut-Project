@@ -74,12 +74,12 @@ export default defineEventHandler(async (event) => {
                 return { success: false, error: "X and Y values must be between 0 and 100." };
             }
 
-            if (image && !image.startsWith('/img/herobar/')) {
+            if (image && !image.startsWith('/images/')) {
                 return { success: false, error: "Invalid image path." };
             }
 
             // Delete the old image if a new image is provided
-            if (image && image !== currentImage && currentImage && currentImage.startsWith('/img/herobar/')) {
+            if (image && image !== currentImage && currentImage && currentImage.startsWith('/images/')) {
                 const oldImagePath = path.join(process.cwd(), 'public', currentImage);
                 try {
                     if (fs.existsSync(oldImagePath)) {
