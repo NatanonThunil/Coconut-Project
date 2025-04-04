@@ -16,13 +16,13 @@ export default defineEventHandler(async (event) => {
     }
 
     if (method === 'GET') {
-      const query = 'SELECT * FROM new';
+      const query = 'SELECT * FROM new'; // Ensure this is specific to "news"
       const [rows] = await connection.execute(query);
 
-      // Return the image path as-is (or add your base URL if needed)
+      // Add base URL to image path
       const processedRows = rows.map((row: { image: any; }) => ({
         ...row,
-        image: row.image || null,
+        image: row.image ? `${process.env.BASE_URL || ''}${row.image}` : null,
       }));
 
       return processedRows;
@@ -35,31 +35,27 @@ export default defineEventHandler(async (event) => {
         return { error: 'Missing required fields: title, author, or status.' };
       }
 
-      // Set default imagePath to null. It will be updated if an image is provided.
       let imagePath = null;
 
-      // If a new image is provided, process it and store it on disk.
-      if (image && image.startsWith('data:image')) {
-        // Extract the base64 part from the data URI
-        const base64Data = image.split(',')[1];
-
-        // Generate a unique filename
-        const imageName = `news_${Date.now()}.jpg`;
-
-        // Define the relative path (this path is stored in the database)
-        imagePath = `/images/${imageName}`;
-
-        // Define the full file system path (adjust 'public' if needed)
-        const fullPath = path.join(process.cwd(), 'public', 'images', imageName);
-
-        // Ensure the directory exists
-        await fs.mkdir(path.dirname(fullPath), { recursive: true });
-
-        // Write the image buffer to disk
-        const buffer = Buffer.from(base64Data, 'base64');
-        await fs.writeFile(fullPath, buffer);
-
-        console.log('Image saved to:', fullPath);
+      if (image && typeof image === 'string' && image.startsWith('data:image')) {
+        try {
+          const base64Data = image.split(',')[1];
+          const imageName = `news_${Date.now()}.jpg`;
+          imagePath = `/images/${imageName}`;
+          const fullPath = path.join(process.cwd(), 'public', 'images', imageName);
+          await fs.mkdir(path.dirname(fullPath), { recursive: true });
+          const buffer = Buffer.from(base64Data, 'base64');
+          await fs.writeFile(fullPath, buffer);
+          console.log('Image saved to:', fullPath);
+        } catch (err) {
+          console.error('Error saving image:', err);
+          setResponseStatus(event, 500);
+          return { error: 'Failed to save image.' };
+        }
+      } else if (image) {
+        console.error('Invalid image format received.');
+        setResponseStatus(event, 400);
+        return { error: 'Invalid image format.' };
       }
 
       const uploadDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -75,7 +71,7 @@ export default defineEventHandler(async (event) => {
         title_en || null,
         description_en || null,
         author,
-        imagePath, // Save file path instead of binary data
+        imagePath, 
         hot_new ? 1 : 0,
         summerize || null,
         summerize_en || null,

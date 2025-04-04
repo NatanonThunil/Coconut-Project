@@ -381,7 +381,7 @@ const bulkUpdateStatus = async (publish) => {
             fetch(`/api/news/${news.id}`, {
                 method: 'PUT',
                 headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...news, status: publish ? 1 : 0 })
+                body: JSON.stringify({ status: publish ? 1 : 0 }) // Only send the status field
             })
         );
 
@@ -392,8 +392,9 @@ const bulkUpdateStatus = async (publish) => {
         });
 
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected news items.`);
-    } catch {
+    } catch (error) {
         alert('Failed to update news status.');
+        console.error('Error in bulkUpdateStatus:', error);
     }
 };
 
@@ -418,20 +419,23 @@ const submitNews = async (publish) => {
         const method = isUpdate ? 'PUT' : 'POST';
         const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news';
 
+    
         const payload = {
-            id: currentNews.value.id,
-            title: currentNews.value.title,
-            title_en: currentNews.value.title_en,
-            description: currentNews.value.description,
-            description_en: currentNews.value.description_en,
-            author: currentNews.value.author,
-            upload_date: currentNews.value.upload_date,
+            id: currentNews.value.id || null,
+            title: currentNews.value.title || '',
+            title_en: currentNews.value.title_en || '',
+            description: currentNews.value.description || '',
+            description_en: currentNews.value.description_en || '',
+            author: currentNews.value.author || '',
+            upload_date: currentNews.value.upload_date || '',
             status: publish ? 1 : 0,
-            hot_new: currentNews.value.hot_new,
-            summerize: currentNews.value.summerize,
-            summerize_en: currentNews.value.summerize_en,
-            image: currentNews.value.image || '',
+            hot_new: currentNews.value.hot_new || false,
+            summerize: currentNews.value.summerize || '',
+            summerize_en: currentNews.value.summerize_en || '',
+            image: currentNews.value.image?.startsWith('data:image') ? currentNews.value.image : null, // Validate image
         };
+
+      
 
         const response = await fetch(url, {
             method,
@@ -439,12 +443,15 @@ const submitNews = async (publish) => {
             body: JSON.stringify(payload),
         });
 
+        const responseBody = await response.json();
+       
+
         if (!response.ok) {
-            throw new Error('Error saving the news.');
+            throw new Error(responseBody.error || 'Error saving the news.');
         }
 
         if (!isUpdate) {
-            currentNews.value.id = await response.json();
+            currentNews.value.id = responseBody.id;
             alert('News added successfully.');
         } else {
             alert('News updated successfully.');
@@ -456,7 +463,7 @@ const submitNews = async (publish) => {
 
     } catch (error) {
         alert('Error while submitting news.');
-        console.error(error);
+        console.error('Error in submitNews:', error); // Enhanced error logging
     }
 };
 

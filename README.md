@@ -1,3 +1,39 @@
+# อัพเดท 5 Apr. 2025
+### ที่ต้องไปเพิ่มเอง 
+คำสั่ง Query สำหรับ SQL
+```bash
+USE coconutknowledgehub;
+SET SQL_SAFE_UPDATES = 0;
+UPDATE `event`
+SET `image` = NULL;
+SET SQL_SAFE_UPDATES = 1;
+ALTER TABLE `event`
+MODIFY COLUMN `image` VARCHAR(255);
+
+```
+
+```bash
+USE coconutknowledgehub;
+CREATE TABLE footer (
+  id INT AUTO_INCREMENT UNIQUE,
+  text TEXT,
+  text_en TEXT,
+  PRIMARY KEY (id)
+);
+
+
+```
+## รายระเอียด Update
+- ลบ API ทีไม่ได้ใช้
+- Backend หน้า `news` เสร็จ
+- API ของ `Footer`เสร็จ
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
+
 # อัพเดท 2 Apr. 2025
 ### ที่ต้องไปเพิ่มเอง 
 คำสั่ง Query สำหรับ SQL

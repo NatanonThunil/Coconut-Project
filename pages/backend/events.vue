@@ -28,6 +28,11 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
+                            <div>Image</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
                             <div>Title<button @click="toggleSort('title')">
                                 <div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div>
                             </button></div>
@@ -61,6 +66,7 @@
                             </button></div>
                         </div>
                     </th>
+                    
                     <th></th>
                 </tr>
             </thead>
@@ -73,6 +79,9 @@
                             <p>{{ event.id }}</p>
                         </div>
                     </td>
+                    <td>
+                        <img v-if="event.image" :src="event.image" alt="Event Image" class="event-image" />
+                    </td>
                     <td>{{ event.title }}</td>
                     <td>{{ event.organizer }}</td>
                     <td>{{ formatDate(event.date_start) }}</td>
@@ -83,6 +92,7 @@
                             <img class="eyesicon" :src="event.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
+                    
                     <td class="action-buttons">
                         <div class="action-btn-container">
                             <button @click="editItem(event)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
@@ -189,7 +199,7 @@ import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '/styles/backend_style.css'; // Import shared CSS
+// import '/styles/backend_style.css'; 
 
 const apiEndpoint = 'events';
 const searchQuery = ref('');
@@ -738,40 +748,47 @@ const cancelCrop = () => {
 
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
-    display: table-cell;
-    width: 5%;
+    width: 6%;
 }
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 30%;
+    width: 8%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-    width: 15%;
+    width: 20%;
+    max-width: max-content;
 }
 
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    text-align: center;
 }
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
     width: 10%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 6%;
+    width: 12%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-    display: table-cell;
     width: 8%;
+    text-align: center;
+}
+
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+    width: 8%;
+    text-align: center;
 }
 
 .action-btn-container {
@@ -1458,5 +1475,19 @@ input:checked+.hotnews-slider:before {
 
 .tags-suggestions div:hover {
     background: #f0f0f0;
+}
+
+.event-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.checkbox-decorate {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: #4E6D16;
 }
 </style>

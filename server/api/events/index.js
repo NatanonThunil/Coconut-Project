@@ -1,6 +1,8 @@
 import mysql from 'mysql2/promise';
 import { dbConfig } from '../../config/poom_db_config';
 import { readBody } from 'h3';
+import path from 'path';
+import fs from 'fs/promises';
 
 export default defineEventHandler(async (event) => {
     let connection;
@@ -8,25 +10,14 @@ export default defineEventHandler(async (event) => {
         connection = await mysql.createConnection(dbConfig);
 
         if (event.req.method === 'GET') {
-            const [rows] = await connection.execute('SELECT * FROM `event`');
+            const [rows] = await connection.execute('SELECT * FROM `event`'); // Ensure this is specific to "events"
 
             if (rows.length === 0) {
                 return { message: 'No events available.' };
             }
 
             const eventItems = rows.map((event) => {
-                let imageBase64 = null;
-                if (event.image) {
-                    const imageBuffer = Buffer.from(event.image);
-                    let mimeType = 'image/jpeg';
-
-                    if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
-                        mimeType = 'image/png';
-                    }
-
-                    imageBase64 = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
-                }
-
+                const baseUrl = process.env.BASE_URL || '';
                 const toBangkokTime = (dateStr) => {
                     const date = new Date(dateStr);
                     const bangkokOffset = 7 * 60 * 60 * 1000;
@@ -35,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
                 return {
                     ...event,
-                    image: imageBase64,
+                    image: event.image ? `${baseUrl}${event.image}` : null, // Add base URL to image path
                     description: event.description,
                     date_start: toBangkokTime(event.date_start),
                     date_end: toBangkokTime(event.date_end),
@@ -69,12 +60,24 @@ export default defineEventHandler(async (event) => {
             let imageBuffer = null;
             if (image) {
                 const imageData = image.split(',')[1];
-                imageBuffer = Buffer.from(imageData, 'base64');
+                const imageName = `event_${Date.now()}.jpg`;
+                const imagePath = `/images/${imageName}`;
+                const fullPath = path.join(process.cwd(), 'public', 'images', imageName);
+                await fs.mkdir(path.dirname(fullPath), { recursive: true });
+                const buffer = Buffer.from(imageData, 'base64');
+                await fs.writeFile(fullPath, buffer);
+                imageBuffer = imagePath; // Store the image path
             }
 
+            const query = `
+                INSERT INTO \`event\` 
+                (title, title_en, organizer, date_start, date_end, location_name, location_name_en, location_url, register_url, description, description_en, event_category, image, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `; // Ensure this is specific to "events"
+
             const [result] = await connection.execute(
-                'INSERT INTO `event` (title,title_en organizer, date_start, date_end, location_name,location_name_en, location_url, register_url, description,description_en, event_category, image, status) VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [title,title_en, organizer, formattedDateStart, formattedDateEnd, location_name,location_name_en, location_url, register_url, description,description_en, event_category, imageBuffer, status]
+                query,
+                [title, title_en, organizer, formattedDateStart, formattedDateEnd, location_name, location_name_en, location_url, register_url, description, description_en, event_category, imageBuffer, status]
             );
 
             return { message: 'Event created successfully', eventId: result.insertId };

@@ -1,3 +1,6 @@
+import path from 'path';
+import fs from 'fs/promises';
+
 export default defineEventHandler(async (event) => {
     const method = event.node.req.method;
     let connection;
@@ -17,7 +20,7 @@ export default defineEventHandler(async (event) => {
         }
 
         if (method === 'GET') {
-            // Handle GET request
+            
             const [rows] = await connection.execute(
                 'SELECT id, title, description, title_en, description_en, author, upload_date, image, hot_new, summerize, summerize_en, status FROM new WHERE id = ? AND status = 1',
                 [id]
@@ -29,16 +32,14 @@ export default defineEventHandler(async (event) => {
             }
 
             let newsItem = rows[0];
-            // if (newsItem.image) {
-            //     newsItem.image = `data:image/jpeg;base64,${newsItem.image.toString('base64')}`;
-            // }
+       
 
             return newsItem;
         } else if (method === 'PUT') {
-            // Handle PUT request
+          
             const body = await readBody(event);
 
-            // Build the query dynamically based on the provided fields
+      
             const fields = [];
             const values = [];
 
@@ -63,9 +64,27 @@ export default defineEventHandler(async (event) => {
                 values.push(body.author || null);
             }
             if (body.image !== undefined) {
-                const imageBuffer = body.image ? Buffer.from(body.image.split(',')[1], 'base64') : null;
-                fields.push('image = ?');
-                values.push(imageBuffer);
+                if (typeof body.image === 'string' && body.image.startsWith('data:image')) {
+                    try {
+                        const base64Data = body.image.split(',')[1];
+                        const imageName = `news_${Date.now()}.jpg`;
+                        const imagePath = `/images/${imageName}`;
+                        const fullPath = path.join(process.cwd(), 'public', 'images', imageName);
+                        await fs.mkdir(path.dirname(fullPath), { recursive: true });
+                        const buffer = Buffer.from(base64Data, 'base64');
+                        await fs.writeFile(fullPath, buffer);
+                        fields.push('image = ?');
+                        values.push(imagePath);
+                    } catch (err) {
+                        console.error('Error saving image:', err);
+                        setResponseStatus(event, 500);
+                        return { error: 'Failed to save image.' };
+                    }
+                } else if (body.image) {
+                    console.error('Invalid image format received.');
+                    setResponseStatus(event, 400);
+                    return { error: 'Invalid image format.' };
+                }
             }
             if (body.hot_new !== undefined) {
                 fields.push('hot_new = ?');
@@ -104,7 +123,7 @@ export default defineEventHandler(async (event) => {
 
             return { message: 'News updated successfully', id };
         } else if (method === 'DELETE') {
-            // Handle DELETE request
+       
             const query = 'DELETE FROM new WHERE id = ?';
             const [result] = await connection.execute(query, [id]);
 
