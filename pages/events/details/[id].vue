@@ -92,7 +92,7 @@ export default {
         const cid = this.$route.params.id;
 
         try {
-            const response = await fetch(`/api/events_table`, {
+            const response = await fetch(`/api/events`, {
       headers: {
        "CKH": '541986Cocon',
        

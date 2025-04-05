@@ -74,8 +74,8 @@
                         </label>
                     </td>
                     <td class="action-buttons">
-                        <button @click="editItem(item)" class="edit-btn"><img src="icon/pen.png" alt="Edit"></button>
-                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="icon/trash.png" alt="Delete"></button>
+                        <button @click="editItem(item)" class="edit-btn"><img src="/icon/pen.png" alt="Edit"></button>
+                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="/icon/trash.png" alt="Delete"></button>
                     </td>
                 </tr>
             </tbody>
@@ -123,6 +123,8 @@
 
 <script setup>
 definePageMeta({ layout: "admin" });
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import { ref, onMounted, computed } from 'vue';
 
 const config = ref({

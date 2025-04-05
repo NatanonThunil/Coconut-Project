@@ -123,7 +123,7 @@ export default {
   async mounted() {
     window.scrollTo(0, 0);
     try {
-      const response = await fetch('/api/events_table', {
+      const response = await fetch('/api/events', {
       headers: {
        "CKH": '541986Cocon',
        

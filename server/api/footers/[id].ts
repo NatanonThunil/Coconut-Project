@@ -1,4 +1,3 @@
-
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method?.toUpperCase();
   const id = event.context.params?.id;
@@ -10,13 +9,8 @@ export default defineEventHandler(async (event) => {
 
   let connection;
   try {
-    const pool = event.context.$scriptdb;
-    if (!pool) {
-      console.error("Error: Database connection pool is not initialized.");
-      return { success: false, error: "Database connection failed." };
-    }
-
-    connection = await pool.getConnection();
+    // Assuming event.context.$scriptdb is a direct connection (not from a pool)
+    connection = event.context.$scriptdb;
 
     if (method === 'GET') {
       try {
@@ -38,6 +32,8 @@ export default defineEventHandler(async (event) => {
             id: footer.id,
             text: footer.text || "Default footer text",
             text_en: footer.text_en || '',
+            credit: footer.credit || '',
+            credit_en: footer.credit_en || '',
           },
         };
       } catch (error) {
@@ -46,19 +42,20 @@ export default defineEventHandler(async (event) => {
       }
     } else if (method === 'PUT') {
       const body = await readBody(event);
-      let { text, text_en } = body;
+      let { text, text_en, credit, credit_en } = body;
 
       text = text ?? null;
       text_en = text_en ?? null;
-
+      credit = credit ?? null;
+      credit_en = credit_en ?? null;
       const query = `
         UPDATE footer 
-        SET text = ?, text_en = ?
+        SET text = ?, text_en = ?, credit = ?, credit_en = ?
         WHERE id = ?
       `;
 
       try {
-        await connection.execute(query, [text, text_en, id]);
+        await connection.execute(query, [text, text_en, credit, credit_en, id]);
       } catch (error) {
         console.error("Error executing query:", (error as Error).message);
         return { success: false, error: "Failed to update footer in the database." };
@@ -73,8 +70,8 @@ export default defineEventHandler(async (event) => {
     console.error("Error handling request:", (error as Error).message || error);
     return { success: false, error: "Failed to handle request." };
   } finally {
-    if (connection) {
-      connection.release();
-    }
+    // No need to release if not using a pool-based connection
+    // If you're not using a pool, just ensure the connection is closed (if applicable).
+    // Example: connection.end(); if using a direct connection (check your DB library).
   }
 });

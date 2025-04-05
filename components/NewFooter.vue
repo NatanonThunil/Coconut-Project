@@ -8,7 +8,7 @@
         <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
         <section class="ft-contract-us">
             <h1>{{ $t("ContactUs") }}</h1>
-            <div class="ft-contract">{{$t('Footer')}}</div>
+            <div class="ft-contract">{{ $t('Footer') }}</div>
         </section>
         <section class="cpr">
             <div>Copyright © Coconut Knowledge Hub
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -30,9 +31,29 @@ export default {
                 { to: "/coconut-information", label: "CoconutInfo" },
                 { to: "/Experts", label: "Experts" },
                 { to: "/FAQs", label: "FAQs" }
-            ]
+            ],
+            footert: "",
         };
-    }
+    },
+    props: {
+        footerText: {
+            type: String,
+            default: "ภาควิชาพืชสวน คณะเกษตร กำแพงแสน มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน จ.นครปฐม 73104"
+        },
+        footerTextEn: {
+            type: String,
+            default: "Department of Horticulture, Faculty of Agriculture at Kamphaeng Saen, Kasetsart University, Kamphaeng Saen Campus, Nakhon Pathom 73140"
+        },
+        footerCredit: {
+            type: String,
+            default: "Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง"
+        },
+        footerCreditEn: {
+            type: String,
+            default: "Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University"
+        }
+    },
+    
 };
 </script>
 
@@ -56,15 +77,15 @@ export default {
 .footer {
     flex-direction: column;
     height: inherit;
-    background-image: linear-gradient(#4E6D16,#2f3f10);
+    background-image: linear-gradient(#4E6D16, #2f3f10);
     display: flex;
     align-items: center;
     justify-content: center;
-   
+
 }
 
 .footer-nav {
-    
+
     padding-top: 1rem;
     display: flex;
     gap: 2rem;
@@ -75,7 +96,7 @@ export default {
 
 .footer-nav a {
     color: white;
-    transition: ease-in-out 0.3s ;
+    transition: ease-in-out 0.3s;
 }
 
 .footer-nav a:hover {
@@ -87,7 +108,7 @@ export default {
     border-radius: 1px;
 
     width: 100%;
-  
+
     padding: 0.5rem;
     color: white;
 }

@@ -199,7 +199,7 @@ import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-// import '/styles/backend_style.css'; 
+
 
 const apiEndpoint = 'events';
 const searchQuery = ref('');
