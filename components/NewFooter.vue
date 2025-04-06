@@ -8,54 +8,67 @@
         <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
         <section class="ft-contract-us">
             <h1>{{ $t("ContactUs") }}</h1>
-            <div class="ft-contract">{{ $t('Footer') }}</div>
+            <div class="ft-contract">{{ (currentLocale === 'th' )? footer.text : footer.text_en}}</div>
         </section>
         <section class="cpr">
-            <div>Copyright © Coconut Knowledge Hub
-                สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง</div>
+            <div>{{ (currentLocale === 'th' )? footer.credit : footer.credit_en}}</div>
         </section>
 
     </footer>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default {
-    data() {
-        return {
-            links: [
-                { to: "/", label: "Home" },
-                { to: "/AboutUs", label: "AboutUs" },
-                { to: "/News", label: "News" },
-                { to: "/Events", label: "Events" },
-                { to: "/coconut-information", label: "CoconutInfo" },
-                { to: "/Experts", label: "Experts" },
-                { to: "/FAQs", label: "FAQs" }
-            ],
-            footert: "",
-        };
-    },
-    props: {
-        footerText: {
-            type: String,
-            default: "ภาควิชาพืชสวน คณะเกษตร กำแพงแสน มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน จ.นครปฐม 73104"
+// Locale
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
+
+// Links for footer nav
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/AboutUs", label: "AboutUs" },
+  { to: "/News", label: "News" },
+  { to: "/Events", label: "Events" },
+  { to: "/coconut-information", label: "CoconutInfo" },
+  { to: "/Experts", label: "Experts" },
+  { to: "/FAQs", label: "FAQs" }
+];
+
+// Footer content
+const footer = ref({
+    text: '',
+    text_en: '',
+    credit: 'Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง',
+    credit_en: 'Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University',
+  });
+// Fetch footer data
+const fetchData = async () => {
+    try {
+      const response = await fetch('/api/footers/1', {
+        headers: {
+          CKH: '541986Cocon',
         },
-        footerTextEn: {
-            type: String,
-            default: "Department of Horticulture, Faculty of Agriculture at Kamphaeng Saen, Kasetsart University, Kamphaeng Saen Campus, Nakhon Pathom 73140"
-        },
-        footerCredit: {
-            type: String,
-            default: "Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง"
-        },
-        footerCreditEn: {
-            type: String,
-            default: "Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University"
-        }
-    },
-    
+      });
+  
+      if (!response.ok) throw new Error('Failed to fetch footer data');
+      const data = await response.json();
+  
+      // Map data safely
+      footer.value.text = data.footer?.text || '';
+      footer.value.text_en = data.footer?.text_en || '';
+      footer.value.credit = data.footer?.credit || footer.value.credit;
+      footer.value.credit_en = data.footer?.credit_en || footer.value.credit_en;
+    } catch (error) {
+      console.error('Error fetching footer:', error);
+    }
 };
+
+onMounted(fetchData);
 </script>
+
+
 
 <style scoped>
 .ft-contract-us {

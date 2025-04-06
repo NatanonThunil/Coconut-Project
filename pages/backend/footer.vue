@@ -137,9 +137,9 @@
   }
   
   .footer-input:focus {
-    border-color: #007bff;
+    border-color: #4E6D16;
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 0 5px rgba(0, 59, 20, 0.3);
   }
   
   .footer-button {
@@ -149,7 +149,7 @@
     font-size: 1rem;
     font-weight: bold;
     color: #fff;
-    background-color: #007bff;
+    background-color: #4E6D16;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -157,7 +157,7 @@
   }
   
   .footer-button:hover {
-    background-color: #0056b3;
+    background-color: #3c550e;
   }
   </style>
   

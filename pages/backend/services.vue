@@ -1,15 +1,13 @@
 <template>
     <div style="height: 5rem;"></div>
     <div class="table-head-text-container">
-        <h1>จัดการกิจกรรม</h1>
-        <p>มีกิจกรรมทั้งหมด {{ EventsNum }}</p>
+        <h1>จัดการบริการ</h1>
+        <p>มีบริการทั้งหมด {{ ServicesNum }}</p>
     </div>
     <div class="add-btn-container">
-        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
+        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ หรือ รายละเอียด" />
         <div class="news-check-publish">
-            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-news-btn" @click="openAddEventModal">ADD Event</button>
+            <button class="add-news-btn" @click="openAddServiceModal">เพิ่มบริการ</button>
         </div>
     </div>
 
@@ -19,10 +17,11 @@
                 <tr>
                     <th>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                class="checkbox-decorate" />
                             <span>ID</span>
                             <button @click="toggleSort('id')">
-                                <div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div>
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
                             </button>
                         </div>
                     </th>
@@ -33,70 +32,59 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Title<button @click="toggleSort('title')">
-                                <div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div>
-                            </button></div>
+                            <div>
+                                Title
+                                <button @click="toggleSort('title')">
+                                    <div :class="{ 'rotate': sortBy === 'title' && sortDirection === -1 }">▲</div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Organizer<button @click="toggleSort('organizer')">
-                                <div :class="{'rotate': sortBy === 'organizer' && sortDirection === -1}">▲</div>
-                            </button></div>
+                            <div>
+                                Description
+                                <button @click="toggleSort('description')">
+                                    <div :class="{ 'rotate': sortBy === 'description' && sortDirection === -1 }">▲</div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Date start<button @click="toggleSort('date_start')">
-                                <div :class="{'rotate': sortBy === 'date_start' && sortDirection === -1}">▲</div>
-                            </button></div>
+                            <div>Status</div>
                         </div>
                     </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Date end<button @click="toggleSort('date_end')">
-                                <div :class="{'rotate': sortBy === 'date_end' && sortDirection === -1}">▲</div>
-                            </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Status<button @click="toggleSort('status')">
-                                <div :class="{'rotate': sortBy === 'status' && sortDirection === -1}">▲</div>
-                            </button></div>
-                        </div>
-                    </th>
-                    
+
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody v-if="filteredSortedEvents.length">
-                <tr v-for="event in filteredSortedEvents" :key="event.id">
+            <tbody v-if="filteredSortedServices.length">
+                <tr v-for="service in filteredSortedServices" :key="service.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="event.selected" class="checkbox-decorate"  />
-                            <p>{{ event.id }}</p>
+                            <input type="checkbox" v-model="service.selected"  class="checkbox-decorate" />
+                            <p>{{ service.id }}</p>
                         </div>
                     </td>
                     <td>
-                        <img v-if="event.image" :src="event.image" alt="Event Image" class="event-image" />
+                        <img v-if="service.image" :src="service.image" alt="Service Image" class="service-image" />
                     </td>
-                    <td>{{ event.title }}</td>
-                    <td>{{ event.organizer }}</td>
-                    <td>{{ formatDate(event.date_start) }}</td>
-                    <td>{{ formatDate(event.date_end) }}</td>
+                    <td>{{ service.title }}</td>
+                    <td>{{ service.description }}</td>
                     <td>
                         <label class="status-toggle">
-                            <input type="checkbox" :checked="event.status" @change="toggleStatus(event)" />
-                            <img class="eyesicon" :src="event.status ? eye : eyeBlink" alt="Visibility Icon" />
+                            <input type="checkbox" :checked="service.status" @change="toggleStatus(service)" />
+                            <img class="eyesicon" :src="service.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
-                    
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(event)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(event.id, event.title)" class="delete-btn"><img src="/icon/trash.png" alt=""></button>
+                            <button @click="editItem(service)" class="edit-btn"><img src="/icon/pen.png"
+                                    alt="Edit"></button>
+                            <button @click="askDelete(service.id, service.title)" class="delete-btn"><img
+                                    src="/icon/trash.png" alt="Delete"></button>
                         </div>
                     </td>
                 </tr>
@@ -104,6 +92,7 @@
         </table>
     </div>
 
+    <!-- Delete Confirmation Modal -->
     <div v-if="showModal" class="modal-overlay">
         <div class="modal">
             <div class="text-alert-container">
@@ -117,66 +106,58 @@
         </div>
     </div>
 
-    <div v-if="showModalAddEvent || showModalEdit" class="modal-overlay">
+    <!-- Add / Edit Modal -->
+    <div v-if="showModalAddService || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
-            <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+            <h2>{{ showModalEdit ? 'แก้ไขบริการ' : 'เพิ่มบริการ' }}</h2>
+            <div class="lang-toggle">
+                <button type="button" @click="toggleLang">
+                    Switch to {{ activeLang ? 'English' : 'Thai' }}
+                </button>
+            </div>
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentEvent.title" placeholder="Enter title" required />
-                    <label>Title (English)</label>
-                    <input class="add-text-input" v-model="currentEvent.title_en" placeholder="Enter title in English" required />
-                    <label>ชื่อผู้เขียน</label>
-                    <input class="add-text-input" v-model="currentEvent.organizer" placeholder="Enter author name" required />
                     <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
                     <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }" @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
-                            <img v-if="!currentEvent.image" src="/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentEvent.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
-                            <div v-if="currentEvent.image" class="image-preview">
-                                <img :src="currentEvent.image" alt="Uploaded Image" class="preview-image" />
+                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+                            @drop.prevent="handleDragDrop">
+                            <img v-if="!currentService.image" src="/icon/upload.svg" draggable="false" />
+                            <h2 v-if="!currentService.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
+                            <div v-if="currentService.image" class="image-preview">
+                                <img :src="currentService.image" alt="Uploaded Image" class="preview-image" />
                                 <button class="remove-btn" @click="removeImage">X</button>
                             </div>
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader" ref="fileInput" />
+                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                                class="file-uploader" ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
                         </div>
                     </div>
-                    <label>Location Name</label>
-                    <input class="add-text-input" v-model="currentEvent.location_name" placeholder="Enter location name" required />
-                    <label>Location Name (English)</label>
-                    <input class="add-text-input" v-model="currentEvent.location_name_en" placeholder="Enter location name in English" required />
-                    <label>Location URL</label>
-                    <input class="add-text-input" v-model="currentEvent.location_url" placeholder="Enter location URL" required />
-                    <label>Register URL</label>
-                    <input class="add-text-input" v-model="currentEvent.register_url" placeholder="Enter register URL" required />
-                </section>
-                <section>
-                    <label>Date Start</label>
-                    <input type="date" v-model="currentEvent.date_start" class="date-input" required />
-                    <label>Date End</label>
-                    <input type="date" v-model="currentEvent.date_end" class="date-input" required />
-                    <label>Category</label>
-                    <select v-model="currentEvent.category" class="category-select" required>
-                        <option value="educate">Educate</option>
-                        <option value="conference">Conference</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <label>Description</label>
-                    <TiptapEditor v-model="currentEvent.description" />
-                    <label>Description (English)</label>
-                    <TiptapEditor v-model="currentEvent.description_en" />
+                    <label>{{ activeLang ? 'ชื่อบริการ' : 'ชื่อบริการ (English)' }}</label>
+                    <input v-show="activeLang" class="add-text-input" v-model="currentService.title"
+                        placeholder="Enter title" required />
+                    <input v-show="!activeLang" class="add-text-input" v-model="currentService.title_en"
+                        placeholder="Enter title" required />
+                    <label>{{ activeLang ? 'รายละเอียด' : 'รายละเอียด (English)' }}</label>
+                    <TiptapEditor v-show="activeLang" v-model="currentService.description" />
+                    <TiptapEditor v-show="!activeLang" v-model="currentService.description_en" />
+
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitEvent(false)">{{ showModalEdit ? 'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitEvent(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitService(false)">
+                    {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+                </button>
+                <button type="button" class="confirm-btn" @click.prevent="submitService(true)">
+                    {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+                </button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
     </div>
 
-    <input type="file" ref="fileInput" @change="handleImageUpload" accept="image/*" hidden>
+    <input type="file" ref="fileInput" @change="handleImageUpload" accept="image/*" hidden />
     <div v-if="showCropper" class="cropper-container">
         <div class="cropper-wrapper">
             <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
@@ -194,255 +175,227 @@
 definePageMeta({
     layout: "admin",
 });
+
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
-import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-
-
-const apiEndpoint = 'events';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
+const apiEndpoint = 'services';
 const searchQuery = ref('');
-const Events = ref([]);
-const EventsNum = ref(0);
+const Services = ref([]);
+const ServicesNum = ref(0);
 const selectAll = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
 const showModal = ref(false);
-const showModalAddEvent = ref(false);
+const showModalAddService = ref(false);
 const showModalEdit = ref(false);
 const isDragging = ref(false);
 const fileInput = ref(null);
 const sortBy = ref(null);
 const sortDirection = ref(1);
-const currentEvent = ref({
+const currentService = ref({
     id: null,
     title: '',
     title_en: '',
     image: '',
-    organizer: '',
     description: '',
-    description_en: '',
-    category: 'educate',
-    date_start: '',
-    date_end: '',
-    status: false,
-    location_name: '',
-    location_name_en: '',
-    location_url: '',
-    register_url: '',
+    description_en: ''
 });
-const cropper = ref(null);
+const cropperInstance = ref(null);
+const croppingImage = ref(null);
+const showCropper = ref(false);
+const cropperImage = ref(null);
+const activeLang = ref(true);
 
-const toggleStatus = async (event) => {
+const toggleLang = () => {
+    activeLang.value = activeLang.value === true ? false : true;
+};
+const toggleSort = (column) => {
+    if (sortBy.value === column) {
+        sortDirection.value *= -1;
+    } else {
+        sortBy.value = column;
+        sortDirection.value = 1;
+    }
+};
+const toggleStatus = async (services) => {
     try {
-        const newStatus = !event.status;
-        const response = await fetch(`/api/${apiEndpoint}/${event.id}`, {
+        const newStatus = !news.status;
+
+  
+        const payload = { status: newStatus ? 1 : 0 };
+
+        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...event, status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to update event status.');
+            const errorBody = await response.text();
+            console.error('Failed to update news status:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
+            });
+            throw new Error('Failed to update news status.');
         }
 
-        event.status = newStatus;
+        // Update status only after successful response
+        news.status = newStatus;
     } catch (error) {
-        alert('Error updating event status.');
+        alert('Error updating news status.');
+        console.error('Error in toggleStatus:', error);
+    }
+};
+const fetchServices = async () => {
+    try {
+        const response = await $fetch(`/api/${apiEndpoint}`, { headers: { 'CKH': '541986Cocon' } });
+        // If response is an object with a 'services' property, use that; otherwise, try response.data or use response itself.
+        const data = Array.isArray(response)
+            ? response
+            : response.services || response.data || [];
+        Services.value = data.map(service => ({ ...service, selected: false }));
+        ServicesNum.value = Services.value.length;
+    } catch (error) {
+        alert('Error fetching services.');
         console.error(error);
     }
+};
+
+
+const filteredSortedServices = computed(() => {
+    let filtered = Services.value.filter(service =>
+        service.id.toString().includes(searchQuery.value) ||
+        service.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            let valA = a[sortBy.value];
+            let valB = b[sortBy.value];
+            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+            return valA.localeCompare(valB, 'th') * sortDirection.value;
+        });
+    }
+    return filtered;
+});
+
+const toggleSelectAll = () => {
+    Services.value.forEach(service => service.selected = selectAll.value);
+};
+
+const openAddServiceModal = () => {
+    currentService.value = {
+        id: null,
+        title: '',
+        title_en: '',
+        image: '',
+        description: '',
+        description_en: ''
+    };
+    showModalAddService.value = true;
+};
+
+const editItem = (service) => {
+    currentService.value = { ...service };
+    showModalEdit.value = true;
+    nextTick(() => {
+        console.log("Editing service:", currentService.value);
+    });
+};
+
+const askDelete = (id, title) => {
+    deleteId.value = id;
+    deleteName.value = title;
+    showModal.value = true;
+};
+
+const confirmDelete = async () => {
+    try {
+        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
+            method: 'DELETE',
+            headers: { 'CKH': '541986Cocon' }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to delete service.');
+        }
+        Services.value = Services.value.filter(service => service.id !== deleteId.value);
+        ServicesNum.value = Services.value.length;
+        showModal.value = false;
+        alert('Service deleted successfully.');
+    } catch (error) {
+        alert(`Error deleting service: ${error.message}`);
+        console.error(error);
+    } finally {
+        deleteId.value = null;
+    }
+};
+
+const cancelDelete = () => {
+    showModal.value = false;
+};
+
+const submitService = async (publish) => {
+    if (!currentService.value.title.trim() || !currentService.value.description.trim()) {
+        alert('Please fill in all required fields: Title and Description.');
+        return;
+    }
+    try {
+        const isUpdate = !!currentService.value.id;
+        const method = isUpdate ? 'PUT' : 'POST';
+        const url = isUpdate ? `/api/${apiEndpoint}/${currentService.value.id}` : `/api/${apiEndpoint}`;
+        const payload = {
+            title: currentService.value.title,
+            title_en: currentService.value.title_en,
+            description: currentService.value.description,
+            description_en: currentService.value.description_en,
+            image: currentService.value.image || '',
+            status: publish ? 1 : 0
+        };
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'CKH': '541986Cocon'
+            },
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error('Error saving the service.');
+        }
+        const result = await response.json();
+        if (!isUpdate) {
+            currentService.value.id = result.insertId;
+            alert('Service added successfully.');
+        } else {
+            alert('Service updated successfully.');
+        }
+        showModalAddService.value = false;
+        showModalEdit.value = false;
+        fetchServices();
+    } catch (error) {
+        alert('Error while submitting service.');
+        console.error('Submit Service Error:', error);
+    }
+};
+
+const closeModal = () => {
+    showModalAddService.value = false;
+    showModalEdit.value = false;
 };
 
 const triggerFileInput = () => {
     fileInput.value.click();
 };
 
-const fetchEvents = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
-        Events.value = response.map(event => ({ ...event, selected: false }));
-        EventsNum.value = Events.value.length;
-    } catch (error) {
-        alert('Error fetching events.');
-    }
-};
-
-const editItem = (event) => {
-    const toBangkokTime = (dateStr) => {
-        const date = new Date(dateStr);
-        const bangkokOffset = 7 * 60 * 60 * 1000;
-        return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 10);
-    };
-
-    currentEvent.value = {
-        ...event,
-        title_en: event.title_en || '',
-        description_en: event.description_en || '',
-        location_name_en: event.location_name_en || '',
-        status: !!event.status,
-        description: event.description || "", // Ensure description is set
-        date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
-        date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
-        category: event.event_category || 'other', // Ensure category is set
-    };
-
-    showModalEdit.value = true; // Open modal first
-
-    nextTick(() => {
-        console.log("Setting Tiptap Content:", currentEvent.value.description);
-    });
-};
-
-const filteredSortedEvents = computed(() => {
-    let filtered = Events.value.filter(event =>
-        event.id.toString().includes(searchQuery.value) ||
-        event.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        event.organizer.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        event.date_start.includes(searchQuery.value) ||
-        event.date_end.includes(searchQuery.value)
-    );
-
-    if (sortBy.value) {
-        filtered.sort((a, b) => {
-            let valA = a[sortBy.value];
-            let valB = b[sortBy.value];
-
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'title' || sortBy.value === 'organizer') return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            if (sortBy.value === 'date_start' || sortBy.value === 'date_end') return (new Date(valB) - new Date(valA)) * sortDirection.value;
-            return 0;
-        });
-    }
-    return filtered;
-});
-
-const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
-        sortBy.value = column;
-        sortDirection.value = column === 'status' ? -1 : 1;
-    }
-};
-
-const openAddEventModal = () => {
-    currentEvent.value = {
-        id: null,
-        title: '',
-        title_en: '',
-        image: '',
-        organizer: '',
-        description: '',
-        description_en: '',
-        category: 'other',
-        date_start: '',
-        date_end: '',
-        status: false,
-        location_name: '',
-        location_name_en: '',
-        location_url: '',
-        register_url: '',
-    };
-    showModalAddEvent.value = true;
-};
-
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedEvents = Events.value.filter(event => event.selected);
-        if (selectedEvents.length === 0) {
-            alert('No events selected.');
-            return;
-        }
-
-        const updatePromises = selectedEvents.map(event =>
-            fetch(`/api/${apiEndpoint}/${event.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...event, status: publish ? 1 : 0 })
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedEvents.forEach(event => {
-            event.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected events.`);
-    } catch {
-        alert('Failed to update event status.');
-    }
-};
-
-const submitEvent = async (publish) => {
-    if (!currentEvent.value.title.trim() || !currentEvent.value.organizer.trim()) {
-        alert('Please fill in all required fields: Title and Organizer.');
-        return;
-    }
-
-    try {
-        const toBangkokTime = (dateStr) => {
-            const date = new Date(dateStr);
-            const bangkokOffset = 7 * 60 * 60 * 1000;
-            return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 19).replace('T', ' ');
-        };
-
-        const formattedDateStart = currentEvent.value.date_start ? toBangkokTime(currentEvent.value.date_start) : null;
-        const formattedDateEnd = currentEvent.value.date_end ? toBangkokTime(currentEvent.value.date_end) : null;
-
-        const isUpdate = !!currentEvent.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentEvent.value.id}` : `/api/${apiEndpoint}`;
-
-        const payload = {
-            ...currentEvent.value,
-            title_en: currentEvent.value.title_en,
-            description_en: currentEvent.value.description_en,
-            location_name_en: currentEvent.value.location_name_en,
-            date_start: formattedDateStart,
-            date_end: formattedDateEnd,
-            status: publish ? 1 : 0,
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the event.');
-        }
-
-        const result = await response.json();
-        if (!isUpdate) {
-            currentEvent.value.id = result.id;
-            alert('Event added successfully.');
-        } else {
-            alert('Event updated successfully.');
-        }
-
-        showModalAddEvent.value = false;
-        showModalEdit.value = false;
-        fetchEvents();
-    } catch (error) {
-        alert('Error while submitting event.');
-        console.error('Submit Event Error:', error);
-    }
-};
-
-const closeModal = () => {
-    showModalAddEvent.value = false;
-    showModalEdit.value = false;
-};
-
 const removeImage = () => {
-    currentEvent.value.image = '';
+    currentService.value.image = '';
 };
 
 const handleDragDrop = (e) => {
@@ -468,7 +421,7 @@ const handleFileUpload = (event) => {
                     zoomable: false,
                     movable: false,
                     rotatable: false,
-                    scalable: false,
+                    scalable: false
                 });
             });
         };
@@ -476,70 +429,18 @@ const handleFileUpload = (event) => {
     }
 };
 
-const askDelete = (id, title) => {
-    deleteId.value = id;
-    deleteName.value = title;
-    showModal.value = true;
-};
-
-const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete event.');
-        }
-
-        Events.value = Events.value.filter(event => event.id !== deleteId.value);
-        EventsNum.value = Events.value.length;
-
-        showModal.value = false;
-        alert('Event deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting event: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-const cancelDelete = () => {
-    showModal.value = false;
-};
-
-onMounted(() => {
-    fetchEvents();
-});
-
-const toggleSelectAll = () => {
-    Events.value.forEach(event => event.selected = selectAll.value);
-};
-
-const cropperInstance = ref(null);
-const croppingImage = ref(null);
-const showCropper = ref(false);
-const cropperImage = ref(null);
-
 const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
         croppingImage.value = reader.result;
         showCropper.value = true;
         nextTick(() => {
             cropperInstance.value = new Cropper(cropperImage.value, {
-                aspectRatio: 8 / 3,
-                viewMode: 2,
-                autoCropArea: 1
+                aspectRatio: 16 / 9,
+                viewMode: 1,
+                autoCropArea: 1,
             });
         });
     };
@@ -549,7 +450,7 @@ const handleImageUpload = (event) => {
 const cropImage = () => {
     if (cropperInstance.value) {
         const canvas = cropperInstance.value.getCroppedCanvas();
-        currentEvent.value.image = canvas.toDataURL('image/jpeg');
+        currentService.value.image = canvas.toDataURL('image/jpeg');
         showCropper.value = false;
         cropperInstance.value.destroy();
     }
@@ -559,9 +460,43 @@ const cancelCrop = () => {
     showCropper.value = false;
     cropperInstance.value.destroy();
 };
+
+onMounted(() => {
+    fetchServices();
+});
 </script>
 
 <style scoped>
+.service-image {
+    max-height: 5rem;
+    object-fit: cover;
+}
+.lang-toggle {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.lang-toggle button {
+    background-color: #4E6D16;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.lang-toggle button:hover {
+    background-color: #3c5213;
+    transform: scale(1.05);
+}
+
+.lang-toggle button:active {
+    transform: scale(0.98);
+}
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -613,7 +548,8 @@ const cancelCrop = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -720,7 +656,8 @@ const cancelCrop = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -808,7 +745,8 @@ const cancelCrop = () => {
 
 .modal-add .modal-content {
     display: flex;
-    flex-direction: row;
+
+    justify-content: center;
     gap: 0rem 2rem;
 }
 
@@ -1288,6 +1226,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
+
     .item-list-table th:nth-child(3),
     .item-list-table td:nth-child(3) {
         display: none;
@@ -1295,6 +1234,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1321,6 +1261,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;

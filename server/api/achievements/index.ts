@@ -1,6 +1,6 @@
 const pdfToBuffer = (pdfData: string) => {
     if (!pdfData || !pdfData.includes(',')) {
-        throw new Error('Invalid PDF data provided');
+        throw new Error('Invalid PDF data provided. Ensure the PDF is in base64 format.');
     }
     return Buffer.from(pdfData.split(',')[1], 'base64');
 };
@@ -31,9 +31,14 @@ export default defineEventHandler(async (event) => {
             const body = await readBody(event);
             const { title, title_en, author, description, description_en, uploadDate, status, pdf } = body;
 
-            // Validate required fields. Modify as needed.
+            // Validate required fields
             if (!title || !author || !pdf || !uploadDate || !status) {
-                return { error: 'Missing required fields: title, author, PDF, uploadDate, and status are required.' };
+                return { success: false, message: 'Missing required fields: title, author, PDF, uploadDate, and status are required.' };
+            }
+
+            // Validate the PDF
+            if (!/^data:application\/pdf;base64,/.test(pdf)) {
+                return { success: false, message: 'Invalid PDF base64 format.' };
             }
 
             const pdfBuffer = pdfToBuffer(pdf);
@@ -47,16 +52,16 @@ export default defineEventHandler(async (event) => {
 
             return {
                 success: true,
-                message: 'Achievement added',
+                message: 'Achievement added successfully',
                 id: result.insertId,
             };
 
         } else {
-            return { error: 'Method Not Allowed' };
+            return { success: false, message: 'Method Not Allowed' };
         }
 
     } catch (error) {
         console.error('Error handling achievement API request:', error);
-        return { error: error instanceof Error ? error.message : 'An unexpected error occurred while handling the request' };
+        return { success: false, message: error instanceof Error ? error.message : 'An unexpected error occurred' };
     }
 });
