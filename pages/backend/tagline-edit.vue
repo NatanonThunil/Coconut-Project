@@ -64,7 +64,7 @@ const toggleEditor = () => {
 };
 const fetchHeadline = async () => {
   try {
-    const response = await $fetch(`${apibase}/${apiEndpoint}/1`, { // Corrected endpoint
+    const response = await $fetch(`/api/${apiEndpoint}/1`, { // Corrected endpoint
       headers: {
         "CKH": '541986Cocon',
       },
@@ -149,7 +149,7 @@ const updateHeadline = async () => {
       // check image
       console.log('Image path:', imagePath);
       // Save the image to the server
-      const uploadResponse = await fetch(`${apibase}/upload`, {
+      const uploadResponse = await fetch(`/api/upload`, {
         method: 'POST',
         headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: base64Image, path: imagePath }),
@@ -163,7 +163,7 @@ const updateHeadline = async () => {
     // Update the headline with the image path
     headline.value.image = imagePath;
 
-    const updateResponse = await fetch(`${apibase}/${apiEndpoint}/1`, {
+    const updateResponse = await fetch(`/api/${apiEndpoint}/1`, {
       method: 'PUT',
       headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
       body: JSON.stringify(headline.value),

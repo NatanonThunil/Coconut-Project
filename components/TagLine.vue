@@ -51,7 +51,7 @@ const updateTextHW = () => {
 
 const fetchTagline = async () => {
   try {
-    const response = await fetch(`${apibase}/headline/1`, {
+    const response = await fetch(`/api/headline/1`, {
       headers: {
         "CKH": '541986Cocon',
       },
