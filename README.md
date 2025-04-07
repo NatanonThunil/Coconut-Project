@@ -1,4 +1,4 @@
-# อัพเดท 5 Apr. 2025
+# อัพเดท 7 Apr. 2025
 ### ที่ต้องไปเพิ่มเอง 
 คำสั่ง Query สำหรับ SQL
 ```bash
@@ -50,11 +50,9 @@ MODIFY COLUMN `image` VARCHAR(255);
 
 
 ## รายระเอียด Update
-- เปลี่ยนไฟล์ Dir สำหรับเก็บรูปภาพ อยู่ที่ ```public/images/ ```
-- แก้ API ของ news เปลี่ยนไปใช้รูปใน Public
-- แก้ `.gitignore` ให้ไม่เอารูไปด้วย
+- อัพเดต icon ตรง ```footer ```
 
-โดย [Poom](https://github.com/WasitpolKuekkong)
+โดย [jeff]
 
 
 
