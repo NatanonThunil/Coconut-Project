@@ -1,12 +1,5 @@
-# Clone
-
-เปิด Command Prompt เข้าไฟล์ที่ต้องการจะติดตั้ง
-
-```bash
-
-git clone -b DekshinePoom --single-branch https://github.com/NatanonThunil/Coconut-Project.git
-
-```
+# อัพเดตแยก bash 
+จะแยก api front และ back
 
 
 # Nuxt Minimal Starter

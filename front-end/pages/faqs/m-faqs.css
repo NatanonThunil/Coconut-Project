@@ -1,0 +1,21 @@
+.faqs-path{
+    display: flex;
+    margin-left: 5rem;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    color: gray;
+}
+.faqs-path a{
+    color: gray;
+}
+h1.context-header {
+    text-align: center;
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 50dvh;
+    gap: 1rem;
+}
