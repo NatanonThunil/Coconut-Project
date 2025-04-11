@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: '123',
     public: {
-      apiBase: '/api'
+      apiBase: process.env.API_BASE || 'http://localhost:8080', // Backend URL
     }
   },
   devtools: { enabled: false },

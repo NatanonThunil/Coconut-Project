@@ -1,5 +1,6 @@
 # อัพเดต 4 apr.
-package.jason อัพเดต
-ใส่ .gitgnore ไว้หน้าสุด
+ใส่ "apiBase: process.env.API_BASE || 'http://localhost:8080', // Backend URL" ลง  ืnuxtConfig
+
+
 
 
