@@ -1,5 +1,5 @@
-# อัพเดตแยก bash 
-จะแยก api front และ back
+# อัพเดต 4 apr.
+อัพเดต  backend สามารถrunได้ 
 
 
 # Nuxt Minimal Starter
