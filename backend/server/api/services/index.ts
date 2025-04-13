@@ -1,23 +1,29 @@
-import { defineEventHandler, readBody, sendError, createError } from 'h3';
+import { defineEventHandler, readBody } from 'h3';
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method;
   const connection = event.context.$scriptdb;
 
   if (!connection) {
-    return sendError(event, createError({ statusCode: 500, statusMessage: 'Database connection not found.' }));
+    return {
+      success: false,
+      error: 'Database connection not found.',
+    };
   }
 
   try {
     if (method === 'GET') {
+      
       const [rows]: any = await connection.execute(
-        'SELECT id, image, title, description, status, title_en, description_en FROM `service` WHERE status = 1'
+        'SELECT id, image, title, description, status, title_en, description_en FROM `service`'
       );
 
+      
       const services = rows.map((row: any) => {
         let imageBase64 = null;
         if (row.image) {
           const imageBuffer = Buffer.from(row.image);
+         
           let mimeType = 'image/jpeg';
           if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
             mimeType = 'image/png';
@@ -29,7 +35,7 @@ export default defineEventHandler(async (event) => {
           image: imageBase64,
           title: row.title,
           description: row.description,
-          status: !!row.status,
+          status: !!row.status, 
           title_en: row.title_en,
           description_en: row.description_en,
         };
@@ -51,7 +57,10 @@ export default defineEventHandler(async (event) => {
       } = body;
 
       if (!title || !description) {
-        return sendError(event, createError({ statusCode: 400, statusMessage: 'Title and description are required.' }));
+        return {
+          success: false,
+          error: 'Title and description are required.',
+        };
       }
 
       let imageBuffer: Buffer | null = null;
@@ -88,13 +97,23 @@ export default defineEventHandler(async (event) => {
         };
       } catch (error) {
         console.error('Error inserting service:', error);
-        return sendError(event, createError({ statusCode: 500, statusMessage: 'Failed to create service record.' }));
+        return {
+          success: false,
+          error: 'Failed to create service record.',
+        };
       }
     } else {
-      return sendError(event, createError({ statusCode: 405, statusMessage: 'Invalid request method. Use GET or POST.' }));
+      
+      return {
+        success: false,
+        error: 'Invalid request method. Use GET or POST.',
+      };
     }
   } catch (error) {
     console.error('Error in service handler:', (error as Error).message);
-    return sendError(event, createError({ statusCode: 500, statusMessage: 'Failed to handle request.' }));
+    return {
+      success: false,
+      error: 'Failed to handle request.',
+    };
   }
 });

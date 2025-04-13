@@ -83,14 +83,15 @@
       window.scrollTo(0, 0);
       try {
         setTimeout(async () => {
-          const response = await fetch("/api/services", {
-            headers: {
-              "CKH": "541986Cocon",
-            },
-          });
+          const response = await fetch("/api/members_table", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
           if (!response.ok) throw new Error("Failed to fetch data");
           const data = await response.json();
-          this.coconuts = data.services || []; // Ensure the correct property is used
+          this.coconuts = data;
           this.loading = false;
         }, 200);
       } catch (error) {
@@ -187,3 +188,4 @@
     width: 20rem;
   }
   </style>
+  

@@ -49,7 +49,6 @@ import 'vue-pdf-embed/dist/styles/annotationLayer.css';
 import 'vue-pdf-embed/dist/styles/textLayer.css';
 const { locale } = useI18n();
 const currentLocale = computed(() => locale.value);
-
 const route = useRoute();
 
 const achievement = ref(null);

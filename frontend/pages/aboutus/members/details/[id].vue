@@ -1,13 +1,7 @@
 <template>
   <Navbar selecto="aboutus" />
   <div class="all-container">
-    <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        
-        <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/aboutus/members">{{ $t('All Member') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="`/aboutus/members/details/${cid}`">{{ member?.name}}</NuxtLinkLocale>
-    </div>
+    <div style="height: 10rem"></div>
 
     <!-- Loader -->
     <div v-if="!member && !error" class="loading">
@@ -77,13 +71,12 @@ export default {
       member: null,
       error: null,
       tlImage,
-      cid: this.$route.params.id, // Define cid here
     };
   },
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/members`, {
+      const response = await fetch(`/api/members_table`, {
       headers: {
        "CKH": '541986Cocon',
        

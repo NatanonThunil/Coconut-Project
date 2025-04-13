@@ -2,9 +2,9 @@
     <Navbar selecto="coconutdata" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('chain_values') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="'/coconut-information/value-chain/'+this.$route.params.id">{{ chain_values?.title || 'No Title'}}</NuxtLinkLocale>
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('Chain Value') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/coconut-information/chain-value/'+this.$route.params.id">{{ chain_values?.title || 'No Title'}}</NuxtLinkLocale>
     </div>
     <div v-if="loading" class="loading-container">
         <CardShimmer v-for="index in 1" :key="index" />
@@ -67,7 +67,7 @@ export default {
     },
     methods: {
         goBack() {
-            this.$router.push('/coconut-information/value-chain');
+            this.$router.push('/coconut-information/chain-value');
         },
         getCategoryLabel(value) {
             const categories = {

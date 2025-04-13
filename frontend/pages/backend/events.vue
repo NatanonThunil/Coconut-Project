@@ -6,10 +6,10 @@
     </div>
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
-        <div class="events-check-publish">
-            <button class="published-events-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-events-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-events-btn" @click="openAddEventModal">ADD Event</button>
+        <div class="news-check-publish">
+            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+            <button class="add-news-btn" @click="openAddEventModal">ADD Event</button>
         </div>
     </div>
 
@@ -240,19 +240,15 @@ const toggleStatus = async (event) => {
         const newStatus = !event.status;
         const response = await fetch(`/api/${apiEndpoint}/${event.id}`, {
             method: 'PUT',
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon' },
+            body: JSON.stringify({ ...event, status: newStatus ? 1 : 0 }),
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
             throw new Error('Failed to update event status.');
         }
 
-        // Update the local state only after a successful response
         event.status = newStatus;
-       
     } catch (error) {
         alert('Error updating event status.');
         console.error(error);
@@ -274,30 +270,29 @@ const fetchEvents = async () => {
 };
 
 const editItem = (event) => {
-    try {
-        const toBangkokTime = (dateStr) => {
-            const date = new Date(dateStr);
-            const bangkokOffset = 7 * 60 * 60 * 1000;
-            return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 10);
-        };
+    const toBangkokTime = (dateStr) => {
+        const date = new Date(dateStr);
+        const bangkokOffset = 7 * 60 * 60 * 1000;
+        return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 10);
+    };
 
-        currentEvent.value = {
-            ...event,
-            title_en: event.title_en || '',
-            description_en: event.description_en || '',
-            location_name_en: event.location_name_en || '',
-            status: !!event.status,
-            description: event.description || '', // Ensure description is set
-            date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
-            date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
-            category: event.event_category || 'other', // Ensure category is set
-        };
+    currentEvent.value = {
+        ...event,
+        title_en: event.title_en || '',
+        description_en: event.description_en || '',
+        location_name_en: event.location_name_en || '',
+        status: !!event.status,
+        description: event.description || "", // Ensure description is set
+        date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
+        date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
+        category: event.event_category || 'other', // Ensure category is set
+    };
 
-        showModalEdit.value = true; // Open the edit modal
-    } catch (error) {
-        console.error('Error in editItem:', error);
-        alert('Failed to load event details for editing.');
-    }
+    showModalEdit.value = true; // Open modal first
+
+    nextTick(() => {
+        console.log("Setting Tiptap Content:", currentEvent.value.description);
+    });
 };
 
 const filteredSortedEvents = computed(() => {
@@ -365,28 +360,20 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedEvents.map(event =>
             fetch(`/api/${apiEndpoint}/${event.id}`, {
                 method: 'PUT',
-                headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: publish ? 1 : 0 }),
+                headers: { 'CKH': '541986Cocon' },
+                body: JSON.stringify({ ...event, status: publish ? 1 : 0 })
             })
         );
 
-        const responses = await Promise.all(updatePromises);
+        await Promise.all(updatePromises);
 
-        // Check for any failed updates
-        const failedUpdates = responses.filter(response => !response.ok);
-        if (failedUpdates.length > 0) {
-            alert('Some events failed to update.');
-        }
-
-        // Update the local state for successfully updated events
         selectedEvents.forEach(event => {
             event.status = publish ? 1 : 0;
         });
 
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected events.`);
-    } catch (error) {
+    } catch {
         alert('Failed to update event status.');
-        console.error('Bulk Update Error:', error);
     }
 };
 
@@ -411,27 +398,18 @@ const submitEvent = async (publish) => {
         const url = isUpdate ? `/api/${apiEndpoint}/${currentEvent.value.id}` : `/api/${apiEndpoint}`;
 
         const payload = {
-            title: currentEvent.value.title,
+            ...currentEvent.value,
             title_en: currentEvent.value.title_en,
-            organizer: currentEvent.value.organizer,
-            description: currentEvent.value.description,
             description_en: currentEvent.value.description_en,
+            location_name_en: currentEvent.value.location_name_en,
             date_start: formattedDateStart,
             date_end: formattedDateEnd,
-            location_name: currentEvent.value.location_name,
-            location_name_en: currentEvent.value.location_name_en,
-            location_url: currentEvent.value.location_url,
-            register_url: currentEvent.value.register_url,
-            event_category: currentEvent.value.category,
-            image: currentEvent.value.image,
             status: publish ? 1 : 0,
         };
 
-        console.log('Sending payload:', payload); // Debug log
-
         const response = await fetch(url, {
             method,
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify(payload),
         });
 
@@ -443,7 +421,7 @@ const submitEvent = async (publish) => {
 
         const result = await response.json();
         if (!isUpdate) {
-            currentEvent.value.id = result.eventId; // Ensure the new event ID is stored
+            currentEvent.value.id = result.id;
             alert('Event added successfully.');
         } else {
             alert('Event updated successfully.');
@@ -451,7 +429,7 @@ const submitEvent = async (publish) => {
 
         showModalAddEvent.value = false;
         showModalEdit.value = false;
-        await fetchEvents(); // Refresh the event list
+        fetchEvents();
     } catch (error) {
         alert('Error while submitting event.');
         console.error('Submit Event Error:', error);
@@ -898,7 +876,7 @@ const cancelCrop = () => {
     position: relative;
 }
 
-.events-check-publish {
+.news-check-publish {
     display: flex;
     gap: 1.5rem;
 }
@@ -1005,7 +983,7 @@ const cancelCrop = () => {
     gap: 1rem;
 }
 
-.published-events-btn {
+.published-news-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -1022,18 +1000,18 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.published-events-btn:hover {
+.published-news-btn:hover {
     color: white;
     background-color: #599c91;
 }
 
-.published-events-btn:active {
+.published-news-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
 
-.unpublished-events-btn {
+.unpublished-news-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -1049,18 +1027,18 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.unpublished-events-btn:hover {
+.unpublished-news-btn:hover {
     color: white;
     background-color: #569187;
 }
 
-.unpublished-events-btn:active {
+.unpublished-news-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
 
-.add-events-btn {
+.add-news-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -1077,12 +1055,12 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.add-events-btn:hover {
+.add-news-btn:hover {
     color: white;
     background-color: #4E6D16;
 }
 
-.add-events-btn:active {
+.add-news-btn:active {
     border: #364b10 solid 3px;
     background-color: #364b10;
     box-shadow: outset 0px 0px 0px 3px white;

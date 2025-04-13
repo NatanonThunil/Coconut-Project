@@ -4,7 +4,7 @@
     <div class="faqs-path">
       <NuxtLinkLocale to="/faqs">FAQs</NuxtLinkLocale>
     </div>
-
+    <div style="height: 1rem"></div>
     <h1 class="context-header">FAQs</h1>
     <div style="height: 5rem"></div>
     <div style="height: 1rem"></div>

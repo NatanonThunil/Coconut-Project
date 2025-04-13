@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div v-if="isLoading" class="loading-container">
       <DotLottieVue 
         v-if="lottieLoaded" 
@@ -11,7 +10,6 @@
       />
       <p v-else style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
     </div>
-
 
     <div v-else>
       <header></header>
@@ -26,7 +24,6 @@
 <script>
 import { ref, onMounted, defineAsyncComponent } from "vue";
 
-
 const DotLottieVue = defineAsyncComponent(() =>
   import("@lottiefiles/dotlottie-vue").then(m => m.DotLottieVue)
 );
@@ -36,8 +33,7 @@ export default {
     DotLottieVue, 
   },
   setup() {
-
-    const loading_time = useRuntimeConfig().public.LoadingTimeMock ; 
+    const loading_time = useRuntimeConfig().public.LoadingTimeMock; 
     const isLoading = ref(true);
     const lottieLoaded = ref(false);
     const loadingAnimation = ref("");
@@ -53,17 +49,19 @@ export default {
     };
 
     onMounted(async () => {
-      window.scrollTo(0, 0);
+      // Scroll smoothly to the top when mounted
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       await preloadLottie(); 
       setTimeout(() => {
         isLoading.value = false;
-      }, loading_time); // Use the updated variable
+      }, loading_time);
     });
 
     return { isLoading, lottieLoaded, loadingAnimation };
   },
 };
 </script>
+
 <style scoped>
 .loading-container {
   display: flex;
@@ -88,5 +86,10 @@ export default {
   50% {
     transform: translateY(-15px);
   }
+}
+
+/* If you need smooth scrolling for the main area only, you can also add: */
+main {
+  scroll-behavior: smooth;
 }
 </style>

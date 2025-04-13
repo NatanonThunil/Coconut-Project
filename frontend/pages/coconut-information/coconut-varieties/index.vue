@@ -1,12 +1,7 @@
 <template>
   <Navbar selecto="coconutdata" />
-  
-  <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
-    </div>
-  <h1 class="context-header">{{ $t('Coconut-varieties') }}</h1>
+  <div style="height: 10rem;"></div>
+  <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
   <div style="height: 5rem;"></div>
 
   <label class="coconut-v-input">

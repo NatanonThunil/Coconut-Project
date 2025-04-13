@@ -1,10 +1,11 @@
-
+import mysql from 'mysql2/promise';
+import { dbConfig } from '../../config/poom_db_config';
 import { readBody } from 'h3';
 
 export default defineEventHandler(async (event) => {
     let connection;
     try {
-   connection = event.context.$scriptdb;
+        connection = await mysql.createConnection(dbConfig);
 
         if (event.req.method === 'GET') {
             const [rows] = await connection.execute('SELECT * FROM `event`');
@@ -13,7 +14,7 @@ export default defineEventHandler(async (event) => {
                 return { message: 'No events available.' };
             }
 
-            const eventItems = rows.map((event: { image: any; description: any; date_start: any; date_end: any; organizer: any; title: any; location_name: any; location_url: any; register_url: any; event_category: any; title_en: any; description_en: any; location_name_en: any; status: any; }) => {
+            const eventItems = rows.map((event) => {
                 let imageBase64 = null;
                 if (event.image) {
                     const imageBuffer = Buffer.from(event.image);
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
                     imageBase64 = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
                 }
 
-                const toBangkokTime = (dateStr: string | number | Date) => {
+                const toBangkokTime = (dateStr) => {
                     const date = new Date(dateStr);
                     const bangkokOffset = 7 * 60 * 60 * 1000;
                     return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 19).replace('T', ' ');
@@ -56,11 +57,7 @@ export default defineEventHandler(async (event) => {
             const body = await readBody(event);
             const { title, title_en, organizer, date_start, date_end, location_name, location_name_en, location_url, register_url, description, description_en, event_category, image, status } = body;
 
-            if (!title || !organizer) {
-                return { error: 'Title and organizer are required.' };
-            }
-
-            const toBangkokTime = (dateStr: string | number | Date) => {
+            const toBangkokTime = (dateStr) => {
                 const date = new Date(dateStr);
                 const bangkokOffset = 7 * 60 * 60 * 1000;
                 return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 19).replace('T', ' ');
@@ -71,12 +68,8 @@ export default defineEventHandler(async (event) => {
 
             let imageBuffer = null;
             if (image) {
-                try {
-                    const imageData = image.split(',')[1];
-                    imageBuffer = Buffer.from(imageData, 'base64');
-                } catch (err) {
-                    return { error: 'Invalid image format.' };
-                }
+                const imageData = image.split(',')[1];
+                imageBuffer = Buffer.from(imageData, 'base64');
             }
 
             const [result] = await connection.execute(

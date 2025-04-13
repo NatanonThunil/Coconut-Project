@@ -33,7 +33,7 @@
       <li :class="[{ Selected: ((selecto === 'coconutdata') || (selecto === 'pests')) }, 'nnedd']">
         <p class="img-dd-adjust">
           <img class="btn-icons"
-            :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
+            :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/icons8-info-W.svg' : '/icon/icons8-info.svg'"
             alt="ข้อมูลมะพร้าว" />
           {{ $t('CoconutInfo') }} <span> ▼</span>
         </p>

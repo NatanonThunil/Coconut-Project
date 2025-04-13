@@ -26,7 +26,7 @@
   <Aboutusslide apiEndPoint="/api/employees" lurl="employees"/>
   <SeeAllButton text="คณะทำงานทั้งหมด" link="/aboutus/employees" />
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <Aboutusslide apiEndPoint="/api/services" lurl="benefitandservice"/>
+  <Aboutusslide apiEndPoint="/api/employees" lurl="benefitandservice"/>
   <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/aboutus/benefitandservice" />
   <ContentHeader contexto="สมาชิก" />
   <Aboutusslide apiEndPoint="/api/members" lurl="members"/>

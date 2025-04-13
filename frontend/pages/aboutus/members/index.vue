@@ -1,11 +1,5 @@
 <template>
     <Navbar selecto="aboutus" />
-    <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        
-        <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/aboutus">{{ $t('All Member') }}</NuxtLinkLocale>
-    </div>
     <page-header head="All Member" />
   
     <!-- Loading State -->
@@ -89,7 +83,7 @@
       window.scrollTo(0, 0);
       try {
         setTimeout(async () => {
-          const response = await fetch("/api/members", {
+          const response = await fetch("/api/members_table", {
       headers: {
        "CKH": '541986Cocon',
        

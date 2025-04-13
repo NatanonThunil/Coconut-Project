@@ -1,5 +1,5 @@
 // server/api/service/[id].ts
-import { defineEventHandler, readBody, sendError, createError } from 'h3';
+import { defineEventHandler, readBody } from 'h3';
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method;
@@ -7,22 +7,31 @@ export default defineEventHandler(async (event) => {
   const id = event.context.params?.id;
 
   if (!connection) {
-    return sendError(event, createError({ statusCode: 500, statusMessage: 'Database connection not found.' }));
+    return {
+      success: false,
+      error: 'Database connection not found.',
+    };
   }
 
   if (!id) {
-    return sendError(event, createError({ statusCode: 400, statusMessage: 'Service ID is required.' }));
+    return {
+      success: false,
+      error: 'Service ID is required.',
+    };
   }
 
   try {
     if (method === 'GET') {
       const [rows]: any = await connection.execute(
-        'SELECT id, image, title, description, status, title_en, description_en FROM `service` WHERE id = ? AND status = 1',
+        'SELECT id, image, title, description, status, title_en, description_en FROM `service` WHERE id = ?',
         [id]
       );
 
       if (rows.length === 0) {
-        return sendError(event, createError({ statusCode: 404, statusMessage: 'Service not found or inactive.' }));
+        return {
+          success: false,
+          error: 'Service not found.',
+        };
       }
 
       const row = rows[0];
@@ -61,7 +70,10 @@ export default defineEventHandler(async (event) => {
       } = body;
 
       if (!title || !description) {
-        return sendError(event, createError({ statusCode: 400, statusMessage: 'Title and description are required.' }));
+        return {
+          success: false,
+          error: 'Title and description are required.',
+        };
       }
 
       let imageBuffer: Buffer | null = null;
@@ -96,7 +108,10 @@ export default defineEventHandler(async (event) => {
         };
       } catch (error) {
         console.error('Error updating service:', error);
-        return sendError(event, createError({ statusCode: 500, statusMessage: 'Failed to update service record.' }));
+        return {
+          success: false,
+          error: 'Failed to update service record.',
+        };
       }
     } else if (method === 'DELETE') {
       await connection.execute('DELETE FROM `service` WHERE id = ?', [id]);
@@ -105,10 +120,16 @@ export default defineEventHandler(async (event) => {
         message: 'Service deleted successfully.',
       };
     } else {
-      return sendError(event, createError({ statusCode: 405, statusMessage: 'Invalid request method.' }));
+      return {
+        success: false,
+        error: 'Invalid request method.',
+      };
     }
   } catch (error) {
     console.error('Error in [id] handler:', (error as Error).message);
-    return sendError(event, createError({ statusCode: 500, statusMessage: 'Failed to process request.' }));
+    return {
+      success: false,
+      error: 'Failed to process request.',
+    };
   }
 });

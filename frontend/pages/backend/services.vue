@@ -220,37 +220,33 @@ const toggleSort = (column) => {
         sortDirection.value = 1;
     }
 };
-const toggleStatus = async (service) => {
+const toggleStatus = async (services) => {
     try {
-        const newStatus = !service.status;
-        const payload = {
-            status: newStatus ? 1 : 0,
-            title: service.title, // Include title
-            description: service.description, // Include description
-            title_en: service.title_en, // Include title_en
-            description_en: service.description_en, // Include description_en
-            image: service.image || '', // Include image if available
-        };
+        const newStatus = !news.status;
 
-        const response = await fetch(`/api/${apiEndpoint}/${service.id}`, {
+  
+        const payload = { status: newStatus ? 1 : 0 };
+
+        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
             headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-            const errorBody = await response.json();
-            console.error('Failed to update service status:', {
+            const errorBody = await response.text();
+            console.error('Failed to update news status:', {
                 status: response.status,
                 statusText: response.statusText,
                 body: errorBody,
             });
-            throw new Error(errorBody.error || 'Failed to update service status.');
+            throw new Error('Failed to update news status.');
         }
 
-        service.status = newStatus;
+        // Update status only after successful response
+        news.status = newStatus;
     } catch (error) {
-        alert(`Error updating service status: ${error.message}`);
+        alert('Error updating news status.');
         console.error('Error in toggleStatus:', error);
     }
 };
