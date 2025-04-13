@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import icon from '@/assets/logo/CKH.png'
+import icon from '/logo/CKH.png'
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -34,6 +34,7 @@ const menuItems = [
   { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
 
   { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
+  { label: "จัดการฟุตเตอร์", path: "/backend/footer" },
 ];
 
 const navigateTo = (path) => {
@@ -55,6 +56,7 @@ const navigateTo = (path) => {
   flex-direction: column;
   padding: 1rem;
   box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Add this line to make the sidebar scrollable */
 }
 
 .logo-container {
@@ -72,6 +74,8 @@ const navigateTo = (path) => {
 
 .menu {
   flex-grow: 1;
+  overflow-y: auto; /* Add this line to make the menu scrollable */
+  overflow-x: visible;
 }
 
 .menu ul {
@@ -97,5 +101,32 @@ const navigateTo = (path) => {
 .menu li.active {
   background-color: #7eb9af;
   color: white;
+}
+
+/* Add custom scrollbar styles */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #7eb9af;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #5a8f87;
+}
+
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: #7eb9af;
+  border-radius: 10px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+  background-color: #5a8f87;
 }
 </style>

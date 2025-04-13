@@ -1,5 +1,6 @@
-# อัพเดต 4 apr.
-ใส่ "apiBase: process.env.API_BASE || 'http://localhost:8080', // Backend URL" ลง  ืnuxtConfig
+# อัพเดต 13 apr.
+เอา code จาก branch DakshinePoom มาใส่ เพราะ code เก่าเหมือนจะเป็น code ของ main
+
 
 
 

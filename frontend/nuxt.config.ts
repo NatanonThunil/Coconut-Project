@@ -1,9 +1,18 @@
+import dotenv from 'dotenv'
+
+dotenv.config()
 export default defineNuxtConfig({
+
+  ssr: false,
+  devServer: {
+    port: 5000,
+  },
   runtimeConfig: {
-    apiSecret: '123',
+    apiSecret: process.env.API_SECRET,
     public: {
-      apiBase: process.env.API_BASE || 'http://localhost:8080', // Backend URL
-    }
+      apiBase: process.env.API_BASE,
+      LoadingTimeMock: process.env.LOADING_TIME_MOCK,
+    },
   },
   devtools: { enabled: false },
 
@@ -45,6 +54,7 @@ export default defineNuxtConfig({
     'nuxt-primevue',
     '@nuxtjs/i18n',
   ],
+
 
   i18n: {
     lazy: true,

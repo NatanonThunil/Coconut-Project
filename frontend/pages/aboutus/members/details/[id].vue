@@ -1,7 +1,13 @@
 <template>
   <Navbar selecto="aboutus" />
   <div class="all-container">
-    <div style="height: 10rem"></div>
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        
+        <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/aboutus/members">{{ $t('All Member') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="`/aboutus/members/details/${cid}`">{{ member?.name}}</NuxtLinkLocale>
+    </div>
 
     <!-- Loader -->
     <div v-if="!member && !error" class="loading">
@@ -55,7 +61,7 @@
       <div style="height: 5rem"></div>
 
       <div class="back-btn-container">
-        <SeeAllButton text="ดูสมาชิกทั้งหมด" link="/members" />
+        <SeeAllButton text="ดูสมาชิกทั้งหมด" link="/aboutus/members" />
       </div>
     </div>
   </div>
@@ -63,7 +69,7 @@
 
 <script>
 import { useHead } from "@vueuse/head";
-import tlImage from "@/assets/img/tl.png";
+import tlImage from "/img/tl.png";
 
 export default {
   data() {
@@ -71,12 +77,18 @@ export default {
       member: null,
       error: null,
       tlImage,
+      cid: this.$route.params.id, // Define cid here
     };
   },
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/members_table`);
+      const response = await fetch(`/api/members`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok)
         throw new Error(
           `Failed to fetch member details: ${response.statusText}`

@@ -41,7 +41,7 @@
                   <div class="event-card-text">
                     <p class="event-title">{{ event.title }}</p>
                     <div class="event-card-date">
-                      <img src="@/assets/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
+                      <img src="/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
                       <p class="event-date">{{ formatDate(event.date_start) }}</p>
                     </div>
                     <div :class="['event-card-status', getStatusClass(event)]">
@@ -107,7 +107,12 @@ export default {
     },
     async fetchEvents() {
       try {
-        const response = await fetch("/api/events_table");
+        const response = await fetch("/api/events", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch events");
         const data = await response.json();
         this.events = Array.isArray(data) ? data : [];

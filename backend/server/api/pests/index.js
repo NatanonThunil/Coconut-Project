@@ -8,13 +8,13 @@ export default defineEventHandler(async () => {
         const [rows] = await connection.execute('SELECT * FROM `pest`');
 
         if (rows.length === 0) {
-            return { message: 'No news available.' };
+            return { message: 'No pests available.' };
         }
 
-        const newsItems = rows.map((pests) => {
+        const pests = rows.map((pest) => {
             let imageBase64 = null;
-            if (pests.image) {
-                const imageBuffer = Buffer.from(pests.image);
+            if (pest.image) {
+                const imageBuffer = Buffer.from(pest.image);
                 let mimeType = 'image/jpeg'; 
 
                 if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
@@ -25,13 +25,13 @@ export default defineEventHandler(async () => {
             }
 
             return {
-                ...pests,
+                ...pest,
                 image: imageBase64,
-                description: pests.description, 
+                description: pest.description, 
             };
         });
 
-        return newsItems;
+        return pests;
     } catch (error) {
         console.error('Error fetching pests:', error);
         return { error: 'Failed to fetch pests' };

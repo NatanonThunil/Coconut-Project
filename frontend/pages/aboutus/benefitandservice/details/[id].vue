@@ -63,7 +63,7 @@
   
   <script>
   import { useHead } from "@vueuse/head";
-  import tlImage from "@/assets/img/tl.png";
+  import tlImage from "/img/tl.png";
   
   export default {
     data() {
@@ -76,33 +76,23 @@
     async mounted() {
       const cid = this.$route.params.id;
       try {
-        const response = await fetch(`/api/benefits_table`);
+        const response = await fetch(`/api/services/${cid}`, {
+          headers: {
+            "CKH": "541986Cocon",
+          },
+        });
         if (!response.ok)
-          throw new Error(
-            `Failed to fetch benefit details: ${response.statusText}`
-          );
+          throw new Error(`Failed to fetch benefit details: ${response.statusText}`);
         const data = await response.json();
-        this.benefit =
-          data.find((benefit) => benefit.id === parseInt(cid) && benefit.status) ||
-          null;
-  
-        // Ensure benefit tags are properly formatted
-        if (this.benefit && typeof this.benefit.benefit_tags_id === "string") {
-          try {
-            this.benefit.benefit_tags_id = JSON.parse(this.benefit.benefit_tags_id);
-          } catch (error) {
-            console.error("Error parsing benefit_tags_id in frontend:", error);
-            this.benefit.benefit_tags_id = [];
-          }
-        }
+        this.benefit = data.service || null;
   
         if (this.benefit) {
           this.updateHead();
         } else {
-          this.error = "ไม่พบข้อมูลคณะทำงาน กรุณาตรวจสอบหมายเลขอีกครั้ง";
+          this.error = "ไม่พบข้อมูลสิทธิประโยชน์ กรุณาตรวจสอบหมายเลขอีกครั้ง";
         }
       } catch (error) {
-        this.error = "ไม่สามารถโหลดข้อมูลคณะทำงานได้ กรุณาลองใหม่อีกครั้ง";
+        this.error = "ไม่สามารถโหลดข้อมูลสิทธิประโยชน์ได้ กรุณาลองใหม่อีกครั้ง";
       }
     },
     methods: {

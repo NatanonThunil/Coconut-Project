@@ -1,6 +1,11 @@
 <template>
-  <div style="height: 10rem;"></div>
+ 
   <Navbar selecto="expert" />
+  <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/experts">{{ $t('Expert') }}</NuxtLinkLocale>
+    </div>
   
   <h3 class="header-content">{{ $t('Expert') }}</h3>
   <div class="header-container">
@@ -8,7 +13,19 @@
   </div>
 
   <!-- Merged navbarexpert content -->
-  <div>
+   <div style="height: 1rem"></div>
+    <!-- Search bar -->
+    <label class="coconut-v-input">
+      <img src="/icon/search.svg" alt="Search Icon" />
+      <input
+        type="text"
+        placeholder="ค้นหาด้วยชื่อ..."
+        v-model="searchQuery"
+        @input="filterByName"
+      />
+    </label>
+    <div style="height: 1rem"></div>
+    <div>
     <!-- Filter options -->
     <ul class="homeeventfiltercontainer">
       <li
@@ -34,17 +51,6 @@
       </li>
     </ul>
 
-    <!-- Search bar -->
-    <label class="coconut-v-input">
-      <img src="@/assets/icon/search.svg" alt="Search Icon" />
-      <input
-        type="text"
-        placeholder="ค้นหาด้วยชื่อ..."
-        v-model="searchQuery"
-        @input="filterByName"
-      />
-    </label>
-    <div style="height: 2rem"></div>
 
     <!-- Loading state -->
     <div class="event-card-section" v-if="isLoading" loading="lazy">
@@ -70,7 +76,7 @@
         <div class="event-card-text">
           <p class="event-title">{{ expert.name }}</p>
           <div class="event-card-date">
-            <img src="@/assets/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
+            <img src="/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
             <p class="event-date">{{ expert.description }}</p>
           </div>
         </div>
@@ -116,7 +122,12 @@ export default {
     async fetchExperts() {
       try {
         this.isLoading = true;
-        const response = await fetch("/api/experts");
+        const response = await fetch("/api/experts", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok) throw new Error("Failed to fetch experts");
         const data = await response.json();
         this.experts = data.map((expert) => ({
@@ -160,7 +171,7 @@ export default {
   text-align: center;
   margin-top: 0;
   padding-top: 20px;
-  font-size: 2rem;
+ 
 }
 .header-content {
   color: #ffffff;

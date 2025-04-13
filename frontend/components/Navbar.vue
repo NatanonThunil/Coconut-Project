@@ -1,35 +1,21 @@
 <template>
   <nav class="navbar" id="nav-header">
     <a class="logo" href="/">
-      <img class="btn-icons" src="~/assets/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
+      <img class="btn-icons" src="/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
     </a>
     <ul class="main-menu">
       <li :class="{ Selected: selecto === 'aboutus' }">
         <NuxtLinkLocale to='/aboutus'>
-          <img class="btn-icons"
-            :src="selecto === 'aboutus' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
+          <img class="btn-icons" :src="selecto === 'aboutus' ? '/icon/w/people.svg' : '/icon/people.svg'"
             alt="เกี่ยวกับเรา" />{{ $t('AboutUs') }}
         </NuxtLinkLocale>
       </li>
-      <!-- <li :class="{ Selected: selecto === 'news' }">
-        <NuxtLinkLocale to="/news">
-          <img class="btn-icons"
-            :src="selecto === 'news' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
-            alt="เกี่ยวกับเรา" />{{ $t('News') }}
-        </NuxtLinkLocale>
-      </li>
-      <li :class="{ Selected: selecto === 'events' }">
-        <NuxtLinkLocale to="/events">
-          <img class="btn-icons"
-            :src="selecto === 'events' ? '/_nuxt/assets/icon/w/people.svg' : '/_nuxt/assets/icon/people.svg'"
-            alt="เกี่ยวกับเรา" />{{ $t('Events') }}
-        </NuxtLinkLocale>
-      </li> -->
 
-      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events')) }, 'nnedd']">
+
+      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events') ) }, 'nnedd']">
         <p class="img-dd-adjust">
           <img class="btn-icons"
-            :src="selecto === 'news' || selecto === 'events' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+            :src="selecto === 'news' || selecto === 'events' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
             alt="ข้อมูลมะพร้าว" />
           {{ $t("News & Events") }} <span> ▼</span>
         </p>
@@ -43,20 +29,13 @@
         </ul>
       </li>
 
-      <!-- <li :class="{ Selected: selecto === 'coconutdata' }">
-        <NuxtLinkLocale to="/coconut-information">
-          <img class="btn-icons"
-            :src="selecto === 'coconutdata' ? '/_nuxt/assets/icon/w/database.svg' : '/_nuxt/assets/icon/database.svg'"
-            alt="ข้อมูลมะพร้าว" />{{ $t('CoconutInfo') }}
-        </NuxtLinkLocale>
-      </li> -->
 
-      <li :class="[{ Selected: ((selecto === 'coconutdata') ) }, 'nnedd']">
-       <p class="img-dd-adjust">
+      <li :class="[{ Selected: ((selecto === 'coconutdata') || (selecto === 'pests')) }, 'nnedd']">
+        <p class="img-dd-adjust">
           <img class="btn-icons"
-            :src="selecto === 'coconutdata' || selecto === 'pest' ? '/_nuxt/assets/icon/w/newsnevents.svg' : '/_nuxt/assets/icon/newsnevents.svg'"
+            :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
             alt="ข้อมูลมะพร้าว" />
-            {{ $t('CoconutInfo') }} <span> ▼</span>
+          {{ $t('CoconutInfo') }} <span> ▼</span>
         </p>
         <ul class="dropdown">
           <li>
@@ -66,21 +45,19 @@
             <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('chain_values') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('chain_values') }}</NuxtLinkLocale>
           </li>
         </ul>
       </li>
       <li :class="{ Selected: selecto === 'expert' }">
         <NuxtLinkLocale to="/experts">
-          <img class="btn-icons"
-            :src="selecto === 'expert' ? '/_nuxt/assets/icon/w/expert.svg' : '/_nuxt/assets/icon/expert.svg'"
+          <img class="btn-icons" :src="selecto === 'expert' ? '/icon/w/expert.svg' : '/icon/expert.svg'"
             alt="ผู้เชี่ยวชาญ" />{{ $t('Experts') }}
         </NuxtLinkLocale>
       </li>
       <li :class="{ Selected: selecto === 'faqs' }">
         <NuxtLinkLocale to="/faqs">
-          <img class="btn-icons"
-            :src="selecto === 'faqs' ? '/_nuxt/assets/icon/w/questions.svg' : '/_nuxt/assets/icon/questions.svg'"
+          <img class="btn-icons" :src="selecto === 'faqs' ? '/icon/w/questions.svg' : '/icon/questions.svg'"
             alt="FAQs" />FAQs
         </NuxtLinkLocale>
       </li>
@@ -126,8 +103,6 @@
 </template>
 
 <script>
-
-
 
 
 export default {
@@ -214,7 +189,7 @@ export default {
 
 .nnedd:hover p span {
   rotate: 30deg;
-  
+
 }
 
 .nnedd:hover .dropdown {
@@ -266,8 +241,8 @@ export default {
   border-radius: 10px;
   transform: scale(1.1);
   outline: #000 3px solid;
-  
- 
+
+
 }
 
 .dropdown li:hover:active {
@@ -301,8 +276,12 @@ nuxt-link:hover {
 }
 
 .navbar {
-
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  margin-top: 0.5%;
   width: 100%;
+  border-radius: 15px;
+  width: 95%;
   background-color: #dbdbdb;
   color: rgb(0, 0, 0);
   display: flex;
@@ -321,13 +300,12 @@ nuxt-link:hover {
 }
 
 .navbar.scrolled {
+  margin: 0;
   background-color: #dbdbdb;
   position: fixed;
-  margin-left: 2.5%;
-  margin-right: 2.5%;
-  margin-top: 1.5%;
-  width: 95%;
-  border-radius: 15px;
+  border-radius: 0px;
+  width: 100%;
+  
 
 
 }
@@ -529,10 +507,12 @@ nuxt-link:hover {
 
 
 @media (max-width: 1205px) {
-  li a img.btn-icons, .img-dd-adjust .btn-icons{
+
+  li a img.btn-icons,
+  .img-dd-adjust .btn-icons {
     display: none;
   }
-  
+
 }
 
 

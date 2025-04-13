@@ -8,33 +8,67 @@
         <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
         <section class="ft-contract-us">
             <h1>{{ $t("ContactUs") }}</h1>
-            <div class="ft-contract">{{$t('Footer')}}</div>
+            <div class="ft-contract">{{ (currentLocale === 'th' )? footer.text : footer.text_en}}</div>
         </section>
         <section class="cpr">
-            <div>Copyright © Coconut Knowledge Hub
-                สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง</div>
+            <div>{{ (currentLocale === 'th' )? footer.credit : footer.credit_en}}</div>
         </section>
 
     </footer>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            links: [
-                { to: "/", label: "Home" },
-                { to: "/AboutUs", label: "AboutUs" },
-                { to: "/News", label: "News" },
-                { to: "/Events", label: "Events" },
-                { to: "/coconut-information", label: "CoconutInfo" },
-                { to: "/Experts", label: "Experts" },
-                { to: "/FAQs", label: "FAQs" }
-            ]
-        };
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+// Locale
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
+
+// Links for footer nav
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/AboutUs", label: "AboutUs" },
+  { to: "/News", label: "News" },
+  { to: "/Events", label: "Events" },
+  { to: "/coconut-information", label: "CoconutInfo" },
+  { to: "/Experts", label: "Experts" },
+  { to: "/FAQs", label: "FAQs" }
+];
+
+// Footer content
+const footer = ref({
+    text: '',
+    text_en: '',
+    credit: 'Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง',
+    credit_en: 'Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University',
+  });
+// Fetch footer data
+const fetchData = async () => {
+    try {
+      const response = await fetch('/api/footers/1', {
+        headers: {
+          CKH: '541986Cocon',
+        },
+      });
+  
+      if (!response.ok) throw new Error('Failed to fetch footer data');
+      const data = await response.json();
+  
+      // Map data safely
+      footer.value.text = data.footer?.text || '';
+      footer.value.text_en = data.footer?.text_en || '';
+      footer.value.credit = data.footer?.credit || footer.value.credit;
+      footer.value.credit_en = data.footer?.credit_en || footer.value.credit_en;
+    } catch (error) {
+      console.error('Error fetching footer:', error);
     }
 };
+
+onMounted(fetchData);
 </script>
+
+
 
 <style scoped>
 .ft-contract-us {
@@ -56,15 +90,15 @@ export default {
 .footer {
     flex-direction: column;
     height: inherit;
-    background-image: linear-gradient(#4E6D16,#2f3f10);
+    background-image: linear-gradient(#4E6D16, #2f3f10);
     display: flex;
     align-items: center;
     justify-content: center;
-   
+
 }
 
 .footer-nav {
-    
+
     padding-top: 1rem;
     display: flex;
     gap: 2rem;
@@ -75,7 +109,7 @@ export default {
 
 .footer-nav a {
     color: white;
-    transition: ease-in-out 0.3s ;
+    transition: ease-in-out 0.3s;
 }
 
 .footer-nav a:hover {
@@ -87,7 +121,7 @@ export default {
     border-radius: 1px;
 
     width: 100%;
-  
+
     padding: 0.5rem;
     color: white;
 }

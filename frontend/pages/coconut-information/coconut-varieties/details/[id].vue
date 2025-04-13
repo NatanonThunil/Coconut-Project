@@ -1,7 +1,13 @@
 <template>
   <Navbar selecto="coconutdata" />
-  <div style="height: 10rem;"></div>
-
+  
+  <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/coconut-information/coconut-varieties/details/'+this.$route.params.id">{{ coconut?.name_th || 'No Title'}}</NuxtLinkLocale>
+    </div>
+    <div style="height: 1.5rem"></div>
   <div v-if="coconut" class="coconut-detail-container">
     <div class="row-top">
       <div class="coconut-detail-img">
@@ -28,7 +34,7 @@
     </div>
 
     <div style="height: 4px;background-color: #4e6d16;width: 80%;margin: 1rem auto;"></div>
-    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/young/coconut-varieties" />
+    <SeeAllButton text="ดูพันธุ์อื่นๆ" link="/coconut-information/coconut-varieties" />
   </div>
 
   <div v-else class="loading-container">
@@ -51,14 +57,17 @@ export default {
     const cid = this.$route.params.id;
 
     try {
-      const response = await fetch(`/api/coconut`);
+      const response = await fetch(`/api/coconuts/${cid}`, { // Corrected endpoint
+        headers: {
+          "CKH": '541986Cocon',
+        },
+      });
       if (!response.ok) throw new Error('Failed to fetch coconut details');
       const data = await response.json();
-      this.coconut = data.find(coconut => coconut.id === parseInt(cid)) || null;
-
+      this.coconut = data.coconut || null; // Adjusted to match the server response structure
 
       useHead({
-        title: `🥥 Coconut - ${this.coconut ? this.coconut.name_th : 'Details'}`,
+        title: `Coconut - ${this.coconut ? this.coconut.name_th : 'Details'}`,
         meta: [
           {
             name: 'description',

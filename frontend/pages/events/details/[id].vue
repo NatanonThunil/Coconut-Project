@@ -16,35 +16,41 @@
             <img :src="calendarIcon">
             {{ formatDate(event?.date_start) }} - {{ formatDate(event?.date_end) }}
         </div>
-        <NuxtLinkLocale class="dnl" :to="event?.location_url || 'https://www.google.co.th/maps/'">
+        <NuxtLinkLocale class="dnl"
+            :to="(currentLocale === 'th') ? (event?.location_url || 'https://www.google.co.th/maps/') : (event?.location_url_en || 'https://www.google.co.th/maps/')">
             <img :src="locationIcon">
-            {{ event?.location_name || 'Unknown location' }}
+            {{ (currentLocale === 'th') ? (event?.location_name || 'Unknown location') : (event?.location_name_en ||
+            'Unknown location')}}
         </NuxtLinkLocale>
     </div>
 
     <div class="divider"></div>
 
     <!-- Event Title -->
-    <h1 style="text-align: center;">{{ event?.title }}</h1>
+    <h1 style="text-align: center;">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') : (event?.title_en
+        || 'No English title name') }}</h1>
 
     <!-- Event Details -->
     <div class="brief-details">
         <div class="toline">
-            <div class="event-head">ผู้จัดกิจกรรม</div>: <div class="event-main-detail">{{ event?.organizer || 'N/A' }}
+            <div class="event-head">{{ $t('Organizer') }}</div>: <div class="event-main-detail">{{ (currentLocale === 'th') ?
+                (event?.organizer || 'N/A') : (event?.organizer_en || 'N/A')}}
             </div>
         </div>
         <div class="toline">
-            <div class="event-head">วัน</div>: <div class="event-main-detail">{{ formatDate(event?.date_start) }} - {{
+            <div class="event-head">{{ $t('Event_Date') }}</div>: <div class="event-main-detail">{{ formatDate(event?.date_start) }} - {{
                 formatDate(event?.date_end) }}</div>
         </div>
         <div class="toline">
-            <div class="event-head">สถานที่จัดงาน</div>: <div class="event-main-detail">
-                <NuxtLinkLocale :to="event?.location_url || 'https://www.google.co.th/maps/'">{{ event?.location_name ||
-                    'N/A' }}</NuxtLinkLocale>
+            <div class="event-head">{{ $t('Location') }}</div>: <div class="event-main-detail">
+                <NuxtLinkLocale :to="event?.location_url || 'https://www.google.co.th/maps/'">{{ (currentLocale ===
+                    'th') ? (event?.location_name ||
+                        'N/A') : (event?.location_name_en ||
+                    'N/A')}}</NuxtLinkLocale>
             </div>
         </div>
         <div class="toline">
-            <div class="event-head">เข้าร่วมกิจกรรม</div>: <div class="event-main-detail">
+            <div class="event-head">{{ $t('Registration') }}</div>: <div class="event-main-detail">
                 <NuxtLinkLocale :to="event?.register_url || '/'">{{ event?.register_url ||
                     'N/A' }}</NuxtLinkLocale>
             </div>
@@ -52,20 +58,27 @@
     </div>
 
     <div class="divider"></div>
-    <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">คำอธิบาย</h2>
-    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="event?.description ||
-        'ไม่มีคำอธิบาย'"></p>
-    <SeeAllButton text="ดูกิจกรรมอื่นๆ" link="/events" />
+    <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">{{ $t('Description') }}</h2>
+    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="(currentLocale === 'th')? (event?.description ||
+        'ไม่มีคำอธิบาย') :  (event?.description_en ||
+        'No English description') "></p>
+    <SeeAllButton :text=" $t('Back to All Events')" link="/events" />
 
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
 import { useHead } from '@vueuse/head';
-import calendarIcon from '@/assets/icon/calenda.svg';
-import locationIcon from '@/assets/icon/location.png';
-import tlImage from '@/assets/img/tl.png';
+import calendarIcon from '/icon/calenda.svg';
+import locationIcon from '/icon/location.png';
+import tlImage from '/img/tl.png';
 
 export default {
+    setup() {
+        const { locale } = useI18n();
+        const currentLocale = computed(() => locale.value);
+        return { currentLocale };
+    },
     data() {
         return {
             event: null,
@@ -79,7 +92,12 @@ export default {
         const cid = this.$route.params.id;
 
         try {
-            const response = await fetch(`/api/events_table`);
+            const response = await fetch(`/api/events`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
             if (!response.ok) throw new Error('Failed to fetch event details');
             const data = await response.json();
             this.event = data.find(event => (event.id === parseInt(cid)) && event.status) || null;

@@ -56,7 +56,7 @@
         <div style="height: 5rem"></div>
   
         <div class="back-btn-container">
-          <SeeAllButton text="ดูคณะทำงานคนอื่น" link="/employees" />
+          <SeeAllButton text="ดูคณะทำงานคนอื่น" link="/aboutus/employees" />
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
   
   <script>
   import { useHead } from "@vueuse/head";
-  import tlImage from "@/assets/img/tl.png";
+  import tlImage from "/img/tl.png";
   
   export default {
     data() {
@@ -77,7 +77,12 @@
     async mounted() {
       const cid = this.$route.params.id;
       try {
-        const response = await fetch(`/api/employees/${cid}`);
+        const response = await fetch(`/api/employees/${cid}`, {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
         if (!response.ok)
           throw new Error(
             `Failed to fetch employee details: ${response.statusText}`

@@ -60,5 +60,19 @@
   "Disease":"โรค",
   "Insect":"แมลง",
   "Other enemies":"ศัตรูอื่นๆ",
-  "chain_values" :"การแปรรูป"
+  "chain_values" :"ห่วงโซ่คุณค่า",
+  "Event_category": "หมวดหมู่กิจกรรม",
+  "Event_status": "สถานะกิจกรรม",
+  "Organizer": "ผู้จัดกิจกรรม",
+  "Event_Date": "เวลาจัดงาน",
+  "Location": "สถานที่จัดงาน",
+  "Registration": "เข้าร่วมกิจกรรม",
+  "Description": "คำอธิบาย",
+  "Back to All Events": "ดูกิจกรรมอื่นๆ",
+   "Achievements": "ผลงาน",
+    "upload" : "อัพโหลดเมื่อ",
+    "By" : "โดย",
+    "Next": "ถัดไป",
+    "Previous": "ก่อนหน้า",
+    "SeeAllAchievements": "ดูผลงานทั้งหมด"
 }

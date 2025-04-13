@@ -74,8 +74,8 @@
                         </label>
                     </td>
                     <td class="action-buttons">
-                        <button @click="editItem(item)" class="edit-btn"><img src="@/assets/icon/pen.png" alt="Edit"></button>
-                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="@/assets/icon/trash.png" alt="Delete"></button>
+                        <button @click="editItem(item)" class="edit-btn"><img src="/icon/pen.png" alt="Edit"></button>
+                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="/icon/trash.png" alt="Delete"></button>
                     </td>
                 </tr>
             </tbody>
@@ -95,14 +95,32 @@
                     <input class="add-text-input" v-model="currentFaq.question_en" placeholder="Enter question in English" />
                     <label>Answer (English)</label>
                     <textarea class="add-text-input" v-model="currentFaq.answer_en" placeholder="Enter answer in English"></textarea>
-                    <label class="advice-toggle">
-                        <input type="checkbox" v-model="currentFaq.isadvice" />
-                        <span>Category (คำแนะนำ / คำถามทั่วไป)</span>
-                    </label>
+                    <label>Category</label>
+                    <div class="category-toggle">
+                        <button
+                            :class="{ active: currentFaq.isadvice === 0 }"
+                            @click="currentFaq.isadvice = 0"
+                            type="button"
+                        >
+                            คำถามทั่วไป
+                        </button>
+                        <button
+                            :class="{ active: currentFaq.isadvice === 1 }"
+                            @click="currentFaq.isadvice = 1"
+                            type="button"
+                        >
+                            คำแนะนำ
+                        </button>
+                    </div>
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirm-btn" @click.prevent="submitFaq(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitFaq(false)">
+                    {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+                </button>
+                <button type="button" class="confirm-btn" @click.prevent="submitFaq(true)">
+                    {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+                </button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
@@ -123,10 +141,9 @@
 
 <script setup>
 definePageMeta({ layout: "admin" });
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import { ref, onMounted, computed } from 'vue';
-import '@/assets/styles/backend_style.css'; // Import shared CSS
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
 
 const config = ref({
     title: "จัดการคำถามที่พบบ่อย",
@@ -197,13 +214,16 @@ const filteredSortedFaqs = computed(() => {
 
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`);
-        if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
+        const response = await fetch(`/api/${config.value.apiEndpoint}`, { headers: { 'CKH': '541986Cocon' } });
+        if (!response.ok) {
+            const errorDetails = await response.text(); // Capture response body
+            throw new Error(`Failed to fetch Data: ${response.statusText}. Details: ${errorDetails}`);
+        }
         const data = await response.json();
         apisdatas.value = Array.isArray(data.faqs) ? data.faqs.map(faq => ({ ...faq, selected: false })) : [];
         dataCount.value = apisdatas.value.length;
     } catch (error) {
-        console.error('Error fetching data:', error.message);
+        console.error('Error fetching data:', error.message); // Log error details
         apisdatas.value = [];
         dataCount.value = 0;
     }
@@ -215,7 +235,7 @@ const toggleStatus = async (faq) => {
         const newStatus = !faq.status;
         const response = await fetch(`/api/${config.value.apiEndpoint}/${faq.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json'},
             body: JSON.stringify({ ...faq, status: newStatus ? 1 : 0 }),
         });
 
@@ -266,12 +286,12 @@ const submitFaq = async (publish) => {
             question_en: currentFaq.value.question_en,
             answer_en: currentFaq.value.answer_en,
             status: publish ? 1 : 0,
-            isadvice: currentFaq.value.isadvice ? 1 : 0,
+            isadvice: currentFaq.value.isadvice ? 1 : 0, // Ensure isadvice is either 0 or 1
         };
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -310,7 +330,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedFaqs.map(faq =>
             fetch(`/api/faqs/${faq.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...faq, status: publish ? 1 : 0 })
             })
         );
@@ -338,7 +358,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/faqs/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon','Content-Type': 'application/json' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 
@@ -1060,6 +1080,47 @@ input:checked+.hotnews-slider {
 
 input:checked+.hotnews-slider:before {
     transform: translateX(18px);
+}
+
+.category-toggle {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.category-toggle button {
+    all: unset;
+    cursor: pointer;
+    padding: 0.7rem 1.5rem;
+    border: 2px solid #4E6D16;
+    border-radius: 8px;
+    background-color: white;
+    color: #4E6D16;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category-toggle button.active {
+    background-color: #4E6D16;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.category-toggle button:hover {
+    background-color: #6F8C28;
+    color: white;
+    transform: scale(1.03);
+}
+
+.category-toggle button:active {
+    background-color: #3A4E12;
+    color: white;
+    transform: scale(0.98);
+    box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 @media screen and (max-width: 1750px) {

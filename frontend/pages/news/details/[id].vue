@@ -1,6 +1,12 @@
 <template>
     <Navbar selecto="home" />
-    <div style="height: 5rem;"></div>
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        
+        <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ news?.title || 'No Title'}}</NuxtLinkLocale>
+    </div>
+    
 
     <div v-if="news" class="container">
         <img class="news-image-banner" :src="news.image || 'https://placehold.co/800x400'" alt="News Image"
@@ -16,7 +22,7 @@
         <div class="news-summary" v-if="news.summerize">
             <h2>สรุป</h2>
             <p style=" display: flex; flex-direction: row;"><img class="unyapragard"
-                    src="/assets/icon/double-quotes.png">{{ news.summerize }}<img src="/assets/icon/double-quotes.png"
+                    src="/icon/double-quotes.png">{{ news.summerize }}<img src="/icon/double-quotes.png"
                     alt="" class="unyapragardl"></p>
             <!--   -->
         </div>
@@ -38,7 +44,7 @@
     <div v-else>
         <div class="news-404-container">
             <div class="news-404-center-content">
-                <section class="news-404-left-section"><img src="@/assets/img/News404.png" alt="" draggable="false">
+                <section class="news-404-left-section"><img src="/img/News404.png" alt="" draggable="false">
                 </section>
                 <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่ข่าว
                     <SeeAllButton text="ดูข่าวอื่นๆ" link="/news" />
@@ -50,7 +56,7 @@
 </template>
 
 <script>
-import unyaprgard from '@/assets/icon/double-quotes.png';
+import unyaprgard from '/icon/double-quotes.png';
 export default {
     data() {
         return {
@@ -64,16 +70,26 @@ export default {
         const cid = this.$route.params.id;
 
         try {
+            if (!cid) throw new Error('Missing news ID parameter');
 
-            const response = await fetch(`/api/news/` + cid);
-            if (!response.ok) throw new Error('Failed to fetch news details');
+            const response = await fetch(`/api/news/${cid}`, {
+                headers: {
+                    "CKH": '541986Cocon',
+                },
+            });
+
+            if (!response.ok) {
+                console.error('API Response Error:', response.status, response.statusText);
+                throw new Error('Failed to fetch news details');
+            }
 
             const data = await response.json();
-            this.news = data.find(news => (news.id === parseInt(cid)) && (news.status)) || null;
+            this.news = data.status ? data : null; // Ensure the news item has a valid status
             this.loading = false;
         } catch (error) {
-            console.error('Error fetching news details:', error);
+            console.error('Error fetching news details:', error.message);
             this.error = 'Failed to load news data. Please try again later.';
+            this.loading = false;
         }
     },
     methods: {

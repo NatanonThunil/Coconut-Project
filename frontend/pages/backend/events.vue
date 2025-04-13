@@ -6,10 +6,10 @@
     </div>
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
-        <div class="news-check-publish">
-            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-news-btn" @click="openAddEventModal">ADD Event</button>
+        <div class="events-check-publish">
+            <button class="published-events-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="unpublished-events-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+            <button class="add-events-btn" @click="openAddEventModal">ADD Event</button>
         </div>
     </div>
 
@@ -24,6 +24,11 @@
                             <button @click="toggleSort('id')">
                                 <div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div>
                             </button>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Image</div>
                         </div>
                     </th>
                     <th>
@@ -61,6 +66,7 @@
                             </button></div>
                         </div>
                     </th>
+                    
                     <th></th>
                 </tr>
             </thead>
@@ -69,9 +75,12 @@
                 <tr v-for="event in filteredSortedEvents" :key="event.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="event.selected" />
+                            <input type="checkbox" v-model="event.selected" class="checkbox-decorate"  />
                             <p>{{ event.id }}</p>
                         </div>
+                    </td>
+                    <td>
+                        <img v-if="event.image" :src="event.image" alt="Event Image" class="event-image" />
                     </td>
                     <td>{{ event.title }}</td>
                     <td>{{ event.organizer }}</td>
@@ -83,10 +92,11 @@
                             <img class="eyesicon" :src="event.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
+                    
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(event)" class="edit-btn"><img src="@/assets/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(event.id, event.title)" class="delete-btn"><img src="@/assets/icon/trash.png" alt=""></button>
+                            <button @click="editItem(event)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
+                            <button @click="askDelete(event.id, event.title)" class="delete-btn"><img src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -115,12 +125,14 @@
                 <section>
                     <label>พาดหัวข่าว</label>
                     <input class="add-text-input" v-model="currentEvent.title" placeholder="Enter title" required />
+                    <label>Title (English)</label>
+                    <input class="add-text-input" v-model="currentEvent.title_en" placeholder="Enter title in English" required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentEvent.organizer" placeholder="Enter author name" required />
                     <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }" @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
-                            <img v-if="!currentEvent.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentEvent.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentEvent.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
                             <div v-if="currentEvent.image" class="image-preview">
                                 <img :src="currentEvent.image" alt="Uploaded Image" class="preview-image" />
@@ -132,29 +144,28 @@
                     </div>
                     <label>Location Name</label>
                     <input class="add-text-input" v-model="currentEvent.location_name" placeholder="Enter location name" required />
-
+                    <label>Location Name (English)</label>
+                    <input class="add-text-input" v-model="currentEvent.location_name_en" placeholder="Enter location name in English" required />
                     <label>Location URL</label>
                     <input class="add-text-input" v-model="currentEvent.location_url" placeholder="Enter location URL" required />
-
                     <label>Register URL</label>
                     <input class="add-text-input" v-model="currentEvent.register_url" placeholder="Enter register URL" required />
                 </section>
                 <section>
                     <label>Date Start</label>
                     <input type="date" v-model="currentEvent.date_start" class="date-input" required />
-
                     <label>Date End</label>
                     <input type="date" v-model="currentEvent.date_end" class="date-input" required />
-
                     <label>Category</label>
                     <select v-model="currentEvent.category" class="category-select" required>
                         <option value="educate">Educate</option>
                         <option value="conference">Conference</option>
                         <option value="other">Other</option>
                     </select>
-
                     <label>Description</label>
                     <TiptapEditor v-model="currentEvent.description" />
+                    <label>Description (English)</label>
+                    <TiptapEditor v-model="currentEvent.description_en" />
                 </section>
             </div>
             <div class="modal-actions">
@@ -184,12 +195,12 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '@/assets/styles/backend_style.css'; // Import shared CSS
+
 
 const apiEndpoint = 'events';
 const searchQuery = ref('');
@@ -208,14 +219,17 @@ const sortDirection = ref(1);
 const currentEvent = ref({
     id: null,
     title: '',
+    title_en: '',
     image: '',
     organizer: '',
     description: '',
+    description_en: '',
     category: 'educate',
     date_start: '',
     date_end: '',
     status: false,
     location_name: '',
+    location_name_en: '',
     location_url: '',
     register_url: '',
 });
@@ -226,15 +240,19 @@ const toggleStatus = async (event) => {
         const newStatus = !event.status;
         const response = await fetch(`/api/${apiEndpoint}/${event.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...event, status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus ? 1 : 0 }),
         });
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
             throw new Error('Failed to update event status.');
         }
 
+        // Update the local state only after a successful response
         event.status = newStatus;
+       
     } catch (error) {
         alert('Error updating event status.');
         console.error(error);
@@ -247,7 +265,7 @@ const triggerFileInput = () => {
 
 const fetchEvents = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         Events.value = response.map(event => ({ ...event, selected: false }));
         EventsNum.value = Events.value.length;
     } catch (error) {
@@ -256,26 +274,30 @@ const fetchEvents = async () => {
 };
 
 const editItem = (event) => {
-    const toBangkokTime = (dateStr) => {
-        const date = new Date(dateStr);
-        const bangkokOffset = 7 * 60 * 60 * 1000;
-        return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 10);
-    };
+    try {
+        const toBangkokTime = (dateStr) => {
+            const date = new Date(dateStr);
+            const bangkokOffset = 7 * 60 * 60 * 1000;
+            return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 10);
+        };
 
-    currentEvent.value = {
-        ...event,
-        status: !!event.status,
-        description: event.description || "", // Ensure description is set
-        date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
-        date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
-        category: event.event_category || 'other', // Ensure category is set
-    };
+        currentEvent.value = {
+            ...event,
+            title_en: event.title_en || '',
+            description_en: event.description_en || '',
+            location_name_en: event.location_name_en || '',
+            status: !!event.status,
+            description: event.description || '', // Ensure description is set
+            date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
+            date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
+            category: event.event_category || 'other', // Ensure category is set
+        };
 
-    showModalEdit.value = true; // Open modal first
-
-    nextTick(() => {
-        console.log("Setting Tiptap Content:", currentEvent.value.description);
-    });
+        showModalEdit.value = true; // Open the edit modal
+    } catch (error) {
+        console.error('Error in editItem:', error);
+        alert('Failed to load event details for editing.');
+    }
 };
 
 const filteredSortedEvents = computed(() => {
@@ -315,14 +337,17 @@ const openAddEventModal = () => {
     currentEvent.value = {
         id: null,
         title: '',
+        title_en: '',
         image: '',
         organizer: '',
         description: '',
+        description_en: '',
         category: 'other',
         date_start: '',
         date_end: '',
         status: false,
         location_name: '',
+        location_name_en: '',
         location_url: '',
         register_url: '',
     };
@@ -340,20 +365,28 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedEvents.map(event =>
             fetch(`/api/${apiEndpoint}/${event.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...event, status: publish ? 1 : 0 })
+                headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: publish ? 1 : 0 }),
             })
         );
 
-        await Promise.all(updatePromises);
+        const responses = await Promise.all(updatePromises);
 
+        // Check for any failed updates
+        const failedUpdates = responses.filter(response => !response.ok);
+        if (failedUpdates.length > 0) {
+            alert('Some events failed to update.');
+        }
+
+        // Update the local state for successfully updated events
         selectedEvents.forEach(event => {
             event.status = publish ? 1 : 0;
         });
 
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected events.`);
-    } catch {
+    } catch (error) {
         alert('Failed to update event status.');
+        console.error('Bulk Update Error:', error);
     }
 };
 
@@ -378,23 +411,27 @@ const submitEvent = async (publish) => {
         const url = isUpdate ? `/api/${apiEndpoint}/${currentEvent.value.id}` : `/api/${apiEndpoint}`;
 
         const payload = {
-            id: currentEvent.value.id,
             title: currentEvent.value.title,
-            description: currentEvent.value.description,
+            title_en: currentEvent.value.title_en,
             organizer: currentEvent.value.organizer,
+            description: currentEvent.value.description,
+            description_en: currentEvent.value.description_en,
             date_start: formattedDateStart,
             date_end: formattedDateEnd,
-            event_category: currentEvent.value.category,
-            status: publish ? 1 : 0,
-            image: currentEvent.value.image || '',
             location_name: currentEvent.value.location_name,
+            location_name_en: currentEvent.value.location_name_en,
             location_url: currentEvent.value.location_url,
             register_url: currentEvent.value.register_url,
+            event_category: currentEvent.value.category,
+            image: currentEvent.value.image,
+            status: publish ? 1 : 0,
         };
+
+        console.log('Sending payload:', payload); // Debug log
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -406,7 +443,7 @@ const submitEvent = async (publish) => {
 
         const result = await response.json();
         if (!isUpdate) {
-            currentEvent.value.id = result.id;
+            currentEvent.value.id = result.eventId; // Ensure the new event ID is stored
             alert('Event added successfully.');
         } else {
             alert('Event updated successfully.');
@@ -414,7 +451,7 @@ const submitEvent = async (publish) => {
 
         showModalAddEvent.value = false;
         showModalEdit.value = false;
-        fetchEvents();
+        await fetchEvents(); // Refresh the event list
     } catch (error) {
         alert('Error while submitting event.');
         console.error('Submit Event Error:', error);
@@ -471,7 +508,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 
@@ -738,40 +775,47 @@ const cancelCrop = () => {
 
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
-    display: table-cell;
-    width: 5%;
+    width: 6%;
 }
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 30%;
+    width: 8%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-    width: 15%;
+    width: 20%;
+    max-width: max-content;
 }
 
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    text-align: center;
 }
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
     width: 10%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 6%;
+    width: 12%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-    display: table-cell;
     width: 8%;
+    text-align: center;
+}
+
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+    width: 8%;
+    text-align: center;
 }
 
 .action-btn-container {
@@ -854,7 +898,7 @@ const cancelCrop = () => {
     position: relative;
 }
 
-.news-check-publish {
+.events-check-publish {
     display: flex;
     gap: 1.5rem;
 }
@@ -961,7 +1005,7 @@ const cancelCrop = () => {
     gap: 1rem;
 }
 
-.published-news-btn {
+.published-events-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -978,18 +1022,18 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.published-news-btn:hover {
+.published-events-btn:hover {
     color: white;
     background-color: #599c91;
 }
 
-.published-news-btn:active {
+.published-events-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
 
-.unpublished-news-btn {
+.unpublished-events-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -1005,18 +1049,18 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.unpublished-news-btn:hover {
+.unpublished-events-btn:hover {
     color: white;
     background-color: #569187;
 }
 
-.unpublished-news-btn:active {
+.unpublished-events-btn:active {
     border: #569187 solid 3px;
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
 
-.add-news-btn {
+.add-events-btn {
     word-wrap: nowrap;
     all: unset;
     font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -1033,12 +1077,12 @@ const cancelCrop = () => {
     font-weight: 600;
 }
 
-.add-news-btn:hover {
+.add-events-btn:hover {
     color: white;
     background-color: #4E6D16;
 }
 
-.add-news-btn:active {
+.add-events-btn:active {
     border: #364b10 solid 3px;
     background-color: #364b10;
     box-shadow: outset 0px 0px 0px 3px white;
@@ -1458,5 +1502,19 @@ input:checked+.hotnews-slider:before {
 
 .tags-suggestions div:hover {
     background: #f0f0f0;
+}
+
+.event-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.checkbox-decorate {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: #4E6D16;
 }
 </style>

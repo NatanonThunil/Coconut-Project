@@ -96,10 +96,10 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(expert)" class="edit-btn"><img src="@/assets/icon/pen.png"
+                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png"
                                     alt=""></button>
                             <button @click="askDelete(expert.id, expert.name)" class="delete-btn"><img
-                                    src="@/assets/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -169,14 +169,14 @@
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
                         <option value="3">Type 3</option>
-                        <option value="4">Type 4</option>
+                        
                     </select>
                     <label>Image</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleFileUpload">
-                            <img v-if="!currentExpert.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
                             <div v-if="currentExpert.image" class="image-preview">
                                 <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
@@ -216,10 +216,8 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
-import '@/assets/styles/backend_style.css';
-import Cropper from 'cropperjs';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import 'cropperjs/dist/cropper.css';
 
 const apiEndpoint = 'experts';
@@ -317,7 +315,7 @@ const toggleStatus = async (expert) => {
         const newStatus = !expert.status;
         const response = await fetch(`/api/${apiEndpoint}/${expert.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ ...expert, status: newStatus ? 1 : 0 }),
         });
 
@@ -334,7 +332,7 @@ const toggleStatus = async (expert) => {
 
 const fetchExperts = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
         const expertsWithTags = await Promise.all(response.map(async (expert) => {
             const tagsResponse = await fetchAllTagsForExpert(expert.id);
             return { ...expert, selected: false, tags: tagsResponse.map(tag => tag.text) };
@@ -349,7 +347,7 @@ const fetchExperts = async () => {
 
 const fetchAllTagsForExpert = async (expertId) => {
     try {
-        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`);
+        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`,{headers: { 'CKH': '541986Cocon' },});
         return Array.isArray(response) ? response : [];
     } catch (error) {
         console.error('Error fetching tags:', error.message, error.stack);
@@ -433,7 +431,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedExperts.map(expert =>
             fetch(`/api/${apiEndpoint}/${expert.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' },
                 body: JSON.stringify({ ...expert, status: publish ? 1 : 0 })
             })
         );
@@ -479,7 +477,7 @@ const submitExpert = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -521,7 +519,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

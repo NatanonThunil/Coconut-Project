@@ -1,178 +1,380 @@
 <template>
-  <div style="height: calc(100dvh - 10rem);">
-    <Navbar selecto="pest" />
+  <Navbar selecto="pests" />
+  <div style="height: 8rem"></div>
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/coconut-information/pest">{{
+      $t("Pest Information")
+    }}</NuxtLinkLocale
+    >/
+  </div>
+  <h1 class="context-header">{{ $t("Pest") }}</h1>
+  <div style="height: 5rem"></div>
 
-    <h3 class="header-content">{{ $t("pest") }}</h3>
-    <div class="header-container">
-      <h1>{{ $t("Pest") }}</h1>
-    </div>
+  <!-- Search Input -->
+  <label class="coconut-v-input">
+    <img src="/icon/search.svg" alt="search icon" />
+    <input
+      type="text"
+      placeholder="Search by name..."
+      v-model="searchQuery"
+      @input="filterPests"
+    />
+  </label>
 
-    <!-- Search Bar (Centered) -->
-    <div class="search-container">
-      <label class="coconut-v-input">
-        <img src="@/assets/icon/search.svg" alt="Search Icon" />
-        <input
-          type="text"
-          placeholder="ค้นหาด้วยชื่อ..."
-          v-model="searchQuery"
-        />
-      </label>
-    </div>
-
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-      <button>{{ $t("All") }}</button>
-
-      <button>{{ $t("Insect") }}</button>
-
-      <button>{{ $t("Disease") }}</button>
-
-      <button>{{ $t("Weed") }}</button>
-
-      <button>{{ $t("Other enemies") }}</button>
-    </div>
-
-    <div style="height: 2rem"></div>
-
-    <!-- Loading state -->
-    <div class="event-card-section" v-if="isLoading">
-      <div style="display: flex; gap: 2rem; flex-direction: row">
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-      </div>
-    </div>
-
-    <!-- Render pest data -->
-    <div
-      class="event-card-section"
-      v-if="!isLoading && filteredPests.length > 0"
-    >
-      <NuxtLink
-        v-for="(pest, index) in filteredPests"
-        :key="index"
-        class="event-card"
-        :to="`/coconut-information/pest/details/${pest.id}`"
+  <!-- Filters -->
+  <div class="all-filter-container">
+    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+      <select
+        v-model="filter.model"
+        class="filter-select"
+        @change="filterPests"
       >
-        <div class="event-card-image">
-          <img
-            :src="pest.image || 'https://placehold.co/600x400'"
-            alt="Pest Image"
-            draggable="false"
-          />
-        </div>
-        <div class="event-card-text">
-          <p class="event-title">{{ pest.name }}</p>
-          <div class="event-card-date">
-            <img
-              src="@/assets/icon/calenda.svg"
-              alt="Calendar Icon"
-              draggable="false"
-            />
-            <p class="event-date">{{ pest.sci_name }}</p>
-          </div>
-        </div>
-      </NuxtLink>
-    </div>
+        <option value="">{{ filter.label }}</option>
+        <option
+          v-for="option in filter.options"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.text }}
+        </option>
+      </select>
+    </label>
+  </div>
 
-    <!-- No data found -->
-    <div class="no-events" v-if="!isLoading && filteredPests.length === 0">
-      <p>No pests found.</p>
-    </div>
+  <!-- Loading State -->
+  <div v-if="loading" class="all-event-card-container">
+    <CardShimmer v-for="index in 30" :key="index" />
+  </div>
+  <div v-else-if="filteredPests.length === 0" class="no-results">
+    <img
+      src="/icon/notfound.png"
+      draggable="false"
+      alt="No pests found"
+    />
+    {{ $t("No pests found") }}
+  </div>
+  <div v-else class="all-event-card-container">
+    <router-link
+      v-for="(pest, index) in paginatedPests"
+      :key="pest.id"
+      :to="`/coconut-information/pest/details/${pest.id}`"
+    >
+      <PestCard
+        :image="pest.image || defaultImage"
+        :title="currentLocale === 'th' ? pest.name : pest.name_en"
+        :description="pest.sci_name || 'No description available'"
+      />
+    </router-link>
+  </div>
+
+  <!-- Pagination -->
+  <div v-if="!loading" class="pagination">
+    <button @click="changePage('prev')" :disabled="currentPage === 1">
+      Prev
+    </button>
+    <input
+      type="number"
+      v-model.number="pageInput"
+      @change="goToPage"
+      :min="1"
+      :max="totalPages"
+    />
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <button @click="changePage('next')" :disabled="currentPage === totalPages">
+      Next
+    </button>
   </div>
 </template>
 
 <script>
+import { useHead } from "@vueuse/head";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import "swiper/swiper-bundle.css";
+import PestCard from "@/components/PestCard.vue"; // Add this import
+import { useI18n } from "vue-i18n"; // Add this import
+
 export default {
+  components: {
+    Swiper,
+    SwiperSlide,
+    PestCard, // Register the component
+  },
   data() {
     return {
       pests: [],
-      isLoading: true,
+      filteredPests: [],
       searchQuery: "",
+      loading: true,
+      defaultImage: "https://placehold.co/600x400",
+      filters: {
+        category: {
+          label: this.$t("Category"),
+          model: "",
+          options: [
+            { value: "0", text: this.$t("Young-coconut") },
+            { value: "1", text: this.$t("Old-coconut") },
+          ],
+        },
+        type: {
+          label: this.$t("All"),
+          model: "",
+          options: [
+            { value: "0", text: this.$t("Pest") },
+            { value: "1", text: this.$t("Weed") },
+            { value: "2", text: this.$t("Disease") },
+            { value: "3", text: this.$t("Insect") },
+            { value: "4", text: this.$t("Other enemies") },
+          ],
+        },
+      },
+      currentPage: 1,
+      itemsPerPage: 30,
+      pageInput: 1,
     };
   },
   computed: {
-    filteredPests() {
-      return this.pests.filter((pest) =>
-        pest.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+    currentLocale() {
+      const { locale } = useI18n(); // Correct the usage of useI18n
+      return locale.value;
     },
+    totalPages() {
+      return Math.ceil(this.filteredPests.length / this.itemsPerPage);
+    },
+    paginatedPests() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredPests.slice(start, start + this.itemsPerPage);
+    },
+  },
+  async mounted() {
+    window.scrollTo(0, 0);
+    try {
+      setTimeout(async () => {
+        const response = await fetch("/api/pests", {
+          headers: {
+            CKH: "541986Cocon",
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        this.pests = data;
+        this.filteredPests = data;
+        this.loading = false;
+      }, 200);
+    } catch (error) {
+      console.error("Error fetching pests:", error);
+    }
   },
   methods: {
-    async fetchPests() {
-      try {
-        this.isLoading = true;
-        const response = await fetch("/api/pests");
-        if (!response.ok) throw new Error("Failed to fetch pests");
+    filterPests() {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredPests = this.pests.filter((pest) => {
+        const nameTh = (pest.name_th || "").toLowerCase();
+        const nameEng = (pest.name_eng || "").toLowerCase();
+        const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
+        const matchesCategory =
+          this.filters.category.model === "" ||
+          pest.category.toString() === this.filters.category.model;
+        const matchesType =
+          this.filters.type.model === "" ||
+          pest.type.toString() === this.filters.type.model;
 
-        const data = await response.json();
+        return matchesQuery && matchesCategory && matchesType;
+      });
+    },
 
-        this.pests = data.filter((pest) => pest.status === 1);
-      } catch (error) {
-        console.error("Error fetching pests:", error);
-        this.pests = [];
-      } finally {
-        this.isLoading = false;
+    changePage(direction) {
+      if (direction === "next" && this.currentPage < this.totalPages) {
+        this.currentPage++;
+      } else if (direction === "prev" && this.currentPage > 1) {
+        this.currentPage--;
       }
     },
+    goToPage() {
+      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
+        this.currentPage = this.pageInput;
+      } else {
+        this.pageInput = this.currentPage;
+      }
+    },
+    resetFilters() {
+      this.filters.category.model = "0";
+      this.filters.type.model = "1";
+      this.filterPests();
+    },
+    clearSearch() {
+      this.searchQuery = "";
+      this.filterPests();
+    },
   },
-  mounted() {
-    this.fetchPests();
+  setup() {
+    useHead({
+      title: "🥥Coconut - Pest Information",
+      meta: [
+        {
+          name: "description",
+          content: "Pest Information page for Coconut Knowledge Hub",
+        },
+      ],
+    });
   },
 };
 </script>
 
 <style scoped>
-/* Centering the search bar */
-.search-container {
-  display: flex;
-  justify-content: center;
-  margin: 1.5rem 0;
-}
-
-/* Navigation Buttons */
-.nav-buttons {
-  display: flex;
-  justify-content: center;
+.all-filter-container {
+  margin-top: 1rem;
   gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  padding-bottom: 1rem;
+  display: flex;
+  justify-content: start;
+  justify-self: center;
+  width: 60%;
 }
 
-.nav-buttons a {
-  text-decoration: none;
+.filters-container {
+  display: flex;
+  justify-content: center;
 }
 
-.nav-buttons button {
-  background-color: #4e6d16;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
+.filter-dropdown {
+  width: 100%;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.8rem;
   border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
   cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s ease-in-out;
-  min-width: 120px;
+}
+
+.filter-select:focus {
+  border-color: #4e6d16;
+}
+
+/* Swiper Styles */
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  padding: 0rem 20%;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-pagination-bullet {
+  background: #4e6d16;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #4e6d16;
+}
+
+.information-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  min-width: 300px;
+  /* Minimum size for big cards */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.information-card:hover {
+  transform: scale(1.05);
+}
+
+.information-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+.information-card .card-content {
+  padding: 1rem;
   text-align: center;
 }
 
-.nav-buttons button:hover {
-  background-color: #3a5111;
+/* PestCards Styles */
+.pest-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  min-width: 300px;
+  /* Minimum size for big cards */
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Search Bar */
+.pest-card:hover {
+  transform: scale(1.05);
+}
+
+.pest-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+.pest-card .card-content {
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Small Card Styles */
+.small-card {
+  width: 100%;
+  max-width: 200px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.small-card:hover {
+  opacity: 1;
+}
+
+/* Existing Styles */
+.context-header {
+  display: flex;
+  justify-self: center;
+}
+
 label.coconut-v-input {
   transition: ease-in-out 0.5s;
   display: flex;
-  justify-content: center;
+  justify-self: center;
   width: 60%;
   height: 3rem;
   outline: 3px solid #4e6d16;
   border-radius: 10px;
   overflow: hidden;
   cursor: text;
+  animation: btnexpand 0.5s ease-in-out forwards;
 }
 
 label.coconut-v-input:hover {
@@ -195,100 +397,181 @@ label.coconut-v-input input {
   width: 90%;
 }
 
-/* No Data Found */
-.no-events {
-  display: flex;
-  justify-content: center;
-  margin: 10rem;
+@keyframes shimmer-effect {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-/* Event Card Section */
-.event-card-section {
+.coconut-v-cards-container {
+  height: auto;
+  width: 80%;
   display: flex;
+  justify-self: center;
+  justify-content: center;
   flex-wrap: wrap;
+  gap: 2rem;
+  margin: 2rem;
+}
+
+.CardShimmer {
+  height: 18rem;
+  width: 15rem;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer-effect 1.5s infinite;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
-  justify-content: center;
-  width: 100%;
-  padding: 1rem;
+  margin: 2rem;
 }
 
-/* Event Card */
-.event-card {
-  all: unset;
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: #4e6d16;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  overflow: hidden;
-  min-width: 16rem;
-  flex: 1 1 calc(25% - 1rem);
-  max-width: 22rem;
-  height: 22rem;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
-  background-color: white;
-  transition: ease-in-out 0.4s;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination .page-input {
+  width: 3rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0.3rem;
+}
+
+.pagination .pagination-line {
+  width: fit-content;
+  min-width: 20%;
+  height: 4px;
+  background-color: #4e6d16;
+}
+
+.pagination-controller {
+  justify-content: center;
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
+  width: 20rem;
 }
 
-.event-card:hover {
-  outline: #4e6d16 solid 3px;
-  transform: scale(1.05);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+@media (max-width: 662px) {
+  .coconut-v-cards-container {
+    width: 90%;
+  }
 }
 
-.event-card .event-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: ease-in-out 0.2s;
+@keyframes btnexpand {
+  0% {
+    opacity: 0;
+    width: 20%;
+  }
+
+  100% {
+    opacity: 1;
+    width: 60%;
+  }
 }
 
-.event-card:hover .event-card-image {
+.bulge-card {
   transform: scale(1.1);
+  transition: transform 0.3s ease-in-out;
 }
 
-.event-card-image {
-  width: 100%;
-  height: 60%;
+/* Filter Container Styles */
+.homeeventfiltercontainer {
   display: flex;
   justify-content: center;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.5);
+  gap: 1rem;
+  margin: 1rem 0;
 }
 
-.event-card-text {
-  padding: 1rem;
+.filtli {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.filtli.selecto {
+  background-color: #4e6d16;
+  color: white;
+}
+
+.filtli:hover {
+  background-color: #4e6d16;
+  color: white;
+}
+
+/* New Filter Styles */
+.filtli.upstream {
+  background-color: #e0f7fa;
+}
+
+.filtli.midstream {
+  background-color: #ffecb3;
+}
+
+.filtli.downstream {
+  background-color: #ffe0b2;
+}
+
+.filtli.young-coconut {
+  background-color: #c8e6c9;
+}
+
+.filtli.mature-coconut {
+  background-color: #d1c4e9;
+}
+
+/* Dropdown Filter Styles */
+.dropdown-filter {
+  margin: 1rem 0;
   display: flex;
-  flex-direction: column;
-  height: 40%;
+  justify-content: center;
 }
 
-.event-title {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  text-overflow: ellipsis;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #333;
+.dropdown-filter select {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
 }
-.navcontainer {
-  width: 100%;
-  height: 100px;
-  border: rgb(255, 255, 255) solid 2px;
+
+/* Fade-in effect for cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
-.header-container {
-  border: rgb(255, 255, 255) solid 3px;
-  text-align: center;
-  margin-top: 0;
-  padding-top: 20px;
-  font-size: 2rem;
-}
-.header-content {
-  color: #ffffff;
-  margin-left: 2%;
-  font-weight: 300;
+
+.all-event-card-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin: 2rem;
+  justify-items: center;
 }
 </style>

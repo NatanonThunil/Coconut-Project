@@ -53,9 +53,12 @@ a {
 
 .Big-card {
     display: flex;
+    flex: 1 1;
     flex-direction: column;
-    height: 20rem;
-    width: 18rem;
+    height: 23rem;
+    width: 100%;
+    min-width: 17rem;
+    max-width:  23rem;
     background-color: white;
     overflow: hidden;
     border-radius: 10px;

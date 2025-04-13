@@ -1,16 +1,20 @@
 <template>
   <Navbar selecto="events" />
-  <div style="height: 10rem;"></div>
+  <div style="height: 8rem"></div>
+    <div class="faqs-path">
+      
+        <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+    </div>
   <h1 class="context-header">{{ $t('Events') }}</h1>
   <div style="height: 5rem;"></div>
 
-  <!-- Search Input -->
+
   <label class="event-v-input">
-    <img src="@/assets/icon/search.svg" alt="search icon">
-    <input type="text" placeholder="Search by name..." v-model="searchQuery" @input="filterEvents" />
+    <img src="/icon/search.svg" alt="search icon">
+    <input type="text" :placeholder="(currentLocale === 'th') ?'ค้นหาด้วยชื่อกิจกรรม...':'Search by Event`s name...' " v-model="searchQuery" @input="filterEvents" />
   </label>
 
-  <!-- Filters -->
+
   <div class="all-filter-container">
     <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
       <select v-model="filter.model" class="filter-select" @change="filterEvents">
@@ -22,66 +26,85 @@
     </label>
   </div>
 
-  <!-- Events -->
-  <div v-if="loading" class="all-event-card-container">
-    <EventCardShimmer v-for="index in itemsPerPage" :key="index" />
-  </div>
-  <div v-else-if="paginatedEvents.length === 0" class="no-results">
-    <img src="@/assets/icon/notfound.png" draggable="false" alt="No events found">
-    {{ $t('No events found') }}
-  </div>
-  <div v-else class="all-event-card-container">
-    <EventCards v-for="event in paginatedEvents" :key="event.id" :url="`/events/details/${event.id}`"
-      :image="event.image || 'https://placehold.co/600x400'" :title="event.title || 'No title provided'"
-      :datestart="formatDate(event.date_start) || 'No date provided'" :location="event.location_name || 'Unknown'"
-      :description="event.description || 'No description available'" />
+
+  <div class="grid-container">
+    <div v-if="loading" class="all-event-card-container">
+      <EventCardShimmer v-for="index in itemsPerPage" :key="index" />
+    </div>
+    <div v-else-if="paginatedEvents.length === 0" class="no-results">
+      <img src="/icon/notfound.png" draggable="false" alt="No events found">
+      {{ $t('No events found') }}
+    </div>
+    <div v-else class="all-event-card-container">
+      <EventCards v-for="event in paginatedEvents" :key="event.id" :url="`/events/details/${event.id}`"
+        :image="event.image || 'https://placehold.co/600x400'" :title="(currentLocale === 'th') ? (event.title || 'No title provided')
+          : (event.title_en || 'No English title provided')" :datestart="formatDate(event.date_start) || 'No date provided'"
+        :location="(currentLocale === 'th')? (event.location_name || 'Unknown') : (event.location_name_en || 'No English location provided')" :description="(currentLocale === 'th') ? (event.description || 'No description available'):(event.description_en || 'No description available')" />
+    </div>
   </div>
 
-  <!-- Pagination -->
-  <div v-if="!loading" class="pagination">
-    <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
-    <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
-    <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
-  </div>
+  <div class="pagination">
+        <div class="pagination-line"></div>
+        <div class="pagination-controller">
+            <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
+            <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+                class="page-input" />
+            <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
+            <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
+        </div>
+        <div class="pagination-line"></div>
+    </div>
+
+  
 </template>
 
 
 <script>
+import nfi from '/img/News404.png';
+import { computed, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 export default {
+  setup() {
+    const { locale, t } = useI18n();
+    const currentLocale = computed(() => locale.value);
+
+    const filters = reactive({
+      category: {
+        label: computed(() => t('Event_category')),
+        model: '',
+        options: [
+          { value: 'educate', text: computed(() => t('Educate')) },
+          { value: 'conference', text: computed(() => t('Conference')) },
+          { value: 'other', text: computed(() => t('Other')) },
+        ],
+      },
+      status: {
+        label: computed(() => t('Event_status')),
+        model: '',
+        options: [
+          { value: 'upcoming', text: computed(() => t('Upcoming')) },
+          { value: 'ongoing', text: computed(() => t('Ongoing')) },
+          { value: 'finished', text: computed(() => t('Finished')) },
+        ],
+      },
+      sort: {
+        label: computed(() => t('Event_date')),
+        model: 'newest',
+        options: [
+          { value: 'newest', text: computed(() => t('Newest')) },
+          { value: 'oldest', text: computed(() => t('Oldest')) },
+        ],
+      },
+    });
+
+    return { currentLocale, filters };
+  },
   data() {
     return {
       events: [],
       filteredEvents: [],
       searchQuery: '',
-      filters: {
-        category: {
-          label: this.$t('Category'),
-          model: '',
-          options: [
-            { value: 'educate', text: this.$t('Educate') },
-            { value: 'conference', text: this.$t('Conference') },
-            { value: 'other', text: this.$t('Other') },
-          ],
-        },
-        status: {
-          label: this.$t('Status'),
-          model: '',
-          options: [
-            { value: 'upcoming', text: this.$t('Upcoming') },
-            { value: 'ongoing', text: this.$t('Ongoing') },
-            { value: 'finished', text: this.$t('Finished') },
-          ],
-        },
-        sort: {
-          label: this.$t('Sort By'),
-          model: 'newest',
-          options: [
-            { value: 'newest', text: this.$t('Newest') },
-            { value: 'oldest', text: this.$t('Oldest') },
-          ],
-        },
-      },
       loading: true,
       currentPage: 1,
       itemsPerPage: 30,
@@ -100,7 +123,12 @@ export default {
   async mounted() {
     window.scrollTo(0, 0);
     try {
-      const response = await fetch('/api/events_table');
+      const response = await fetch('/api/events', {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
       if (!response.ok) throw new Error('Failed to fetch events');
       const data = await response.json();
       this.events = Array.isArray(data) ? data.filter(event => event.status === 1) : [];
@@ -115,15 +143,18 @@ export default {
     filterEvents() {
       const now = new Date();
       const { category, status, sort } = this.filters;
+      const searchQueryLower = this.searchQuery.toLowerCase();
 
       this.filteredEvents = this.events
         .filter(event => {
-          if (this.searchQuery && !event.title?.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          if (this.searchQuery && !((event.title || "").toLowerCase().includes(searchQueryLower))) {
             return false;
           }
+
           if (category.model && event.event_category !== category.model) {
             return false;
           }
+
           if (status.model === 'ongoing' && !(new Date(event.date_start) <= now && new Date(event.date_end) >= now)) {
             return false;
           }
@@ -141,8 +172,9 @@ export default {
             : new Date(b.date_start) - new Date(a.date_start);
         });
 
-      this.currentPage = 1; // Reset to first page on filter change
+      this.currentPage = 1;
     },
+
     changePage(direction) {
       if (direction === 'next' && this.currentPage < this.totalPages) {
         this.currentPage++;
@@ -157,16 +189,15 @@ export default {
         this.pageInput = this.currentPage;
       }
     },
-    // formatDate(date) {
-    //   // Add your date formatting logic here
-    //   return new Date(date).toLocaleDateString();
-    // },
   },
 };
 </script>
 
 
+
 <style scoped>
+
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -239,16 +270,16 @@ export default {
 }
 
 .all-event-card-container {
-
-  margin: 1.8rem;
-  display: flex;
-  justify-self: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
+  max-width: calc(5 * 20rem + 4 * 15px);
+  gap: 15px;
   width: 80%;
-  min-height: 20rem;
-  gap: 1.5rem;
+  justify-content: center;
+  margin: 1rem auto;
 }
+
+
 
 h1.context-header {
   text-align: center;
@@ -303,4 +334,19 @@ label.event-v-input input {
 .filter-select:focus {
   border-color: #4e6d16;
 }
+
+@media (max-width: 1024px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(2, 20rem);
+  }
+}
+
+/* Mobile View (1-2 Columns) */
+@media (max-width: 691px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(1, 20rem);
+  }
+}
+
+
 </style>

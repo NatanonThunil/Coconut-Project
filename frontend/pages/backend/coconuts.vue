@@ -74,8 +74,8 @@
                         </label>
                     </td>
                     <td class="action-buttons">
-                        <button @click="editItem(item)" class="edit-btn"><img src="@/assets/icon/pen.png" alt="Edit"></button>
-                        <button @click="askDelete(item.id, item.name_eng)" class="delete-btn"><img src="@/assets/icon/trash.png" alt="Delete"></button>
+                        <button @click="editItem(item)" class="edit-btn"><img src="/icon/pen.png" alt="Edit"></button>
+                        <button @click="askDelete(item.id, item.name_eng)" class="delete-btn"><img src="/icon/trash.png" alt="Delete"></button>
                     </td>
                 </tr>
             </tbody>
@@ -135,9 +135,9 @@
 <script setup>
 definePageMeta({ layout: "admin" });
 import { ref, onMounted, computed } from 'vue';
-// import '@/assets/styles/be-coconuts.css';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
+
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 
 const config = ref({
     title: "จัดการมะพร้าว",
@@ -215,7 +215,9 @@ const filteredSortedCoconuts = computed(() => {
 
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`);
+        const response = await fetch(`/api/${config.value.apiEndpoint}`, {
+      headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
+    });
         if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
         const data = await response.json();
         apisdatas.value = Array.isArray(data.coconuts) ? data.coconuts.map(coconut => ({ ...coconut, selected: false })) : [];
@@ -230,22 +232,31 @@ const fetchApi = async () => {
 const toggleStatus = async (coconut) => {
     try {
         const newStatus = !coconut.status;
-        const response = await fetch(`/api/${config.value.apiEndpoint}/${coconut.id}`, {
+        coconut.status = newStatus ? 1 : 0;
+
+        
+        const updatedCoconut = { ...coconut, status: newStatus };
+
+   
+        const response = await fetch(`/api/coconuts/${coconut.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...coconut, status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedCoconut), 
         });
 
         if (!response.ok) {
             throw new Error('Failed to update coconut status.');
         }
 
+        // If the update is successful, the image will remain intact.
         coconut.status = newStatus;
     } catch (error) {
         alert('Error updating coconut status.');
         console.error(error);
     }
 };
+
+
 
 const openAddCoconutModal = () => {
     currentCoconut.value = {
@@ -298,7 +309,7 @@ const submitCoconut = async (publish) => {
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
@@ -336,7 +347,7 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedCoconuts.map(coconut =>
             fetch(`/api/coconuts/${coconut.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...coconut, status: publish ? 1 : 0 })
             })
         );
@@ -364,7 +375,7 @@ const confirmDelete = async () => {
     try {
         const response = await fetch(`/api/coconuts/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
             body: JSON.stringify({ id: deleteId.value }),
         });
 

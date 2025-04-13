@@ -23,7 +23,10 @@
               }"
           >
               <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
-                  <aboutusCard :url="`/aboutus/${lurl}/details/${employee.id}`" :image="getEmployeeImage(employee.image)" :name="getTitle(employee)" :description="employee.description"/>
+                  <aboutusCard :url="`/aboutus/${lurl}/details/${employee.id}`" 
+                               :image="getEmployeeImage(employee.image)" 
+                               :name="getTitle(employee)" 
+                               :description="employee.description"/>
               </SwiperSlide>
           </Swiper>
       </div>
@@ -36,7 +39,7 @@
 
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
-import noimageHandle from '@/assets/img/no-image-handle.png';
+import noimageHandle from '/img/no-image-handle.png';
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -83,9 +86,14 @@ export default {
       },
       async fetchEmployees() {
           try {
-              const response = await fetch(this.apiEndPoint);
+              const response = await fetch(this.apiEndPoint , {
+                  headers: {
+                      "CKH": '541986Cocon',
+                  },
+              });
               if (!response.ok) throw new Error("Failed to fetch employees");
               const data = await response.json();
+              console.log("Fetched data:", data); // Debugging fetched data
               this.employees = Array.isArray(data) ? data.filter(emp => emp.status === 1) : [];
           } catch (error) {
               console.error("Error fetching employees:", error);

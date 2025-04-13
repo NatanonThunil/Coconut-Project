@@ -5,8 +5,8 @@
         <div class="event-card-details-container">
             <div class="event-card-title">{{ title }}</div>
             <div class="event-date-and-local">
-                <div class="event-card-datestart"><img src="@/assets/icon/calenda.svg">{{ datestart }}</div>
-                <div class="event-card-location"><img src="@/assets/icon/location.png">{{ location }}</div>
+                <div class="event-card-datestart"><img src="/icon/calenda.svg">{{ datestart }}</div>
+                <div class="event-card-location"><img src="/icon/location.png">{{ location }}</div>
             </div>
             <div class="event-card-details">{{ description }}</div>
         </div>
@@ -16,6 +16,7 @@
 
 
 <script>
+
 export default {
     props: {
         url: {

@@ -27,28 +27,51 @@
                             <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
                                 class="checkbox-decorate" />
                             <span>ID</span>
-                            <button @click="toggleSort('id')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button>
+                            <button @click="toggleSort('id')">
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
+                            </button>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Title<button @click="toggleSort('title')"><div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div></button></div>
+                            <div>Image</div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Author<button @click="toggleSort('author')"><div :class="{'rotate': sortBy === 'author' && sortDirection === -1}">▲</div></button></div>
+                            <div>Title<button @click="toggleSort('title')">
+                                    <div :class="{ 'rotate': sortBy === 'title' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
-                    <th><div class="checkbox-id-container">
-                            <div>Hot news <button @click="toggleSort('hot_new')"><div :class="{'rotate': sortBy === 'hot_new' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Create date <button @click="toggleSort('upload_date')"><div :class="{'rotate': sortBy === 'upload_date' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Status <button @click="toggleSort('status')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Author<button @click="toggleSort('author')">
+                                    <div :class="{ 'rotate': sortBy === 'author' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Hot news <button @click="toggleSort('hot_new')">
+                                    <div :class="{ 'rotate': sortBy === 'hot_new' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Create date <button @click="toggleSort('upload_date')">
+                                    <div :class="{ 'rotate': sortBy === 'upload_date' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Status <button @click="toggleSort('status')">
+                                    <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -57,9 +80,12 @@
                 <tr v-for="news in filteredSortedNews" :key="news.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="news.selected" />
+                            <input type="checkbox" v-model="news.selected" class="checkbox-decorate" />
                             <p>{{ news.id }}</p>
                         </div>
+                    </td>
+                    <td>
+                        <img v-if="news.image" :src="news.image" alt="News Image" class="news-image" />
                     </td>
                     <td>{{ news.title }}</td>
                     <td>{{ news.author }}</td>
@@ -67,6 +93,7 @@
                         {{ news.hot_new ? "✓" : "✕" }}
                     </td>
                     <td>{{ formatDate(news.upload_date) }}</td>
+                    
                     <td>
                         <label class="status-toggle">
                             <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
@@ -75,9 +102,9 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container"> <button @click="editItem(news)" class="edit-btn"><img
-                                    src="@/assets/icon/pen.png" alt=""></button>
+                                    src="/icon/pen.png" alt=""></button>
                             <button @click="askDelete(news.id, news.title)" class="delete-btn"><img
-                                    src="@/assets/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -101,11 +128,20 @@
     <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
+            <div class="lang-toggle">
+                <button type="button" @click="toggleLang">
+                    Switch to {{ activeLang? 'English' : 'Thai' }}
+                </button>
+            </div>
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>พาดหัวข่าว</label>
-                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
+                    <label v-show="activeLang">พาดหัวข่าว</label>
+                    <input v-show="activeLang" class="add-text-input" v-model="currentNews.title"
+                        placeholder="Enter title" required />
+                    <label v-show="!activeLang">พาดหัวข่าว Eng</label>
+                    <input v-show="!activeLang" class="add-text-input" v-model="currentNews.title_en"
+                        placeholder="Enter title" required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
                         required />
@@ -114,7 +150,7 @@
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
                             @drop.prevent="handleDragDrop">
-                            <img v-if="!currentNews.image" src="@/assets/icon/upload.svg" draggable="false" />
+                            <img v-if="!currentNews.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentNews.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
                             <div v-if="currentNews.image" class="image-preview">
                                 <img :src="currentNews.image" alt="Uploaded Image" class="preview-image" />
@@ -136,10 +172,13 @@
                         </label>
                     </div>
                     <label>Description</label>
-                    <TiptapEditor v-model="currentNews.description" />
-
-                    <label>Summary</label>
-                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <TiptapEditor v-show="activeLang" v-model="currentNews.description" />
+                    <TiptapEditor v-show="!activeLang" v-model="currentNews.description_en" />
+                    <label v-show="activeLang">สรุป</label>
+                    <textarea v-show="activeLang" v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <label v-show="!activeLang">สรุป Eng</label>
+                    <textarea v-show="!activeLang" v-model="currentNews.summerize_en"
+                        placeholder="Enter summary"></textarea>
                 </section>
             </div>
             <div class="modal-actions">
@@ -169,12 +208,12 @@ definePageMeta({
     layout: "admin",
 });
 import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '@/assets/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '@/assets/icon/eye-slash-alt-svgrepo-com.svg';
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '@/assets/styles/backend_style.css'; // Import shared CSS
+
 
 const apiEndpoint = 'news';
 const searchQuery = ref('');
@@ -188,15 +227,18 @@ const showModalAddnews = ref(false);
 const showModalEdit = ref(false);
 const isDragging = ref(false);
 const fileInput = ref(null);
-const sortBy = ref(null);
-const sortDirection = ref(1);
+const sortBy = ref('id');
+const sortDirection = ref(-1);
 const currentNews = ref({
     id: null,
     title: '',
+    title_en: '',
     image: '',
     author: '',
     description: '',
+    description_en: '',
     summerize: '',
+    summerize_en: '',
     hot_new: false,
     upload_date: new Date().toISOString().split('T')[0],
     status: false,
@@ -205,30 +247,39 @@ const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
+const activeLang = ref(true);
+const toggleLang = () => {
+    activeLang.value = activeLang.value === true ? false : true;
+};
 
 const toggleStatus = async (news) => {
     try {
-
         const newStatus = !news.status;
 
+        // Send only the fields required for updating the status
+        const payload = { status: newStatus ? 1 : 0 };
 
         const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...news, status: newStatus ? 1 : 0 }),
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
+            const errorBody = await response.text();
+            console.error('Failed to update news status:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
+            });
             throw new Error('Failed to update news status.');
         }
 
         // Update status only after successful response
         news.status = newStatus;
-
-
     } catch (error) {
         alert('Error updating news status.');
-        console.error(error);
+        console.error('Error in toggleStatus:', error);
     }
 };
 
@@ -237,7 +288,12 @@ const triggerFileInput = () => {
 };
 const fetchNews = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`);
+        const response = await $fetch(`/api/${apiEndpoint}`, {
+            headers: {
+                "CKH": '541986Cocon',
+
+            },
+        });
         News.value = response.map(news => ({ ...news, selected: false }));
         NewsNum.value = News.value.length;
     } catch (error) {
@@ -263,35 +319,35 @@ const editItem = (news) => {
 
 
 const filteredSortedNews = computed(() => {
-  let filtered = News.value.filter(news =>
-    news.id.toString().includes(searchQuery.value) ||
-    news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    news.upload_date.includes(searchQuery.value)
-  );
-  
-  if (sortBy.value) {
-    filtered.sort((a, b) => {
-      let valA = a[sortBy.value];
-      let valB = b[sortBy.value];
-      
-      if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-      if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
-      if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-      if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
-      return 0;
-    });
-  }
-  return filtered;
+    let filtered = News.value.filter(news =>
+        news.id.toString().includes(searchQuery.value) ||
+        news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        news.upload_date.includes(searchQuery.value)
+    );
+
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            let valA = a[sortBy.value];
+            let valB = b[sortBy.value];
+
+            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+            if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
+            if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
+            if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
+            return 0;
+        });
+    }
+    return filtered;
 });
 
 const toggleSort = (column) => {
-  if (sortBy.value === column) {
-    sortDirection.value *= -1;
-  } else {
-    sortBy.value = column;
-    sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
-  }
+    if (sortBy.value === column) {
+        sortDirection.value *= -1;
+    } else {
+        sortBy.value = column;
+        sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
+    }
 };
 
 
@@ -299,10 +355,13 @@ const openAddNewsModal = () => {
     currentNews.value = {
         id: null,
         title: '',
+        title_en: '',
         image: '',
         author: '',
         description: '',
+        description_en: '',
         summerize: '',
+        summerize_en: '',
         hot_new: false,
         upload_date: new Date().toISOString().split('T')[0],
         status: false,
@@ -321,8 +380,8 @@ const bulkUpdateStatus = async (publish) => {
         const updatePromises = selectedNews.map(news =>
             fetch(`/api/news/${news.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...news, status: publish ? 1 : 0 })
+                headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: publish ? 1 : 0 }) // Only send the status field
             })
         );
 
@@ -333,8 +392,9 @@ const bulkUpdateStatus = async (publish) => {
         });
 
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected news items.`);
-    } catch {
+    } catch (error) {
         alert('Failed to update news status.');
+        console.error('Error in bulkUpdateStatus:', error);
     }
 };
 
@@ -357,32 +417,41 @@ const submitNews = async (publish) => {
 
         const isUpdate = !!currentNews.value.id;
         const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news_rest';
+        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news';
 
+    
         const payload = {
-            id: currentNews.value.id,
-            title: currentNews.value.title,
-            description: currentNews.value.description,
-            author: currentNews.value.author,
-            upload_date: currentNews.value.upload_date,
+            id: currentNews.value.id || null,
+            title: currentNews.value.title || '',
+            title_en: currentNews.value.title_en || '',
+            description: currentNews.value.description || '',
+            description_en: currentNews.value.description_en || '',
+            author: currentNews.value.author || '',
+            upload_date: currentNews.value.upload_date || '',
             status: publish ? 1 : 0,
-            hot_new: currentNews.value.hot_new,
-            summerize: currentNews.value.summerize,
-            image: currentNews.value.image || '',
+            hot_new: currentNews.value.hot_new || false,
+            summerize: currentNews.value.summerize || '',
+            summerize_en: currentNews.value.summerize_en || '',
+            image: currentNews.value.image?.startsWith('data:image') ? currentNews.value.image : null, // Validate image
         };
+
+      
 
         const response = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
+        const responseBody = await response.json();
+       
+
         if (!response.ok) {
-            throw new Error('Error saving the news.');
+            throw new Error(responseBody.error || 'Error saving the news.');
         }
 
         if (!isUpdate) {
-            currentNews.value.id = await response.json();
+            currentNews.value.id = responseBody.id;
             alert('News added successfully.');
         } else {
             alert('News updated successfully.');
@@ -394,7 +463,7 @@ const submitNews = async (publish) => {
 
     } catch (error) {
         alert('Error while submitting news.');
-        console.error(error);
+        console.error('Error in submitNews:', error); // Enhanced error logging
     }
 };
 
@@ -461,10 +530,13 @@ const askDelete = (id, title) => {
 };
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/news/${deleteId.value}`, {
+        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: deleteId.value }),
+            headers: {
+                'CKH': '541986Cocon',
+                'Content-Type': 'application/json'
+            }
+            // No body needed for DELETE request, just pass the `id` in the URL
         });
 
         const result = await response.json();
@@ -474,7 +546,7 @@ const confirmDelete = async () => {
             throw new Error(result.error || 'Failed to delete news.');
         }
 
-        // Update frontend list
+        // Update frontend list after successful deletion
         News.value = News.value.filter(news => news.id !== deleteId.value);
         NewsNum.value = News.value.length;
 
@@ -487,6 +559,8 @@ const confirmDelete = async () => {
         deleteId.value = null;
     }
 };
+
+
 
 
 
@@ -504,6 +578,33 @@ const toggleSelectAll = () => {
 </script>
 
 <style scoped>
+
+.lang-toggle {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.lang-toggle button {
+  background-color: #4E6D16;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.lang-toggle button:hover {
+  background-color: #3c5213;
+  transform: scale(1.05);
+}
+
+.lang-toggle button:active {
+  transform: scale(0.98);
+}
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -555,7 +656,8 @@ const toggleSelectAll = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -662,7 +764,8 @@ const toggleSelectAll = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -695,40 +798,49 @@ const toggleSelectAll = () => {
 
 .item-list-table th:nth-child(1),
 .item-list-table td:nth-child(1) {
-    display: table-cell;
-    width: 5%;
+    width: 6%;
 }
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 30%;
+    width: 8%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-    width: 15%;
+    width: 20%;
+    max-width: max-content;
 }
 
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    text-align: center;
+    
 }
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
     width: 10%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 6%;
+    width: 12%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-    display: table-cell;
     width: 8%;
+    text-align: center;
+    
+}
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+    width: 8%;
+    text-align: center;
+    
 }
 
 .action-btn-container {
@@ -895,7 +1007,8 @@ const toggleSelectAll = () => {
 }
 
 .item-list-table tbody {
-    max-height: 70dvh;
+    min-height: 40dvh;
+    max-height: 55dvh;
     overflow-y: auto;
     display: block;
 }
@@ -1224,19 +1337,43 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
-    .item-list-table th:nth-child(3),
-    .item-list-table td:nth-child(3) {
+
+    .item-list-table th:nth-child(4),
+    .item-list-table td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1500px) {
+
+    .item-list-table th:nth-child(2),
+    .item-list-table td:nth-child(2) {
         display: none;
     }
 }
 
 @media screen and (max-width: 1440px) {
-    .item-list-table th:nth-child(2),
-    .item-list-table td:nth-child(2) {
-        width: 10%;
-    }
+
+.item-list-table th:nth-child(3),
+.item-list-table td:nth-child(3) {
+    width: 18%;
 }
 
+}
+@media screen and (max-width: 1306px) {
+
+.item-list-table th:nth-child(5),
+.item-list-table td:nth-child(5) {
+    display: none;
+}
+}
+@media screen and (max-width: 1130px) {
+
+.item-list-table th:nth-child(6),
+.item-list-table td:nth-child(6) {
+    display: none;
+}
+}
 @media screen and (max-width: 1052px) {
     .add-btn-container {
         flex-direction: column;
@@ -1254,9 +1391,14 @@ input:checked+.hotnews-slider:before {
     .modal-add .modal-content section:nth-child(2) {
         width: 100%;
     }
+    .item-list-table th:nth-child(3),
+.item-list-table td:nth-child(3) {
+    width: 10%;
+}
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
@@ -1431,5 +1573,19 @@ input:checked+.hotnews-slider:before {
     border-color: #6F8C28;
     box-shadow: 0 0 5px rgba(111, 140, 40, 0.5);
     outline: none;
+}
+
+.news-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.checkbox-decorate {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: #4E6D16;
 }
 </style>

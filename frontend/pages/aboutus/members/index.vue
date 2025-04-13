@@ -1,5 +1,11 @@
 <template>
     <Navbar selecto="aboutus" />
+    <div style="height: 8rem"></div>
+    <div class="faqs-path">
+        
+        <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/aboutus">{{ $t('All Member') }}</NuxtLinkLocale>
+    </div>
     <page-header head="All Member" />
   
     <!-- Loading State -->
@@ -21,7 +27,7 @@
         @click="goToDetails(coconut.id)"
       /> -->
   
-      <AboutusCard v-for="coconut in paginatedCoconuts" :name="coconut.name || 'ชื่อไทย'" :description="coconut.description" :key="coconut.id" :image="coconut.image || 'https://via.placeholder.com/1280x720'" :url="`aboutus/employees/details/${coconut.id}`" @click="goToDetails(coconut.id)"/>
+      <AboutusCard v-for="coconut in paginatedCoconuts" :name="coconut.name || 'ชื่อไทย'" :description="coconut.description" :key="coconut.id" :image="coconut.image || 'https://via.placeholder.com/1280x720'" :url="`aboutus/members/details/${coconut.id}`" @click="goToDetails(coconut.id)"/>
     </div>
   
     <div class="pagination">
@@ -83,7 +89,12 @@
       window.scrollTo(0, 0);
       try {
         setTimeout(async () => {
-          const response = await fetch("/api/members_table");
+          const response = await fetch("/api/members", {
+      headers: {
+       "CKH": '541986Cocon',
+       
+      },
+    });
           if (!response.ok) throw new Error("Failed to fetch data");
           const data = await response.json();
           this.coconuts = data;
@@ -109,7 +120,7 @@
         }
       },
       goToDetails(id) {
-        this.$router.push(`/aboutus/employees/details/${id}`);
+        this.$router.push(`/aboutus/members/details/${id}`);
       },
     },
     setup() {
