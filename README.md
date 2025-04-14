@@ -34,7 +34,7 @@ API_BASE = '/coconut-api'
 ```
 
 - API news Method GET ใช้ได้แล้ว เหลือ 
-    - GET `Finished` (ตอนนี้ใช้ Mock Data ตอนนี้คอมไม่มี SQL)
+    - GET `Finished` (ใช้ Mock Data ตอนนี้คอมไม่มี SQL)
     - GET by ID
     - POST
     - PUT (id)
@@ -42,7 +42,7 @@ API_BASE = '/coconut-api'
     - ยังไม่ได้ Fetch data ที่หน้าบ้าน
 
 - ใช้ `RUN.bat` จัดการ package และเริ่มการทำงาน Project ได้เลย
-- 
+  
 
 # อัพเดต 13 apr.
 
