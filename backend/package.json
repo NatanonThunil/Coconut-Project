@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "coconuzz",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "back-end": "file:",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0"
   }
 }
