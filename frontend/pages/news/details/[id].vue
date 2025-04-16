@@ -56,6 +56,7 @@
 </template>
 
 <script>
+const { getNewsById } = useNews();
 import unyaprgard from '/icon/double-quotes.png';
 export default {
     data() {
@@ -72,18 +73,7 @@ export default {
         try {
             if (!cid) throw new Error('Missing news ID parameter');
 
-            const response = await fetch(`/api/news/${cid}`, {
-                headers: {
-                    "CKH": '541986Cocon',
-                },
-            });
-
-            if (!response.ok) {
-                console.error('API Response Error:', response.status, response.statusText);
-                throw new Error('Failed to fetch news details');
-            }
-
-            const data = await response.json();
+            const data = await getNewsById(cid); // Use the getNewsById function
             this.news = data.status ? data : null; // Ensure the news item has a valid status
             this.loading = false;
         } catch (error) {
@@ -103,8 +93,7 @@ export default {
             });
         }
     }
-}
-
+};
 </script>
 
 <style scoped>

@@ -58,7 +58,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import notfound from '/img/News404.png';
-
+const { getNews } = useNews();
 const newsItems = ref([]);
 const hotNews = ref(null);
 const loading = ref(true);
@@ -66,11 +66,7 @@ const regularNews = ref([]);
 
 const fetchNews = async () => {
   try {
-    const response = await $fetch('/api/news', {
-      headers: {
-        "CKH": '541986Cocon',
-      },
-    });
+    const response = await getNews(); // Corrected the invocation of getNews
     // Sort news items by descending id (highest id first)
     newsItems.value = response.sort((a, b) => b.id - a.id);
 

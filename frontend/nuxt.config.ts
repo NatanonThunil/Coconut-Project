@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config({ path: '../.env' })
 export default defineNuxtConfig({
 
   ssr: false,
@@ -10,6 +10,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: process.env.API_SECRET,
     public: {
+      urlBase: process.env.FE_BASE_URL,
       apiBase: process.env.API_BASE,
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
     },
@@ -51,7 +52,7 @@ export default defineNuxtConfig({
   ],
 
   modules: [
-    'nuxt-primevue',
+    // 'nuxt-primevue',
     '@nuxtjs/i18n',
   ],
 

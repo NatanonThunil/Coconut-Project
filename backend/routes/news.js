@@ -1,22 +1,31 @@
 import { Router } from 'express';
 const router = Router();
-// import db from '../db'; 
+import db from '../db.js'; 
 
 /////////////////////////////// GET
 router.get('/', async (req, res) => {
     try {
-        //ลอง
-        const rows = [
-            { id: 1, name: 'Mock Item 1', description: 'This is mock data 1' },
-            { id: 2, name: 'Mock Item 2', description: 'This is mock data 2' },
-            { id: 3, name: 'Mock Item 3', description: 'This is mock data 3' },
-        ];
 
-        //db จริงใช้อันนี้
-        // const [rows] = await db.query('SELECT * FROM new');
+        const [rows] = await db.query('SELECT * FROM new');
 
 
         res.json(rows);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+/////////////////////////////// GET BY ID
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await db.query('SELECT * FROM new WHERE id = ?', [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'News item not found' });
+        }
+
+        res.json(rows[0]);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

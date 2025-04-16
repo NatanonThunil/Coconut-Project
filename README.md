@@ -1,4 +1,49 @@
 
+# อัพเดต 16 Apr.
+
+### .env
+แก้ .env
+
+```bash
+
+##################### FRONT
+
+NITRO_PORT=5000
+# เฉพาะ localhost
+NITRO_HOST='localhost'
+# ถ้าอยากให้เครื่องอื่นเข้าถึงweb
+# NITRO_HOST=0.0.0.0  
+FE_BASE_URL = 'http://localhost:5000'
+FE_PORT=5000
+API_SECRET = 'Cocon541986'
+##################### BACK
+
+API_BASE = '/coconut-api'
+DB_PASSWORD = '@Wow1TEi2T'
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_DATABASE = 'coconutknowledgehub'
+BE_BASE_URL = 'http://localhost:5001'
+BE_PORT=5001
+
+
+```
+
+- API news 
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST
+    - PUT (id)
+    - DELETE (id)
+
+- แยก Port หน้าบ้านเป็น `5000` หลังบ้าน `5001`
+- Fetch ข้อมูลทุกหน้าของ `news`
+- เพิ่ม Middleware ที่หลังบ้าน กัน Search แล้วไปเจอ
+- เพิ่ม Composables จัดการ RestAPIs
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
 # อัพเดต 14 Apr.
 
 ### .env

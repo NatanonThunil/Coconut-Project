@@ -243,6 +243,7 @@ const currentNews = ref({
     upload_date: new Date().toISOString().split('T')[0],
     status: false,
 });
+const { getNews } = useNews();
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
@@ -288,12 +289,7 @@ const triggerFileInput = () => {
 };
 const fetchNews = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`, {
-            headers: {
-                "CKH": '541986Cocon',
-
-            },
-        });
+        const response = await getNews();
         News.value = response.map(news => ({ ...news, selected: false }));
         NewsNum.value = News.value.length;
     } catch (error) {

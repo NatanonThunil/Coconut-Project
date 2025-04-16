@@ -1,26 +1,34 @@
 <template>
   <div class="news-container">
     <!-- Hot News Section -->
-    <NuxtLinkLocale v-if="hotNews" class="hot-news-section" :to="'/news/details/' + hotNews.id">
+    <NuxtLinkLocale
+      v-if="hotNews"
+      class="hot-news-section"
+      :to="`/news/details/${hotNews.id}`"
+    >
       <div class="hot-news-image">
         <img :src="hotNews.image" alt="Hot News Image" draggable="false" />
       </div>
       <div class="hot-news-text">
-        <h2>{{ (currentLocale === 'th') ? hotNews.title : hotNews.title_en }}</h2>
-        <div style="height: 1rem;"></div>
-        <p>{{ (currentLocale === 'th') ? hotNews.summerize : hotNews.summerize_en }}</p>
-        <div style="height: 1rem;"></div>
-        <p style="display: flex; justify-content: flex-end;">{{ formatDate(hotNews.upload_date) }}</p>
+        <h2>{{ getLocalizedText(hotNews, 'title') }}</h2>
+        <div class="spacer"></div>
+        <p>{{ getLocalizedText(hotNews, 'summerize') }}</p>
+        <div class="spacer"></div>
+        <p class="date-text">{{ formatDate(hotNews.upload_date) }}</p>
       </div>
     </NuxtLinkLocale>
 
     <!-- Regular News Section -->
     <div class="news-rows" v-if="regularNews.length">
-      <div class="news-item" v-for="news in regularNews" :key="news.id"
-        @click="$router.push('/news/details/' + news.id)">
+      <div
+        class="news-item"
+        v-for="news in regularNews"
+        :key="news.id"
+        @click="() => navigateToDetails(news.id)"
+      >
         <img :src="news.image" alt="News Image" draggable="false" />
         <div class="news-text-container">
-          <h2>{{ (currentLocale === 'th') ? news.title : news.title_en }}</h2>
+          <h2>{{ getLocalizedText(news, 'title') }}</h2>
           <p>{{ formatDate(news.upload_date) }}</p>
         </div>
       </div>
@@ -39,67 +47,88 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, onMounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useNews } from '~/composables/useNews'
+import { useRouter } from 'vue-router'
 
-const { locale } = useI18n();
-const currentLocale = computed(() => locale.value);
-const newsItems = ref([]);
-const hotNews = ref(null);
-const loading = ref(true);
-const regularNews = ref([]);
+const { locale } = useI18n()
+const currentLocale = computed(() => locale.value)
+const router = useRouter()
+
+
+const { getNews } = useNews()
+
+const newsItems = ref([])
+const hotNews = ref(null)
+const regularNews = ref([])
+const loading = ref(true)
+
+
+const getLocalizedText = (newsItem, key) => {
+  return currentLocale.value === 'th' ? newsItem[key] : newsItem[`${key}_en`]
+}
+
+
+const formatDate = (dateStr) => {
+  return new Date(dateStr).toLocaleDateString(currentLocale.value)
+}
+
+
+const navigateToDetails = (id) => {
+  router.push(`/news/details/${id}`)
+}
 
 const fetchNews = async () => {
+  loading.value = true
   try {
-    const response = await $fetch('/api/news', {
-      headers: {
-        "CKH": '541986Cocon',
-      },
-    });
+    const response = await getNews()
+
+    if (Array.isArray(response)) {
+  
+      newsItems.value = response.sort((a, b) => b.id - a.id)
     
-    // Sort news items by highest id first (assuming higher id means more recent)
-    newsItems.value = response.sort((a, b) => b.id - a.id);
-
-    // Filter and assign hot news and regular news accordingly
-    hotNews.value = newsItems.value.find((news) => news.hot_new && news.status) || null;
-    regularNews.value = newsItems.value.filter((news) => !news.hot_new && news.status).slice(0, 2);
+      hotNews.value = newsItems.value.find((item) => item.hot_new && item.status) || null
+      regularNews.value = newsItems.value.filter((item) => !item.hot_new && item.status).slice(0, 2)
+    } else {
+      console.error('Unexpected response format:', response)
+      newsItems.value = []
+      hotNews.value = null
+      regularNews.value = []
+    }
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error('Error fetching news:', error)
+    newsItems.value = []
+    hotNews.value = null
+    regularNews.value = []
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-onMounted(fetchNews);
+// Re-fetch the news when the component mounts and whenever the current locale changes.
+onMounted(fetchNews)
+watch(currentLocale, fetchNews)
 </script>
 
 <style scoped>
-.hot-news-text p {
-  text-align: left;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
-  text-overflow: ellipsis;
-}
-
-.hot-news-text h1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  text-overflow: ellipsis;
-}
-
-
 .news-container {
-  margin-left: 4%;
-  margin-right: 4%;
+  margin: 0 4%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
+.spacer {
+  height: 1rem;
+}
+
+.date-text {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Hot News Section Styles */
 .hot-news-section {
   cursor: pointer;
   display: flex;
@@ -107,33 +136,31 @@ onMounted(fetchNews);
   min-height: 15rem;
   flex-direction: row;
   align-items: center;
-  background-color: #DFF169;
+  background-color: #dff169;
   border-radius: 10px;
   overflow: hidden;
-  transition: ease-in-out 0.2s;
+  transition: all 0.2s ease-in-out;
   opacity: 0;
   transform: translateY(50px);
   animation: fadeInUp 0.8s ease-out forwards;
 }
-
 .hot-news-section:hover {
   transform: scale(1.01);
   background-color: #abb94f;
-  box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 4px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.6);
 }
 
 .hot-news-image {
   max-height: 300px;
   width: 50%;
-  max-width: 100%;
   overflow: hidden;
   display: flex;
   align-items: center;
 }
 
 .hot-news-image img {
-  height: 100%;
   width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -143,11 +170,10 @@ onMounted(fetchNews);
   border-radius: 10px;
   color: black;
   text-align: justify;
-  /* line-height: 1.4; */
-  height: 100%;
   max-width: 50%;
 }
 
+/* Regular News Section Styles */
 .news-rows {
   display: flex;
   flex-direction: row;
@@ -159,15 +185,13 @@ onMounted(fetchNews);
   cursor: pointer;
   height: 15rem;
   flex: 1;
-  background-color: #DFF169;
+  background-color: #dff169;
   border-radius: 10px;
-  color: white;
   display: flex;
-  min-height: 180px;
   flex-direction: row;
   align-items: center;
   overflow: hidden;
-  transition: ease-in-out 0.2s;
+  transition: all 0.2s ease-in-out;
   opacity: 0;
   transform: translateY(50px);
   animation: fadeInUp 0.8s ease-out forwards;
@@ -176,7 +200,7 @@ onMounted(fetchNews);
 .news-item:hover {
   transform: scale(1.01);
   background-color: #abb94f;
-  box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 4px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.6);
 }
 
 .news-text-container {
@@ -184,22 +208,21 @@ onMounted(fetchNews);
 }
 
 .news-item img {
-  align-self: center;
   width: 55%;
   height: 100%;
   object-fit: cover;
 }
 
 .news-item h2 {
+  margin: 1rem;
+  text-align: left;
+  line-height: 1.4;
+  color: black;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   text-overflow: ellipsis;
-  margin: 1rem;
-  text-align: left;
-  line-height: 1.4;
-  color: black;
 }
 
 .news-item p {
@@ -209,27 +232,7 @@ onMounted(fetchNews);
   color: black;
 }
 
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.news-item:nth-child(1) {
-  animation-delay: 0.2s;
-}
-
-.news-item:nth-child(2) {
-  animation-delay: 0.4s;
-}
-
-
+/* Shimmer Loading Styles */
 .loading-shimmer {
   display: flex;
   flex-direction: column;
@@ -240,11 +243,20 @@ onMounted(fetchNews);
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
-  max-height: 50rem;
   height: 300px;
   border-radius: 10px;
   width: 100%;
+}
 
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
@@ -253,43 +265,26 @@ onMounted(fetchNews);
   }
 }
 
-
-
+/* Responsive Styles */
 @media screen and (max-width: 1250px) {
   .hot-news-section {
-
     flex-direction: column;
     align-items: center;
-    border-radius: 10px;
-    overflow: hidden;
-
   }
-
   .hot-news-image {
     width: 100%;
     height: 50rem;
   }
-
-  .hot-news-image img {
-    width: 100%;
-  }
-
   .hot-news-text {
     max-width: 100%;
     text-align: center;
   }
-
   .news-rows {
-    display: none;
     flex-direction: column;
   }
-
   .news-item {
     margin-bottom: 1rem;
-    max-width: 100%;
-    display: flex;
   }
-
   .news-item img {
     max-height: 120px;
   }
@@ -299,13 +294,10 @@ onMounted(fetchNews);
   .hot-news-image img {
     max-width: 90%;
   }
-
   .news-item img {
     max-height: 100px;
   }
-
   .news-item {
-    display: none;
     flex-direction: column;
   }
 }
