@@ -1,3 +1,18 @@
+# อัพเดต 18 Apr.
+
+- API news 
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id)
+    - DELETE (id)
+
+-เพิ่ม Method POST ให้ news
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
 
 # อัพเดต 16 Apr.
 

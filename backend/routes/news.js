@@ -1,6 +1,6 @@
 import { Router } from 'express';
 const router = Router();
-import db from '../db.js'; 
+import db from '../db.js';
 
 /////////////////////////////// GET
 router.get('/', async (req, res) => {
@@ -30,5 +30,20 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+
+
+/////////////////////////////// POST
+router.post('/', async (req, res) => {
+    try {
+        const { title, images, author, upload_date, description, summerize, hot_new, status, title_en, description_en, summerize_en } = req.body;
+        const [result] = await db.query('INSERT INTO new (title, images, author, upload_date, description, summerize, hot_new, status, title_en, description_en, summerize_en) VALUES (?, ?,?,?,?,?,?,?,?,?,?)', [title, images, author, upload_date, description, summerize, hot_new, status, title_en, description_en, summerize_en]);
+
+        res.status(201).json({ id: result.insertId, title, images, author, upload_date, description, summerize, hot_new, status, title_en, description_en, summerize_en });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+
 
 export default router;

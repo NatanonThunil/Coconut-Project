@@ -34,7 +34,7 @@ export const useNews = () => {
         }
     };
 
-    const createNews = async (title: string, content: string) => {
+    const createNews = async (title:string, images:string, author:string, upload_date:Date, description:string, summerize:string, hot_new:string, status:boolean, title_en:string, description_en:string, summerize_en:string) => {
         const url = `${be_api_url}${apiBase}/news`;
         console.log('Requesting URL:', url);
         return await $fetch(url, {
@@ -42,7 +42,7 @@ export const useNews = () => {
             headers: {
                 'cocon-key': 'Cocon541986',
             },
-            body: { title, content },
+            body: { title, images, author, upload_date, description, summerize, hot_new, status, title_en, description_en, summerize_en },
         });
     };
 
