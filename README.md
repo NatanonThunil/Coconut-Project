@@ -1,5 +1,12 @@
 # อัพเดต 18 Apr.
 
+-ลง multer 
+
+โดย [Jeff]
+
+
+# อัพเดต 18 Apr.
+
 - API news 
     - GET `Finished`
     - GET by ID `Finished`

@@ -3,10 +3,10 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import routes from './routes/index.js';
 
-config({ path: '../.env' });
+config();
 
 const app = express();
-const PORT = process.env.BE_PORT || 8080;
+const PORT = process.env.BE_PORT || 5100;
 const base = process.env.API_BASE || '/api';
 
 app.use(cors({

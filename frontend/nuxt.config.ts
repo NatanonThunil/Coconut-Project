@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-dotenv.config({ path: '../.env' })
+dotenv.config()
 export default defineNuxtConfig({
 
   ssr: false,
