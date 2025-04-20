@@ -1,6 +1,8 @@
-# อัพเดต 18 Apr.
+# อัพเดต 20 Apr.
 
--ลง multer 
+- อัพ multer ลง imdage-upload 
+- แก้ post 5001 เป็น 5100
+- แก้ให้ frontend เชื่อม .env ของ backend
 
 โดย [Jeff]
 

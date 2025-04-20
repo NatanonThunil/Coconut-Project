@@ -1,7 +1,7 @@
 export const useNews = () => {
     const config = useRuntimeConfig();
-    const apiBase = config.public.apiBase || ''; // Ensure apiBase has a default value
-    const be_api_url = 'http://localhost:5001';
+    const apiBase = config.public.apiBase || '/coconut-api'; // Ensure apiBase has a default value
+    const be_api_url = 'http://localhost:5100'; // Replace with your actual backend API URL
 
     const getNews = async () => {
         const url = `${be_api_url}${apiBase}/news`;

@@ -70,9 +70,9 @@ const getLocalizedText = (newsItem, key) => {
 }
 
 
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString(currentLocale.value)
-}
+// const formatDate = (dateStr) => {
+//   return new Date(dateStr).toLocaleDateString(currentLocale.value)
+// }
 
 
 const navigateToDetails = (id) => {
