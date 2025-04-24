@@ -1,3 +1,10 @@
+# อัพเดต 24 Apr.
+
+- แก้ให้ หน้า new โชว์ใน sever ได้ละ
+
+โดย [Jeff]
+
+
 # อัพเดต 20 Apr.
 
 - อัพ multer ลง imdage-upload 

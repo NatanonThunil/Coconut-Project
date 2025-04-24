@@ -7,7 +7,7 @@ config();
 
 const app = express();
 const PORT = process.env.BE_PORT || 5100;
-const base = process.env.API_BASE || '/api';
+const base = process.env.API_BASE || '/coconut-api';
 
 app.use(cors({
     origin: process.env.FE_BASE_URL,
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 /// ดึง API เป็นกระจุกอยู่ที่ /routes/index.js
 routes.forEach(({ path, handler }) => {
-    app.use(`${base}${path}`, handler);
+    app.use( path , handler);
 });
 
 /// ใช้ทดสอบ server เฉยๆ ลบออกก็ได้

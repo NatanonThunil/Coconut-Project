@@ -1,18 +1,20 @@
 import dotenv from 'dotenv'
 
-dotenv.config({path:"../backend/.env"})
+dotenv.config({path:'../backend/.env'})
 export default defineNuxtConfig({
 
   ssr: false,
   devServer: {
     port: 5000,
   },
+  
   runtimeConfig: {
     apiSecret: process.env.API_SECRET,
     public: {
       urlBase: process.env.FE_BASE_URL,
       apiBase: process.env.API_BASE,
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
+      apiKey: process.env.API_SECRET || 'Cocon541986',
     },
   },
   devtools: { enabled: false },
