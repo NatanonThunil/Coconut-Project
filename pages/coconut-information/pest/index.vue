@@ -2,11 +2,7 @@
   <Navbar selecto="pests" />
   <div style="height: 8rem"></div>
   <div class="faqs-path">
-    <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/pest">{{
-      $t("Pest Information")
-    }}</NuxtLinkLocale
-    >/
+    <NuxtLinkLocale to="/pests">{{$t('Pest') }}</NuxtLinkLocale>
   </div>
   <h1 class="context-header">{{ $t("Pest") }}</h1>
   <div style="height: 5rem"></div>
@@ -55,7 +51,7 @@
     {{ $t("No pests found") }}
   </div>
   <div v-else class="all-event-card-container">
-    <router-link
+    <NuxtLinkLocale
       v-for="(pest, index) in paginatedPests"
       :key="pest.id"
       :to="`/coconut-information/pest/details/${pest.id}`"
@@ -65,7 +61,7 @@
         :title="currentLocale === 'th' ? pest.name : pest.name_en"
         :description="pest.sci_name || 'No description available'"
       />
-    </router-link>
+    </NuxtLinkLocale>
   </div>
 
   <!-- Pagination -->

@@ -3,7 +3,7 @@
   <div style="height: 100dvh;">
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-      <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
+      <NuxtLinkLocale to="/coconutdata">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
 
     </div>
     <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
@@ -324,4 +324,5 @@ export default {
     width: 12rem;
   }
 }
+
 </style>

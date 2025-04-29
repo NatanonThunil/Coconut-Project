@@ -59,7 +59,7 @@
   "Disease": "Disease",
   "Insect": "Insect",
   "Other enemies": "Other enemies",
-  "chain_values": "Value Chain",
+  "Value Chain": "Value Chain",
   "Event_category": "Category",
   "Event_status": "Status",
   "Event_date": "Sort by Date",
@@ -74,6 +74,8 @@
   "By": "By",
   "Next": "Next",
   "Previous": "Previous",
-  "SeeAllAchievements": "See All Achievements"
+  "SeeAllAchievements": "See All Achievements",
+  "Information Pest" : "Information Pest",
+  "Category":"Category"
  
 }

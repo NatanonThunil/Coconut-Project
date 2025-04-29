@@ -2,10 +2,10 @@
     <Navbar selecto="faqs" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-      <NuxtLinkLocale to="/faqs">FAQs</NuxtLinkLocale>
+      <NuxtLinkLocale to="/faqs">{{$t('FAQs') }}</NuxtLinkLocale>
     </div>
     <div style="height: 1rem"></div>
-    <h1 class="context-header">FAQs</h1>
+    <h1 class="context-header">{{$t('FAQs') }}</h1>
     <div style="height: 5rem"></div>
     <div style="height: 1rem"></div>
     <ContentHeader :contexto="$t('Qs')" />

@@ -45,7 +45,7 @@
             <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('chain_values') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>
           </li>
         </ul>
       </li>

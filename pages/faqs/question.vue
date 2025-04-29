@@ -2,7 +2,7 @@
     <Navbar selecto="faqs" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        <NuxtLinkLocale to="/faqs">FAQs</NuxtLinkLocale>/<NuxtLinkLocale to="/faqs/question">{{$t('seeAllQs') }}
+        <NuxtLinkLocale to="/faqs">{{$t('FAQs') }}</NuxtLinkLocale>/<NuxtLinkLocale to="/faqs/question">{{$t('seeAllQs') }}
         </NuxtLinkLocale>
     </div>
     <div style="height: 1rem"></div>
