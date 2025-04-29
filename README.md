@@ -19,6 +19,18 @@
 ## Update List
 
 - เปลี่ยนดึง key ใช้โดยตรง ไปดึงจาก `.env`
+
+    ตัวอย่าง
+    ```bash
+    /// จากหน้า backend/routes/news.js
+    const API_KEY = 'Cocon541986';
+    ```
+    เป็น
+    ```bash
+    /// จากหน้า backend/routes/news.js
+    const API_KEY = process.env.API_SECRET
+    ```
+
 - แก้ Components `HomeEvents` ให้ใช้ `Composables/useEvents.ts` ได้
 - เพิ่ม API events
 - เพิ่มกรีณีรองรับ import ไฟล์ไม่สำเร็จให้ดูง่ายขึ้นว่ามาดึงมาใช้ไม่ได้
