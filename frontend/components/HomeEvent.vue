@@ -71,8 +71,8 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
-
+import { useEvents } from '~/composables/useEvents'
+const { getEvents } = useEvents()
 
 export default {
   components: {
@@ -107,14 +107,11 @@ export default {
     },
     async fetchEvents() {
       try {
-        const response = await fetch("/api/events", {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-        if (!response.ok) throw new Error("Failed to fetch events");
-        const data = await response.json();
+        const data = await getEvents();
+
+        // ไม่ต้องตรวจว่ามันเป็น json 
+        // if (!response.ok) throw new Error("Failed to fetch events");
+        // const data = await response.json();
         this.events = Array.isArray(data) ? data : [];
       } catch (error) {
         console.error("Error fetching events:", error);

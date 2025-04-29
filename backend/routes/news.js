@@ -1,8 +1,13 @@
 import { Router } from 'express';
 const router = Router();
+import { config } from 'dotenv';
+config();
 import db from '../db.js';
 
-const API_KEY = 'Cocon541986'; // Replace with your actual API key
+// const API_KEY = 'Cocon541986'; // Replace with your actual API key
+
+// ดึง API_KEY จาก .env (/backend/.env)
+const API_KEY = process.env.API_SECRET
 
 // Middleware to validate API key
 router.use((req, res, next) => {
@@ -51,7 +56,7 @@ router.post('/', async (req, res) => {
         res.status(201).json({
             id: result.insertId,
             title,
-            images,
+            images, ///ยังไม่ได้ทำรับรองรูปภาพ
             author,
             upload_date,
             description,

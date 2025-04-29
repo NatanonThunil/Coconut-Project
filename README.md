@@ -1,3 +1,30 @@
+# อัพเดต 29 Apr.
+
+## TO-DO
+
+- API news 
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id)
+    - DELETE (id)
+
+- API events
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id)
+    - DELETE (id)
+
+## Update List
+
+- เปลี่ยนดึง key ใช้โดยตรง ไปดึงจาก `.env`
+- เพิ่ม API events
+- เพิ่มกรีณีรองรับ import ไฟล์ไม่สำเร็จให้ดูง่ายขึ้นว่ามาดึงมาใช้ไม่ได้
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
 # อัพเดต 24 Apr.
 
 - แก้ให้ หน้า new โชว์ใน sever ได้ละ

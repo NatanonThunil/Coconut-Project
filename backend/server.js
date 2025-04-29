@@ -2,12 +2,13 @@ import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
 import routes from './routes/index.js';
-
+// /backend/.env
 config();
 
 const app = express();
-const PORT = process.env.BE_PORT || 5100;
-const base = process.env.API_BASE || '/coconut-api';
+//ให้ดูออกว่าดึง .env มาใช้ได้ไหม
+const PORT = process.env.BE_PORT || 3000;
+const base = process.env.API_BASE || '/notuseorerror-api';
 
 app.use(cors({
     origin: process.env.FE_BASE_URL,
@@ -29,7 +30,9 @@ app.use((req, res, next) => {
 
 /// ดึง API เป็นกระจุกอยู่ที่ /routes/index.js
 routes.forEach(({ path, handler }) => {
-    app.use( path , handler);
+
+    // คสรเป็น coconut-api/news อิงจาก routes/index
+    app.use( `${base}${path}` , handler);
 });
 
 /// ใช้ทดสอบ server เฉยๆ ลบออกก็ได้

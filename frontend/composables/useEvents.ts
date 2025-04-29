@@ -1,13 +1,11 @@
-
-
-export const useNews = () => {
+export const useEvents = () => {
     const config = useRuntimeConfig();
     const apiBase = config.public.apiBase || '/env-notwork'; // Ensure apiBase has a default value
     const be_api_url = config.public.beUrl; // ดึง มาจาก nuxt config
     const apiKey = 'Cocon541986'; // ยังติดปัญหาใช้า env ใน composable ไม่ได้ ให้มันอยู่ตรงนี้ไปก่อน
 
-    const getNews = async () => {
-        const url = `${be_api_url}${apiBase}/news`;
+    const getEvents = async () => {
+        const url = `${be_api_url}${apiBase}/events`;
         console.log('Requesting URL:', url);
 
         return await $fetch(url, {
@@ -17,13 +15,13 @@ export const useNews = () => {
         });
     };
 
-    const getNewsById = async (id: number) => {
+    const getEventById = async (id: number) => {
         if (!id || isNaN(id)) {
-            console.error('Invalid news ID:', id);
-            throw new Error('Invalid news ID');
+            console.error('Invalid event ID:', id);
+            throw new Error('Invalid event ID');
         }
 
-        const url = `${be_api_url}${apiBase}/news/${id}`;
+        const url = `${be_api_url}${apiBase}/events/${id}`;
         console.log('Requesting URL:', url);
         try {
             const response = await $fetch(url, {
@@ -33,25 +31,28 @@ export const useNews = () => {
             });
             return response;
         } catch (error) {
-            console.error(`Error fetching news by ID (${id}):`, error);
+            console.error(`Error fetching event by ID (${id}):`, error);
             throw error;
         }
     };
-
-    const createNews = async (
-        title: string,
-        images: string, ///ยังไม่ได้ทำรับรองรูปภาพ
-        author: string,
-        upload_date: Date,
+   
+    const createEvent = async (
+        image: string, ///ยังไม่ได้ทำรับรองรูปภาพ
+        title: string, 
+        organizer: string,
+        date_start: Date,
+        date_end: Date,
+        location_name: string,
+        location_url: string,
+        register_url: string,
         description: string,
-        summerize: string,
-        hot_new: string,
+        event_category: 'educate' | 'conference' | 'other',
         status: boolean,
+        location_name_en: string,
         title_en: string,
-        description_en: string,
-        summerize_en: string
+        description_en: string
     ) => {
-        const url = `${be_api_url}${apiBase}/news`;
+        const url = `${be_api_url}${apiBase}/events`;
         console.log('Requesting URL:', url);
         return await $fetch(url, {
             method: 'POST',
@@ -59,20 +60,23 @@ export const useNews = () => {
                 'cocon-key': apiKey,
             },
             body: {
+                image,
                 title,
-                images,
-                author,
-                upload_date,
+                organizer,
+                date_start,
+                date_end,
+                location_name,
+                location_url,
+                register_url,
                 description,
-                summerize,
-                hot_new,
+                event_category,
                 status,
+                location_name_en,
                 title_en,
                 description_en,
-                summerize_en,
             },
         });
     };
 
-    return { getNews, getNewsById, createNews };
+    return { getEvents, getEventById, createEvent };
 };
