@@ -1,3 +1,36 @@
+# อัพเดต 30 Apr.
+
+## TO-DO
+
+- API news 
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id)
+    - DELETE (id)
+
+- API events
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id)
+    - DELETE (id)
+
+- API footers
+    - GET `ไม่ได้ใช้แต่ใส่ไปนั่นแหละ`
+    - GET by ID `Finished`
+    - PUT (id) `Finished`
+
+
+## Update List
+
+- เพิ่ม API `Footer` GET, GET by id, PUT
+- Merge หน้า `Pest` ของ [เจมส์](https://github.com/JeerasakSampeng)
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
 # อัพเดต 29 Apr.
 
 ## TO-DO

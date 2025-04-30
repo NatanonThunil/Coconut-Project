@@ -18,9 +18,10 @@
 </template>
 
 <script setup>
+import { useFooters } from '~/composables/useFooters'
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-
+const { getFooters, getFooterById } = useFooters(); // Ensure getFooterById is imported
 // Locale
 const { locale } = useI18n();
 const currentLocale = computed(() => locale.value);
@@ -46,22 +47,15 @@ const footer = ref({
 // Fetch footer data
 const fetchData = async () => {
     try {
-      const response = await fetch('/api/footers/1', {
-        headers: {
-          CKH: '541986Cocon',
-        },
-      });
-  
-      if (!response.ok) throw new Error('Failed to fetch footer data');
-      const data = await response.json();
-  
-      // Map data safely
-      footer.value.text = data.footer?.text || '';
-      footer.value.text_en = data.footer?.text_en || '';
-      footer.value.credit = data.footer?.credit || footer.value.credit;
-      footer.value.credit_en = data.footer?.credit_en || footer.value.credit_en;
+        const data = await getFooterById(1);
+
+        
+        footer.value.text = data?.text || '';
+        footer.value.text_en = data?.text_en || '';
+        footer.value.credit = data?.credit || footer.value.credit;
+        footer.value.credit_en = data?.credit_en || footer.value.credit_en;
     } catch (error) {
-      console.error('Error fetching footer:', error);
+        console.error('Error fetching footer:', error);
     }
 };
 
