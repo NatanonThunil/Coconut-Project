@@ -115,7 +115,7 @@ export default {
       try {
         const response = await fetch(this.apiEndPoint, {
           headers: {
-            "CKH": '541986Cocon',
+            "cocon-key": '541986Cocon',
           },
         });
         if (!response.ok) throw new Error("Failed to fetch employees");

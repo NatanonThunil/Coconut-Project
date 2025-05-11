@@ -5,6 +5,9 @@
 - API Achievement 
   - ยังทำให้แสดงไม่ได้ 
 
+- AboutUSslidePDF
+  - แก้ รหัส CHK เป็น cocon-key
+
 
 
 # อัพเดต 30 Apr.
