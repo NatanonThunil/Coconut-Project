@@ -1,12 +1,9 @@
-# อัพเดต 11 May.
+# อัพเดต 13 May.
 
 ## TO-DO
 
-- API Achievement 
-  - ยังทำให้แสดงไม่ได้ 
-
-- AboutUSslidePDF
-  - แก้ รหัส CHK เป็น cocon-key
+- แก้ไฟล์ components 
+  - ตรง CHK เป็น cocon-key ทุกหน้าเรียบร้อย(ฝากเช็คดูอีกทีนะเพื่อตาลาย)
 
 
 
