@@ -29,10 +29,17 @@ export const useAchievements = () => {
                     'cocon-key': apiKey,
                 },
             });
-            return response;
+
+            // Check if the response is valid
+            if (!response || Object.keys(response).length === 0) {
+                console.error(`Achievement with ID ${id} not found in response:`, response);
+                throw new Error('Achievement not found');
+            }
+
+            return response; // Return the achievement data directly
         } catch (error) {
-            console.error(`Error fetching achievement by ID (${id}):`, error);
-            throw error;
+            console.error(`Error fetching achievement by ID (${id}):`, error.message || error);
+            throw new Error(error.message || 'Failed to fetch achievement');
         }
     };
 

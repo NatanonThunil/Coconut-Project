@@ -57,6 +57,8 @@ import { ref, onMounted, computed, watch } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import 'pdfjs-dist/legacy/build/pdf.worker';
 import noimageHandle from '/img/no-image-handle.png';
+import { useAchievements } from '~/composables/useAchievements';
+const { getAchievements } = useAchievements();
 const Achievements = ref([]);
 const searchQuery = ref("");
 const currentPage = ref(1);
@@ -77,12 +79,8 @@ const filters = ref([
 
 const fetchAchievements = async () => {
   try {
-    const response = await fetch('/api/achievements', {
-      headers: {
-        "CKH": '541986Cocon',
-      },
-    });
-    const { achievements } = await response.json();
+    
+    const { achievements } = await getAchievements();
 
     const filteredAchievements = achievements.filter(achievement => achievement.status === 1);
 

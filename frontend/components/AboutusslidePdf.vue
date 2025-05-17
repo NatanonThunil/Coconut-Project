@@ -55,6 +55,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import aboutusCardPdf from "./aboutusCardPdf.vue";
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
+/// import composables 'Achievements' ตรงนี้
+import { useAchievements } from '~/composables/useAchievements';
+const { getAchievements } = useAchievements();
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   props: {
@@ -113,13 +118,8 @@ export default {
 
     async fetchEmployees() {
       try {
-        const response = await fetch(this.apiEndPoint, {
-          headers: {
-            "cocon-key": '541986Cocon',
-          },
-        });
-        if (!response.ok) throw new Error("Failed to fetch employees");
-        const data = await response.json();
+        const data = await getAchievements(); // ใข้ composable getAchievements ตรงนี้
+        
 
         // Ensure the API response structure matches expectations
         if (data.success && Array.isArray(data.achievements)) {
@@ -139,7 +139,7 @@ export default {
           throw new Error("Unexpected API response structure");
         }
       } catch (error) {
-        console.error("Error fetching employees:", error);
+        console.error("Error fetching employees:", error.message); // Improved error logging
         this.employees = [];
       } finally {
         this.isLoading = false;

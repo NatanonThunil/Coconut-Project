@@ -1,3 +1,44 @@
+# อัพเดต 17 May.
+
+## TO-DO
+
+- API news 
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - DELETE (id)
+
+- API events
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - DELETE (id)
+
+- API footers
+    - GET `ไม่ได้ใช้แต่ใส่ไปนั่นแหละ`
+    - GET by ID `Finished`
+    - PUT (id) `Finished`
+
+- API Achievements
+    - GET `Finished`
+    - GET by ID `Finished`
+    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+
+
+## Update List
+
+- แก้ fetch Achievements
+![หน้า About us](image.png)
+- หน้าที่แก้
+    - AboutUs
+    - AboutUs/Achievements
+    - AboutUs/Achievements/id
+
+
+
 # อัพเดต 13 May.
 
 ## TO-DO

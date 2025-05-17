@@ -50,7 +50,8 @@ import 'vue-pdf-embed/dist/styles/textLayer.css';
 const { locale } = useI18n();
 const currentLocale = computed(() => locale.value);
 const route = useRoute();
-
+import { useAchievements } from '~/composables/useAchievements';
+const { getAchievementById } = useAchievements();
 const achievement = ref(null);
 const error = ref(null);
 const currentPage = ref(1);
@@ -89,16 +90,11 @@ const fetchAchievement = async () => {
     isLoadingPDF.value = true;
     achievement.value = null;
     showPdf.value = false;
+    error.value = null; 
     try {
-        const response = await fetch(`/api/achievements/${cid}`, {
-            headers: { "CKH": '541986Cocon' }
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch achievement details');
-
-        const data = await response.json();
-        if (data.achievement) {
-            achievement.value = data.achievement;
+        const data = await getAchievementById(cid);
+        if (data) {
+            achievement.value = data; 
 
             // Wait for DOM update then enable PDF
             await nextTick();
@@ -110,7 +106,6 @@ const fetchAchievement = async () => {
         } else {
             throw new Error('Achievement not found');
         }
-
     } catch (err) {
         console.error('Error fetching achievement details:', err);
         error.value = 'Failed to load achievement data. Please try again later.';

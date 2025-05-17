@@ -155,7 +155,8 @@ import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 
 
-
+import { useAchievements } from '~/composables/useAchievements';
+const { getAchievements } = useAchievements();
 const apiEndpoint = 'achievements';
 const searchQuery = ref('');
 const achievements = ref([]);
@@ -228,15 +229,8 @@ const triggerFileInput = () => {
 
 const fetchAchievements = async () => {
     try {
-        const response = await fetch(`/api/${apiEndpoint}`, {
-            headers: {
-                "CKH": '541986Cocon',
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch achievements.');
-        }
-        const data = await response.json();
+       
+        const data = await getAchievements();
         achievements.value = data.achievements.map(achievement => ({ ...achievement, selected: false }));
         achievementsNum.value = achievements.value.length;
     } catch (error) {
