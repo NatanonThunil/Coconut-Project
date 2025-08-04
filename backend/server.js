@@ -4,7 +4,7 @@ import cors from 'cors';
 import routes from './routes/index.js';
 // /backend/.env
 config();
-
+app.use(express.static('public'))
 // const dotenv = require('dotenv');
 // const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
 // dotenv.config({ path: envFile });
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
     const key = req.headers['cocon-key']; 
     if (!key) {
         console.error('Missing API key in headers'); 
-    }
+    } console.log(process.env.API_SECRET);
     if (key !== process.env.API_SECRET) {
         console.error('Invalid API key:', key); 
         return res.status(403).json({ error: 'Forbidden: Invalid API key' });
@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 routes.forEach(({ path, handler }) => {
 
     // คสรเป็น coconut-api/news อิงจาก routes/index
-    app.use( `${base}${path}` , handler);
+    app.use( `${path}` , handler);
 });
 
 /// ใช้ทดสอบ server เฉยๆ ลบออกก็ได้
