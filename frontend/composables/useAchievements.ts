@@ -44,34 +44,35 @@ export const useAchievements = () => {
     };
 
     const createAchievement = async (
-        title: string,
-        title_en: string,
-        author: string,
-        description: string,
-        description_en: string,
-        uploadDate: Date,
-        status: boolean,
-        pdf: string
-    ) => {
-        const url = `${be_api_url}${apiBase}/achievements`;
-        console.log('Requesting URL:', url);
-        return await $fetch(url, {
-            method: 'POST',
-            headers: {
-                'cocon-key': apiKey,
-            },
-            body: {
-                title,
-                title_en,
-                author,
-                description,
-                description_en,
-                uploadDate,
-                status,
-                pdf,
-            },
-        });
-    };
-
+    title: string,
+    title_en: string,
+    author: string,
+    description: string,
+    description_en: string,
+    uploadDate: Date,
+    status: boolean,
+    pdf: string,
+    canDownload: boolean // Added parameter
+) => {
+    const url = `${be_api_url}${apiBase}/achievements`;
+    console.log('Requesting URL:', url);
+    return await $fetch(url, {
+        method: 'POST',
+        headers: {
+            'cocon-key': apiKey,
+        },
+        body: {
+            title,
+            title_en,
+            author,
+            description,
+            description_en,
+            uploadDate,
+            status,
+            pdf,
+            canDownload, // Added to body
+        },
+    });
+};
     return { getAchievements, getAchievementById, createAchievement };
 };

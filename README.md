@@ -1,41 +1,15 @@
-# อัพเดต 17 May.
+# อัพเดต 5 Aug.
 
 ## TO-DO
 
-- API news 
-    - GET `Finished`
-    - GET by ID `Finished`
-    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
-    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
-    - DELETE (id)
+- เพิ่ม API Employees มาแต่มันไม่แสดง(เพราะไรไม่รู้ไม่ขึ้น Errorให้ด้วย)
 
-- API events
-    - GET `Finished`
-    - GET by ID `Finished`
-    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
-    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
-    - DELETE (id)
-
-- API footers
-    - GET `ไม่ได้ใช้แต่ใส่ไปนั่นแหละ`
-    - GET by ID `Finished`
-    - PUT (id) `Finished`
-
-- API Achievements
-    - GET `Finished`
-    - GET by ID `Finished`
-    - POST `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
-    - PUT (id) `ต้องใช้ API ของ upload เพื่ออัพโหลดรูป`
+- Achievements
+    - ไม่แสดงการ์ด 
 
 
-## Update List
 
-- แก้ fetch Achievements
-![หน้า About us](image.png)
-- หน้าที่แก้
-    - AboutUs
-    - AboutUs/Achievements
-    - AboutUs/Achievements/id
+- **ลบ ตัว app.use(express.static('public')) มันทำให้ sever แตกเลยลบไป ถึงไม่มี sever ก็รันได้ปกติรูปใน public ก็ขึ้นไม่มีปัญหา ** 
 
 
 

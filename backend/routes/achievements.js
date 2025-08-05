@@ -53,7 +53,8 @@ router.post('/', async (req, res) => {
             description_en,
             uploadDate,
             status,
-            pdf
+            pdf,
+            canDownload // Add this line
         } = req.body;
 
         const [result] = await db.query(
@@ -65,8 +66,9 @@ router.post('/', async (req, res) => {
                 description_en,
                 uploadDate,
                 status,
-                pdf
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                pdf,
+                canDownload
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 title,
                 title_en,
@@ -75,7 +77,8 @@ router.post('/', async (req, res) => {
                 description_en,
                 uploadDate,
                 status,
-                pdf
+                pdf,
+                canDownload // Add this value
             ]
         );
 
@@ -88,7 +91,8 @@ router.post('/', async (req, res) => {
             description_en,
             uploadDate,
             status,
-            pdf
+            pdf,
+            canDownload // Add this to response
         });
     } catch (e) {
         res.status(500).json({ error: e.message });

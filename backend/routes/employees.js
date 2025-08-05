@@ -19,7 +19,7 @@ router.use((req, res, next) => {
 /////////////////////////////// GET
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM employees');
+        const [rows] = await db.query('SELECT * FROM employee');
         res.json(rows);
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const [rows] = await db.query('SELECT * FROM employees WHERE id = ?', [id]);
+        const [rows] = await db.query('SELECT * FROM employee WHERE id = ?', [id]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Employee not found' });
@@ -45,24 +45,38 @@ router.get('/:id', async (req, res) => {
 /////////////////////////////// POST
 router.post('/', async (req, res) => {
     try {
-        const { name, position, image, description, status, name_en, position_en, description_en,tags } = req.body;
+        const {
+            name,
+            name_en,
+            image,
+            address,
+            address_en,
+            phoneNumber,
+            status,
+            description,
+            description_en,
+            email
+        } = req.body;
+
         const [result] = await db.query(
-            'INSERT INTO employees (name, position, image, description, status, name_en, position_en, description_en,tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [name, position, image, description, status, name_en, position_en, description_en, tags]
+            `INSERT INTO employee 
+            (name, name_en, image, address, address_en, phoneNumber, status, description, description_en, email) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [name, name_en, image, address, address_en, phoneNumber, status, description, description_en, email]
         );
 
         res.status(201).json({
             id: result.insertId,
             name,
-            position,
-            image, // ยังไม่ได้ทำรับรองรูปภาพ
-            description,
-            status,
             name_en,
-            position_en,
+            image,
+            address,
+            address_en,
+            phoneNumber,
+            status,
+            description,
             description_en,
-            tags,
-
+            email
         });
     } catch (e) {
         res.status(500).json({ error: e.message });

@@ -36,38 +36,39 @@ export const useEmployees = () => {
         }
     };
 
-    const createEmployee = async (
-        name: string,
-        position: string,
-        image: string, // ยังไม่ได้ทำรับรองรูปภาพ
-        description: string,
-        status: boolean,
-        name_en: string,
-        position_en: string,
-        description_en: string,
-        tag: string[] = [],
-    
-    ) => {
-        const url = `${be_api_url}${apiBase}/employees`;
-        console.log('Requesting URL:', url);
-        return await $fetch(url, {
-            method: 'POST',
-            headers: {
-                'cocon-key': apiKey,
-            },
-            body: {
-                name,
-                position,
-                image,
-                description,
-                status,
-                name_en,
-                position_en,
-                description_en,
-                tag,
-            },
-        });
-    };
+  const createEmployee = async (
+    name: string,
+    name_en: string,
+    image: string,
+    address: string,
+    address_en: string,
+    phoneNumber: string,
+    status: boolean,
+    description: string,
+    description_en: string,
+    email: string
+) => {
+    const url = `${be_api_url}${apiBase}/employees`;
+    console.log('Requesting URL:', url);
+    return await $fetch(url, {
+        method: 'POST',
+        headers: {
+            'cocon-key': apiKey,
+        },
+        body: {
+            name,
+            name_en,
+            image,
+            address,
+            address_en,
+            phoneNumber,
+            status,
+            description,
+            description_en,
+            email
+        },
+    });
+};
 
     return { getEmployees, getEmployeeById, createEmployee };
 };
