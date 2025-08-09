@@ -25,6 +25,8 @@
 
 
 <script setup>
+import { useFAQs } from '~/composables/useFAQs'
+const { getFAQs } = useFAQs()
 import "@/pages/faqs/m-faqs.css"
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -34,24 +36,17 @@ const currentLocale = computed(() => locale.value);
 const searchQuery = ref('');
 const fetchapi = async () => {
     try {
-        const response = await fetch('/api/faqs', {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        const data = await getFAQs();
+
+
 
         if (data.faqs) {
             faqs.value = data.faqs.map(item => ({
                 id: item.id,
                 question: item.question,
-                question_en: item.question_en || item.question, 
+                question_en: item.question_en || item.question,
                 answer: item.answer,
-                answer_en: item.answer_en || item.answer, 
+                answer_en: item.answer_en || item.answer,
                 status: item.status,
                 isadvice: item.isadvice
             }));

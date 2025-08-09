@@ -140,6 +140,8 @@
 </template>
 
 <script setup>
+import { useFAQs } from '~/composables/useFAQs'
+const { getFAQs, createFAQs, updateFAQ, deleteFAQ } = useFAQs()
 definePageMeta({ layout: "admin" });
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
@@ -214,12 +216,7 @@ const filteredSortedFaqs = computed(() => {
 
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`, { headers: { 'CKH': '541986Cocon' } });
-        if (!response.ok) {
-            const errorDetails = await response.text(); // Capture response body
-            throw new Error(`Failed to fetch Data: ${response.statusText}. Details: ${errorDetails}`);
-        }
-        const data = await response.json();
+       const data = await getFAQs();
         apisdatas.value = Array.isArray(data.faqs) ? data.faqs.map(faq => ({ ...faq, selected: false })) : [];
         dataCount.value = apisdatas.value.length;
     } catch (error) {
@@ -232,18 +229,18 @@ const fetchApi = async () => {
 
 const toggleStatus = async (faq) => {
     try {
-        const newStatus = !faq.status;
-        const response = await fetch(`/api/${config.value.apiEndpoint}/${faq.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json'},
-            body: JSON.stringify({ ...faq, status: newStatus ? 1 : 0 }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update FAQ status.');
-        }
-
+        const newStatus = faq.status ? 0 : 1;
+        await updateFAQ(
+            faq.id,
+            faq.question,
+            faq.answer,
+            newStatus,
+            faq.isadvice,
+            faq.question_en,
+            faq.answer_en
+        );
         faq.status = newStatus;
+        
     } catch (error) {
         alert('Error updating FAQ status.');
         console.error(error);
@@ -276,36 +273,38 @@ const submitFaq = async (publish) => {
 
     try {
         const isUpdate = !!currentFaq.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/faqs/${currentFaq.value.id}` : '/api/faqs';
-
-        // Prepare payload
         const payload = {
             question: currentFaq.value.question,
             answer: currentFaq.value.answer,
+            status: publish ? 1 : 0,
+            isadvice: currentFaq.value.isadvice ? 1 : 0,
             question_en: currentFaq.value.question_en,
             answer_en: currentFaq.value.answer_en,
-            status: publish ? 1 : 0,
-            isadvice: currentFaq.value.isadvice ? 1 : 0, // Ensure isadvice is either 0 or 1
         };
 
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || 'Error saving the FAQ.');
-        }
-
-        if (!isUpdate) {
+        let result;
+        if (isUpdate) {
+            result = await updateFAQ(
+                currentFaq.value.id,
+                payload.question,
+                payload.answer,
+                payload.status,
+                payload.isadvice,
+                payload.question_en,
+                payload.answer_en
+            );
+            alert('FAQ updated successfully.');
+        } else {
+            result = await createFAQs(
+                payload.question,
+                payload.answer,
+                payload.status,
+                payload.isadvice,
+                payload.question_en,
+                payload.answer_en
+            );
             currentFaq.value.id = result.id;
             alert('FAQ added successfully.');
-        } else {
-            alert('FAQ updated successfully.');
         }
 
         showModalAddFaq.value = false;
@@ -356,19 +355,9 @@ const askDelete = (id, question) => {
 
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/faqs/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon','Content-Type': 'application/json' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to delete FAQ.');
-        }
-
+        await deleteFAQ(deleteId.value);
         apisdatas.value = apisdatas.value.filter(faq => faq.id !== deleteId.value);
         dataCount.value = apisdatas.value.length;
-
         showModal.value = false;
         alert('FAQ deleted successfully.');
     } catch (error) {

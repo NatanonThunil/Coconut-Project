@@ -12,7 +12,7 @@ config();
 const app = express();
 //ให้ดูออกว่าดึง .env มาใช้ได้ไหม
 const PORT = process.env.BE_PORT || 3000;
-const base = process.env.API_BASE || '/notuseorerror-api';
+// const base = process.env.API_BASE || '/notuseorerror-api';
 
 app.use(cors({
     origin: process.env.FE_BASE_URL,
@@ -24,7 +24,8 @@ app.use((req, res, next) => {
     const key = req.headers['cocon-key']; 
     if (!key) {
         console.error('Missing API key in headers'); 
-    } console.log(process.env.API_SECRET);
+    } 
+    // console.log(process.env.API_SECRET);
     if (key !== process.env.API_SECRET) {
         console.error('Invalid API key:', key); 
         return res.status(403).json({ error: 'Forbidden: Invalid API key' });

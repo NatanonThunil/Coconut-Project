@@ -3,7 +3,7 @@ import eventsRoutes from './events.js';
 import footersRoutes from './footers.js';
 import achievementsRoutes from './achievements.js';
 import employeesRoutes from './employees.js';
-import e from 'express';
+import faqsRoutes from './faqs.js';
 // import newsRoutes from './news.js';
 export default [
     { path: '/news', handler: newsRoutes },
@@ -11,5 +11,6 @@ export default [
     { path: '/footers', handler: footersRoutes },
     { path: '/achievements', handler: achievementsRoutes },
     {path: '/employees', handler: employeesRoutes },
+    {path: '/faqs', handler: faqsRoutes },
     // { path: '/news', handler: newsRoutes },
 ];

@@ -37,6 +37,8 @@
   </template>
   
   <script setup>
+  import { useFAQs } from '~/composables/useFAQs'
+  const { getFAQs } = useFAQs()
   import "@/pages/faqs/m-faqs.css"
   import { ref, onMounted, computed } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -48,17 +50,7 @@
   // Fetching data from API
   const fetchapi = async () => {
     try {
-      const response = await fetch('/api/faqs', {
-        headers: {
-          "CKH": '541986Cocon',
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const data = await response.json();
+      const data = await getFAQs();
   
       if (data.faqs) {
         faqs.value = data.faqs.map(item => ({
@@ -93,7 +85,7 @@
   </script>
   
   <style scoped>
-  /* Add your scoped CSS here */
+
   .context-header {
     display: flex;
     justify-self: center;
@@ -127,4 +119,3 @@
     font-size: 1.2rem;
   }
   </style>
-  
