@@ -46,7 +46,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { useHerobars } from '~/composables/useHerobars'
+const { getHerobarById, updateHerobarById } = useHerobars()
+import { useUpload } from '~/composables/useUpload'
+const { uploadImage } = useUpload()
+import { ref, onMounted, nextTick, computed } from 'vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 const apibase = useRuntimeConfig().public.apiBase;
@@ -64,20 +68,14 @@ const toggleEditor = () => {
 };
 const fetchHeadline = async () => {
   try {
-    const response = await $fetch(`/api/${apiEndpoint}/1`, { // Corrected endpoint
-      headers: {
-        "CKH": '541986Cocon',
-      },
-    });
-    if (response.headline) {
-      headline.value = {
-        x: response.headline.x ?? 50,
-        y: response.headline.y ?? 50,
-        image: response.headline.image || 'https://placehold.co/600x400',
-        text_en: response.headline.text_en || 'กำลังโหลด',
-        text: response.headline.text || 'กำลังโหลด',
-      };
-    }
+    const data = await getHerobarById(1);
+    headline.value = {
+      x: data.x ?? 50,
+      y: data.y ?? 50,
+      image: data.image || 'https://placehold.co/600x400',
+      text_en: data.text_en || 'กำลังโหลด',
+      text: data.text || 'กำลังโหลด',
+    };
   } catch (error) {
     console.error('Error fetching headline:', error);
   }
@@ -144,34 +142,29 @@ const updateHeadline = async () => {
     if (headline.value.image.startsWith('data:image')) {
       const base64Image = headline.value.image.split(',')[1];
       const imageName = `herobar_${Date.now()}.jpg`;
-      imagePath = `/images/${imageName}`;
+      imagePath = `/images/${imageName}`; // Save to public/images/
 
-      // check image
-      console.log('Image path:', imagePath);
-      // Save the image to the server
-      const uploadResponse = await fetch(`/api/upload`, {
-        method: 'POST',
-        headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64Image, path: imagePath }),
-      });
-
-      if (!uploadResponse.ok) {
+      // Use composable for upload
+      let uploadResponse;
+      try {
+        uploadResponse = await uploadImage(base64Image, imagePath);
+      } catch (err) {
         throw new Error('Failed to upload image');
+      }
+      if (uploadResponse.error) {
+        throw new Error(uploadResponse.error);
       }
     }
 
-    // Update the headline with the image path
-    headline.value.image = imagePath;
-
-    const updateResponse = await fetch(`/api/${apiEndpoint}/1`, {
-      method: 'PUT',
-      headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-      body: JSON.stringify(headline.value),
-    });
-
-    if (!updateResponse.ok) {
-      throw new Error('Failed to update headline');
-    }
+    // Update the headline with the image path using composable
+    await updateHerobarById(
+      1,
+      headline.value.text,
+      headline.value.text_en,
+      headline.value.x,
+      headline.value.y,
+      imagePath
+    );
 
     alert('Headline updated successfully!');
     await fetchHeadline(); // Refresh the data

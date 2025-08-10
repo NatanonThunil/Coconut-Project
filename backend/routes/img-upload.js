@@ -1,32 +1,25 @@
+import { Router } from 'express';
+import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
-import { readBody } from 'h3';
-import multer from 'multer';
-import express from 'express';
 
-const app = express();
+const router = Router();
+router.use(express.json());
 
-// Configure multer for file uploads
-const upload = multer({ dest: 'uploads' });
-
-// Serve static files from the 'public' directory
-app.use('/static', express.static(path.join(process.cwd(), 'public')));
-
-export default eventHandler(async (event) => {
+router.post('/', async (req, res) => {
   try {
-    const body = await readBody(event);
+    const { image, path: imagePath } = req.body;
 
-    if (!body || !body.image || !body.path) {
-      return { statusCode: 400, body: { error: 'Image data or path is missing' } };
+    if (!image || !imagePath) {
+      return res.status(400).json({ error: 'Image data or path is missing' });
     }
 
-    const { image, path: imagePath } = body;
-
+    // Remove leading slash if present
+    const fileName = path.basename(imagePath.replace(/^\/+/, ''));
     // Sanitize path to prevent directory traversal attacks
-    const safePath = path.join('public/images', path.basename(imagePath));
+    const safePath = path.join('public/images', fileName);
     const fullPath = path.join(process.cwd(), safePath);
 
-    // Decode Base64 image
     try {
       const buffer = Buffer.from(image, 'base64');
 
@@ -40,17 +33,24 @@ export default eventHandler(async (event) => {
       // Save image
       await fs.writeFile(fullPath, buffer);
 
-      return { statusCode: 200, body: { message: 'Image uploaded successfully', path: safePath } };
-    } catch (error) {
-      return { statusCode: 400, body: { error: 'Invalid Base64 image data' } };
-    }
+      // Check if file exists after writing
+      try {
+        await fs.access(fullPath);
+        console.log('Image file written successfully:', fullPath);
+      } catch (err) {
+        console.error('Image file not found after write:', fullPath);
+        return res.status(500).json({ error: 'File write failed' });
+      }
 
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error uploading image:', error.message);
-    } else {
-      console.error('Error uploading image:', error);
+      return res.status(200).json({ message: 'Image uploaded successfully', path: `/images/${fileName}` });
+    } catch (error) {
+      console.error('Error during image write:', error);
+      return res.status(400).json({ error: 'Invalid Base64 image data or file write error' });
     }
-    return { statusCode: 500, body: { error: `Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}` } };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return res.status(500).json({ error: `Failed to upload image: ${error.message}` });
   }
 });
+
+export default router;

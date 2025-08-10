@@ -6,6 +6,8 @@ import employeesRoutes from './employees.js';
 import coconutsRoutes from './coconuts.js';
 import faqsRoutes from './faqs.js';
 import expertsRoutes from './experts.js';
+import herobarsRoutes from './herobars.js';
+import imageUploadRoutes from './img-upload.js';
 // import newsRoutes from './news.js';
 export default [
     { path: '/news', handler: newsRoutes },
@@ -16,5 +18,7 @@ export default [
     {path: '/faqs', handler: faqsRoutes },
     {path: '/coconuts', handler: coconutsRoutes },
     {path: '/experts', handler: expertsRoutes },
+    {path: '/herobars', handler: herobarsRoutes },
+    {path: '/img-upload', handler: imageUploadRoutes },
     // { path: '/news', handler: newsRoutes },
 ];

@@ -17,7 +17,9 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { useHerobars } from '~/composables/useHerobars'
 
+const { getHerobarById } = useHerobars()
 
 defineProps({
   isFixed: {
@@ -51,36 +53,17 @@ const updateTextHW = () => {
 
 const fetchTagline = async () => {
   try {
-    const response = await fetch(`/api/headline/1`, {
-      headers: {
-        "CKH": '541986Cocon',
-      },
-    });
-    if (!response.ok) throw new Error(`Failed to fetch data, Status: ${response.status}`);
+    const data = await getHerobarById(1);
+    heado.value = {
+      text: data.text || "No tagline available.",
+      text_en: data.text_en || "No tagline available.",
+      x: data.x ?? 50,
+      y: data.y ?? 50,
+      image: data.image || "/img/tl.png",
+    };
 
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("Invalid response format: Expected JSON");
-    }
-
-    const data = await response.json();
-
-    if (data.headline) {
-      heado.value = {
-        ...data.headline,
-        text: data.headline.text || "No tagline available.",
-        text_en: data.headline.text_en || "No tagline available.",
-        x: data.headline.x ?? 50,
-        y: data.headline.y ?? 50,
-        image: data.headline.image || "/img/tl.png", // Ensure fallback image
-      };
-
-      await nextTick();
-      updateTextHW();
-    } else {
-      console.warn("Headline not found:", data.message);
-      heado.value.text = "No tagline available.";
-    }
+    await nextTick();
+    updateTextHW();
   } catch (error) {
     console.error("Error fetching headline:", error);
     heado.value.text = "Failed to load tagline.";
