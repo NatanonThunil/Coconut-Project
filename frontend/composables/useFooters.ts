@@ -6,7 +6,7 @@ export const useFooters = () => {
 
     const getFooterById = async (id: number) => {
         const url = `${be_api_url}${apiBase}/footers/${id}`;
-        console.log('Requesting URL:', url);
+       
         try {
             return await $fetch(url, {
                 headers: {
@@ -14,7 +14,7 @@ export const useFooters = () => {
                 },
             });
         } catch (error) {
-            console.error(`Error fetching footer by ID (${id}):`, error);
+            
             throw error;
         }
     };
@@ -27,7 +27,7 @@ export const useFooters = () => {
         credit_en: string
     ) => {
         const url = `${be_api_url}${apiBase}/footers/${id}`;
-        console.log('Updating footer at URL:', url);
+      
         return await $fetch(url, {
             method: 'PUT',
             headers: {

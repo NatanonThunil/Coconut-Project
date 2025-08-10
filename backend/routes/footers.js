@@ -47,9 +47,6 @@ router.put('/:id', async (req, res) => {
             credit_en
         } = req.body;
 
-        // Debug: log incoming data
-        console.log('PUT /footers/:id body:', req.body);
-        console.log('SQL params:', [text, text_en, credit, credit_en, id]);
 
         const [result] = await db.query(
             `UPDATE footer SET 
