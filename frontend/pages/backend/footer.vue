@@ -45,7 +45,8 @@
   
   <script setup>
   import { ref, onMounted } from 'vue';
-  
+  import { useFooters } from '~/composables/useFooters'
+  const { getFooterById, updateFooterById } = useFooters()
   definePageMeta({
     layout: 'admin',
   });
@@ -59,20 +60,13 @@
   
   const fetchFooter = async () => {
     try {
-      const response = await fetch('/api/footers/1', {
-        headers: {
-          CKH: '541986Cocon',
-        },
-      });
-  
-      if (!response.ok) throw new Error('Failed to fetch footer data');
-      const data = await response.json();
+      const data = await getFooterById(1);
   
       // Map data safely
-      footer.value.text = data.footer?.text || '';
-      footer.value.text_en = data.footer?.text_en || '';
-      footer.value.credit = data.footer?.credit || footer.value.credit;
-      footer.value.credit_en = data.footer?.credit_en || footer.value.credit_en;
+      footer.value.text = data.text || '';
+      footer.value.text_en = data.text_en || '';
+      footer.value.credit = data.credit || footer.value.credit;
+      footer.value.credit_en = data.credit_en || footer.value.credit_en;
     } catch (error) {
       console.error('Error fetching footer:', error);
     }
@@ -80,22 +74,15 @@
   
   const saveFooter = async () => {
     try {
-      const response = await fetch('/api/footers/1', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          CKH: '541986Cocon',
-        },
-        body: JSON.stringify({
-          text: footer.value.text,
-          text_en: footer.value.text_en,
-          credit: footer.value.credit,
-          credit_en: footer.value.credit_en,
-        }),
-      });
-  
-      if (!response.ok) throw new Error('Failed to update footer');
+      await updateFooterById(
+        1,
+        footer.value.text,
+        footer.value.text_en,
+        footer.value.credit,
+        footer.value.credit_en
+      );
       alert('Footer updated successfully!');
+      window.location.reload(); // Refresh the page
     } catch (error) {
       console.error('Error updating footer:', error);
       alert('Failed to update footer.');
@@ -160,4 +147,4 @@
     background-color: #3c550e;
   }
   </style>
-  
+

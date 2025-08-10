@@ -1,8 +1,11 @@
 import { Router } from 'express';
+import express from 'express'; // Only import once at the top
 const router = Router();
 import { config } from 'dotenv';
 config();
 import db from '../db.js';
+
+router.use(express.json());
 
 // ดึง API_KEY จาก .env (/backend/.env)
 const API_KEY = process.env.API_SECRET;
@@ -16,15 +19,6 @@ router.use((req, res, next) => {
     next();
 });
 
-/////////////////////////////// GET
-router.get('/', async (req, res) => {
-    try {
-        const [rows] = await db.query('SELECT * FROM footer');
-        res.json(rows);
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
-});
 
 /////////////////////////////// GET BY ID
 router.get('/:id', async (req, res) => {
@@ -52,6 +46,10 @@ router.put('/:id', async (req, res) => {
             credit,
             credit_en
         } = req.body;
+
+        // Debug: log incoming data
+        console.log('PUT /footers/:id body:', req.body);
+        console.log('SQL params:', [text, text_en, credit, credit_en, id]);
 
         const [result] = await db.query(
             `UPDATE footer SET 
@@ -81,6 +79,7 @@ router.put('/:id', async (req, res) => {
             credit_en
         });
     } catch (e) {
+        console.error('Error in PUT /footers/:id:', e); // Log full error object
         res.status(500).json({ error: e.message });
     }
 });
