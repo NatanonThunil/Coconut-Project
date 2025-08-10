@@ -4,10 +4,9 @@
 [สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
 ## Update List
 
-- เพิ่ม API `FAQs` GET,POST, PUT, DELETE
-- หลังบ้าน FAQs กลับมาปกติ
+- เพิ่ม coconutApi 'แต่มันไม่ขึ้น api ให้เห็น error เลยไม่รู้ว่าผิดตรงไหน'
 
-โดย [Poom](https://github.com/WasitpolKuekkong)
+โดย [SuJeff]
 
 # อัพเดต 5 Aug.
 
