@@ -5,6 +5,7 @@
 ## Update List
 
 - เพิ่ม coconutApi 'แต่มันไม่ขึ้น api ให้เห็น error เลยไม่รู้ว่าผิดตรงไหน'
+- เพิ่ม Experts มา
 
 โดย [SuJeff]
 
