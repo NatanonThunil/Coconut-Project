@@ -3,6 +3,7 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 
+
 const router = Router();
 router.use(express.json());
 
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
     // Remove leading slash if present
     const fileName = path.basename(imagePath.replace(/^\/+/, ''));
     // Sanitize path to prevent directory traversal attacks
-    const safePath = path.join('public/images', fileName);
+    const safePath = path.join('../../frontend/.output/public/images', fileName);
     const fullPath = path.join(process.cwd(), safePath);
 
     try {
