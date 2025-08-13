@@ -16,6 +16,7 @@ export default defineNuxtConfig({
       apiBase: process.env.API_BASE,
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
       apiKey: process.env.API_SECRET || 'Cocon541986',
+      
     },
   },
   devtools: { enabled: false },

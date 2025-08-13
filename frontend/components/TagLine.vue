@@ -2,7 +2,8 @@
   <div class="hero-bar">
     <div class="background" :style="{
       backgroundImage: `url(${heado.image})`,
-      backgroundAttachment: isFixed ? 'fixed' : 'scroll'
+      backgroundAttachment: isFixed ? 'fixed' : 'scroll',
+      
     }"></div>
     <div class="overlay"></div>
 
@@ -108,6 +109,7 @@ watchEffect(updateTextHW);
   background-position: top center;
   background-repeat: no-repeat;
   z-index: -2;
+  animation: fadeInImage 1s ease-out;
 }
 
 .overlay {
@@ -146,7 +148,7 @@ watchEffect(updateTextHW);
 @keyframes fadeInImage {
   0% {
 
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 
   100% {

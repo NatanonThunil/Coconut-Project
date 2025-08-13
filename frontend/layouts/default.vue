@@ -1,21 +1,18 @@
 <template>
   <div>
     <div v-if="isLoading" class="loading-container">
-      <DotLottieVue 
-        v-if="lottieLoaded" 
-        style="height: 300px; width: 300px" 
-        autoplay 
-        loop 
-        :src="loadingAnimation"
-      />
+      <DotLottieVue v-if="lottieLoaded" style="height: 300px; width: 300px" autoplay loop :src="loadingAnimation" />
       <p v-else style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
     </div>
 
     <div v-else>
       <header></header>
       <main>
-        <slot /> 
+        <div class="cocon-main-container">
+          <slot />
+        </div>
       </main>
+
       <NewFooter />
     </div>
   </div>
@@ -30,10 +27,10 @@ const DotLottieVue = defineAsyncComponent(() =>
 
 export default {
   components: {
-    DotLottieVue, 
+    DotLottieVue,
   },
   setup() {
-    const loading_time = useRuntimeConfig().public.LoadingTimeMock; 
+    const loading_time = useRuntimeConfig().public.LoadingTimeMock;
     const isLoading = ref(true);
     const lottieLoaded = ref(false);
     const loadingAnimation = ref("");
@@ -41,17 +38,18 @@ export default {
     const preloadLottie = async () => {
       try {
         const lottieUrl = new URL("@/assets/load/loading.lottie", import.meta.url).href;
-        loadingAnimation.value = lottieUrl; 
+        loadingAnimation.value = lottieUrl;
         lottieLoaded.value = true;
       } catch (error) {
         console.error("Lottie preload error:", error);
       }
     };
 
+
     onMounted(async () => {
       // Scroll smoothly to the top when mounted
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      await preloadLottie(); 
+      await preloadLottie();
       setTimeout(() => {
         isLoading.value = false;
       }, loading_time);
@@ -63,6 +61,11 @@ export default {
 </script>
 
 <style scoped>
+.cocon-main-container {
+  opacity: 0;
+  animation: fadein 0.6s forwards;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -80,15 +83,29 @@ export default {
 
 /* Bouncing animation */
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-15px);
   }
 }
 
-/* If you need smooth scrolling for the main area only, you can also add: */
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+
+}
+
+
 main {
   scroll-behavior: smooth;
 }

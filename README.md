@@ -10,7 +10,14 @@
 - ตกแต่ง ``SeeAllButton`` เพิ่ม
 - เพิ่ม API ``PdfUpload`` (ยังไม่เสร็จ)
 - เพิ่มตัวระบุตำแหน่งก่อเซฟ pathไฟล์ลง ``Tagline-edit``(Backend)
-- BulkUpdate ของ FAQs แก้แล้ว 
+- BulkUpdate ของ ``FAQs`` แก้แล้ว 
+- เอา ``Lottie`` กลับมา(Loading Screen)
+- เพิ่ม Animation ``Herobar``
+- เพิ่ม ``LOADING_TIMR_MOCK`` ใน ``.env``
+
+``` bash
+LOADING_TIME_MOCK = 1000
+```
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
