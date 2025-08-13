@@ -16,7 +16,7 @@
 - เพิ่ม ``LOADING_TIMR_MOCK`` ใน ``.env``
 
 ``` bash
-LOADING_TIME_MOCK = 1000
+LOADING_TIME_MOCK = 1000 /// 1วิ
 ```
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
