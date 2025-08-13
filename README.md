@@ -11,7 +11,7 @@
 - เพิ่ม API PdfUpload (ยังไม่เสร็จ)
 - เพิ่มตัวระบุตำแหน่งก่อเซฟ pathไฟล์ลง tagline-edit(Backend)
 
-[Poom](https://github.com/WasitpolKuekkong)
+โดย [Poom](https://github.com/WasitpolKuekkong)
 
 # อัพเดต 13 Aug.
 ### TO-DO
@@ -21,13 +21,8 @@
 - แก้ bug /api(ให้เป็น /coconut-api) เรียบร้อยแล้ว
 - แต่ติดปัญหา error: "Forbidden: Invalid API key" แทน(ได้ไงก่อน) 
 - bug achievements ไม่แสดงแต่ api ขึ้นปกติ คาดว่าน่าจะอยู่ที่ หน้า front ตรง pdfurl (เลยอยากฝากให้ท่าน Eix3 ดูให้หน่อย)
-- แก้ path ใน img-upload 
-- แก้ achievements ให้ทำงาน(เกือบ)ปกติ 
-- ตกแต่ง หน้าachievement เพิ่ม  
-- ตกแต่ง SeeAllButton เพิ่ม
-- เพิ่ม API Pdf Upload (ยังไม่เสร็จ)
 
-โดย [SuJeff] และ [Poom](https://github.com/WasitpolKuekkong)
+โดย [SuJeff]
 
 # อัพเดต 11 Aug.
 ### TO-DO
