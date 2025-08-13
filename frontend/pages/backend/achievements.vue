@@ -321,9 +321,9 @@ const bulkUpdateStatus = async (publish) => {
         a.description,
         a.description_en,
         a.uploadDate,
-        publish,      // status boolean
+        publish,     
         a.pdf,
-        true          // canDownload
+        true          
       )
     );
 

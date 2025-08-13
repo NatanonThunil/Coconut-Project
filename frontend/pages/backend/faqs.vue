@@ -320,6 +320,8 @@ const submitFaq = async (publish) => {
 
 const bulkUpdateStatus = async (publish) => {
     try {
+
+        
         const selectedFaqs = apisdatas.value.filter(faq => faq.selected);
         if (selectedFaqs.length === 0) {
             alert('No FAQs selected.');
@@ -327,11 +329,15 @@ const bulkUpdateStatus = async (publish) => {
         }
 
         const updatePromises = selectedFaqs.map(faq =>
-            fetch(`/api/faqs/${faq.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json'},
-                body: JSON.stringify({ ...faq, status: publish ? 1 : 0 })
-            })
+            updateFAQ(
+                faq.id,
+                faq.question,
+                faq.answer,
+                publish ? 1 : 0,
+                faq.isadvice,
+                faq.question_en,
+                faq.answer_en
+            )
         );
 
         await Promise.all(updatePromises);

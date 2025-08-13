@@ -10,6 +10,7 @@
 - ตกแต่ง ``SeeAllButton`` เพิ่ม
 - เพิ่ม API ``PdfUpload`` (ยังไม่เสร็จ)
 - เพิ่มตัวระบุตำแหน่งก่อเซฟ pathไฟล์ลง ``Tagline-edit``(Backend)
+- BulkUpdate ของ FAQs แก้แล้ว 
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
