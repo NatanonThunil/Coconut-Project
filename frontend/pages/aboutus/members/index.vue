@@ -83,7 +83,7 @@
       window.scrollTo(0, 0);
       try {
         setTimeout(async () => {
-          const response = await fetch("/api/members_table", {
+          const response = await fetch("/coconut-api/members_table", {
       headers: {
        "CKH": '541986Cocon',
        

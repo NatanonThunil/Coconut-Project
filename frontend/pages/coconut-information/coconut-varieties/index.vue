@@ -80,7 +80,7 @@ export default {
     window.scrollTo(0, 0);
     try {
       setTimeout(async () => {
-        const response = await fetch('/api/coconuts', {
+        const response = await fetch('/coconut-api/coconuts', {
           headers: {
             CKH: '541986Cocon',
           },

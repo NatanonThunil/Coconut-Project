@@ -5,7 +5,7 @@ config();
 import db from '../db.js';
 
 // ดึง API_KEY จาก .env (/backend/.env)
-const API_KEY = process.env.API_SECRET;
+const API_KEY = process.env.API_SECRET
 
 // Middleware to validate API key
 router.use((req, res, next) => {

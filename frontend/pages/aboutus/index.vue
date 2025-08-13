@@ -14,7 +14,7 @@
   <div class="a">
     <ContentHeader contexto="ผลงานของเรา" />
     <section>
-      <AboutusslidePdf apiEndPoint="/api/achievements" title="title" lurl="achievements"/>
+      <AboutusslidePdf apiEndPoint="/coconut-api/achievements" title="title" lurl="achievements"/>
 
       <SeeAllButton text="ผลงานทั้งหมด" link="/aboutus/achievements" />
     </section>
@@ -23,13 +23,13 @@
   <ContentHeader contexto="คณะทำงาน" />
 
 
-  <Aboutusslide apiEndPoint="/api/employees" lurl="employees"/>
+  <Aboutusslide apiEndPoint="/coconut-api/employees" lurl="employees"/>
   <SeeAllButton text="คณะทำงานทั้งหมด" link="/aboutus/employees" />
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <Aboutusslide apiEndPoint="/api/employees" lurl="benefitandservice"/>
+  <Aboutusslide apiEndPoint="/coconut-api/employees" lurl="benefitandservice"/>
   <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/aboutus/benefitandservice" />
   <ContentHeader contexto="สมาชิก" />
-  <Aboutusslide apiEndPoint="/api/members" lurl="members"/>
+  <Aboutusslide apiEndPoint="/coconut-api/members" lurl="members"/>
   <SeeAllButton text="สมาชิกทั้งหมด" link="/aboutus/members" />
   <div style="height: 3rem;"></div>
 </template>
