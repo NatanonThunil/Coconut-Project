@@ -54,6 +54,7 @@ import { ref, onMounted, nextTick, computed } from 'vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 const apibase = useRuntimeConfig().public.apiBase;
+const beurl = useRuntimeConfig().public.urlBase;
 const apiEndpoint = 'headline';
 const headline = ref({ x: 50, y: 50, image: '', text: 'กำลังโหลด...', text_en: '-' });
 const fileInput = ref(null);
@@ -142,7 +143,7 @@ const updateHeadline = async () => {
     if (headline.value.image.startsWith('data:image')) {
       const base64Image = headline.value.image.split(',')[1];
       const imageName = `herobar_${Date.now()}.jpg`;
-      imagePath = `/images/${imageName}`; // Save to public/images/
+      imagePath = `${beurl}/images/${imageName}`; // Save to public/images/
 
       // Use composable for upload
       let uploadResponse;

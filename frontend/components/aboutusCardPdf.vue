@@ -1,7 +1,7 @@
 <template>
   <div class="card-content-container" @click="goToUrl">
     <div :class="ispdf ? 'pdf-image-container' : 'people-image-container'">
-      <img :src="image" alt="Card Image" />
+      <img :src="image || noimageHandle" alt="Card Image" />
     </div>
     <div class="people-details-container">
       <h3 class="coconut-green-text">{{ name }}</h3>
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     image: {

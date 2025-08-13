@@ -27,25 +27,39 @@
                             <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
                                 class="checkbox-decorate" />
                             <span>ID</span>
-                            <button @click="toggleSort('id')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button>
+                            <button @click="toggleSort('id')">
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
+                            </button>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Title<button @click="toggleSort('title')"><div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div></button></div>
+                            <div>Title<button @click="toggleSort('title')">
+                                    <div :class="{ 'rotate': sortBy === 'title' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Author<button @click="toggleSort('author')"><div :class="{'rotate': sortBy === 'author' && sortDirection === -1}">▲</div></button></div>
+                            <div>Author<button @click="toggleSort('author')">
+                                    <div :class="{ 'rotate': sortBy === 'author' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
-                    <th><div class="checkbox-id-container">
-                            <div>Upload Date<button @click="toggleSort('uploadDate')"><div :class="{'rotate': sortBy === 'uploadDate' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
-                    <th><div class="checkbox-id-container">
-                            <div>Status <button @click="toggleSort('status')"><div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div></button></div>
-                        </div></th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Upload Date<button @click="toggleSort('uploadDate')">
+                                    <div :class="{ 'rotate': sortBy === 'uploadDate' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Status <button @click="toggleSort('status')">
+                                    <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
+                                </button></div>
+                        </div>
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -54,7 +68,7 @@
                 <tr v-for="achievement in filteredSortedAchievements" :key="achievement.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="achievement.selected" class="checkbox-decorate"/>
+                            <input type="checkbox" v-model="achievement.selected" class="checkbox-decorate" />
                             <p>{{ achievement.id }}</p>
                         </div>
                     </td>
@@ -97,16 +111,18 @@
             <h2>{{ showModalEdit ? 'แก้ไขความสำเร็จ' : 'เพิ่มความสำเร็จ' }}</h2>
             <div class="lang-toggle">
                 <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang? 'English' : 'Thai' }}
+                    Switch to {{ activeLang ? 'English' : 'Thai' }}
                 </button>
             </div>
             <div class="divider"></div>
-            
+
             <div class="modal-content">
                 <section>
-                    <label>{{activeLang? 'หัวข้อ':'Title' }}</label>
-                    <input v-show="activeLang" class="add-text-input" v-model="currentAchievement.title" placeholder="หัวข้อผลงาน..." required />
-                    <input v-show="!activeLang" class="add-text-input" v-model="currentAchievement.title_en" placeholder="Enter title..." required />
+                    <label>{{ activeLang ? 'หัวข้อ' : 'Title' }}</label>
+                    <input v-show="activeLang" class="add-text-input" v-model="currentAchievement.title"
+                        placeholder="หัวข้อผลงาน..." required />
+                    <input v-show="!activeLang" class="add-text-input" v-model="currentAchievement.title_en"
+                        placeholder="Enter title..." required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentAchievement.author" placeholder="Enter author name"
                         required />
@@ -121,17 +137,19 @@
                                 <embed :src="currentAchievement.pdf" type="application/pdf" class="preview-pdf" />
                                 <button class="remove-btn" @click="removePdf">X</button>
                             </div>
-                            <input type="file" accept="application/pdf" @change="handleFileUpload"
-                                class="file-uploader" ref="fileInput" />
+                            <input type="file" accept="application/pdf" @change="handleFileUpload" class="file-uploader"
+                                ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse
                                 File</button>
                         </div>
                     </div>
                 </section>
                 <section>
-                    <label>{{ activeLang? 'คำอธิบาย' : 'Descriptions' }}</label>
-                    <textarea v-show="activeLang" v-model=" currentAchievement.description" placeholder="คำอธิบาย..."></textarea>
-                    <textarea v-show="!activeLang" v-model=" currentAchievement.description_en" placeholder="Descriptions here..."></textarea>
+                    <label>{{ activeLang ? 'คำอธิบาย' : 'Descriptions' }}</label>
+                    <textarea v-show="activeLang" v-model="currentAchievement.description"
+                        placeholder="คำอธิบาย..."></textarea>
+                    <textarea v-show="!activeLang" v-model="currentAchievement.description_en"
+                        placeholder="Descriptions here..."></textarea>
 
                 </section>
             </div>
@@ -153,10 +171,12 @@ definePageMeta({
 import { ref, onMounted, computed, nextTick } from 'vue';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
-
-
 import { useAchievements } from '~/composables/useAchievements';
-const { getAchievements } = useAchievements();
+import { usePdfUpload } from '~/composables/usePdfUpload';
+
+const { getAchievements, createAchievement, deleteAchievement, updateAchievement } = useAchievements();
+const { uploadPdf } = usePdfUpload();
+
 const apiEndpoint = 'achievements';
 const searchQuery = ref('');
 const achievements = ref([]);
@@ -172,6 +192,7 @@ const fileInput = ref(null);
 const sortBy = ref(null);
 const sortDirection = ref(1);
 const activeLang = ref(true);
+
 const currentAchievement = ref({
     id: null,
     title: '',
@@ -183,91 +204,73 @@ const currentAchievement = ref({
     uploadDate: new Date().toISOString().split('T')[0],
     status: false,
 });
-const toggleLang = () => {
-    activeLang.value = activeLang.value === true ? false : true;
-};
+
+const toggleLang = () => { activeLang.value = !activeLang.value; };
 
 const toggleStatus = async (achievement) => {
-    try {
-        const newStatus = !achievement.status;
-        achievement.status = newStatus ? 1 : 0;
+  const previousStatus = achievement.status;
+  try {
+    const newStatus = !previousStatus;
+    achievement.status = newStatus ? 1 : 0;
 
-        // Fix for date formatting issue
-        const formattedDate = new Date(achievement.uploadDate).toISOString().slice(0, 19).replace('T', ' ');
+    const updatedAchievement = await updateAchievement(
+      achievement.id,
+      achievement.title,
+      achievement.title_en,
+      achievement.author,
+      achievement.description,
+      achievement.description_en,
+      achievement.uploadDate,
+      newStatus,
+      achievement.pdf,
+      true
+    );
 
-        const response = await fetch(`/api/${apiEndpoint}/${achievement.id}`, {
-            method: 'PUT',
-            headers: {
-                'CKH': '541986Cocon',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ...achievement,
-                status: newStatus,
-                uploadDate: formattedDate 
-            }),
-        });
-
-        if (!response.ok) {
-            achievement.status = newStatus ? 0 : 1;
-            throw new Error('Failed to update achievement status.');
-        }
-
-        const updatedAchievement = await response.json();
-        console.log('Updated achievement:', updatedAchievement);
-
-    } catch (error) {
-        alert('Error updating achievement status.');
-        console.error(error);
-    }
+    Object.assign(achievement, updatedAchievement);
+  } catch (error) {
+    achievement.status = previousStatus;
+    alert('Error updating achievement status.');
+    console.error(error);
+  }
 };
 
-
-const triggerFileInput = () => {
-    fileInput.value.click();
-};
+const triggerFileInput = () => { fileInput.value.click(); };
 
 const fetchAchievements = async () => {
-    try {
-       
-        const data = await getAchievements();
-        achievements.value = data.achievements.map(achievement => ({ ...achievement, selected: false }));
-        achievementsNum.value = achievements.value.length;
-    } catch (error) {
-        alert('Error fetching achievements.');
-        console.error(error);
-    }
+  try {
+    const data = await getAchievements();
+    const list = Array.isArray(data?.achievements) ? data.achievements : Array.isArray(data) ? data : [];
+    achievements.value = list.map(a => ({ ...a, selected: false }));
+    achievementsNum.value = achievements.value.length;
+  } catch (error) {
+    alert('Error fetching achievements.');
+    console.error(error);
+  }
 };
 
 const editItem = (achievement) => {
     currentAchievement.value = {
         ...achievement,
         status: !!achievement.status,
-        description: achievement.description || "", // Ensure description is set
-        pdf: achievement.pdf || '', // Ensure pdf is set
+        description: achievement.description || "", 
+        pdf: achievement.pdf || '', 
     };
-
-    showModalEdit.value = true; // Open modal first
-
-    nextTick(() => {
-        console.log("Setting Tiptap Content:", currentAchievement.value.description);
-    });
+    showModalEdit.value = true;
 };
 
 const filteredSortedAchievements = computed(() => {
-    let filtered = achievements.value.filter(achievement =>
-        achievement.id.toString().includes(searchQuery.value) ||
-        achievement.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        achievement.title_en.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        achievement.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        achievement.uploadDate.includes(searchQuery.value)
+    let filtered = achievements.value.filter(a =>
+        a.id.toString().includes(searchQuery.value) ||
+        a.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        a.title_en.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        a.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        a.uploadDate.includes(searchQuery.value)
     );
 
     if (sortBy.value) {
         filtered.sort((a, b) => {
             let valA = a[sortBy.value];
             let valB = b[sortBy.value];
-
             if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
             if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
             if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
@@ -279,9 +282,8 @@ const filteredSortedAchievements = computed(() => {
 });
 
 const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
+    if (sortBy.value === column) sortDirection.value *= -1;
+    else {
         sortBy.value = column;
         sortDirection.value = column === 'status' ? -1 : 1;
     }
@@ -301,206 +303,168 @@ const openAddAchievementModal = () => {
     };
     showModalAddAchievement.value = true;
 };
+
 const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedAchievements = achievements.value.filter(achievement => achievement.selected);
-        if (selectedAchievements.length === 0) {
-            alert('No achievements selected.');
-            return;
-        }
-
-        // Loop through selected achievements and format uploadDate
-        const updatePromises = selectedAchievements.map(achievement => {
-            // Format the date to 'YYYY-MM-DD HH:MM:SS' before sending
-            const formattedDate = new Date(achievement.uploadDate).toISOString().slice(0, 19).replace('T', ' ');
-
-            return fetch(`/api/${apiEndpoint}/${achievement.id}`, {
-                method: 'PUT',
-                headers: {
-                    'CKH': '541986Cocon',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...achievement,
-                    status: publish ? 1 : 0,
-                    uploadDate: formattedDate,  // Ensure correct date format
-                }),
-            });
-        });
-
-        await Promise.all(updatePromises);
-
-        // Update the local state after success
-        selectedAchievements.forEach(achievement => {
-            achievement.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
-    } catch (error) {
-        alert('Failed to update achievement status.');
-        console.error(error);
+  try {
+    const selectedAchievements = achievements.value.filter(a => a.selected);
+    if (!selectedAchievements.length) {
+      alert('No achievements selected.');
+      return;
     }
-};
 
+    const updatePromises = selectedAchievements.map(a =>
+      updateAchievement(
+        a.id,
+        a.title,
+        a.title_en,
+        a.author,
+        a.description,
+        a.description_en,
+        a.uploadDate,
+        publish,      // status boolean
+        a.pdf,
+        true          // canDownload
+      )
+    );
+
+    await Promise.all(updatePromises);
+
+    // Update local state after API call
+    selectedAchievements.forEach(a => a.status = publish ? 1 : 0);
+
+    alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
+  } catch (error) {
+    console.error(error);
+    alert('Failed to update achievement status.');
+  }
+};
 
 const submitAchievement = async (publish) => {
-    if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
-        alert('Please fill in all required fields: Title and Author.');
-        return;
+  if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
+    alert('Please fill in Title and Author.');
+    return;
+  }
+  try {
+    const uploadDate = new Date(currentAchievement.value.uploadDate);
+    const formattedDate = uploadDate.toISOString().slice(0, 19).replace('T', ' ');
+    const status = publish ? 1 : 0;
+
+    let result;
+    if (showModalEdit.value && currentAchievement.value.id) {
+      result = await updateAchievement(
+        currentAchievement.value.id,
+        currentAchievement.value.title,
+        currentAchievement.value.title_en,
+        currentAchievement.value.author,
+        currentAchievement.value.description,
+        currentAchievement.value.description_en,
+        formattedDate,
+        status,
+        currentAchievement.value.pdf || '',
+        true
+      );
+
+      const index = achievements.value.findIndex(a => a.id === currentAchievement.value.id);
+      if (index !== -1) achievements.value[index] = { ...result, selected: achievements.value[index].selected };
+      alert('Achievement updated successfully.');
+    } else {
+      result = await createAchievement(
+        currentAchievement.value.title,
+        currentAchievement.value.title_en,
+        currentAchievement.value.author,
+        currentAchievement.value.description,
+        currentAchievement.value.description_en,
+        formattedDate,
+        status,
+        currentAchievement.value.pdf || '',
+        true
+      );
+
+      achievements.value.push({ ...result, selected: false });
+      achievementsNum.value = achievements.value.length;
+      alert('Achievement added successfully.');
     }
 
-    try {
-        const userTime = new Date();
-        const bangkokOffset = 7 * 60 * 60 * 1000;
-        const bangkokTime = new Date(userTime.getTime() + bangkokOffset);
-
-        currentAchievement.value.uploadDate = bangkokTime
-            .toISOString()
-            .slice(0, 19)
-            .replace('T', ' ');
-
-        const isUpdate = !!currentAchievement.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentAchievement.value.id}` : `/api/${apiEndpoint}`;
-
-        const payload = {
-            id: currentAchievement.value.id,
-            title: currentAchievement.value.title,
-            title_en: currentAchievement.value.title_en,
-            description: currentAchievement.value.description,
-            description_en: currentAchievement.value.description_en,
-            author: currentAchievement.value.author,
-            uploadDate: currentAchievement.value.uploadDate,
-            status: publish ? 1 : 0,
-            pdf: currentAchievement.value.pdf || '',
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            throw new Error('Error saving the achievement.');
-        }
-
-        if (!isUpdate) {
-            currentAchievement.value.id = await response.json();
-            alert('Achievement added successfully.');
-        } else {
-            alert('Achievement updated successfully.');
-        }
-
-        showModalAddAchievement.value = false;
-        showModalEdit.value = false;
-        fetchAchievements();
-
-    } catch (error) {
-        alert('Error while submitting achievement.');
-        console.error(error);
-    }
-};
-
-const closeModal = () => {
     showModalAddAchievement.value = false;
     showModalEdit.value = false;
+  } catch (err) {
+    console.error('Error saving achievement:', err);
+    alert('Error saving achievement.');
+  }
 };
 
-const removePdf = () => {
-    currentAchievement.value.pdf = '';
+const closeModal = () => { showModalAddAchievement.value = false; showModalEdit.value = false; };
+const removePdf = () => { currentAchievement.value.pdf = ''; };
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file || file.type !== 'application/pdf') return;
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const base64Data = reader.result.split(',')[1];
+
+      const uploaded = await uploadPdf(base64Data, file.name);
+      currentAchievement.value.pdf = uploaded.path;
+    } catch (err) {
+      alert('Failed to upload PDF');
+      console.error(err);
+    }
+  };
+  reader.readAsDataURL(file);
 };
 
 const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
+  isDragging.value = false;
+  const files = e.dataTransfer.files;
+  if (files.length > 0) handleFileUpload({ target: { files } });
 };
 
-const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onload = () => {
-            currentAchievement.value.pdf = reader.result;
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-const askDelete = (id, title) => {
-    deleteId.value = id;
-    deleteName.value = title;
-    showModal.value = true;
-};
-
+const askDelete = (id, title) => { deleteId.value = id; deleteName.value = title; showModal.value = true; };
 const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon','Content-Type': 'application/json'  },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete achievement.');
-        }
-
-        achievements.value = achievements.value.filter(achievement => achievement.id !== deleteId.value);
-        achievementsNum.value = achievements.value.length;
-
-        showModal.value = false;
-        alert('Achievement deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting achievement: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-const cancelDelete = () => {
+  try {
+    const response = await deleteAchievement(deleteId.value);
+    achievements.value = achievements.value.filter(a => a.id !== deleteId.value);
+    achievementsNum.value = achievements.value.length;
     showModal.value = false;
+    alert(response.message || 'Achievement deleted successfully.');
+  } catch (error) {
+    alert(`Error deleting achievement: ${error?.message || 'Unknown error'}`);
+    console.error(error);
+  } finally { deleteId.value = null; }
 };
+const cancelDelete = () => { showModal.value = false; };
 
-onMounted(() => {
-    fetchAchievements();
-});
-
-const toggleSelectAll = () => {
-    achievements.value.forEach(achievement => achievement.selected = selectAll.value);
-};
+onMounted(() => { fetchAchievements(); });
+const toggleSelectAll = () => { achievements.value.forEach(a => a.selected = selectAll.value); };
 </script>
-<style scoped>
 
+<style scoped>
 .lang-toggle {
-  margin-bottom: 1rem;
-  text-align: center;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 .lang-toggle button {
-  background-color: #4E6D16;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #4E6D16;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .lang-toggle button:hover {
-  background-color: #3c5213;
-  transform: scale(1.05);
+    background-color: #3c5213;
+    transform: scale(1.05);
 }
 
 .lang-toggle button:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
 .status-toggle {
@@ -713,7 +677,7 @@ const toggleSelectAll = () => {
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    
+
 }
 
 .item-list-table th:nth-child(5),
@@ -732,13 +696,14 @@ const toggleSelectAll = () => {
 .item-list-table td:nth-child(7) {
     width: 8%;
     text-align: center;
-    
+
 }
+
 .item-list-table th:nth-child(8),
 .item-list-table td:nth-child(8) {
     width: 8%;
     text-align: center;
-    
+
 }
 
 .action-btn-container {
@@ -1252,26 +1217,29 @@ input:checked+.hotnews-slider:before {
 
 @media screen and (max-width: 1440px) {
 
-.item-list-table th:nth-child(3),
-.item-list-table td:nth-child(3) {
-    width: 18%;
-}
+    .item-list-table th:nth-child(3),
+    .item-list-table td:nth-child(3) {
+        width: 18%;
+    }
 
 }
+
 @media screen and (max-width: 1306px) {
 
-.item-list-table th:nth-child(5),
-.item-list-table td:nth-child(5) {
-    display: none;
+    .item-list-table th:nth-child(5),
+    .item-list-table td:nth-child(5) {
+        display: none;
+    }
 }
-}
+
 @media screen and (max-width: 1130px) {
 
-.item-list-table th:nth-child(6),
-.item-list-table td:nth-child(6) {
-    display: none;
+    .item-list-table th:nth-child(6),
+    .item-list-table td:nth-child(6) {
+        display: none;
+    }
 }
-}
+
 @media screen and (max-width: 1052px) {
     .add-btn-container {
         flex-direction: column;
@@ -1289,10 +1257,11 @@ input:checked+.hotnews-slider:before {
     .modal-add .modal-content section:nth-child(2) {
         width: 100%;
     }
+
     .item-list-table th:nth-child(3),
-.item-list-table td:nth-child(3) {
-    width: 10%;
-}
+    .item-list-table td:nth-child(3) {
+        width: 10%;
+    }
 }
 
 @media screen and (max-width: 865px) {

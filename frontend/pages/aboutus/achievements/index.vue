@@ -80,9 +80,22 @@ const filters = ref([
 const fetchAchievements = async () => {
   try {
     
-    const { achievements } = await getAchievements();
+    loading.value = true;
+     /// รับมาเป็น json
+     const raw = await getAchievements();
 
-    const filteredAchievements = achievements.filter(achievement => achievement.status === 1);
+ ///แปลงเป็น 
+    const list = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.achievements)
+        ? raw.achievements
+        : [];
+
+    if (!list.length) {
+      console.warn("No achievements found or unexpected response format:", raw);
+    }
+    const filteredAchievements = list.filter(achievement => achievement.status === 1);
+
 
     await Promise.all(filteredAchievements.map(async (achievement) => {
       if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {

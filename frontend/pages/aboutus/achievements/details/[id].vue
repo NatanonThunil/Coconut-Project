@@ -19,7 +19,7 @@
                     <button class="view-btn" @click="nextPage" :disabled="currentPage >= totalPages">{{ $t("Next") }}</button>
                 </div>
             </div>
-            <img v-else :src="'https://placehold.co/600x400'" alt="" draggable="false" />
+            <img v-else :src="noimageHandle" alt="" draggable="false" />
 
         </section>
         <section class="achievements-text-container">
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-
+import noimageHandle from '/img/no-image-handle.png';
 import { ref, onMounted, watch, nextTick, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import VuePdfEmbed from 'vue-pdf-embed';
@@ -202,20 +202,41 @@ watch(() => route.params.id, fetchAchievement);
     flex-direction: column;
     width: 85%;
     margin: 0 auto;
+    
 }
+
+.achievements-text-details-container p{
+    font-size: clamp(0.8rem, 1vw, 1rem);
+  
+    
+}
+
 
 .achievements-text-container {
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+     overflow-wrap: break-word;
 }
 
 .achievements-pdf-container {
     padding: 0.5rem;
     background-color: rgb(1, 1, 1, 0.2);
     border-radius: 10px;
+    flex: 0 1 60%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
 }
+.achievements-pdf-container img{
+   
+    width: 100%;
+
+    object-fit: cover;
+    
+}
+
 
 .loading-container {
     text-align: center;
@@ -227,12 +248,21 @@ watch(() => route.params.id, fetchAchievement);
 .achievement-content-container {
     display: flex;
     flex-direction: row;
+ 
     background-color: rgb(241, 241, 241);
     box-shadow: 0px 0px 16px rgb(0, 0, 0, 0.3);
     padding: 1rem;
     width: 80%;
     margin: 0 auto;
     border-radius: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
+@media (max-width: 1000px) {
+ .achievement-content-container {
+    flex-direction: column;
+
+}
+}
 </style>

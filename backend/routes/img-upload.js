@@ -3,7 +3,6 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 
-
 const router = Router();
 router.use(express.json());
 
@@ -15,39 +14,30 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Image data or path is missing' });
     }
 
-    // Remove leading slash if present
+    // Get filename and sanitize it
     const fileName = path.basename(imagePath.replace(/^\/+/, ''));
-    // Sanitize path to prevent directory traversal attacks
-    const safePath = path.join('../../frontend/.output/public/images', fileName);
-    const fullPath = path.join(process.cwd(), safePath);
 
+    // Absolute path to the images folder
+    const baseDir = path.resolve(process.cwd(), '../frontend/.output/public/images');
+    const fullPath = path.join(baseDir, fileName);
+
+    // Ensure directory exists
+    await fs.mkdir(baseDir, { recursive: true });
+
+    // Convert base64 to buffer and save file
+    const buffer = Buffer.from(image, 'base64');
+    await fs.writeFile(fullPath, buffer);
+
+    // Verify the file exists
     try {
-      const buffer = Buffer.from(image, 'base64');
-
-      // Debug safepath and fullpath
-      console.log('Safe Path:', safePath);
-      console.log('Full Path:', fullPath);
-
-      // Ensure directory exists
-      await fs.mkdir(path.dirname(fullPath), { recursive: true });
-
-      // Save image
-      await fs.writeFile(fullPath, buffer);
-
-      // Check if file exists after writing
-      try {
-        await fs.access(fullPath);
-        console.log('Image file written successfully:', fullPath);
-      } catch (err) {
-        console.error('Image file not found after write:', fullPath);
-        return res.status(500).json({ error: 'File write failed' });
-      }
-
-      return res.status(200).json({ message: 'Image uploaded successfully', path: `/images/${fileName}` });
-    } catch (error) {
-      console.error('Error during image write:', error);
-      return res.status(400).json({ error: 'Invalid Base64 image data or file write error' });
+      await fs.access(fullPath);
+      console.log('Image file written successfully:', fullPath);
+    } catch {
+      console.error('Image file not found after write:', fullPath);
+      return res.status(500).json({ error: 'File write failed' });
     }
+
+    return res.status(200).json({ message: 'Image uploaded successfully', path: `/images/${fileName}` });
   } catch (error) {
     console.error('Error uploading image:', error);
     return res.status(500).json({ error: `Failed to upload image: ${error.message}` });

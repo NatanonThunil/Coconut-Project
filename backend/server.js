@@ -11,6 +11,8 @@ config();
 
 const app = express();
 //ให้ดูออกว่าดึง .env มาใช้ได้ไหม
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.BE_PORT || 3000;
 // const base = process.env.API_BASE || '/notuseorerror-api';
 app.use(express.static('public')) // <-- Add this line to serve static files

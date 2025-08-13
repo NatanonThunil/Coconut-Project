@@ -2,48 +2,38 @@
   <div class="employee-slider-container">
     <button @click="goPrev" class="btn-4-swiper"><</button>
 
-    <!-- Shimmer Effect While Loading -->
-    <div class="employee-card-section" v-if="isLoading">
-      <div style="display: flex; gap: 2rem; flex-direction: row;">
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-      </div>
-    </div>
+        <!-- Shimmer Effect While Loading -->
+        <div class="employee-card-section" v-if="isLoading">
+          <div style="display: flex; gap: 2rem; flex-direction: row;">
+            <CardShimmer />
+            <CardShimmer />
+            <CardShimmer />
+            <CardShimmer />
+          </div>
+        </div>
 
-    <!-- Employee Slider with PDF Rendering -->
-    <div v-if="!isLoading && employees.length > 0" class="swiper-container">
-      <Swiper
-        :slides-per-view="4"
-        :space-between="10"
-        ref="mySwiper"
-        :slides-per-group="4"
-        :breakpoints="{
-          480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
-          768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
-          1024: { slidesPerView: 3, spaceBetween: 10, slidesPerGroup: 3 },
-          1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 },
-        }"
-      >
-        <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
-          <aboutusCardPdf
-            :url="`/aboutus/${lurl}/details/${employee.id}`"
-            :image="employee.pdfImage || noimageHandle"
-            :name="getTitle(employee)"
-            :description="employee.description"
-            :ispdf="!!employee.pdf"
-          />
-        </SwiperSlide>
-      </Swiper>
-    </div>
+        <!-- Employee Slider with PDF Rendering -->
+        <div v-if="!isLoading && employees.length > 0" class="swiper-container">
+          <Swiper :slides-per-view="4" :space-between="10" ref="mySwiper" :slides-per-group="4" :breakpoints="{
+            480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
+            768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
+            1024: { slidesPerView: 3, spaceBetween: 10, slidesPerGroup: 3 },
+            1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 },
+          }">
+            <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
+              <aboutusCardPdf :url="`/aboutus/${lurl}/details/${employee.id}`"
+                :image="employee.pdfImage || noimageHandle" :name="getTitle(employee)"
+                :description="employee.description" :ispdf="!!employee.pdf" />
+            </SwiperSlide>
+          </Swiper>
+        </div>
 
-    <!-- No Employees Message -->
-    <div v-if="!isLoading && employees.length === 0" class="no-employees">
-      No Achievements available at the moment.
-    </div>
+        <!-- No Employees Message -->
+        <div v-if="!isLoading && employees.length === 0" class="no-employees">
+          No Achievements available at the moment.
+        </div>
 
-    <button @click="goNext" class="btn-4-swiper">></button>
+        <button @click="goNext" class="btn-4-swiper">></button>
   </div>
 </template>
 
@@ -83,6 +73,7 @@ export default {
     return {
       employees: [],
       isLoading: true,
+       noimageHandle,
     };
   },
   mounted() {
@@ -116,35 +107,35 @@ export default {
       return null;
     },
 
-    async fetchEmployees() {
-      try {
-        const data = await getAchievements(); // ใข้ composable getAchievements ตรงนี้
-        
+   async fetchEmployees() {
+  try {
+    const raw = await getAchievements();
+    
+    if (Array.isArray(raw)) {
+      this.employees = raw.filter(emp => emp.status === 1);
+      this.employees.sort((a, b) => b.id - a.id);
 
-        // Ensure the API response structure matches expectations
-        if (data.success && Array.isArray(data.achievements)) {
-          this.employees = data.achievements.filter(emp => emp.status === 1);
-          this.employees.sort((a, b) => b.id - a.id);
+      this.employees = await Promise.all(
+        this.employees.map(async (employee) => {
+          if (employee.pdf) {
+            employee.pdfImage = await this.getPdfImage(employee);
+          }
+          return employee;
+        })
+      );
+    } else {
+      console.warn("Unexpected structure, got:", raw);
+      throw new Error("Unexpected API response structure");
+    }
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    this.employees = [];
+  } finally {
+    this.isLoading = false;
+  }
+},
 
-          // Fetch PDF images asynchronously for each employee
-          this.employees = await Promise.all(
-            this.employees.map(async (employee) => {
-              if (employee.pdf) {
-                employee.pdfImage = await this.getPdfImage(employee);
-              }
-              return employee;
-            })
-          );
-        } else {
-          throw new Error("Unexpected API response structure");
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error.message); // Improved error logging
-        this.employees = [];
-      } finally {
-        this.isLoading = false;
-      }
-    },
+
 
     getTitle(employee) {
       return this.title && employee[this.title] ? employee[this.title] : employee.name;
@@ -170,9 +161,11 @@ export default {
 .swiper {
   width: 100%;
 }
+
 .swiper-wrapper {
   justify-content: center !important;
 }
+
 .btn-4-swiper {
   all: unset;
   cursor: pointer;

@@ -1,78 +1,143 @@
 export const useAchievements = () => {
-    const config = useRuntimeConfig();
-    const apiBase = config.public.apiBase || '/env-notwork'; // Ensure apiBase has a default value
-    const be_api_url = config.public.beUrl; // ดึง มาจาก nuxt config
-    const apiKey = 'Cocon541986'; // ยังติดปัญหาใช้า env ใน composable ไม่ได้ ให้มันอยู่ตรงนี้ไปก่อน
+  const config = useRuntimeConfig();
+  const be_api_url = config.public.beUrl;
+  const apiKey = 'Cocon541986'; 
+const apiBase = config.public.apiBase || '/env-notwork'; // Ensure apiBase has a default value
+  const getAchievements = async () => {
+    const url = `${be_api_url}${apiBase}/achievements`;
+    console.log('Requesting URL:', url);
+    const res = await fetch(url, {
+      headers: { 'cocon-key': apiKey },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch achievements: ${res.statusText}`);
+    return res.json();
+  };
 
-    const getAchievements = async () => {
-        const url = `${be_api_url}${apiBase}/achievements`;
-        console.log('Requesting URL:', url);
+  const getAchievementById = async (id: number) => {
+    if (!id || isNaN(id)) throw new Error('Invalid achievement ID');
+    const url = `${be_api_url}${apiBase}/achievements/${id}`;
+    console.log('Requesting URL:', url);
+    const res = await fetch(url, {
+      headers: { 'cocon-key': apiKey },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch achievement: ${res.statusText}`);
+    return res.json();
+  };
 
-        return await $fetch(url, {
-            headers: {
-                'cocon-key': apiKey,
-            },
-        });
-    };
-
-    const getAchievementById = async (id: number) => {
-        if (!id || isNaN(id)) {
-            console.error('Invalid achievement ID:', id);
-            throw new Error('Invalid achievement ID');
-        }
-
-        const url = `${be_api_url}${apiBase}/achievements/${id}`;
-        console.log('Requesting URL:', url);
-        try {
-            const response = await $fetch(url, {
-                headers: {
-                    'cocon-key': apiKey,
-                },
-            });
-
-            // Check if the response is valid
-            if (!response || Object.keys(response).length === 0) {
-                console.error(`Achievement with ID ${id} not found in response:`, response);
-                throw new Error('Achievement not found');
-            }
-
-            return response; // Return the achievement data directly
-        } catch (error) {
-            console.error(`Error fetching achievement by ID (${id}):`, error.message || error);
-            throw new Error(error.message || 'Failed to fetch achievement');
-        }
-    };
-
-    const createAchievement = async (
+  const createAchievement = async (
     title: string,
     title_en: string,
     author: string,
     description: string,
     description_en: string,
-    uploadDate: Date,
+    uploadDate: string | Date,
     status: boolean,
     pdf: string,
-    canDownload: boolean // Added parameter
-) => {
+    canDownload: boolean
+  ) => {
+    if (!title || !author) throw new Error('Title and Author are required');
+
+    const formattedDate =
+      typeof uploadDate === 'string'
+        ? uploadDate
+        : new Date(uploadDate).toISOString().slice(0, 19).replace('T', ' ');
+
+    const backendStatus = status ? 1 : 0;
+
     const url = `${be_api_url}${apiBase}/achievements`;
     console.log('Requesting URL:', url);
-    return await $fetch(url, {
-        method: 'POST',
-        headers: {
-            'cocon-key': apiKey,
-        },
-        body: {
-            title,
-            title_en,
-            author,
-            description,
-            description_en,
-            uploadDate,
-            status,
-            pdf,
-            canDownload, // Added to body
-        },
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'cocon-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        title_en,
+        author,
+        description,
+        description_en,
+        uploadDate: formattedDate,
+        status: backendStatus,
+        pdf,
+        canDownload,
+      }),
     });
-};
-    return { getAchievements, getAchievementById, createAchievement };
+
+    if (!res.ok) throw new Error(`Failed to create achievement: ${res.statusText}`);
+    return res.json();
+  };
+
+  const updateAchievement = async (
+    id: number,
+    title: string,
+    title_en: string,
+    author: string,
+    description: string,
+    description_en: string,
+    uploadDate: string | Date,
+    status: boolean,
+    pdf: string,
+    canDownload: boolean
+  ) => {
+    if (!id || isNaN(id)) throw new Error('Invalid achievement ID');
+    if (!title || !author) throw new Error('Title and Author are required');
+
+    const formattedDate =
+      typeof uploadDate === 'string'
+        ? uploadDate
+        : new Date(uploadDate).toISOString().slice(0, 19).replace('T', ' ');
+
+    const backendStatus = status ? 1 : 0;
+
+    const url = `${be_api_url}${apiBase}/achievements/${id}`;
+    console.log('Updating achievement ID:', id, 'URL:', url);
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'cocon-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        title_en,
+        author,
+        description,
+        description_en,
+        uploadDate: formattedDate,
+        status: backendStatus,
+        pdf,
+        canDownload,
+      }),
+    });
+
+    if (!res.ok) throw new Error(`Failed to update achievement: ${res.statusText}`);
+    return res.json();
+  };
+
+  const deleteAchievement = async (id: number) => {
+    if (!id || isNaN(id)) throw new Error('Invalid achievement ID');
+
+    const url = `${be_api_url}${apiBase}/achievements/${id}`;
+    console.log('Deleting achievement ID:', id, 'URL:', url);
+
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: { 'cocon-key': apiKey },
+    });
+
+    if (!res.ok) throw new Error(`Failed to delete achievement: ${res.statusText}`);
+    return res.json();
+  };
+
+  return {
+    getAchievements,
+    getAchievementById,
+    createAchievement,
+    updateAchievement,
+    deleteAchievement,
+  };
 };

@@ -30,6 +30,7 @@ export default {
 
 .news-button {
     overflow: hidden;
+    align-items: center;
     display: flex;
     justify-self: center;
     justify-content: center;
@@ -41,7 +42,7 @@ export default {
     background-color: transparent;
     color: #4e6d16;
     padding: 10px 20px;
-    font-size: clamp(10px, 2vw ,26px);
+    font-size: clamp(12px, 2vw ,26px);
     font-weight: bold;
     border: none;
     border-radius: 30px;
