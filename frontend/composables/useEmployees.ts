@@ -7,7 +7,6 @@ export const useEmployees = () => {
     const getEmployees = async () => {
         const url = `${be_api_url}${apiBase}/employees`;
         console.log('Requesting URL:', url);
-
         return await $fetch(url, {
             headers: {
                 'cocon-key': apiKey,
@@ -20,7 +19,6 @@ export const useEmployees = () => {
             console.error('Invalid employee ID:', id);
             throw new Error('Invalid employee ID');
         }
-
         const url = `${be_api_url}${apiBase}/employees/${id}`;
         console.log('Requesting URL:', url);
         try {

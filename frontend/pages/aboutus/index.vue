@@ -43,6 +43,7 @@ import "swiper/css/pagination";
 import Cardemployees from "~/components/Aboutusslide.vue";
 import Aboutusslide from "~/components/Aboutusslide.vue";
 
+
 export default {
   components: {
     Swiper,
@@ -62,8 +63,7 @@ export default {
       achievements: [], // Stores the fetched achievement data
     };
   },
- 
-  
+
 };
 </script>
 

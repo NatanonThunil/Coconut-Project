@@ -48,97 +48,114 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { useEmployees } from '~/composables/useEmployees'
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useHead } from "@vueuse/head";
-import {useEmployees} from "@/composables/useEmployees";
-const { getEmployees} = useEmployees()
-export default {
-  data() {
-    return {
-      searchQuery: "",
-      employees: [],
-      currentPage: 1,
-      itemsPerPage: 30,
-      pageInput: 1,
-      loading: true,
-      selectedTag: this.$route.query.tag || null,
-    };
-  },
-  computed: {
-    totalPages() {
-      return Math.max(1, Math.ceil(this.filteredEmployees.length / this.itemsPerPage));
-    },
-    filteredEmployees() {
-      const query = this.searchQuery?.toString().trim().toLowerCase() || ""; 
-      return this.employees.filter(employee => {
-        const matchesName = employee.name?.toLowerCase().includes(query);
-        const matchesTag = this.selectedTag ? (employee.tags && employee.tags.includes(this.selectedTag)) : true;
-        return matchesName && matchesTag;
-      });
-    },
-    paginatedEmployees() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredEmployees.slice(start, start + this.itemsPerPage);
-    }
-  },
 
-  watch: {
-    currentPage(newPage) {
-      this.pageInput = newPage;
-    },
-    searchQuery() {
-      this.currentPage = 1; 
-    },
-    '$route.query.tag'(newTag) {
-      this.selectedTag = newTag;
-      this.currentPage = 1;
-    },
-  },
-  async mounted() {
-    window.scrollTo(0, 0);
-    try {
-      setTimeout(async () => {
-        this.loading = true;
-        
-        const data = await  getEmployees();
-        this.employees = data;
-        this.loading = false;
-      }, 200);
-    } catch (error) {
-      console.error("Error fetching employees:", error);
+const { getEmployees } = useEmployees()
+const employees = ref([])
+const searchQuery = ref("")
+const currentPage = ref(1)
+const itemsPerPage = 30
+const pageInput = ref(1)
+const loading = ref(true)
+const { locale } = useI18n()
+const currentLocale = computed(() => locale.value)
+
+const fetchapi = async () => {
+  try {
+    loading.value = true
+    // รับมาเป็น json
+    const raw = await getEmployees()
+
+    // แปลงเป็น array
+    const list = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.employees)
+        ? raw.employees
+        : []
+
+    if (!list.length) {
+      console.warn("No employees found or unexpected response format:", raw)
     }
-  },
-  methods: {
-    changePage(direction) {
-      if (direction === "next" && this.currentPage < this.totalPages) {
-        this.currentPage++;
-      } else if (direction === "prev" && this.currentPage > 1) {
-        this.currentPage--;
-      }
+
+    // กรองเฉพาะที่ status === 1
+    employees.value = list
+      .filter(employee => employee.status === 1)
+      .map(item => ({
+        id: item.id,
+        image: item.image,
+        name: item.name,
+        name_en: item.name_en || item.name,
+        address: item.address,
+        address_en: item.address_en || item.address,
+        phoneNumber: item.phoneNumber,
+        status: item.status,
+        description: item.description,
+        description_en: item.description_en || item.description,
+        email: item.email,
+      }))
+  } catch (error) {
+    console.error("Error fetching employees:", error)
+    employees.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchapi)
+
+const filteredEmployees = computed(() => {
+  const query = searchQuery.value?.toString().trim().toLowerCase() || ""
+  return employees.value
+    .filter(employee => employee.status)
+    .filter(employee =>
+      (employee.name?.toLowerCase().includes(query) ||
+        employee.name_en?.toLowerCase().includes(query))
+    )
+    .sort((a, b) => b.id - a.id)
+})
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredEmployees.value.length / itemsPerPage))
+)
+
+const paginatedEmployees = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return filteredEmployees.value.slice(start, start + itemsPerPage)
+})
+
+function changePage(direction) {
+  if (direction === "next" && currentPage.value < totalPages.value) {
+    currentPage.value++
+  } else if (direction === "prev" && currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+function goToPage() {
+  if (pageInput.value >= 1 && pageInput.value <= totalPages.value) {
+    currentPage.value = pageInput.value
+  } else {
+    pageInput.value = currentPage.value
+  }
+}
+
+function goToDetails(id) {
+  window.location.href = `/aboutus/employees/details/${id}`
+}
+
+useHead({
+  title: "🥥Employee - Varieties",
+  meta: [
+    {
+      name: "description",
+      content: "Home page for Employee Knowledge Hub",
     },
-    goToPage() {
-      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
-        this.currentPage = this.pageInput;
-      } else {
-        this.pageInput = this.currentPage;
-      }
-    },
-    goToDetails(id) {
-      this.$router.push(`/aboutus/employees/details/${id}`);
-    },
-  },
-  setup() {
-    useHead({
-      title: "🥥Employee - Varieties",
-      meta: [
-        {
-          name: "description",
-          content: "Home page for Employee Knowledge Hub",
-        },
-      ],
-    });
-  },
-};
+  ],
+})
 </script>
 
 <style scoped>

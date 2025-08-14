@@ -9,6 +9,7 @@ import expertsRoutes from './experts.js';
 import herobarsRoutes from './herobars.js';
 import imageUploadRoutes from './img-upload.js';
 import pdfUploadRoutes from './pdf-upload.js';
+import membersRoutes from './menbers.js'; 
 // import newsRoutes from './news.js';
 export default [
     { path: '/news', handler: newsRoutes },
@@ -22,5 +23,6 @@ export default [
     {path: '/herobars', handler: herobarsRoutes },
     {path: '/img-upload', handler: imageUploadRoutes },
     {path: '/pdf-upload', handler: pdfUploadRoutes },
+    {path: '/members', handler: membersRoutes },
     // { path: '/news', handler: newsRoutes },
 ];

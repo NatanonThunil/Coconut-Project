@@ -54,6 +54,8 @@
   
   <script>
   import { useHead } from "@vueuse/head";
+  import { useMembers } from "~/composables/useMembers";  
+  const { getMembers } = useMembers();
   export default {
     data() {
       return {
@@ -81,23 +83,46 @@
     },
     async mounted() {
       window.scrollTo(0, 0);
-      try {
-        setTimeout(async () => {
-          const response = await fetch("/coconut-api/members_table", {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-          if (!response.ok) throw new Error("Failed to fetch data");
-          const data = await response.json();
-          this.coconuts = data;
-          this.loading = false;
-        }, 200);
+          try {
+        loading.value = true;
+        const raw = await getMembers();
+
+        const list = Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw?.members)
+            ? raw.members
+            : [];
+
+        if (!list.length) {
+          console.warn("No members found or unexpected response format:", raw);
+        }
+                coconuts.value = list
+          .filter(member => member.status === 1)
+          .map(item => ({
+            id: item.id,
+            image: item.image,
+            name: item.name,
+            name_en: item.name_en || item.name,
+            email: item.email,
+            address: item.address,
+            address_en: item.address_en || item.address,
+            phoneNumber: item.phoneNumber,
+            status: item.status,
+            description: item.description,
+            description_en: item.description_en || item.description,
+          }));
       } catch (error) {
-        console.error("Error fetching coconuts:", error);
+        console.error("Error fetching members:", error);
+        coconuts.value = [];
+      } finally {
+        loading.value = false;
       }
+          onMounted(() => {
+      window.scrollTo(0, 0);
+      fetchMembers();
+    });
     },
+    
     methods: {
       changePage(direction) {
         if (direction === "next" && this.currentPage < this.totalPages) {

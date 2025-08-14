@@ -4,6 +4,17 @@
 [สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
 
 ### Update List
+- เพิ่ม Member api (ยังแสดงไม่ได้)
+- แก้ Employees สามารถแสดง ได้ ขึ้นการ์ดปกติ **แต่ ไม่แสดงในหน้า aboutus เพราะไม่รู้จะให้มันแสดงยังไง**
+
+โดย [Sujeff]
+
+# อัพเดต 14 Aug.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
 - แก้ path ใน ``img-upload``
 - แก้ achievements ให้ทำงาน(เกือบ)ปกติ ``GET, GET by id, POST, PUT, DELETE ``(เหลือทำ upload PDF กับตกแต่ง)
 - ตกแต่งหน้า ``Achievement``(Front) เพิ่ม

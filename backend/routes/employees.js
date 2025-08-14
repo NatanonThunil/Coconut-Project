@@ -20,12 +20,12 @@ router.use((req, res, next) => {
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM employee');
-        res.json(rows);
+        res.json({ employees: rows }); // <-- wrap in object
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
-
+// ...existing code...
 /////////////////////////////// GET BY ID
 router.get('/:id', async (req, res) => {
     try {
@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Employee not found' });
         }
 
-        res.json(rows[0]);
+        res.json({ employee: rows[0] }); // <-- wrap in object
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
