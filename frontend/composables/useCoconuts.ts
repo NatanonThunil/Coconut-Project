@@ -5,13 +5,10 @@ export const useCoconuts = () => {
     const apiKey = 'Cocon541986'; // Hardcoded for now
 
     const getCoconuts = async () => {
-        const url = `${be_api_url}${apiBase}/coconuts`;
+        const url = `${be_api_url}/coconuts`;
         console.log('Requesting URL:', url);
-
         return await $fetch(url, {
-            headers: {
-                'cocon-key': apiKey,
-            },
+            headers: { 'cocon-key': apiKey },
         });
     };
 
@@ -21,15 +18,10 @@ export const useCoconuts = () => {
             throw new Error('Invalid coconut ID');
         }
 
-        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
+        const url = `${be_api_url}/coconuts/${id}`;
         console.log('Requesting URL:', url);
         try {
-            const response = await $fetch(url, {
-                headers: {
-                    'cocon-key': apiKey,
-                },
-            });
-            return response;
+            return await $fetch(url, { headers: { 'cocon-key': apiKey } });
         } catch (error) {
             console.error(`Error fetching coconut by ID (${id}):`, error);
             throw error;
@@ -51,11 +43,10 @@ export const useCoconuts = () => {
     ) => {
         const url = `${be_api_url}${apiBase}/coconuts`;
         console.log('Requesting URL:', url);
+    
         return await $fetch(url, {
             method: 'POST',
-            headers: {
-                'cocon-key': apiKey,
-            },
+            headers: { 'cocon-key': apiKey },
             body: {
                 description,
                 origin,
@@ -70,7 +61,47 @@ export const useCoconuts = () => {
                 image,
             },
         });
+        
     };
 
-    return { getCoconuts, getCoconutById, createCoconut };
+    const updateCoconut = async (
+        id: number,
+        payload: {
+            description?: string;
+            origin?: string;
+            status?: boolean;
+            name_eng?: string;
+            name_th?: string;
+            sci_name_f?: string;
+            sci_name_m?: string;
+            sci_name_l?: string;
+            characteristics?: string;
+            youngold?: 'Young' | 'Old';
+            image?: string;
+        }
+    ) => {
+        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
+        console.log('Updating coconut at URL:', url);
+        return await $fetch(url, {
+            method: 'PUT',
+            headers: { 'cocon-key': apiKey },
+            body: payload,
+        });
+    };
+
+    const deleteCoconut = async (id: number) => {
+        if (!id || isNaN(id)) {
+            console.error('Invalid coconut ID:', id);
+            throw new Error('Invalid coconut ID');
+        }
+
+        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
+        console.log('Deleting coconut at URL:', url);
+        return await $fetch(url, {
+            method: 'DELETE',
+            headers: { 'cocon-key': apiKey },
+        });
+    };
+
+    return { getCoconuts, getCoconutById, createCoconut, updateCoconut, deleteCoconut };
 };

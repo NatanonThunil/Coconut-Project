@@ -18,39 +18,47 @@
                 <tr>
                     <th>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                class="checkbox-decorate" />
                             <span>ID</span>
                             <button @click="toggleSort('id')">
-                                <div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div>
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
                             </button>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
+                            <div>Image
+
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
                             <div>English Name<button @click="toggleSort('name_eng')">
-                                <div :class="{'rotate': sortBy === 'name_eng' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'name_eng' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Thai Name<button @click="toggleSort('name_th')">
-                                <div :class="{'rotate': sortBy === 'name_th' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'name_th' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Origin<button @click="toggleSort('origin')">
-                                <div :class="{'rotate': sortBy === 'origin' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'origin' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Status<button @click="toggleSort('status')">
-                                <div :class="{'rotate': sortBy === 'status' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>Actions</th>
@@ -64,6 +72,7 @@
                             <p>{{ item.id }}</p>
                         </div>
                     </td>
+                    <td><img class="items-image" :src="item.image || noimageHandle"></td>
                     <td>{{ item.name_eng }}</td>
                     <td>{{ item.name_th }}</td>
                     <td>{{ item.origin }}</td>
@@ -75,7 +84,8 @@
                     </td>
                     <td class="action-buttons">
                         <button @click="editItem(item)" class="edit-btn"><img src="/icon/pen.png" alt="Edit"></button>
-                        <button @click="askDelete(item.id, item.name_eng)" class="delete-btn"><img src="/icon/trash.png" alt="Delete"></button>
+                        <button @click="askDelete(item.id, item.name_eng)" class="delete-btn"><img src="/icon/trash.png"
+                                alt="Delete"></button>
                     </td>
                 </tr>
             </tbody>
@@ -87,33 +97,52 @@
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
+                    <div class="image-upload-container">
+                        <div v-if="currentCoconut.image" class="image-preview">
+                            <img :src="currentCoconut.image" alt="Coconut Image" />
+                        </div>
+                        <input type="file" ref="fileInput" @change="handleFileChange" accept="image/png, image/jpeg"
+                            style="display: none;" />
+                        <button type="button" class="upload-btn" @click="fileInput.click()">
+                            {{ currentCoconut.image ? 'Change Image' : 'Upload Image' }}
+                        </button>
+
+                    </div>
+
                     <label>English Name</label>
-                    <input class="add-text-input" v-model="currentCoconut.name_eng" placeholder="Enter English name" required />
+                    <input class="add-text-input" v-model="currentCoconut.name_eng" placeholder="Enter English name"
+                        required />
                     <label>Thai Name</label>
-                    <input class="add-text-input" v-model="currentCoconut.name_th" placeholder="Enter Thai name" required />
+                    <input class="add-text-input" v-model="currentCoconut.name_th" placeholder="Enter Thai name"
+                        required />
                     <label>Description</label>
-                    <textarea class="add-text-input" v-model="currentCoconut.description" placeholder="Enter description" required></textarea>
+                    <textarea class="add-text-input" v-model="currentCoconut.description"
+                        placeholder="Enter description" required></textarea>
                     <label>Origin</label>
                     <input class="add-text-input" v-model="currentCoconut.origin" placeholder="Enter origin" required />
                     <label>Scientific Name (F)</label>
-                    <input class="add-text-input" v-model="currentCoconut.sci_name_f" placeholder="Enter scientific name (F)" required />
+                    <input class="add-text-input" v-model="currentCoconut.sci_name_f"
+                        placeholder="Enter scientific name (F)" required />
                     <label>Scientific Name (M)</label>
-                    <input class="add-text-input" v-model="currentCoconut.sci_name_m" placeholder="Enter scientific name (M)" required />
+                    <input class="add-text-input" v-model="currentCoconut.sci_name_m"
+                        placeholder="Enter scientific name (M)" required />
                     <label>Scientific Name (L)</label>
-                    <input class="add-text-input" v-model="currentCoconut.sci_name_l" placeholder="Enter scientific name (L)" required />
+                    <input class="add-text-input" v-model="currentCoconut.sci_name_l"
+                        placeholder="Enter scientific name (L)" required />
                     <label>Characteristics</label>
-                    <textarea class="add-text-input" v-model="currentCoconut.characteristics" placeholder="Enter characteristics" required></textarea>
+                    <textarea class="add-text-input" v-model="currentCoconut.characteristics"
+                        placeholder="Enter characteristics" required></textarea>
                     <label>Young/Old</label>
                     <select v-model="currentCoconut.youngold" class="category-select" required>
                         <option value="Young">Young</option>
                         <option value="Old">Old</option>
                     </select>
-                    <label>Image</label>
-                    <input type="file" @change="handleFileChange" class="file-uploader" accept="image/png, image/jpeg" required />
+
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirm-btn" @click.prevent="submitCoconut(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirm-btn" @click.prevent="submitCoconut(true)">{{ showModalEdit ?
+                    'Update & Publish' : 'Add & Publish' }}</button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
@@ -130,35 +159,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Cropper Overlay -->
+    <div v-if="showCropper" class="cropper-overlay">
+        <div class="cropper-container">
+            <h3 class="cropper-title">Crop Coconut Image</h3>
+            <div class="cropper-wrapper">
+                <img ref="cropperImage" :src="croppingImage" alt="Crop Image" class="cropper-img" />
+            </div>
+            <div class="cropper-actions">
+                <button type="button" class="crop-btn" @click="cropImage">Crop & Use</button>
+                <button type="button" class="cancel-btn" @click="cancelCrop">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div style="height: 5rem;"></div>
+
+
 </template>
-
 <script setup>
+import noimageHandle from '/img/no-image-handle.png';
 definePageMeta({ layout: "admin" });
-import { ref, onMounted, computed } from 'vue';
-
+import { ref, onMounted, nextTick, computed } from 'vue';
+import { useCoconuts } from '~/composables/useCoconuts';
+import { useUpload } from '~/composables/useUpload';
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 
-const config = ref({
-    title: "จัดการมะพร้าว",
-    apiEndpoint: 'coconuts',
-    searchPlaceholder: "ค้นหาด้วย id, ชื่อ, ผู้เขียน หรือ วันที่",
-    columns: [
-        { key: 'id', label: 'ID' },
-        { key: 'name_eng', label: 'English Name' },
-        { key: 'name_th', label: 'Thai Name' },
-        { key: 'origin', label: 'Origin' }
-    ]
-});
+const { getCoconuts, createCoconut, updateCoconut, deleteCoconut } = useCoconuts();
+const { uploadImage } = useUpload();
 
 const searchQuery = ref('');
 const apisdatas = ref([]);
 const dataCount = ref(0);
+
 const showModalAddCoconut = ref(false);
 const showModalEdit = ref(false);
 const showModal = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
+
 const currentCoconut = ref({
     id: null,
     name_eng: '',
@@ -178,34 +220,69 @@ const selectAll = ref(false);
 const sortBy = ref(null);
 const sortDirection = ref(1);
 
-const toggleSelectAll = () => {
-    apisdatas.value.forEach(coconut => coconut.selected = selectAll.value);
+// --- Image cropper ---
+const fileInput = ref(null);
+const showCropper = ref(false);
+const croppingImage = ref(null);
+const cropperInstance = ref(null);
+const cropperImage = ref(null);
+
+
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        croppingImage.value = reader.result;
+        showCropper.value = true;
+        nextTick(() => {
+            cropperInstance.value = new Cropper(cropperImage.value, {
+                aspectRatio: 1, // square crop for coconut
+                viewMode: 2,
+                autoCropArea: 1,
+            });
+        });
+    };
+    reader.readAsDataURL(file);
 };
 
+const cropImage = () => {
+    if (cropperInstance.value) {
+        const canvas = cropperInstance.value.getCroppedCanvas();
+        currentCoconut.value.image = canvas.toDataURL('image/jpeg');
+        showCropper.value = false;
+        cropperInstance.value.destroy();
+    }
+};
+
+const cancelCrop = () => {
+    showCropper.value = false;
+    cropperInstance.value.destroy();
+};
+
+// --- Table logic ---
+const toggleSelectAll = () => apisdatas.value.forEach(c => c.selected = selectAll.value);
+
 const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
+    if (sortBy.value === column) sortDirection.value *= -1;
+    else {
         sortBy.value = column;
         sortDirection.value = column === 'status' ? -1 : 1;
     }
 };
 
 const filteredSortedCoconuts = computed(() => {
-    let filtered = apisdatas.value.filter(coconut =>
-        coconut.id.toString().includes(searchQuery.value) ||
-        coconut.name_eng.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        coconut.name_th.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        coconut.origin.toLowerCase().includes(searchQuery.value.toLowerCase())
+    let filtered = apisdatas.value.filter(c =>
+        c.id.toString().includes(searchQuery.value) ||
+        c.name_eng.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        c.name_th.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        c.origin.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
-
     if (sortBy.value) {
         filtered.sort((a, b) => {
-            let valA = a[sortBy.value];
-            let valB = b[sortBy.value];
-
+            let valA = a[sortBy.value], valB = b[sortBy.value];
             if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'name_eng' || sortBy.value === 'name_th' || sortBy.value === 'origin') return valA.localeCompare(valB, 'th') * sortDirection.value;
+            if (['name_eng', 'name_th', 'origin'].includes(sortBy.value)) return valA.localeCompare(valB, 'th') * sortDirection.value;
             if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
             return 0;
         });
@@ -213,14 +290,11 @@ const filteredSortedCoconuts = computed(() => {
     return filtered;
 });
 
+// --- Fetch API ---
 const fetchApi = async () => {
     try {
-        const response = await fetch(`/api/${config.value.apiEndpoint}`, {
-      headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-    });
-        if (!response.ok) throw new Error(`Failed to fetch Data: ${response.statusText}`);
-        const data = await response.json();
-        apisdatas.value = Array.isArray(data.coconuts) ? data.coconuts.map(coconut => ({ ...coconut, selected: false })) : [];
+        const data = await getCoconuts();
+        apisdatas.value = data.map(c => ({ ...c, selected: false }));
         dataCount.value = apisdatas.value.length;
     } catch (error) {
         console.error('Error fetching data:', error.message);
@@ -229,49 +303,27 @@ const fetchApi = async () => {
     }
 };
 
+// --- Status toggle ---
 const toggleStatus = async (coconut) => {
     try {
         const newStatus = !coconut.status;
-        coconut.status = newStatus ? 1 : 0;
-
-        
-        const updatedCoconut = { ...coconut, status: newStatus };
-
-   
-        const response = await fetch(`/api/coconuts/${coconut.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedCoconut), 
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update coconut status.');
-        }
-
-        // If the update is successful, the image will remain intact.
         coconut.status = newStatus;
+
+        const payload = { ...coconut, status: newStatus ? 1 : 0 };
+        const updated = await updateCoconut(coconut.id, payload);
+        Object.assign(coconut, updated);
     } catch (error) {
         alert('Error updating coconut status.');
         console.error(error);
     }
 };
 
-
-
+// --- Add/Edit modal ---
 const openAddCoconutModal = () => {
     currentCoconut.value = {
-        id: null,
-        name_eng: '',
-        name_th: '',
-        description: '',
-        origin: '',
-        sci_name_f: '',
-        sci_name_m: '',
-        sci_name_l: '',
-        characteristics: '',
-        youngold: 'Young',
-        image: null,
-        status: false,
+        id: null, name_eng: '', name_th: '', description: '', origin: '',
+        sci_name_f: '', sci_name_m: '', sci_name_l: '', characteristics: '',
+        youngold: 'Young', image: null, status: false
     };
     showModalAddCoconut.value = true;
 };
@@ -281,155 +333,218 @@ const editItem = (coconut) => {
     showModalEdit.value = true;
 };
 
+const bulkUpdateStatus = async (statusValue) => {
+    try {
+
+        const selectedCoconuts = apisdatas.value.filter(c => c.selected);
+        if (!selectedCoconuts.length) {
+            alert('Please select at least one coconut.');
+            return;
+        }
+
+
+        const updatePromises = selectedCoconuts.map(coconut => {
+            const payload = { ...coconut, status: statusValue ? 1 : 0 };
+            return updateCoconut(coconut.id, payload);
+        });
+
+
+        await Promise.all(updatePromises);
+
+
+        apisdatas.value.forEach(c => {
+            if (c.selected) c.status = statusValue ? 1 : 0;
+        });
+
+        alert(`Updated ${selectedCoconuts.length} coconuts successfully!`);
+    } catch (error) {
+        alert(`Error updating coconuts: ${error.message}`);
+        console.error(error);
+    }
+};
+
 const submitCoconut = async (publish) => {
     if (!currentCoconut.value.name_eng.trim() || !currentCoconut.value.name_th.trim()) {
-        alert('Please fill in all required fields: English Name and Thai Name.');
+        alert('Please fill in required fields.');
         return;
     }
 
     try {
-        const isUpdate = !!currentCoconut.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/coconuts/${currentCoconut.value.id}` : '/api/coconuts';
+        let imagePath = currentCoconut.value.image;
 
-        // Prepare payload
-        const payload = {
-            name_eng: currentCoconut.value.name_eng,
-            name_th: currentCoconut.value.name_th,
-            description: currentCoconut.value.description,
-            origin: currentCoconut.value.origin,
-            sci_name_f: currentCoconut.value.sci_name_f,
-            sci_name_m: currentCoconut.value.sci_name_m,
-            sci_name_l: currentCoconut.value.sci_name_l,
-            characteristics: currentCoconut.value.characteristics,
-            youngold: currentCoconut.value.youngold,
-            image: currentCoconut.value.image,
-            status: publish ? 1 : 0,
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || 'Error saving the coconut.');
+        // Upload image if it’s new
+        if (imagePath?.startsWith('data:image')) {
+            const base64Image = imagePath.split(',')[1];
+            const imageName = `coconut_${Date.now()}.jpg`;
+            imagePath = `/images/${imageName}`;
+            const uploadResponse = await uploadImage(base64Image, imagePath);
+            if (uploadResponse.error) throw new Error(uploadResponse.error);
         }
 
-        if (!isUpdate) {
-            currentCoconut.value.id = result.id;
-            alert('Coconut added successfully.');
-        } else {
+        const payload = { ...currentCoconut.value, image: imagePath, status: publish ? 1 : 0 };
+
+        if (currentCoconut.value.id) {
+            await updateCoconut(currentCoconut.value.id, payload);
             alert('Coconut updated successfully.');
+        } else {
+            const newCoconut = await createCoconut(
+                payload.description, payload.origin, payload.status,
+                payload.name_eng, payload.name_th, payload.sci_name_f,
+                payload.sci_name_m, payload.sci_name_l, payload.characteristics,
+                payload.youngold, payload.image
+            );
+            currentCoconut.value.id = newCoconut.id;
+            alert('Coconut added successfully.');
         }
 
         showModalAddCoconut.value = false;
         showModalEdit.value = false;
         fetchApi();
-
     } catch (error) {
-        alert(`Error while submitting coconut: ${error.message}`);
+        alert(`Error: ${error.message}`);
         console.error(error);
     }
 };
 
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedCoconuts = apisdatas.value.filter(coconut => coconut.selected);
-        if (selectedCoconuts.length === 0) {
-            alert('No coconuts selected.');
-            return;
-        }
-
-        const updatePromises = selectedCoconuts.map(coconut =>
-            fetch(`/api/coconuts/${coconut.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...coconut, status: publish ? 1 : 0 })
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedCoconuts.forEach(coconut => {
-            coconut.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected coconuts.`);
-    } catch (error) {
-        alert('Failed to update coconut status.');
-        console.error(error);
-    }
-};
-
-const askDelete = (id, name) => {
-    deleteId.value = id;
-    deleteName.value = name;
-    showModal.value = true;
-};
-
+// --- Delete ---
+const askDelete = (id, name) => { deleteId.value = id; deleteName.value = name; showModal.value = true; };
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/coconuts/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to delete coconut.');
-        }
-
-        apisdatas.value = apisdatas.value.filter(coconut => coconut.id !== deleteId.value);
+        await deleteCoconut(deleteId.value);
+        apisdatas.value = apisdatas.value.filter(c => c.id !== deleteId.value);
         dataCount.value = apisdatas.value.length;
-
         showModal.value = false;
         alert('Coconut deleted successfully.');
     } catch (error) {
         alert(`Error deleting coconut: ${error.message}`);
         console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
+    } finally { deleteId.value = null; }
 };
-
-const cancelDelete = () => {
-    showModal.value = false;
-};
-
-const closeModal = () => {
-    showModalAddCoconut.value = false;
-    showModalEdit.value = false;
-};
-
-const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        convertImageToBase64(file);
-    }
-};
-
-const convertImageToBase64 = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-        currentCoconut.value.image = reader.result.split(',')[1];
-    };
-};
+const cancelDelete = () => showModal.value = false;
+const closeModal = () => { showModalAddCoconut.value = false; showModalEdit.value = false; };
 
 onMounted(fetchApi);
 </script>
 
+
 <style scoped>
+.items-image {
+    width: 3rem;
+    height: 3rem;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cropper-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.cropper-container {
+    background: #fff;
+    padding: 1.5rem;
+    
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.cropper-title {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.cropper-wrapper {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+   
+    margin-bottom: 1rem;
+}
+
+.cropper-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cropper-actions {
+    display: flex;
+    justify-content: space-around;
+}
+
+.cropper-actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+
+.cropper-actions .crop-btn {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.cropper-actions .crop-btn:hover {
+    background-color: #45a049;
+}
+
+.cropper-actions .cancel-btn {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.cropper-actions .cancel-btn:hover {
+    background-color: #d32f2f;
+}
+
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.upload-btn {
+    padding: 0.5rem 1rem;
+    background-color: #B6E3DB;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #88b1a9;
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    object-fit: cover;
+}
+
 .checkbox-decorate {
     width: 1.2rem;
     height: 1.2rem;
     cursor: pointer;
     accent-color: #4E6D16;
 }
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -437,9 +552,11 @@ onMounted(fetchApi);
     gap: 8px;
     cursor: pointer;
 }
+
 .rotate {
     transform: rotate(180deg);
 }
+
 .status-toggle input {
     display: none;
 }
@@ -479,7 +596,8 @@ onMounted(fetchApi);
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -488,6 +606,7 @@ onMounted(fetchApi);
     align-items: center;
     width: 100%;
 }
+
 .checkbox-id-container div {
     display: flex;
     gap: 0.5rem;
@@ -510,12 +629,15 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    width: 15%;
+    text-align: center;   /* horizontal center */
+    vertical-align: middle;
+    width: 5%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-    width: 15%;
+      text-align: center;
+    width: 8%;
 }
 
 .item-list-table th:nth-child(4),
@@ -526,6 +648,7 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
+     text-align: center;
     width: 5%;
 }
 
@@ -536,12 +659,14 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-    display: table-cell;
+  text-align: center;
     width: 10%;
 }
+
 .action-btn-container {
     display: flex;
 }
+
 .mod-sl,
 .mod-sr {
     display: flex;
@@ -622,6 +747,7 @@ onMounted(fetchApi);
     transition: background-color 0.3s ease;
     position: relative;
 }
+
 .coconut-check-publish {
     display: flex;
     gap: 1.5rem;
@@ -658,8 +784,10 @@ onMounted(fetchApi);
 
 .image-preview {
     position: relative;
+    display: flex;
+    justify-content: center;
     height: fit-content;
-    width: fit-content;
+    width: 100%;
 }
 
 .preview-image {
@@ -694,7 +822,7 @@ onMounted(fetchApi);
     display: flex;
     flex-direction: column;
     justify-self: center;
-    width: 90%;
+    width: 85%;
 }
 
 .item-list-table thead,
@@ -709,14 +837,17 @@ onMounted(fetchApi);
     overflow-y: auto;
     display: block;
 }
+
 .item-list-table tbody tr td p {
     width: 2rem;
     text-align: center;
 }
+
 .add-btn-container div {
     display: flex;
     gap: 0.5rem;
 }
+
 .add-btn-container {
     display: flex;
     justify-content: end;
@@ -725,6 +856,7 @@ onMounted(fetchApi);
     padding: 1rem;
     gap: 1rem;
 }
+
 .published-coconut-btn {
     word-wrap: nowrap;
     all: unset;
@@ -752,6 +884,7 @@ onMounted(fetchApi);
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
+
 .unpublished-coconut-btn {
     word-wrap: nowrap;
     all: unset;
@@ -937,6 +1070,7 @@ onMounted(fetchApi);
     border-radius: 5px;
     transition: 0.2s;
 }
+
 .confirme-btn {
     background-color: transparent;
     outline: #4E6D16 3px solid;
@@ -1031,6 +1165,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
+
     .item-list-table th:nth-child(3),
     .item-list-table td:nth-child(3) {
         display: none;
@@ -1038,6 +1173,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1048,6 +1184,7 @@ input:checked+.hotnews-slider:before {
     .add-btn-container {
         flex-direction: column;
     }
+
     .modal-add .modal-content {
         display: flex;
         flex-direction: column;
@@ -1063,6 +1200,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;

@@ -1,6 +1,10 @@
 <template>
   <Navbar selecto="coconutdata" />
-  <div style="height: 10rem;"></div>
+     <div style="height: 8rem"></div>
+    <div class="faqs-path">
+     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/<NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
+    </div>
+    <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
   <div style="height: 5rem;"></div>
 
@@ -9,22 +13,32 @@
     <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
   </label>
 
+  <div class="all-filter-container">
+    <label class="filter-dropdown">
+      <select v-model="filterType" @change="filterCoconuts" class="filter-select">
+        <option value="">{{ (currentLocale == 'th')? "ทั้งหมด" : "All"}}</option>
+        <option value="Young">{{ (currentLocale == 'th')? "มะพร้าวอ่อน" : "Young Coconut"}}</option>
+        <option value="Old">{{ (currentLocale == 'th')? "มะพร้าวแก่" : "Old Coconut"}}</option>
+      </select>
+    </label>
+  </div>
+
   <!-- Loading State -->
   <div v-if="loading" class="coconut-v-cards-container">
     <CardShimmer v-for="index in 30" :key="index" />
   </div>
 
   <div v-else class="coconut-v-cards-container">
-    <CoconutCards 
-      v-for="coconut in paginatedCoconuts" 
+    <CoconutCards
+      v-for="coconut in paginatedCoconuts"
       :key="coconut.id"
-      :img="coconut.image || 'https://via.placeholder.com/1280x720'"
-      :url="`/coconut-varieties/details/${coconut.id}`" 
+      :img="coconut.image || noimageHandle"
+      :url="`/coconut-varieties/details/${coconut.id}`"
       :name="coconut.name_th || 'ชื่อไทย'"
-      :sci_front="coconut.sci_name_f || 'วิทย์ 1'" 
+      :sci_front="coconut.sci_name_f || 'วิทย์ 1'"
       :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
-      :sci_back="coconut.sci_name_l || 'วิทย์ 3'" 
-      @click="goToDetails(coconut.id)" 
+      :sci_back="coconut.sci_name_l || 'วิทย์ 3'"
+      @click="goToDetails(coconut.id)"
     />
   </div>
 
@@ -32,13 +46,13 @@
     <div class="pagination-line"></div>
     <div class="pagination-controller">
       <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
-      <input 
-        type="number" 
-        v-model.number="pageInput" 
-        @change="goToPage" 
-        :min="1" 
+      <input
+        type="number"
+        v-model.number="pageInput"
+        @change="goToPage"
+        :min="1"
         :max="totalPages"
-        class="page-input" 
+        class="page-input"
       />
       <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
       <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
@@ -49,17 +63,36 @@
 
 <script>
 import { useHead } from '@vueuse/head';
+import { useCoconuts } from '~/composables/useCoconuts';
+import noimageHandle from '/img/no-image-handle.png';
+import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
+
+const { getCoconuts } = useCoconuts();
+
 export default {
   data() {
     return {
       coconuts: [],
       filteredCoconuts: [],
       searchQuery: '',
+      filterType: '',
       currentPage: 1,
       itemsPerPage: 30,
       pageInput: 1,
-      loading: true, // Initial loading state
+      loading: true,
     };
+  },
+  setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+
+    useHead({
+      title: '🥥Coconut - Varieties',
+      meta: [{ name: 'description', content: 'Home page for Coconut Knowledge Hub' }],
+    });
+
+    return { currentLocale };
   },
   computed: {
     totalPages() {
@@ -72,33 +105,21 @@ export default {
     },
   },
   watch: {
-    currentPage(newPage) {
-      this.pageInput = newPage;
+    searchQuery() {
+      this.filterCoconuts();
+    },
+    filterType() {
+      this.filterCoconuts();
     },
   },
   async mounted() {
     window.scrollTo(0, 0);
     try {
-      setTimeout(async () => {
-        const response = await fetch('/coconut-api/coconuts', {
-          headers: {
-            CKH: '541986Cocon',
-          },
-        });
-        if (!response.ok) throw new Error('Failed to fetch data');
-        const data = await response.json();
-
-        // Log data to check its structure
-        console.log('API response:', data);
-
-        // Check if the response is an array; if not, assume the array is in data.coconuts
-        const coconutArray = Array.isArray(data) ? data : data.coconuts || [];
-        // Filter out coconuts based on the 'status' before assignment
-        this.coconuts = coconutArray.filter(coconut => coconut.status);
-        this.filteredCoconuts = [...this.coconuts];
-
-        this.loading = false; // Once data is loaded, change loading state
-      }, 200);
+      const data = await getCoconuts();
+      const coconutArray = Array.isArray(data) ? data : data.coconuts || [];
+      this.coconuts = coconutArray.filter(coconut => coconut.status);
+      this.filteredCoconuts = [...this.coconuts];
+      this.loading = false;
     } catch (error) {
       console.error('Error fetching coconuts:', error);
     }
@@ -106,11 +127,19 @@ export default {
   methods: {
     filterCoconuts() {
       const query = this.searchQuery.toLowerCase();
-      this.filteredCoconuts = this.coconuts.filter(
-        (coconut) =>
-          coconut.name_th.toLowerCase().includes(query) ||
-          coconut.name_eng.toLowerCase().includes(query)
-      );
+
+      this.filteredCoconuts = this.coconuts.filter((coconut) => {
+        const matchesName =
+          (coconut.name_th || '').toLowerCase().includes(query) ||
+          (coconut.name_eng || '').toLowerCase().includes(query);
+
+        const matchesType = this.filterType
+          ? (coconut.youngold || '').toLowerCase() === this.filterType.toLowerCase()
+          : true;
+
+        return matchesName && matchesType;
+      });
+
       this.currentPage = 1;
     },
     changePage(direction) {
@@ -131,21 +160,43 @@ export default {
       this.$router.push(`/coconut-information/coconut-varieties/details/${id}`);
     },
   },
-  setup() {
-    useHead({
-      title: '🥥Coconut - Varieties',
-      meta: [
-        {
-          name: 'description',
-          content: 'Home page for Coconut Knowledge Hub',
-        },
-      ],
-    });
-  },
 };
 </script>
 
+
+
 <style scoped>
+.filters-container {
+  display: flex;
+  justify-content: center;
+}
+
+.filter-dropdown {
+  width: 100%;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: #4e6d16;
+}
+
+.all-filter-container {
+
+  margin-top: 1rem;
+  gap: 1rem;
+  display: flex;
+  justify-content: start;
+  justify-self: center;
+  width: 60%;
+}
 .context-header {
   display: flex;
   justify-self: center;
@@ -188,6 +239,7 @@ label.coconut-v-input input {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -269,6 +321,7 @@ label.coconut-v-input input {
     opacity: 0;
     width: 20%;
   }
+
   100% {
     opacity: 1;
     width: 60%;

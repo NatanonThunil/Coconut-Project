@@ -5,6 +5,7 @@
     <div class="admin-content">
       <section class="admin-content-l">
         <Adminsidebar />
+        
       </section>
       <section class="admin-content-r">
         <slot />
@@ -30,15 +31,15 @@ export default {
 }
 
 .admin-content-l {
+  
   display: flex;
+  flex-direction: row;
 
 }
-
 .admin-content-r {
-
-  margin-left: 250px;
-  width: calc(100% - 250px);
-
-
+  width: 100%;
+ 
 }
+
+
 </style>

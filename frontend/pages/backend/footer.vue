@@ -1,7 +1,8 @@
 <template>
-    <div style="height: 5rem;"></div>
-    <NewFooter />
-    <div style="height: 2rem;"></div>
+    <div class="from-container">
+      
+    <div class="footer-container"><NewFooter /></div>
+    
     <div class="footer-form">
       <label class="footer-label">Footer Text (Default)</label>
       <input
@@ -40,6 +41,7 @@
       />
   
       <button @click="saveFooter" class="footer-button">Save change</button>
+    </div>
     </div>
   </template>
   
@@ -95,6 +97,20 @@
   </script>
   
   <style scoped>
+  .footer-container {
+   width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .from-container {
+    max-width:90%;
+    margin: 0 auto;
+    padding: 20px;
+   
+  }
   .footer-form {
     max-width: 400px;
     margin: 40px auto;

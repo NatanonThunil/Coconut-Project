@@ -20,19 +20,13 @@ router.use((req, res, next) => {
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM coconut');
-        // Convert image buffer to base64
-        const coconuts = rows.map(coconut => {
-            let imageBase64 = null;
-            if (coconut.image) {
-                imageBase64 = `data:image/jpeg;base64,${coconut.image.toString('base64')}`;
-            }
-            return { ...coconut, image: imageBase64 };
-        });
-        res.json(coconuts);
+        // Image is now just a path, no base64 conversion needed
+        res.json(rows);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
+
 
 /////////////////////////////// GET BY ID
 router.get('/:id', async (req, res) => {
@@ -42,12 +36,9 @@ router.get('/:id', async (req, res) => {
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Coconut not found' });
         }
-        let coconut = rows[0];
-        let imageBase64 = null;
-        if (coconut.image) {
-            imageBase64 = `data:image/jpeg;base64,${coconut.image.toString('base64')}`;
-        }
-        res.json({ ...coconut, image: imageBase64 });
+        const coconut = rows[0];
+        // Image is now just a path, no base64 conversion needed
+        res.json(coconut);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -56,15 +47,18 @@ router.get('/:id', async (req, res) => {
 /////////////////////////////// POST
 router.post('/', async (req, res) => {
     try {
-        const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image } = req.body;
+        const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image, status } = req.body;
+
         if (!image) {
-            return res.status(400).json({ error: 'Image is required.' });
+            return res.status(400).json({ error: 'Image path is required.' });
         }
-        const imageBuffer = Buffer.from(image, 'base64');
+
         const [result] = await db.query(
-            `INSERT INTO coconut (image, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [imageBuffer, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold]
+            `INSERT INTO coconut (image, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [image, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status]
         );
+
         res.status(201).json({
             id: result.insertId,
             description,
@@ -76,6 +70,7 @@ router.post('/', async (req, res) => {
             sci_name_l,
             characteristics,
             youngold,
+            status,
             image
         });
     } catch (e) {
@@ -88,17 +83,19 @@ router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image, status } = req.body;
-        let imageBuffer = null;
-        if (image) {
-            imageBuffer = Buffer.from(image, 'base64');
-        }
+
+        // Only update image if a new path is provided
         const [result] = await db.query(
-            `UPDATE coconut SET description=?, origin=?, name_eng=?, name_th=?, sci_name_f=?, sci_name_m=?, sci_name_l=?, characteristics=?, youngold=?, status=?, image=COALESCE(?, image) WHERE id=?`,
-            [description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status, imageBuffer, id]
+            `UPDATE coconut
+             SET description = ?, origin = ?, name_eng = ?, name_th = ?, sci_name_f = ?, sci_name_m = ?, sci_name_l = ?, characteristics = ?, youngold = ?, status = ?, image = COALESCE(?, image)
+             WHERE id = ?`,
+            [description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status, image || null, id]
         );
+
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Coconut not found or no changes made' });
         }
+
         res.json({ message: 'Coconut updated successfully' });
     } catch (e) {
         res.status(500).json({ error: e.message });
