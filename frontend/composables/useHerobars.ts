@@ -4,7 +4,7 @@ export const useHerobars = () => {
     const apiKey = 'Cocon541986';
     const apiBase = config.public.apiBase || '/env-notwork';
     const getHerobarById = async (id: number) => {
-        const url = `${be_api_url}${apiBase}/herobars/${id}`;
+        const url = `${be_api_url}/herobars/${id}`;
         try {
             return await $fetch(url, {
                 headers: {
@@ -25,7 +25,7 @@ export const useHerobars = () => {
         y: number,
         image: string
     ) => {
-        const url = `${be_api_url}${apiBase}/herobars/${id}`;
+        const url = `${be_api_url}/herobars/${id}`;
         return await $fetch(url, {
             method: 'PUT',
             headers: {

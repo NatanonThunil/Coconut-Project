@@ -5,7 +5,7 @@ export const useCoconuts = () => {
     const apiKey = 'Cocon541986'; // Hardcoded for now
 
     const getCoconuts = async () => {
-        const url = `${be_api_url}${apiBase}/coconuts`;
+        const url = `${be_api_url}/coconuts`;
         console.log('Requesting URL:', url);
         return await $fetch(url, {
             headers: { 'cocon-key': apiKey },
@@ -18,7 +18,7 @@ export const useCoconuts = () => {
             throw new Error('Invalid coconut ID');
         }
 
-        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
+        const url = `${be_api_url}/coconuts/${id}`;
         console.log('Requesting URL:', url);
         try {
             return await $fetch(url, { headers: { 'cocon-key': apiKey } });
@@ -41,7 +41,7 @@ export const useCoconuts = () => {
         youngold: 'Young' | 'Old',
         image: string // base64 string
     ) => {
-        const url = `${be_api_url}${apiBase}/coconuts`;
+        const url = `${be_api_url}/coconuts`;
         console.log('Requesting URL:', url);
     
         return await $fetch(url, {
@@ -80,7 +80,7 @@ export const useCoconuts = () => {
             image?: string;
         }
     ) => {
-        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
+        const url = `${be_api_url}/coconuts/${id}`;
         console.log('Updating coconut at URL:', url);
         return await $fetch(url, {
             method: 'PUT',

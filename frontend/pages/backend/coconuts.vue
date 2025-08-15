@@ -364,47 +364,65 @@ const bulkUpdateStatus = async (statusValue) => {
 };
 
 const submitCoconut = async (publish) => {
-    if (!currentCoconut.value.name_eng.trim() || !currentCoconut.value.name_th.trim()) {
-        alert('Please fill in required fields.');
-        return;
+  if (!currentCoconut.value.name_eng.trim() || !currentCoconut.value.name_th.trim()) {
+    alert('Please fill in required fields.');
+    return;
+  }
+
+  try {
+    let imagePath = currentCoconut.value.image;
+
+    // Upload image if it’s a new base64 string
+    if (imagePath?.startsWith('data:image')) {
+      // Determine extension from MIME type in the data URL
+      const mimeMatch = imagePath.match(/^data:image\/(\w+);base64,/);
+      const ext = mimeMatch ? mimeMatch[1].toLowerCase() : 'jpeg';
+      const imageName = `coconut_${Date.now()}.${ext}`;
+
+      // Upload using useUpload
+      const uploadResponse = await uploadImage(imagePath, imageName);
+      if (uploadResponse.error) throw new Error(uploadResponse.error);
+
+      // Update path after successful upload
+      imagePath = `/images/${imageName}`; // path matches server upload folder
     }
 
-    try {
-        let imagePath = currentCoconut.value.image;
+    // Prepare payload
+    const payload = { ...currentCoconut.value, image: imagePath, status: publish ? 1 : 0 };
 
-        // Upload image if it’s new
-        if (imagePath?.startsWith('data:image')) {
-            const base64Image = imagePath.split(',')[1];
-            const imageName = `coconut_${Date.now()}.jpg`;
-            imagePath = `/images/${imageName}`;
-            const uploadResponse = await uploadImage(base64Image, imagePath);
-            if (uploadResponse.error) throw new Error(uploadResponse.error);
-        }
-
-        const payload = { ...currentCoconut.value, image: imagePath, status: publish ? 1 : 0 };
-
-        if (currentCoconut.value.id) {
-            await updateCoconut(currentCoconut.value.id, payload);
-            alert('Coconut updated successfully.');
-        } else {
-            const newCoconut = await createCoconut(
-                payload.description, payload.origin, payload.status,
-                payload.name_eng, payload.name_th, payload.sci_name_f,
-                payload.sci_name_m, payload.sci_name_l, payload.characteristics,
-                payload.youngold, payload.image
-            );
-            currentCoconut.value.id = newCoconut.id;
-            alert('Coconut added successfully.');
-        }
-
-        showModalAddCoconut.value = false;
-        showModalEdit.value = false;
-        fetchApi();
-    } catch (error) {
-        alert(`Error: ${error.message}`);
-        console.error(error);
+    // Create or update coconut
+    if (currentCoconut.value.id) {
+      await updateCoconut(currentCoconut.value.id, payload);
+      alert('Coconut updated successfully.');
+    } else {
+      const newCoconut = await createCoconut(
+        payload.description,
+        payload.origin,
+        payload.status,
+        payload.name_eng,
+        payload.name_th,
+        payload.sci_name_f,
+        payload.sci_name_m,
+        payload.sci_name_l,
+        payload.characteristics,
+        payload.youngold,
+        payload.image
+      );
+      currentCoconut.value.id = newCoconut.id;
+      alert('Coconut added successfully.');
     }
+
+    // Close modals and refresh list
+    showModalAddCoconut.value = false;
+    showModalEdit.value = false;
+    fetchApi();
+  } catch (error) {
+    alert(`Error: ${error.message}`);
+    console.error(error);
+  }
 };
+
+
 
 // --- Delete ---
 const askDelete = (id, name) => { deleteId.value = id; deleteName.value = name; showModal.value = true; };
