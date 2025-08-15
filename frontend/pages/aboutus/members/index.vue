@@ -52,109 +52,102 @@
     </div>
   </template>
   
-  <script>
-  import { useHead } from "@vueuse/head";
-  import { useMembers } from "~/composables/useMembers";  
-  const { getMembers } = useMembers();
-  export default {
-    data() {
-      return {
-        coconuts: [],
-        currentPage: 1,
-        itemsPerPage: 30,
-        pageInput: 1,
-        loading: true,
-      };
-    },
-    computed: {
-      totalPages() {
-        return Math.ceil(this.coconuts.length / this.itemsPerPage);
-      },
-      paginatedCoconuts() {
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        const end = start + this.itemsPerPage;
-        return this.coconuts.slice(start, end);
-      },
-    },
-    watch: {
-      currentPage(newPage) {
-        this.pageInput = newPage;
-      },
-    },
-    async mounted() {
-      window.scrollTo(0, 0);
-          try {
-        loading.value = true;
-        const raw = await getMembers();
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useHead } from "@vueuse/head";
+import { useMembers } from "~/composables/useMembers";
 
-        const list = Array.isArray(raw)
-          ? raw
-          : Array.isArray(raw?.members)
-            ? raw.members
-            : [];
+const { getMembers } = useMembers();
 
-        if (!list.length) {
-          console.warn("No members found or unexpected response format:", raw);
-        }
-                coconuts.value = list
-          .filter(member => member.status === 1)
-          .map(item => ({
-            id: item.id,
-            image: item.image,
-            name: item.name,
-            name_en: item.name_en || item.name,
-            email: item.email,
-            address: item.address,
-            address_en: item.address_en || item.address,
-            phoneNumber: item.phoneNumber,
-            status: item.status,
-            description: item.description,
-            description_en: item.description_en || item.description,
-          }));
-      } catch (error) {
-        console.error("Error fetching members:", error);
-        coconuts.value = [];
-      } finally {
-        loading.value = false;
-      }
-          onMounted(() => {
-      window.scrollTo(0, 0);
-      fetchMembers();
-    });
+const coconuts = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(30);
+const pageInput = ref(1);
+const loading = ref(true);
+
+const fetchMembers = async () => {
+  try {
+    loading.value = true;
+    const raw = await getMembers();
+
+    const list = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.members)
+      ? raw.members
+      : [];
+
+    if (!list.length) {
+      console.warn("No members found or unexpected response format:", raw);
+    }
+
+    coconuts.value = list
+      .filter((member) => member.status === 1)
+      .map((item) => ({
+        id: item.id,
+        image: item.image,
+        name: item.name,
+        name_en: item.name_en || item.name,
+        email: item.email,
+        address: item.address,
+        address_en: item.address_en || item.address,
+        phoneNumber: item.phoneNumber,
+        status: item.status,
+        description: item.description,
+        description_en: item.description_en || item.description,
+      }));
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    coconuts.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
+const totalPages = computed(() =>
+  Math.ceil(coconuts.value.length / itemsPerPage.value)
+);
+
+const paginatedCoconuts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return coconuts.value.slice(start, end);
+});
+
+const changePage = (direction) => {
+  if (direction === "next" && currentPage.value < totalPages.value) {
+    currentPage.value++;
+  } else if (direction === "prev" && currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const goToPage = () => {
+  if (pageInput.value >= 1 && pageInput.value <= totalPages.value) {
+    currentPage.value = pageInput.value;
+  } else {
+    pageInput.value = currentPage.value;
+  }
+};
+
+const goToDetails = (id) => {
+  window.location.href = `/aboutus/members/details/${id}`;
+};
+
+useHead({
+  title: "🥥Coconut - Varieties",
+  meta: [
+    {
+      name: "description",
+      content: "Home page for Coconut Knowledge Hub",
     },
-    
-    methods: {
-      changePage(direction) {
-        if (direction === "next" && this.currentPage < this.totalPages) {
-          this.currentPage++;
-        } else if (direction === "prev" && this.currentPage > 1) {
-          this.currentPage--;
-        }
-      },
-      goToPage() {
-        if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
-          this.currentPage = this.pageInput;
-        } else {
-          this.pageInput = this.currentPage;
-        }
-      },
-      goToDetails(id) {
-        this.$router.push(`/aboutus/members/details/${id}`);
-      },
-    },
-    setup() {
-      useHead({
-        title: "🥥Coconut - Varieties",
-        meta: [
-          {
-            name: "description",
-            content: "Home page for Coconut Knowledge Hub",
-          },
-        ],
-      });
-    },
-  };
-  </script>
+  ],
+});
+
+onMounted(() => {
+  window.scrollTo(0, 0);
+  fetchMembers();
+});
+</script>
   
   <style scoped>
   .coconut-v-cards-container {

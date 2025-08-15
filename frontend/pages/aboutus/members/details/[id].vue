@@ -64,6 +64,9 @@
 <script>
 import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
+import { useMembers } from "~/composables/useMembers";
+
+const { getMemberById } = useMembers();
 
 export default {
   data() {
@@ -76,17 +79,14 @@ export default {
   async mounted() {
     const cid = this.$route.params.id;
     try {
-      const response = await fetch(`/api/members_table`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
+      const data = await getMemberById(cid);
+      this.member = data.status ? data : null; 
+      this.loading = true;
+
       if (!response.ok)
         throw new Error(
           `Failed to fetch member details: ${response.statusText}`
         );
-      const data = await response.json();
       this.member =
         data.find((member) => member.id === parseInt(cid) && member.status) ||
         null;
@@ -109,6 +109,7 @@ export default {
     } catch (error) {
       this.error = "ไม่สามารถโหลดข้อมูลสมาชิกได้ กรุณาลองใหม่อีกครั้ง";
     }
+    this.loading = false;
   },
   methods: {
     updateHead() {

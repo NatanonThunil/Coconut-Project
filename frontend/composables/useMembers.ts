@@ -13,6 +13,16 @@ export const useMembers = () => {
             },
         });
     };
+      const getMemberById = async (id: number) => {
+    if (!id || isNaN(id)) throw new Error('Invalid employee ID');
+    const url = `${be_api_url}${apiBase}/members/${id}`;
+    console.log('Requesting URL:', url);
+    const res = await fetch(url, {
+      headers: { 'cocon-key': apiKey },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch member: ${res.statusText}`);
+    return res.json();
+  };
 
     const createMember = async (
         image: string,
@@ -80,6 +90,7 @@ export const useMembers = () => {
 
     return {
         getMembers,
+        getMemberById,
         createMember,
         deleteMember,
         updateMember,

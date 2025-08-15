@@ -5,7 +5,7 @@ export const useCoconuts = () => {
     const apiKey = 'Cocon541986'; // Hardcoded for now
 
     const getCoconuts = async () => {
-        const url = `${be_api_url}/coconuts`;
+        const url = `${be_api_url}${apiBase}/coconuts`;
         console.log('Requesting URL:', url);
         return await $fetch(url, {
             headers: { 'cocon-key': apiKey },
@@ -18,7 +18,7 @@ export const useCoconuts = () => {
             throw new Error('Invalid coconut ID');
         }
 
-        const url = `${be_api_url}/coconuts/${id}`;
+        const url = `${be_api_url}${apiBase}/coconuts/${id}`;
         console.log('Requesting URL:', url);
         try {
             return await $fetch(url, { headers: { 'cocon-key': apiKey } });
