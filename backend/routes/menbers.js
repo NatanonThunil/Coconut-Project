@@ -18,6 +18,22 @@ router.use((req, res, next) => {
     next();
 });
 
+/////////////////////////////// GET BY ID
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await db.query('SELECT * FROM member WHERE id = ?', [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Member item not found' });
+        }
+
+        res.json(rows[0]);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 /////////////////////////////// GET all members
 router.get('/', async (req, res) => {
     try {

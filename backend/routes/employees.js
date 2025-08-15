@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Employee not found' });
         }
 
-        res.json({ employee: rows[0] }); // <-- wrap in object
+        res.json( rows[0] ); // <-- wrap in object
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

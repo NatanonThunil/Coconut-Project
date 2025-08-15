@@ -1,7 +1,21 @@
 <template>
   <Navbar selecto="aboutus" />
+  <div style="height: 8rem"></div>
+
   <div class="all-container">
-    <div style="height: 10rem"></div>
+    <div class="faqs-path">
+      <NuxtLinkLocale to="/aboutus/">{{ $t('AboutUs') }}</NuxtLinkLocale>/
+      <NuxtLinkLocale to="/aboutus/members">{{ $t('All Member') }}</NuxtLinkLocale>/
+      <NuxtLinkLocale v-if="member" :to="'/aboutus/members/details/' + this.$route.params.id">
+        <div>
+          {{ currentLocale === 'th' ? (member?.name || '-') : (member?.name_en || '-') }}
+        </div>
+      </NuxtLinkLocale>
+
+
+    </div>
+    
+    <div style="height: 1rem"></div>
 
     <!-- Loader -->
     <div v-if="!member && !error" class="loading">
@@ -9,19 +23,14 @@
     </div>
 
     <!-- Error -->
-    <div v-if="error" class="error">
+    <div v-if="!member" class="error">
       <p>{{ error }}</p>
     </div>
 
     <!-- Member Profile Section -->
     <div class="member-container" v-if="member">
       <div class="member-content">
-        <img
-          :src="member?.image || tlImage"
-          class="member-image"
-          alt="Member Image"
-          draggable="false"
-        />
+        <img :src="member?.image || tlImage" class="member-image" alt="Member Image" draggable="false" />
 
         <div class="member-details">
           <h1 class="member-name">{{ member?.name }}</h1>
@@ -35,11 +44,7 @@
           <div class="tags">
             <p><strong>แท็ก:</strong></p>
             <div v-if="member?.member_tags_id && member.member_tags_id.length">
-              <span
-                v-for="(tag, index) in member.member_tags_id"
-                :key="index"
-                class="tag"
-              >
+              <span v-for="(tag, index) in member.member_tags_id" :key="index" class="tag">
                 {{ tag }}
               </span>
             </div>
@@ -65,10 +70,19 @@
 import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
 import { useMembers } from "~/composables/useMembers";
+import { useI18n } from 'vue-i18n';
+// import { useRoute } from 'vue-router';
 
 const { getMemberById } = useMembers();
 
+
 export default {
+  setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+    // const route = useRoute();
+    return { currentLocale };
+  },
   data() {
     return {
       member: null,
@@ -78,10 +92,12 @@ export default {
   },
   async mounted() {
     const cid = this.$route.params.id;
+
     try {
-      const data = await getMemberById(cid);
-      this.member = data.status ? data : null; 
       this.loading = true;
+      const data = await getMemberById(cid);
+      this.member = data.status ? data : null;
+
 
       if (!response.ok)
         throw new Error(
@@ -91,15 +107,15 @@ export default {
         data.find((member) => member.id === parseInt(cid) && member.status) ||
         null;
 
-      // Ensure member tags are properly formatted
-      if (this.member && typeof this.member.member_tags_id === "string") {
-        try {
-          this.member.member_tags_id = JSON.parse(this.member.member_tags_id);
-        } catch (error) {
-          console.error("Error parsing member_tags_id in frontend:", error);
-          this.member.member_tags_id = [];
-        }
-      }
+      // // Ensure member tags are properly formatted
+      // if (this.member && typeof this.member.member_tags_id === "string") {
+      //   try {
+      //     this.member.member_tags_id = JSON.parse(this.member.member_tags_id);
+      //   } catch (error) {
+      //     console.error("Error parsing member_tags_id in frontend:", error);
+      //     this.member.member_tags_id = [];
+      //   }
+      // }
 
       if (this.member) {
         this.updateHead();

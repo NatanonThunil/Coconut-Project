@@ -18,11 +18,17 @@ export const useEmployees = () => {
     if (!id || isNaN(id)) throw new Error('Invalid employee ID');
     const url = `${be_api_url}${apiBase}/employees/${id}`;
     console.log('Requesting URL:', url);
-    const res = await fetch(url, {
-      headers: { 'cocon-key': apiKey },
-    });
-    if (!res.ok) throw new Error(`Failed to fetch employee: ${res.statusText}`);
-    return res.json();
+            try {
+            const response = await $fetch(url, {
+                headers: {
+                    'cocon-key': apiKey,
+                },
+            });
+            return response;
+        } catch (error) {
+            console.error(`Error fetching event by ID (${id}):`, error);
+            throw error;
+        }
   };
 
   const createEmployee = async (
