@@ -1,7 +1,7 @@
 export const useEmployees = () => {
   const config = useRuntimeConfig();
   const be_api_url = config.public.beUrl;
-  const apiBase = config.public.apiBase || '/env-notwork';
+  const apiBase = config.public.apiBase ;
   const apiKey = 'Cocon541986';
 
   const getEmployees = async () => {

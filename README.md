@@ -1,3 +1,54 @@
+# อัพเดต 16 Aug.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- เจอปัญหาที่ใหญ่มากๆ Projไม่สามารถเก็บ``api secret``ให้พ้นจากสายตาได้ เพราะ``key`` ต้องอยู่กับ``Front`` แต่จริง``nuxt(front)``มันสามารถเก็บ``key``ของมันแบบมิดชิดได้ แต่ติดที่ว่าต้องใช้ serverที่มันมีให้ มันมีวิธีที่ว่าใช้``server``ของ``nuxt``ดึงข้อมูลจาก``server``ของ``express``อีกที แต่สิ่งที่ต้องแก้คือระดับหมอลำ 
+- ทำ env ใช้ง่ายขึ้น
+- ย่อขนาดรูปและpdfได้
+- อัพโหลด pdf ได้แล้ว
+- แสดง pdf เสถียรขึ้น
+
+Frontend
+```bash
+
+API_BASE = ''  # ถ้าจะ dev ไม่ต้องใส่
+FE_BASE_URL = ''  # ถ้าจะ dev ไม่ต้องใส่
+BE_BASE_URL= '' # ถ้าจะ dev ไม่ต้องใส่
+NITRO_HOST=localhost # เฉพาะ localhost ถ้าอยากให้เครื่องอื่นเข้าถึงweb NITRO_HOST=0.0.0.0  
+NITRO_PORT=5000
+```
+
+
+ฺBackend
+```bash
+
+BE_PORT=5100
+BE_BASE_URL=http://localhost:5100
+FE_BASE_URL=http://localhost:5000
+API_SECRET='Cocon541986'
+########### File Paths ###########
+IMG_PATH='../frontend/public/images' #../frontend/.output/public/images
+PDF_PATH='../frontend/public/pdfs'  #../frontend/.output/public/pdfs
+
+######## DB ######## แก้ตาม server
+DB_PASSWORD=@Wow1TEi2T 
+DB_HOST=localhost
+DB_USER=root
+DB_DATABASE=coconutknowledgehub
+
+
+```
+
+
+โดย  [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
+
+
 # อัพเดต 15 Aug.
 ### TO-DO
 

@@ -1,8 +1,8 @@
 export const useCoconuts = () => {
     const config = useRuntimeConfig();
-    const apiBase = config.public.apiBase || '/env-notwork';
+    const apiBase = config.public.apiBase;
     const be_api_url = config.public.beUrl;
-    const apiKey = 'Cocon541986'; // Hardcoded for now
+    const apiKey = 'Cocon541986'; 
 
     const getCoconuts = async () => {
         const url = `${be_api_url}${apiBase}/coconuts`;
@@ -39,7 +39,7 @@ export const useCoconuts = () => {
         sci_name_l: string,
         characteristics: string,
         youngold: 'Young' | 'Old',
-        image: string // base64 string
+        image: string 
     ) => {
         const url = `${be_api_url}${apiBase}/coconuts`;
         console.log('Requesting URL:', url);

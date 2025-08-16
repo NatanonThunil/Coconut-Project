@@ -1,8 +1,8 @@
 export const useAchievements = () => {
   const config = useRuntimeConfig();
   const be_api_url = config.public.beUrl;
-  const apiKey = 'Cocon541986'; 
-const apiBase = config.public.apiBase || '/env-notwork'; // Ensure apiBase has a default value
+  const apiKey = 'Cocon541986';
+  const apiBase = config.public.apiBase;
   const getAchievements = async () => {
     const url = `${be_api_url}${apiBase}/achievements`;
     console.log('Requesting URL:', url);

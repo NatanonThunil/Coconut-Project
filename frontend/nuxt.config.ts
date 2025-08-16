@@ -2,7 +2,11 @@
 
 // dotenv.config({path:'../backend/.env'})
 export default defineNuxtConfig({
-
+  vite: {
+    optimizeDeps: {
+      exclude: ['pdfjs-dist']
+    }
+  },
   ssr: false,
   devServer: {
     port: 5000,
@@ -12,10 +16,10 @@ export default defineNuxtConfig({
     apiSecret: process.env.API_SECRET,
     public: {
       beUrl: process.env.BE_BASE_URL || 'http://localhost:5100',
-      urlBase: process.env.FE_BASE_URL,
-      apiBase: process.env.API_BASE,
+      baseUrl: process.env.FE_BASE_URL || 'http://localhost:5000',
+      apiBase: process.env.API_BASE || '',
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
-      apiKey: process.env.API_SECRET || 'Cocon541986',
+      
       
     },
   },

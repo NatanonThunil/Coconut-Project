@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
     // Force extension to match MIME type
     const finalFileName = safeFileName.endsWith(`.${ext}`) ? safeFileName : `${safeFileName}.${ext}`;
 
-    const baseDir = path.resolve(process.cwd(), '../frontend/.output/public/images');
+    const baseDir = path.resolve(process.cwd(), process.env.IMG_PATH);
     const fullPath = path.join(baseDir, finalFileName);
     await fs.mkdir(baseDir, { recursive: true });
 

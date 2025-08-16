@@ -2,7 +2,7 @@ export const useHerobars = () => {
     const config = useRuntimeConfig();
     const be_api_url = config.public.beUrl;
     const apiKey = 'Cocon541986';
-    const apiBase = config.public.apiBase || '/env-notwork';
+    const apiBase = config.public.apiBase;
     const getHerobarById = async (id: number) => {
         const url = `${be_api_url}${apiBase}/herobars/${id}`;
         try {

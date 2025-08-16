@@ -1,6 +1,7 @@
 <template>
   <div class="employee-slider-container">
-    <button @click="goPrev" class="btn-4-swiper"><</button>
+    <button @click="goPrev" class="btn-4-swiper">
+      <</button>
 
         <!-- Shimmer Effect While Loading -->
         <div class="employee-card-section" v-if="isLoading">
@@ -44,8 +45,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import aboutusCardPdf from "./aboutusCardPdf.vue";
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
-/// import composables 'Achievements' ตรงนี้
+import * as pdfjsLib from "pdfjs-dist/webpack";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.js",
+  import.meta.url
+).href;
+
 import { useAchievements } from '~/composables/useAchievements';
 const { getAchievements } = useAchievements();
 import { ref, computed, onMounted } from 'vue';
@@ -73,7 +79,7 @@ export default {
     return {
       employees: [],
       isLoading: true,
-       noimageHandle,
+      noimageHandle,
     };
   },
   mounted() {
@@ -107,33 +113,33 @@ export default {
       return null;
     },
 
-   async fetchEmployees() {
-  try {
-    const raw = await getAchievements();
-    
-    if (Array.isArray(raw)) {
-      this.employees = raw.filter(emp => emp.status === 1);
-      this.employees.sort((a, b) => b.id - a.id);
+    async fetchEmployees() {
+      try {
+        const raw = await getAchievements();
 
-      this.employees = await Promise.all(
-        this.employees.map(async (employee) => {
-          if (employee.pdf) {
-            employee.pdfImage = await this.getPdfImage(employee);
-          }
-          return employee;
-        })
-      );
-    } else {
-      console.warn("Unexpected structure, got:", raw);
-      throw new Error("Unexpected API response structure");
-    }
-  } catch (error) {
-    console.error("Error fetching employees:", error);
-    this.employees = [];
-  } finally {
-    this.isLoading = false;
-  }
-},
+        if (Array.isArray(raw)) {
+          this.employees = raw.filter(emp => emp.status === 1);
+          this.employees.sort((a, b) => b.id - a.id);
+
+          this.employees = await Promise.all(
+            this.employees.map(async (employee) => {
+              if (employee.pdf) {
+                employee.pdfImage = await this.getPdfImage(employee);
+              }
+              return employee;
+            })
+          );
+        } else {
+          console.warn("Unexpected structure, got:", raw);
+          throw new Error("Unexpected API response structure");
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        this.employees = [];
+      } finally {
+        this.isLoading = false;
+      }
+    },
 
 
 

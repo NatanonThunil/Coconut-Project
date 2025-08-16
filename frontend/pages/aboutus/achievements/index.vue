@@ -9,7 +9,6 @@
   <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t("Achievement") }}</h1>
   <div style="height: 5rem"></div>
-  <div style="height: 1rem"></div>
   <frontesearch :placeholder="'ค้นหาด้วยชื่องาน...'" v-model:search="searchQuery" />
 
   <div class="all-filter-container">
@@ -28,8 +27,11 @@
   <!-- Achievements Display -->
   <div class="card-achivments-container">
     <Achievemento v-for="achievement in paginatedAchievements" :key="achievement.id"
-      :picture="achievement.thumbnail || noimageHandle" :title="achievement.title"
-      :text="achievement.description" :url="`/aboutus/achievements/details/${achievement.id}`" color="white"
+      :picture="achievement.thumbnail || noimageHandle" 
+      :title="achievement.title" 
+      :text="achievement.description"
+      :url="`/aboutus/achievements/details/${achievement.id}`" 
+      color="white" 
       :author="achievement.author" />
   </div>
 
@@ -50,21 +52,24 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n';
-const { locale } = useI18n();
-const currentLocale = computed(() => locale.value);
-import { ref, onMounted, computed, watch } from 'vue';
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
-import 'pdfjs-dist/legacy/build/pdf.worker';
-import noimageHandle from '/img/no-image-handle.png';
-import { useAchievements } from '~/composables/useAchievements';
-const { getAchievements } = useAchievements();
-const Achievements = ref([]);
-const searchQuery = ref("");
-const currentPage = ref(1);
-const itemsPerPage = ref(10);
-const pageInput = ref(1);
-const loading = ref(true);
+import { ref, onMounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf'
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.mjs',
+  import.meta.url
+).href
+
+import noimageHandle from '/img/no-image-handle.png'
+import { useAchievements } from '~/composables/useAchievements'
+const { getAchievements } = useAchievements()
+
+const Achievements = ref([])
+const searchQuery = ref("")
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const pageInput = ref(1)
+const loading = ref(true)
 const filters = ref([
   {
     label: 'Sort By',
@@ -74,138 +79,91 @@ const filters = ref([
       { value: 'oldest', text: 'Oldest' },
     ],
   },
-]);
+])
 
-
-const fetchAchievements = async () => {
-  try {
-    
-    loading.value = true;
-     /// รับมาเป็น json
-     const raw = await getAchievements();
-
- ///แปลงเป็น 
-    const list = Array.isArray(raw)
-      ? raw
-      : Array.isArray(raw?.achievements)
-        ? raw.achievements
-        : [];
-
-    if (!list.length) {
-      console.warn("No achievements found or unexpected response format:", raw);
-    }
-    const filteredAchievements = list.filter(achievement => achievement.status === 1);
-
-
-    await Promise.all(filteredAchievements.map(async (achievement) => {
-      if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {
-        achievement.thumbnail = await generateThumbnail(achievement.pdf);
-      }
-    }));
-
-    Achievements.value = filteredAchievements;
-  } catch (e) {
-    console.error('Error fetching achievements:', e);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const isValidPdfUrl = (url) => {
-  try {
-    new URL(url);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
+// ---- PDF Thumbnail Generation ----
 const generateThumbnail = async (pdfUrl) => {
+  if (!pdfUrl) return 'https://placehold.co/600x400'
   try {
-    const loadingTask = pdfjsLib.getDocument(pdfUrl);
-    const pdf = await loadingTask.promise;
-    if (!pdf.numPages) throw new Error('Invalid PDF structure');
-    const page = await pdf.getPage(1);
-
-    const scale = 1.5;
-    const viewport = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    const renderContext = { canvasContext: context, viewport };
-    await page.render(renderContext).promise;
-
-    return canvas.toDataURL();
-  } catch (e) {
-    console.error(`Error generating thumbnail for PDF: ${pdfUrl}`, e.message);
-    return 'https://placehold.co/600x400';
+    // Ensure it runs only on client
+    if (process.client) {
+      console.log('Generating thumbnail for:', pdfUrl)
+      const loadingTask = pdfjsLib.getDocument(pdfUrl)
+      const pdf = await loadingTask.promise
+      if (!pdf.numPages) throw new Error('PDF has no pages')
+      const page = await pdf.getPage(1)
+      const scale = 1.5
+      const viewport = page.getViewport({ scale })
+      const canvas = document.createElement('canvas')
+      const context = canvas.getContext('2d')
+      if (!context) throw new Error('Cannot get canvas context')
+      canvas.width = viewport.width
+      canvas.height = viewport.height
+      await page.render({ canvasContext: context, viewport }).promise
+      return canvas.toDataURL()
+    }
+  } catch (err) {
+    console.error('PDF thumbnail error:', pdfUrl, err.message)
+    return 'https://placehold.co/600x400'
   }
-};
+  return 'https://placehold.co/600x400'
+}
 
-// Watch search query and reset to first page
-watch(searchQuery, () => {
-  currentPage.value = 1;
-});
+// ---- Fetch Achievements ----
+const fetchAchievements = async () => {
+  loading.value = true
+  try {
+    const raw = await getAchievements()
+    const list = Array.isArray(raw) ? raw : Array.isArray(raw?.achievements) ? raw.achievements : []
+    const filtered = list.filter(a => a.status === 1)
+    Achievements.value = await Promise.all(
+      filtered.map(async a => {
+        a.thumbnail = await generateThumbnail(a.pdf)
+        return a
+      })
+    )
+  } catch (err) {
+    console.error('Error fetching achievements:', err)
+    Achievements.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
-// Filter achievements based on search query
+// ---- Filtering / Pagination ----
+watch(searchQuery, () => { currentPage.value = 1 })
+
 const filteredAchievements = computed(() => {
-  const query = searchQuery.value?.toString().trim().toLowerCase() || "";
-  return Achievements.value.filter(achievement => {
-    const matchesTitle = achievement.title?.toLowerCase().includes(query);
-    return matchesTitle;
-  });
-});
+  const query = searchQuery.value.toLowerCase()
+  return Achievements.value.filter(a => a.title?.toLowerCase().includes(query))
+})
 
-// Handle the filters applied
 const filterEvents = () => {
-  const sortBy = filters.value.find(filter => filter.label === 'Sort By').model;
+  const sortBy = filters.value.find(f => f.label === 'Sort By').model
+  let list = filteredAchievements.value
+  if (sortBy === 'newest') list = list.sort((a, b) => b.id - a.id)
+  else if (sortBy === 'oldest') list = list.sort((a, b) => a.id - b.id)
+  return list
+}
 
-  let filteredList = filteredAchievements.value;
-
-  // Apply sorting based on the selected option
-  if (sortBy === 'newest') {
-    filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
-  } else if (sortBy === 'oldest') {
-    filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
-  }
-
-  return filteredList;
-};
-
-// Total number of pages
-const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filterEvents().length / itemsPerPage.value));
-});
-
-// Paginated achievements for the current page
+const totalPages = computed(() => Math.max(1, Math.ceil(filterEvents().length / itemsPerPage.value)))
 const paginatedAchievements = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  return filterEvents().slice(start, start + itemsPerPage.value);
-});
-
-// Pagination handlers
-const changePage = (direction) => {
-  if (direction === "next" && currentPage.value < totalPages.value) {
-    currentPage.value++;
-  } else if (direction === "prev" && currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  return filterEvents().slice(start, start + itemsPerPage.value)
+})
+const changePage = dir => {
+  if (dir === 'next' && currentPage.value < totalPages.value) currentPage.value++
+  else if (dir === 'prev' && currentPage.value > 1) currentPage.value--
+}
 const goToPage = () => {
-  if (pageInput.value >= 1 && pageInput.value <= totalPages.value) {
-    currentPage.value = pageInput.value;
-  } else {
-    pageInput.value = currentPage.value;
-  }
-};
+  if (pageInput.value >= 1 && pageInput.value <= totalPages.value) currentPage.value = pageInput.value
+  else pageInput.value = currentPage.value
+}
 
-// Fetch achievements on mounted
-onMounted(fetchAchievements);
+// ---- On Mounted ----
+onMounted(fetchAchievements)
 </script>
+
 
 <style scoped>
 .filter-dropdown {
