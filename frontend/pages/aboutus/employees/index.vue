@@ -1,7 +1,13 @@
 <template>
   <Navbar selecto="aboutus" />
+  <div style="height: 8rem"></div>
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/aboutus/employees">{{ $t('All Employees') }}</NuxtLinkLocale>
+  </div>
+  <div style="height: 1rem"></div>
   <page-header head="All Employees" />
-  <frontesearch v-model:search="searchQuery" placeh="ค้นหาด้วยชื่อ..."/>
+  <frontesearch v-model:search="searchQuery" placeh="ค้นหาด้วยชื่อ..." />
   <!-- Loading State -->
   <div v-if="loading" class="employee-v-cards-container">
     <CardShimmer v-for="index in 30" :key="index" />
@@ -9,15 +15,9 @@
 
   <!-- Loaded Content -->
   <div v-else class="employee-v-cards-container">
-    <AboutusCard
-      v-for="employee in paginatedEmployees"
-      :name="employee.name || 'ชื่อไทย'"
-      :description="employee.description"
-      :key="employee.id"
-      :image="employee.image || 'https://placehold.co/600x400'"
-      :url='`aboutus/employees/details/${employee.id}`'
-      @click="goToDetails(employee.id)"
-    />
+    <AboutusCard v-for="employee in paginatedEmployees" :name="employee.name || 'ชื่อไทย'"
+      :description="employee.description" :key="employee.id" :image="employee.image || 'https://placehold.co/600x400'"
+      :url='`aboutus/employees/details/${employee.id}`' @click="goToDetails(employee.id)" />
   </div>
 
   <div class="pagination">
@@ -26,21 +26,12 @@
       <button @click="changePage('prev')" :disabled="currentPage === 1">
         กลับ
       </button>
-      <input
-        type="number"
-        v-model.number="pageInput"
-        @change="goToPage"
-        :min="1"
-        :max="totalPages"
-        class="page-input"
-      />
+      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+        class="page-input" />
       <span style="display: flex; align-self: center">
         จาก {{ totalPages }}
       </span>
-      <button
-        @click="changePage('next')"
-        :disabled="currentPage === totalPages"
-      >
+      <button @click="changePage('next')" :disabled="currentPage === totalPages">
         ถัดไป
       </button>
     </div>
@@ -112,8 +103,8 @@ const filteredEmployees = computed(() => {
   return employees.value
     .filter(employee => employee.status)
     .filter(employee =>
-      (employee.name?.toLowerCase().includes(query) ||
-        employee.name_en?.toLowerCase().includes(query))
+    (employee.name?.toLowerCase().includes(query) ||
+      employee.name_en?.toLowerCase().includes(query))
     )
     .sort((a, b) => b.id - a.id)
 })
