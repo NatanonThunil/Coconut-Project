@@ -172,10 +172,10 @@ import { ref, onMounted, computed, nextTick } from 'vue';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import { useAchievements } from '~/composables/useAchievements';
-import { usePdfUpload } from '~/composables/usePdfUpload';
-
+import { useUploadPDF } from '~/composables/usePdfUpload';
+const { uploadPDF } = useUploadPDF()
 const { getAchievements, createAchievement, deleteAchievement, updateAchievement } = useAchievements();
-const { uploadPdf } = usePdfUpload();
+
 
 const apiEndpoint = 'achievements';
 const searchQuery = ref('');
@@ -208,52 +208,52 @@ const currentAchievement = ref({
 const toggleLang = () => { activeLang.value = !activeLang.value; };
 
 const toggleStatus = async (achievement) => {
-  const previousStatus = achievement.status;
-  try {
-    const newStatus = !previousStatus;
-    achievement.status = newStatus ? 1 : 0;
+    const previousStatus = achievement.status;
+    try {
+        const newStatus = !previousStatus;
+        achievement.status = newStatus ? 1 : 0;
 
-    const updatedAchievement = await updateAchievement(
-      achievement.id,
-      achievement.title,
-      achievement.title_en,
-      achievement.author,
-      achievement.description,
-      achievement.description_en,
-      achievement.uploadDate,
-      newStatus,
-      achievement.pdf,
-      true
-    );
+        const updatedAchievement = await updateAchievement(
+            achievement.id,
+            achievement.title,
+            achievement.title_en,
+            achievement.author,
+            achievement.description,
+            achievement.description_en,
+            achievement.uploadDate,
+            newStatus,
+            achievement.pdf,
+            true
+        );
 
-    Object.assign(achievement, updatedAchievement);
-  } catch (error) {
-    achievement.status = previousStatus;
-    alert('Error updating achievement status.');
-    console.error(error);
-  }
+        Object.assign(achievement, updatedAchievement);
+    } catch (error) {
+        achievement.status = previousStatus;
+        alert('Error updating achievement status.');
+        console.error(error);
+    }
 };
 
 const triggerFileInput = () => { fileInput.value.click(); };
 
 const fetchAchievements = async () => {
-  try {
-    const data = await getAchievements();
-    const list = Array.isArray(data?.achievements) ? data.achievements : Array.isArray(data) ? data : [];
-    achievements.value = list.map(a => ({ ...a, selected: false }));
-    achievementsNum.value = achievements.value.length;
-  } catch (error) {
-    alert('Error fetching achievements.');
-    console.error(error);
-  }
+    try {
+        const data = await getAchievements();
+        const list = Array.isArray(data?.achievements) ? data.achievements : Array.isArray(data) ? data : [];
+        achievements.value = list.map(a => ({ ...a, selected: false }));
+        achievementsNum.value = achievements.value.length;
+    } catch (error) {
+        alert('Error fetching achievements.');
+        console.error(error);
+    }
 };
 
 const editItem = (achievement) => {
     currentAchievement.value = {
         ...achievement,
         status: !!achievement.status,
-        description: achievement.description || "", 
-        pdf: achievement.pdf || '', 
+        description: achievement.description || "",
+        pdf: achievement.pdf || '',
     };
     showModalEdit.value = true;
 };
@@ -305,92 +305,92 @@ const openAddAchievementModal = () => {
 };
 
 const bulkUpdateStatus = async (publish) => {
-  try {
-    const selectedAchievements = achievements.value.filter(a => a.selected);
-    if (!selectedAchievements.length) {
-      alert('No achievements selected.');
-      return;
+    try {
+        const selectedAchievements = achievements.value.filter(a => a.selected);
+        if (!selectedAchievements.length) {
+            alert('No achievements selected.');
+            return;
+        }
+
+        const updatePromises = selectedAchievements.map(a =>
+            updateAchievement(
+                a.id,
+                a.title,
+                a.title_en,
+                a.author,
+                a.description,
+                a.description_en,
+                a.uploadDate,
+                publish,
+                a.pdf,
+                true
+            )
+        );
+
+        await Promise.all(updatePromises);
+
+        // Update local state after API call
+        selectedAchievements.forEach(a => a.status = publish ? 1 : 0);
+
+        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
+    } catch (error) {
+        console.error(error);
+        alert('Failed to update achievement status.');
     }
-
-    const updatePromises = selectedAchievements.map(a =>
-      updateAchievement(
-        a.id,
-        a.title,
-        a.title_en,
-        a.author,
-        a.description,
-        a.description_en,
-        a.uploadDate,
-        publish,     
-        a.pdf,
-        true          
-      )
-    );
-
-    await Promise.all(updatePromises);
-
-    // Update local state after API call
-    selectedAchievements.forEach(a => a.status = publish ? 1 : 0);
-
-    alert(`Successfully ${publish ? 'published' : 'unpublished'} selected achievements.`);
-  } catch (error) {
-    console.error(error);
-    alert('Failed to update achievement status.');
-  }
 };
 
 const submitAchievement = async (publish) => {
-  if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
-    alert('Please fill in Title and Author.');
-    return;
-  }
-  try {
-    const uploadDate = new Date(currentAchievement.value.uploadDate);
-    const formattedDate = uploadDate.toISOString().slice(0, 19).replace('T', ' ');
-    const status = publish ? 1 : 0;
-
-    let result;
-    if (showModalEdit.value && currentAchievement.value.id) {
-      result = await updateAchievement(
-        currentAchievement.value.id,
-        currentAchievement.value.title,
-        currentAchievement.value.title_en,
-        currentAchievement.value.author,
-        currentAchievement.value.description,
-        currentAchievement.value.description_en,
-        formattedDate,
-        status,
-        currentAchievement.value.pdf || '',
-        true
-      );
-
-      const index = achievements.value.findIndex(a => a.id === currentAchievement.value.id);
-      if (index !== -1) achievements.value[index] = { ...result, selected: achievements.value[index].selected };
-      alert('Achievement updated successfully.');
-    } else {
-      result = await createAchievement(
-        currentAchievement.value.title,
-        currentAchievement.value.title_en,
-        currentAchievement.value.author,
-        currentAchievement.value.description,
-        currentAchievement.value.description_en,
-        formattedDate,
-        status,
-        currentAchievement.value.pdf || '',
-        true
-      );
-
-      achievements.value.push({ ...result, selected: false });
-      achievementsNum.value = achievements.value.length;
-      alert('Achievement added successfully.');
+    if (!currentAchievement.value.title.trim() || !currentAchievement.value.author.trim()) {
+        alert('Please fill in Title and Author.');
+        return;
     }
+    try {
+        const uploadDate = new Date(currentAchievement.value.uploadDate);
+        const formattedDate = uploadDate.toISOString().slice(0, 19).replace('T', ' ');
+        const status = publish ? 1 : 0;
 
-    showModalAddAchievement.value = false;
-    showModalEdit.value = false;
-  } catch (err) {
-    console.error('Error saving achievement:', err);
-    alert('Error saving achievement.');
-  }
+        let result;
+        if (showModalEdit.value && currentAchievement.value.id) {
+            result = await updateAchievement(
+                currentAchievement.value.id,
+                currentAchievement.value.title,
+                currentAchievement.value.title_en,
+                currentAchievement.value.author,
+                currentAchievement.value.description,
+                currentAchievement.value.description_en,
+                formattedDate,
+                status,
+                currentAchievement.value.pdf || '',
+                true
+            );
+
+            const index = achievements.value.findIndex(a => a.id === currentAchievement.value.id);
+            if (index !== -1) achievements.value[index] = { ...result, selected: achievements.value[index].selected };
+            alert('Achievement updated successfully.');
+        } else {
+            result = await createAchievement(
+                currentAchievement.value.title,
+                currentAchievement.value.title_en,
+                currentAchievement.value.author,
+                currentAchievement.value.description,
+                currentAchievement.value.description_en,
+                formattedDate,
+                status,
+                currentAchievement.value.pdf || '',
+                true
+            );
+
+            achievements.value.push({ ...result, selected: false });
+            achievementsNum.value = achievements.value.length;
+            alert('Achievement added successfully.');
+        }
+
+        showModalAddAchievement.value = false;
+        showModalEdit.value = false;
+    } catch (err) {
+        console.error('Error saving achievement:', err);
+        alert('Error saving achievement.');
+    }
 };
 
 const closeModal = () => { showModalAddAchievement.value = false; showModalEdit.value = false; };
@@ -398,41 +398,57 @@ const removePdf = () => { currentAchievement.value.pdf = ''; };
 
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
-  if (!file || file.type !== 'application/pdf') return;
+  if (!file || file.type !== 'application/pdf') {
+    alert('Please upload a valid PDF file.');
+    return;
+  }
 
   const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const base64Data = reader.result.split(',')[1];
 
-      const uploaded = await uploadPdf(base64Data, file.name);
-      currentAchievement.value.pdf = uploaded.path;
+  reader.onloadend = async () => {
+    const pdfData = reader.result; // Base64 string
+
+    if (!pdfData) {
+      alert("Failed to read PDF file.");
+      return;
+    }
+
+    // Create a unique PDF path for backend
+    const pdfPath = `achievements/${Date.now()}_${file.name}`;
+
+    try {
+      const uploaded = await uploadPDF(pdfData, pdfPath);
+      currentAchievement.value.pdf = uploaded.path; // set the backend path
+      alert("PDF uploaded successfully!");
     } catch (err) {
-      alert('Failed to upload PDF');
       console.error(err);
+      alert('Failed to upload PDF');
     }
   };
+
   reader.readAsDataURL(file);
 };
 
+
+
 const handleDragDrop = (e) => {
-  isDragging.value = false;
-  const files = e.dataTransfer.files;
-  if (files.length > 0) handleFileUpload({ target: { files } });
+    isDragging.value = false;
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleFileUpload({ target: { files } });
 };
 
 const askDelete = (id, title) => { deleteId.value = id; deleteName.value = title; showModal.value = true; };
 const confirmDelete = async () => {
-  try {
-    const response = await deleteAchievement(deleteId.value);
-    achievements.value = achievements.value.filter(a => a.id !== deleteId.value);
-    achievementsNum.value = achievements.value.length;
-    showModal.value = false;
-    alert(response.message || 'Achievement deleted successfully.');
-  } catch (error) {
-    alert(`Error deleting achievement: ${error?.message || 'Unknown error'}`);
-    console.error(error);
-  } finally { deleteId.value = null; }
+    try {
+        const response = await deleteAchievement(deleteId.value);
+        achievements.value = achievements.value.filter(a => a.id !== deleteId.value);
+        achievementsNum.value = achievements.value.length;
+        showModal.value = false;
+        alert(response.message || 'Achievement deleted successfully.');
+    } catch (error) {
+        alert(`Error deleting achievement: ${error?.message || 'Unknown error'}`);
+        console.error(error);
+    } finally { deleteId.value = null; }
 };
 const cancelDelete = () => { showModal.value = false; };
 
