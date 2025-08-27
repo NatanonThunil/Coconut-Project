@@ -1,6 +1,7 @@
 <template>
     <div class="employee-slider-container">
-        <button @click="goPrev" class="btn-4-swiper"> < </button>
+        <button @click="goPrev" class="btn-4-swiper">
+            < </button>
 
                 <div class="employee-card-section" v-if="isLoading">
                     <div style="display: flex; gap: 2rem; flex-direction: row;">
@@ -18,8 +19,8 @@
                         1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 },
                     }">
                         <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
-                            <aboutusCard :url="`/aboutus/${lurl}/details/${employee.id}`"
-                                :image="employee.image" :name="getTitle(employee)"
+                            <AboutusCard :url="`/aboutus/${lurl}/details/${employee.id}`"
+                                :image="getEmployeeImage(employee.image)" :name="getTitle(employee)"
                                 :description="employee.description" />
                         </SwiperSlide>
                     </Swiper>
@@ -28,92 +29,110 @@
                     No employees available at the moment.
                 </div>
                 <button @click="goNext" class="btn-4-swiper">></button>
-            
-        
-            
+
+
+
     </div>
 </template>
 
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
-import noimageHandle from '/img/no-image-handle.png';
+import noimageHandle from "/img/no-image-handle.png";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import AboutusCard from "./aboutusCard.vue";
+import CardShimmer from "./CardShimmer.vue";
 import { useEmployees } from "~/composables/useEmployees";
+import { useMembers } from "~/composables/useMembers";
 
 const { getEmployees } = useEmployees();
+const { getMembers } = useMembers();
 
 export default {
-    props: {
-        apiEndPoint: {
-            type: String,
-            required: true,
-        },
-        title: {
-            type: String,
-        },
-        lurl: {
-            type: String,
-        }
+  props: {
+    apiEndPoint: { type: String, required: true },
+    title: { type: String },
+    lurl: { type: String },
+  },
+  components: {
+    Swiper,
+    SwiperSlide,
+    AboutusCard,
+    CardShimmer,
+  },
+  data() {
+    return {
+      employees: [],
+      members: [],
+      isLoading: true,
+      swiperInstance: null,
+    };
+  },
+  mounted() {
+    this.fetchEmployees();
+    this.fetchMembers();
+  },
+  methods: {
+    getTitle(item) {
+      return this.title && item[this.title] ? item[this.title] : item.name;
     },
-    components: {
-        Swiper,
-        SwiperSlide,
+    getEmployeeImage(image) {
+      return image || noimageHandle;
     },
-    data() {
-        return {
-            employees: [],
-            isLoading: true,
-        };
+    goPrev() {
+      if (this.swiperInstance) this.swiperInstance.slidePrev();
     },
-    mounted() {
-        this.fetchEmployees();
+    goNext() {
+      if (this.swiperInstance) this.swiperInstance.slideNext();
     },
-    methods: {
-        getTitle(employee) {
-            return this.title && employee[this.title] ? employee[this.title] : employee.name;
-        },
-        getPath() {
-            return this.lurl;
-        },
-        goPrev() {
-            this.$refs.mySwiper.$el.swiper.slidePrev();
-        },
-        goNext() {
-            this.$refs.mySwiper.$el.swiper.slideNext();
-        },
-        async fetchEmployees() {
-            try {
-                this.isLoading = true;
-                const raw = await getEmployees();
-                if (Array.isArray(raw)) {
-                    this.employees = raw.filter(emp => emp.status === 1);
-                    this.employees.sort((a, b) => b.id - a.id);
-                } else if (raw && Array.isArray(raw.data)) {
-                    this.employees = raw.data.filter(emp => emp.status === 1);
-                    this.employees.sort((a, b) => b.id - a.id);
-                } else {
-                    console.warn("Unexpected structure, got:", raw);
-                    throw new Error("Unexpected API response structure");
-                }
-            } catch (error) {
-                console.error("Error fetching employees:", error);
-                this.employees = [];
-            } finally {
-                this.isLoading = false;
-            }
-        }
+    onSwiper(swiper) {
+      this.swiperInstance = swiper;
     },
-    computed: {
-        getEmployeeImage() {
-            return (image) => image ? image : noimageHandle;
-        },
-        filteredEmployees() {
-            return this.employees.filter(emp => emp.status === 1);
-        }
-    }
+    async fetchEmployees() {
+      try {
+        this.isLoading = true;
+        const raw = await getEmployees();
+        let employees = [];
+        if (Array.isArray(raw)) employees = raw;
+        else if (raw && Array.isArray(raw.data)) employees = raw.data;
+        else throw new Error("Unexpected API response structure");
+
+        this.employees = employees
+          .filter(emp => emp.status === 1)
+          .sort((a, b) => b.id - a.id);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        this.employees = [];
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async fetchMembers() {
+      try {
+        const raw = await getMembers();
+        let members = [];
+        if (Array.isArray(raw)) members = raw;
+        else if (raw && Array.isArray(raw.data)) members = raw.data;
+        else throw new Error("Unexpected API response structure");
+
+        this.members = members
+          .filter(mem => mem.status === 1)
+          .sort((a, b) => b.id - a.id);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        this.members = [];
+      }
+    },
+  },
+  computed: {
+    filteredEmployees() {
+      return this.employees.filter(emp => emp.status === 1);
+    },
+    filteredMembers() {
+      return this.members.filter(mem => mem.status === 1);
+    },
+  },
 };
 </script>
 
