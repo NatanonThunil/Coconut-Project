@@ -1,3 +1,14 @@
+# อัพเดต 28 Aug.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- แก้ หน้า aboutus ให้แสดงได้แล้วแต่มัน ยัง bug อยู่นิดหน่อย
+
+โดย [Sujeff]
+
+
 # อัพเดต 23 Aug.
 ### TO-DO
 
