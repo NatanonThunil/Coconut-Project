@@ -13,8 +13,8 @@
       </div>
     </div>
 
-    <!-- Employees Swiper -->
-    <div v-if="!isLoading && filteredEmployees.length > 0" class="swiper-container">
+    <!-- Members Swiper -->
+    <div v-if="!isLoading && filteredMembers.length > 0" class="swiper-container">
       <Swiper
         :slides-per-view="4"
         :space-between="10"
@@ -27,7 +27,7 @@
           1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 }
         }"
       >
-        <SwiperSlide v-for="(person, index) in filteredEmployees" :key="index">
+        <SwiperSlide v-for="(person, index) in filteredMembers" :key="index">
           <AboutusCard
             :url="`/aboutus/${lurl}/details/${person.id}`"
             :image="getEmployeeImage(person.image)"
@@ -37,10 +37,9 @@
         </SwiperSlide>
       </Swiper>
     </div>
-    <div v-if="!isLoading && filteredEmployees.length === 0">
-      No employees available at the moment.
+    <div v-if="!isLoading && filteredMembers.length === 0">
+      No members available at the moment.
     </div>
-
 
     <!-- Next button -->
     <button @click="goNext" class="btn-4-swiper"> &gt; </button>
@@ -55,11 +54,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import AboutusCard from "./aboutusCard.vue";
 import CardShimmer from "./CardShimmer.vue";
-import { useEmployees } from "~/composables/useEmployees";
+import { useMembers } from "~/composables/useMembers";
 
-
-const { getEmployees } = useEmployees();
-
+const { getMembers } = useMembers();
 
 export default {
   props: {
@@ -104,20 +101,20 @@ export default {
     async fetchData() {
       this.isLoading = true;
       try {
-        const [empRaw] = await Promise.allSettled([
-          getEmployees(),
+        const [memRaw] = await Promise.allSettled([
+          getMembers(),
         ]);
 
-        // Employees
-        if (empRaw.status === "fulfilled") {
-          let employees = [];
-          const raw = empRaw.value;
-          if (Array.isArray(raw)) employees = raw;
-          else if (raw && Array.isArray(raw.data)) employees = raw.data;
-          else if (raw && Array.isArray(raw.employees)) employees = raw.employees;
-          else if (raw && typeof raw === "object") employees = [raw];
+        // Members
+        if (memRaw.status === "fulfilled") {
+          let members = [];
+          const raw = memRaw.value;
+          if (Array.isArray(raw)) members = raw;
+          else if (raw && Array.isArray(raw.data)) members = raw.data;
+          else if (raw && Array.isArray(raw.members)) members = raw.members;
+          else if (raw && typeof raw === "object") members = [raw];
 
-          this.employees = employees.filter(e => e.status === 1);
+          this.members = members.filter(m => m.status === 1);
         }
 
       } catch (error) {
@@ -128,10 +125,9 @@ export default {
     },
   },
   computed: {
-    filteredEmployees() {
-      return this.employees.filter(e => e.status === 1);
+    filteredMembers() {
+      return this.members.filter(m => m.status === 1);
     },
-
   },
 };
 </script>
