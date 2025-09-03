@@ -5,8 +5,9 @@
 
 ### Update List
 - แก้ หน้า aboutus ให้แสดงได้ปกติแล้ว
+- GET GET(id) POST PUT DELETE backend ของ``PEST``ปกติ Front แสดงปกติ แต่ต้องตกแต่งภายหลัง ✅
 
-โดย [Sujeff]
+โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 
 # อัพเดต 28 Aug.
 ### TO-DO

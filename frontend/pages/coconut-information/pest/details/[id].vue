@@ -51,7 +51,7 @@
         <div style="height: 8rem"></div>
         <!-- Added more space -->
         <div class="back-btn-container">
-          <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/pest" />
+          <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
         </div>
       </div>
     </div>
@@ -63,7 +63,8 @@ import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
 import { useI18n } from "vue-i18n";
 import { computed } from "vue";
-
+import { usePests } from "@/composables/usePests";
+const { getPestById } = usePests();
 export default {
   setup() {
     const { locale } = useI18n();
@@ -80,27 +81,17 @@ export default {
     };
   },
   async mounted() {
-    const cid = this.$route.params.id; // Get the pest ID from the URL
+    const cid = this.$route.params.id; 
     try {
-      const response = await fetch(`/api/pests/`, {
-        headers: {
-          CKH: "541986Cocon",
-        },
-      });
-      if (!response.ok)
-        throw new Error(`Failed to fetch pest details: ${response.statusText}`);
-      const data = await response.json();
-      this.pest =
-        data.find((pest) => pest.id === parseInt(cid) && pest.status === 1) ||
-        null;
-
-      if (this.pest) {
-        this.updateHead();
-      } else {
-        this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
-      }
+        const data = await getPestById(cid); 
+        this.pest = data && data.status === 1 ? data : null; 
+        if (this.pest) {
+            this.updateHead();
+        } else {
+            this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
+        }
     } catch (error) {
-      this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
+        this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
     }
   },
   methods: {

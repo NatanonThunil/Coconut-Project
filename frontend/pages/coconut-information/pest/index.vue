@@ -43,7 +43,7 @@
     <CardShimmer v-for="index in 30" :key="index" />
   </div>
   <div v-else-if="filteredPests.length === 0" class="no-results">
-    <img
+    <img class="no-result-image"
       src="/icon/notfound.png"
       draggable="false"
       alt="No pests found"
@@ -89,7 +89,8 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/swiper-bundle.css";
 import PestCard from "@/components/PestCard.vue"; // Add this import
 import { useI18n } from "vue-i18n"; // Add this import
-
+import { usePests } from "@/composables/usePests";
+const { getPests } = usePests();
 export default {
   components: {
     Swiper,
@@ -145,35 +146,32 @@ export default {
   async mounted() {
     window.scrollTo(0, 0);
     try {
-      setTimeout(async () => {
-        const response = await fetch("/api/pests", {
-          headers: {
-            CKH: "541986Cocon",
-          },
-        });
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const data = await response.json();
-        this.pests = data;
-        this.filteredPests = data;
-        this.loading = false;
-      }, 200);
+        setTimeout(async () => {
+            const data = await getPests(); // Ensure `await` is used to resolve the promise
+            this.pests = Array.isArray(data) ? data : []; // Ensure `data` is an array
+            this.filteredPests = this.pests;
+            this.loading = false;
+        }, 200);
     } catch (error) {
-      console.error("Error fetching pests:", error);
+        console.error("Error fetching pests:", error);
+        this.pests = [];
+        this.filteredPests = [];
+        this.loading = false;
     }
   },
   methods: {
     filterPests() {
       const query = this.searchQuery.toLowerCase();
       this.filteredPests = this.pests.filter((pest) => {
-        const nameTh = (pest.name_th || "").toLowerCase();
-        const nameEng = (pest.name_eng || "").toLowerCase();
+        const nameTh = (pest.name || "").toLowerCase();
+        const nameEng = (pest.name_en || "").toLowerCase();
         const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
         const matchesCategory =
           this.filters.category.model === "" ||
-          pest.category.toString() === this.filters.category.model;
+          pest.category?.toString() === this.filters.category.model;
         const matchesType =
           this.filters.type.model === "" ||
-          pest.type.toString() === this.filters.type.model;
+          pest.type?.toString() === this.filters.type.model;
 
         return matchesQuery && matchesCategory && matchesType;
       });

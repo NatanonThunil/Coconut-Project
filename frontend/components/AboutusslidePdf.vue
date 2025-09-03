@@ -45,12 +45,10 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import aboutusCardPdf from "./aboutusCardPdf.vue";
-import * as pdfjsLib from "pdfjs-dist/webpack";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import workerUrl from "pdfjs-dist/build/pdf.worker.mjs?url";
+GlobalWorkerOptions.workerSrc = workerUrl;
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.js",
-  import.meta.url
-).href;
 
 import { useAchievements } from '~/composables/useAchievements';
 const { getAchievements } = useAchievements();
