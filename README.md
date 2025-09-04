@@ -5,6 +5,7 @@
 
 ### Update List
 - เพิ่ม Chain value ยังไม่เสร็จ Back
+- เพิ่ม employees และ member ของ back  ยังไม่เสร็จ
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 

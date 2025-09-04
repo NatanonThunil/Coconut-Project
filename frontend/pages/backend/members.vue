@@ -1,224 +1,181 @@
 <template>
-    <div style="height: 5rem;"></div>
-    <div class="table-head-text-container">
-        <h1>จัดการสมาชิก</h1>
-        <p>มีสมาชิกทั้งหมด {{ membersNum }}</p>
+  <div style="height: 5rem;"></div>
+  <div class="table-head-text-container">
+    <h1>จัดการสมาชิก</h1>
+    <p>มีสมาชิกทั้งหมด {{ membersNum }}</p>
+  </div>
+
+  <div class="add-btn-container">
+    <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
+    <div class="member-check-publish">
+      <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+      <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
+      <button class="add-news-btn" @click="openAddMemberModal">ADD Member</button>
     </div>
-    <div class="add-btn-container">
-        <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
-        <div class="member-check-publish">
-            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-news-btn" @click="openAddMemberModal">ADD Member</button>
-        </div>
-    </div>
+  </div>
 
-    <div class="table-container">
-        <table class="item-list-table">
-            <thead>
-                <tr>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
-                                class="checkbox-decorate" />
-                            <span>ID</span>
-                            <button @click="toggleSort('id')">
-                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
-                            </button>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Name<button @click="toggleSort('name')">
-                                    <div :class="{ 'rotate': sortBy === 'name' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Email<button @click="toggleSort('email')">
-                                    <div :class="{ 'rotate': sortBy === 'email' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Address<button @click="toggleSort('address')">
-                                    <div :class="{ 'rotate': sortBy === 'address' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Phone Number<button @click="toggleSort('phoneNumber')">
-                                    <div :class="{ 'rotate': sortBy === 'phoneNumber' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Tags<button @click="toggleSort('tags')">
-                                    <div :class="{ 'rotate': sortBy === 'tags' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Status<button @click="toggleSort('status')">
-                                    <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
-                                </button></div>
-                        </div>
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody v-if="filteredSortedMembers.length">
-                <tr v-for="member in filteredSortedMembers" :key="member.id">
-                    <td>
-                        <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="member.selected" />
-                            <p>{{ member.id }}</p>
-                        </div>
-                    </td>
-                    <td>{{ member.name }}</td>
-                    <td>{{ member.email }}</td>
-                    <td>{{ member.address }}</td>
-                    <td>{{ member.phoneNumber }}</td>
-
-                    <td>{{ member.tags.join(', ') }}</td>
-                    <td>
-                        <label class="status-toggle">
-                            <input type="checkbox" :checked="member.status" @change="toggleStatus(member)" />
-                            <img class="eyesicon" :src="member.status ? eye : eyeBlink" alt="Visibility Icon" />
-                        </label>
-                    </td>
-                    <td class="action-buttons">
-                        <div class="action-btn-container">
-                            <button @click="editItem(member)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(member.id, member.name)" class="delete-btn"><img
-                                    src="/icon/trash.png" alt=""></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div v-if="showModal" class="modal-overlay">
-        <div class="modal">
-            <div class="text-alert-container">
-                <span>ต้องการที่จะ <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span></span>
-                <p>" {{ deleteName }} "</p>
+  <div class="table-container">
+    <table class="item-list-table">
+      <thead>
+        <tr>
+          <th>
+            <div class="checkbox-id-container">
+              <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+              <span>ID</span>
+              <button @click="toggleSort('id')">
+                <div :class="{ rotate: sortBy === 'id' && sortDirection === -1 }">▲</div>
+              </button>
             </div>
-            <div class="modal-actions">
-                <button @click="confirmDelete" class="confirm-btn">Yes</button>
-                <button @click="cancelDelete" class="cancel-btn">No</button>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
+              <div>Name<button @click="toggleSort('name')">
+                  <div :class="{ rotate: sortBy === 'name' && sortDirection === -1 }">▲</div>
+                </button></div>
             </div>
-        </div>
-    </div>
-
-    <div v-if="showModalAddMember || showModalEdit" class="modal-overlay">
-        <form class="modal-add" @submit.prevent>
-            <h2>{{ showModalEdit ? 'แก้ไขสมาชิก' : 'เพิ่มสมาชิก' }}</h2>
-            <div class="divider"></div>
-            <div class="modal-content">
-                <section>
-                    <label>ชื่อ</label>
-                    <input class="add-text-input" v-model="currentMember.name" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
-                    <label>ชื่อ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentMember.name_en" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
-                    <label>ที่อยู่</label>
-                    <input class="add-text-input" v-model="currentMember.address" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
-                    <label>ที่อยู่ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentMember.address_en" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
-                    <label>เบอร์โทร</label>
-                    <input class="add-text-input" v-model="currentMember.phoneNumber" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
-                    <label>Email</label>
-                    <input class="add-text-input" v-model="currentMember.email" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
-                    <label>คำอธิบาย</label>
-                    <textarea class="add-text-input" v-model="currentMember.description" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description"></textarea>
-                    <label>คำอธิบาย (อังกฤษ)</label>
-                    <textarea class="add-text-input" v-model="currentMember.description_en" @input="handleInputChange"
-                        @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter description in English"></textarea>
-                    <label>Tags</label>
-                    <div class="tags-input-container">
-                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange"
-                            @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
-                            placeholder="Add a tag" />
-                        <div class="tag" v-for="(tag, index) in currentMember.tags" :key="index">
-                            {{ tag }}
-                            <button type="button" @click="removeTag(index)">x</button>
-                        </div>
-
-
-                        <div v-if="filteredTags.length" class="tags-suggestions">
-                            <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
-                                {{ tag }}
-                            </div>
-                        </div>
-                    </div>
-                    <label>Image</label>
-                    <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
-                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleFileUpload">
-                            <img v-if="!currentMember.image" src="/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentMember.image">Drag & Drop or Click to Upload</h2>
-                            <div v-if="currentMember.image" class="image-preview">
-                                <img :src="currentMember.image" alt="Uploaded Image" class="preview-image" />
-                                <button class="remove-btn" @click="removeImage">X</button>
-                            </div>
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
-                                class="file-uploader" ref="fileInput" />
-                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
-                        </div>
-                    </div>
-                </section>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
+              <div>Email<button @click="toggleSort('email')">
+                  <div :class="{ rotate: sortBy === 'email' && sortDirection === -1 }">▲</div>
+                </button></div>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitMember(false)">{{ showModalEdit ?
-                    'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitMember(true)">{{ showModalEdit ?
-                    'Update & Publish' : 'Add & Publish' }}</button>
-                <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
+              <div>Address<button @click="toggleSort('address')">
+                  <div :class="{ rotate: sortBy === 'address' && sortDirection === -1 }">▲</div>
+                </button></div>
             </div>
-        </form>
-    </div>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
+              <div>Phone Number<button @click="toggleSort('phoneNumber')">
+                  <div :class="{ rotate: sortBy === 'phoneNumber' && sortDirection === -1 }">▲</div>
+                </button></div>
+            </div>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
+              <div>Status<button @click="toggleSort('status')">
+                  <div :class="{ rotate: sortBy === 'status' && sortDirection === -1 }">▲</div>
+                </button></div>
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
 
-    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden>
-    <div v-if="showCropper" class="cropper-container">
-        <div class="cropper-wrapper">
-            <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
-        </div>
-        <div class="cropper-actions">
-            <button @click="cropImage" class="crop-btn">Crop & Upload</button>
-            <button @click="cancelCrop" class="cancel-btn">Cancel</button>
-        </div>
-    </div>
+      <tbody v-if="filteredSortedMembers.length">
+        <tr v-for="member in filteredSortedMembers" :key="member.id">
+          <td>
+            <div class="checkbox-id-container">
+              <input type="checkbox" v-model="member.selected" />
+              <p>{{ member.id }}</p>
+            </div>
+          </td>
+          <td>{{ member.name }}</td>
+          <td>{{ member.email }}</td>
+          <td>{{ member.address }}</td>
+          <td>{{ member.phoneNumber }}</td>
+          <td>
+            <label class="status-toggle">
+              <input type="checkbox" :checked="member.status" @change="toggleStatus(member)" />
+              <img class="eyesicon" :src="member.status ? eye : eyeBlink" alt="Visibility Icon" />
+            </label>
+          </td>
+          <td class="action-buttons">
+            <div class="action-btn-container">
+              <button @click="editItem(member)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
+              <button @click="askDelete(member.id, member.name)" class="delete-btn"><img src="/icon/trash.png" alt=""></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div style="height: 5rem;"></div>
+  <!-- Delete Modal -->
+  <div v-if="showModal" class="modal-overlay">
+    <div class="modal">
+      <div class="text-alert-container">
+        <span>ต้องการที่จะ <span style="color: red; font-size: larger; font-weight: bolder;">ลบ</span></span>
+        <p>" {{ deleteName }} "</p>
+      </div>
+      <div class="modal-actions">
+        <button @click="confirmDelete" class="confirm-btn">Yes</button>
+        <button @click="cancelDelete" class="cancel-btn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div v-if="showModalAddMember || showModalEdit" class="modal-overlay">
+    <form class="modal-add" @submit.prevent>
+      <h2>{{ showModalEdit ? 'แก้ไขสมาชิก' : 'เพิ่มสมาชิก' }}</h2>
+      <div class="divider"></div>
+      <div class="modal-content">
+        <section>
+          <label>ชื่อ</label>
+          <input class="add-text-input" v-model="currentMember.name" required />
+          <label>ชื่อ (อังกฤษ)</label>
+          <input class="add-text-input" v-model="currentMember.name_en" required />
+          <label>ที่อยู่</label>
+          <input class="add-text-input" v-model="currentMember.address" required />
+          <label>ที่อยู่ (อังกฤษ)</label>
+          <input class="add-text-input" v-model="currentMember.address_en" required />
+          <label>เบอร์โทร</label>
+          <input class="add-text-input" v-model="currentMember.phoneNumber" required />
+          <label>Email</label>
+          <input class="add-text-input" v-model="currentMember.email" required />
+          <label>คำอธิบาย</label>
+          <textarea class="add-text-input" v-model="currentMember.description"></textarea>
+          <label>คำอธิบาย (อังกฤษ)</label>
+          <textarea class="add-text-input" v-model="currentMember.description_en"></textarea>
+
+          <label>Image</label>
+          <div class="image-upload-container">
+            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+              @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+              @drop.prevent="handleFileUpload">
+              <img v-if="!currentMember.image" src="/icon/upload.svg" draggable="false" />
+              <h2 v-if="!currentMember.image">Drag & Drop or Click to Upload</h2>
+              <div v-if="currentMember.image" class="image-preview">
+                <img :src="currentMember.image" alt="Uploaded Image" class="preview-image" />
+                <button class="remove-btn" @click="removeImage">X</button>
+              </div>
+              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                class="file-uploader" ref="fileInput" />
+              <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="confirme-btn" @click.prevent="submitMember(false)">
+          {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+        </button>
+        <button type="button" class="confirm-btn" @click.prevent="submitMember(true)">
+          {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+        </button>
+        <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
-definePageMeta({
-    layout: "admin",
-});
-import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
-import 'cropperjs/dist/cropper.css';
+definePageMeta({ layout: "admin" });
+import { ref, onMounted, computed } from "vue";
+import eye from "/icon/eye-alt-svgrepo-com.svg";
+import eyeBlink from "/icon/eye-slash-alt-svgrepo-com.svg";
+import { useMembers } from "~/composables/useMembers";
+import { useUpload } from "~/composables/useUpload";
 
-const apiEndpoint = 'members';
-const searchQuery = ref('');
+const { getMembers, createMember, deleteMember, updateMember } = useMembers();
+const { uploadImage } = useUpload();
+
+const searchQuery = ref("");
 const members = ref([]);
 const membersNum = ref(0);
 const selectAll = ref(false);
@@ -230,359 +187,160 @@ const showModalEdit = ref(false);
 const sortBy = ref(null);
 const sortDirection = ref(1);
 const currentMember = ref({
-    id: null,
-    name: '',
-    name_en: '',
-    address: '',
-    address_en: '',
-    phoneNumber: '',
-    email: '',
-    description: '',
-    description_en: '',
-    status: 1,
-    tags: [],
-    image: '',
+  id: null,
+  name: "",
+  name_en: "",
+  address: "",
+  address_en: "",
+  phoneNumber: "",
+  email: "",
+  description: "",
+  description_en: "",
+  status: 1,
+  image: "",
 });
-const newTag = ref('');
 const isDragging = ref(false);
 const fileInput = ref(null);
-const filteredTags = ref([]);
-const cropperInstance = ref(null);
-const croppingImage = ref(null);
-const showCropper = ref(false);
-const cropperImage = ref(null);
-const allTags = ref(['tag1', 'tag2', 'tag3']); // Example tags, replace with actual tags
-const originalImage = ref(''); // Store the original image before cropping
 
-const triggerFileInput = () => {
-    fileInput.value.click();
+const triggerFileInput = () => fileInput.value.click();
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const url = await uploadImage(file);
+  currentMember.value.image = url;
 };
-
-const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
-};
-
-const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            originalImage.value = currentMember.value.image; // Save the original image
-            croppingImage.value = reader.result;
-            showCropper.value = true;
-            nextTick(() => {
-                cropperInstance.value = new Cropper(cropperImage.value, {
-                    aspectRatio: 2 / 3,
-                    viewMode: 2,
-                    autoCropArea: 1
-                });
-            });
-        };
-        reader.readAsDataURL(file);
-    } else {
-        alert('Only JPEG and PNG files are allowed.');
-    }
-};
-
-const cropImage = () => {
-    if (cropperInstance.value) {
-        const canvas = cropperInstance.value.getCroppedCanvas();
-        currentMember.value.image = canvas.toDataURL('image/jpeg');
-        showCropper.value = false;
-        cropperInstance.value.destroy();
-    }
-};
-
-const cancelCrop = () => {
-    currentMember.value.image = originalImage.value; // Restore the original image
-    showCropper.value = false;
-    cropperInstance.value.destroy();
-};
-
-const removeImage = () => {
-    currentMember.value.image = '';
-};
-
-const toggleStatus = async (member) => {
-    try {
-        const newStatus = !member.status;
-        const response = await fetch(`/api/${apiEndpoint}/${member.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...member, status: newStatus ? 1 : 0 }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update member status.');
-        }
-
-        member.status = newStatus;
-    } catch (error) {
-        alert('Error updating member status.');
-        console.error(error);
-    }
-};
+const removeImage = () => { currentMember.value.image = ""; };
 
 const fetchMembers = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`, { headers: { 'CKH': '541986Cocon' }, });
-        const membersWithTags = await Promise.all(response.map(async (member) => {
-            const tagsResponse = await fetchAllTagsForMember(member.id);
-            return { ...member, selected: false, tags: tagsResponse.map(tag => tag.text) };
-        }));
-        members.value = membersWithTags;
-        membersNum.value = members.value.length;
-    } catch (error) {
-        alert('Error fetching members.');
-        console.error('Error fetching members:', error.message, error.stack);
-    }
-};
-
-const fetchAllTagsForMember = async (memberId) => {
-    try {
-        const response = await $fetch(`/api/tags_member?member_id=${memberId}`, { headers: { 'CKH': '541986Cocon' }, });
-        return Array.isArray(response) ? response : [];
-    } catch (error) {
-        console.error('Error fetching tags:', error.message, error.stack);
-        alert('Error fetching tags.');
-        return [];
-    }
-};
-
-const editItem = (member) => {
-    currentMember.value = {
-        ...member,
-        status: !!member.status,
-        tags: [...member.tags],
-        image: member.image || ''
-    };
-    showModalEdit.value = true;
-};
-
-
-const filteredSortedMembers = computed(() => {
-    let filtered = members.value.filter(member =>
-        member.id.toString().includes(searchQuery.value) ||
-        member.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        member.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        member.phoneNumber.includes(searchQuery.value) ||
-        member.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        member.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase()))
-    );
-
-    if (sortBy.value) {
-        filtered.sort((a, b) => {
-            let valA = a[sortBy.value];
-            let valB = b[sortBy.value];
-
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'name' || sortBy.value === 'address' || sortBy.value === 'email') return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            if (sortBy.value === 'phoneNumber') return (valA - valB) * sortDirection.value;
-            return 0;
-        });
-    }
-    return filtered;
-});
-
-const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
-        sortBy.value = column;
-        sortDirection.value = column === 'status' ? -1 : 1;
-    }
-};
-
-const openAddMemberModal = () => {
-    currentMember.value = {
-        id: null,
-        name: '',
-        name_en: '',
-        address: '',
-        address_en: '',
-        phoneNumber: '',
-        email: '',
-        description: '',
-        description_en: '',
-        status: 1,
-        tags: [],
-        image: '',
-    };
-    showModalAddMember.value = true;
-};
-
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedMembers = members.value.filter(member => member.selected);
-        if (selectedMembers.length === 0) {
-            alert('No members selected.');
-            return;
-        }
-
-        const updatePromises = selectedMembers.map(member =>
-            fetch(`/api/${apiEndpoint}/${member.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...member, status: publish ? 1 : 0 })
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedMembers.forEach(member => {
-            member.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected members.`);
-    } catch {
-        alert('Failed to update member status.');
-    }
+  try {
+    const res = await getMembers();
+    const membersArray = Array.isArray(res) ? res : [];
+    const memberssWithData = membersArray.map((members) => ({
+      ...members,
+      selected: false,
+    }));
+    members.value = memberssWithData;
+    membersNum.value = members.value.length;
+  } catch (err) {
+    alert("Error fetching members.");
+    console.error(err);
+  }
 };
 
 const submitMember = async (publish) => {
-    if (!currentMember.value.name.trim() || !currentMember.value.name_en.trim() || !currentMember.value.address.trim() || !currentMember.value.address_en.trim() || !currentMember.value.phoneNumber.trim() || !currentMember.value.email.trim()) {
-        alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
-        return;
+  if (!currentMember.value.name.trim()) {
+    alert("Please fill in required fields.");
+    return;
+  }
+  try {
+    const payload = { ...currentMember.value, status: publish ? 1 : 0 };
+    if (payload.id) {
+      await updateMember(payload.id, payload);
+      alert("Member updated successfully.");
+    } else {
+      await createMember(payload);
+      alert("Member added successfully.");
     }
-
-    try {
-        const isUpdate = !!currentMember.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentMember.value.id}` : `/api/${apiEndpoint}`;
-
-        const payload = {
-            id: currentMember.value.id,
-            name: currentMember.value.name,
-            name_en: currentMember.value.name_en,
-            address: currentMember.value.address,
-            address_en: currentMember.value.address_en,
-            phoneNumber: currentMember.value.phoneNumber,
-            email: currentMember.value.email,
-            description: currentMember.value.description,
-            description_en: currentMember.value.description_en,
-            status: publish ? 1 : 0,
-            tags: currentMember.value.tags,
-            image: currentMember.value.image || '',
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the member.');
-        }
-
-        const result = await response.json();
-        if (!isUpdate) {
-            currentMember.value.id = result.id;
-            alert('Member added successfully.');
-        } else {
-            alert('Member updated successfully.');
-        }
-
-        showModalAddMember.value = false;
-        showModalEdit.value = false;
-        fetchMembers();
-    } catch (error) {
-        alert('Error while submitting member.');
-        console.error('Submit Member Error:', error);
-    }
-};
-
-const closeModal = () => {
     showModalAddMember.value = false;
     showModalEdit.value = false;
+    fetchMembers();
+  } catch (err) {
+    alert("Error saving member.");
+    console.error(err);
+  }
+};
+
+const toggleStatus = async (member) => {
+  try {
+    await updateMember(member.id, { ...member, status: member.status ? 0 : 1 });
+    member.status = member.status ? 0 : 1;
+  } catch {
+    alert("Error updating status.");
+  }
+};
+
+const editItem = (member) => {
+  currentMember.value = { ...member };
+  showModalEdit.value = true;
+};
+const openAddMemberModal = () => {
+  currentMember.value = {
+    id: null,
+    name: "",
+    name_en: "",
+    address: "",
+    address_en: "",
+    phoneNumber: "",
+    email: "",
+    description: "",
+    description_en: "",
+    status: 1,
+    image: "",
+  };
+  showModalAddMember.value = true;
 };
 
 const askDelete = (id, name) => {
-    deleteId.value = id;
-    deleteName.value = name;
-    showModal.value = true;
+  deleteId.value = id;
+  deleteName.value = name;
+  showModal.value = true;
 };
-
 const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete member.');
-        }
-
-        members.value = members.value.filter(member => member.id !== deleteId.value);
-        membersNum.value = members.value.length;
-
-        showModal.value = false;
-        alert('Member deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting member: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-const cancelDelete = () => {
+  try {
+    await deleteMember(deleteId.value);
+    members.value = members.value.filter(m => m.id !== deleteId.value);
+    membersNum.value = members.value.length;
     showModal.value = false;
+    alert("Deleted successfully.");
+  } catch (err) {
+    alert("Error deleting.");
+    console.error(err);
+  }
 };
+const cancelDelete = () => { showModal.value = false; };
 
-const addTag = () => {
-    if (newTag.value.trim() !== '' && !currentMember.value.tags.includes(newTag.value.trim())) {
-        currentMember.value.tags.push(newTag.value.trim());
-    }
-    newTag.value = '';
-    filteredTags.value = [];
-    currentMember.value = { ...currentMember.value };
-};
-
-const removeTag = (index) => {
-    currentMember.value.tags.splice(index, 1);
-};
-
-const filterTags = () => {
-    const prefix = newTag.value.toLowerCase();
-    filteredTags.value = allTags.value.filter(tag => tag.toLowerCase().startsWith(prefix) && !currentMember.value.tags.includes(tag));
-};
-
-const selectTag = (tag) => {
-    currentMember.value.tags.push(tag);
-    newTag.value = '';
-    filteredTags.value = [];
-};
-
-const handleInputChange = () => {
-    currentMember.value.image = currentMember.value.image;
-};
-
-const preventFormSubmit = (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-    }
-};
-
-onMounted(() => {
-    fetchMembers();
+const filteredSortedMembers = computed(() => {
+  let filtered = members.value.filter(m =>
+    m.id.toString().includes(searchQuery.value) ||
+    m.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    m.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    m.phoneNumber.includes(searchQuery.value) ||
+    m.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+  if (sortBy.value) {
+    filtered.sort((a, b) => {
+      let valA = a[sortBy.value], valB = b[sortBy.value];
+      if (sortBy.value === "id") return (valA - valB) * sortDirection.value;
+      if (["name", "address", "email"].includes(sortBy.value)) return valA.localeCompare(valB, "th") * sortDirection.value;
+      if (sortBy.value === "status") return (valB - valA) * sortDirection.value;
+      if (sortBy.value === "phoneNumber") return (valA - valB) * sortDirection.value;
+      return 0;
+    });
+  }
+  return filtered;
 });
 
-const toggleSelectAll = () => {
-    members.value.forEach(member => member.selected = selectAll.value);
+const toggleSort = (col) => {
+  if (sortBy.value === col) sortDirection.value *= -1;
+  else { sortBy.value = col; sortDirection.value = col === "status" ? -1 : 1; }
 };
+
+const toggleSelectAll = () => {
+  members.value.forEach(m => m.selected = selectAll.value);
+};
+
+const bulkUpdateStatus = async (publish) => {
+  try {
+    const selected = members.value.filter(m => m.selected);
+    await Promise.all(selected.map(m => updateMember(m.id, { ...m, status: publish ? 1 : 0 })));
+    selected.forEach(m => m.status = publish ? 1 : 0);
+    alert(`Updated ${selected.length} members.`);
+  } catch {
+    alert("Bulk update failed.");
+  }
+};
+
+onMounted(fetchMembers);
 </script>
 
 

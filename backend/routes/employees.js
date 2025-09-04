@@ -20,7 +20,7 @@ router.use((req, res, next) => {
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM employee');
-        res.json({ employees: rows }); // <-- wrap in object
+        res.json(rows); // <-- wrap in object
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

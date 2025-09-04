@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM member');
-        res.json({ members: rows });
+        res.json(rows);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

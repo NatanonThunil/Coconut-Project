@@ -5,10 +5,7 @@
     <p>มีพนักงานทั้งหมด {{ employeesNum }}</p>
   </div>
   <div class="add-btn-container">
-    <SearchInput
-      v-model:search="searchQuery"
-      placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร"
-    />
+    <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
     <div class="employee-check-publish">
       <button class="published-news-btn" @click="bulkUpdateStatus(true)">
         All Checked Publish
@@ -28,17 +25,10 @@
         <tr>
           <th>
             <div class="checkbox-id-container">
-              <input
-                type="checkbox"
-                v-model="selectAll"
-                @change="toggleSelectAll"
-                class="checkbox-decorate"
-              />
+              <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
               <span>ID</span>
               <button @click="toggleSort('id')">
-                <div
-                  :class="{ rotate: sortBy === 'id' && sortDirection === -1 }"
-                >
+                <div :class="{ rotate: sortBy === 'id' && sortDirection === -1 }">
                   ▲
                 </div>
               </button>
@@ -48,11 +38,9 @@
             <div class="checkbox-id-container">
               <div>
                 Name<button @click="toggleSort('name')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'name' && sortDirection === -1,
-                    }"
-                  >
+                  <div :class="{
+                    rotate: sortBy === 'name' && sortDirection === -1,
+                  }">
                     ▲
                   </div>
                 </button>
@@ -63,11 +51,9 @@
             <div class="checkbox-id-container">
               <div>
                 Email<button @click="toggleSort('email')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'email' && sortDirection === -1,
-                    }"
-                  >
+                  <div :class="{
+                    rotate: sortBy === 'email' && sortDirection === -1,
+                  }">
                     ▲
                   </div>
                 </button>
@@ -78,11 +64,9 @@
             <div class="checkbox-id-container">
               <div>
                 Address<button @click="toggleSort('address')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'address' && sortDirection === -1,
-                    }"
-                  >
+                  <div :class="{
+                    rotate: sortBy === 'address' && sortDirection === -1,
+                  }">
                     ▲
                   </div>
                 </button>
@@ -93,27 +77,9 @@
             <div class="checkbox-id-container">
               <div>
                 Phone Number<button @click="toggleSort('phoneNumber')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'phoneNumber' && sortDirection === -1,
-                    }"
-                  >
-                    ▲
-                  </div>
-                </button>
-              </div>
-            </div>
-          </th>
-
-          <th>
-            <div class="checkbox-id-container">
-              <div>
-                Tags<button @click="toggleSort('tags')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'tags' && sortDirection === -1,
-                    }"
-                  >
+                  <div :class="{
+                    rotate: sortBy === 'phoneNumber' && sortDirection === -1,
+                  }">
                     ▲
                   </div>
                 </button>
@@ -124,11 +90,9 @@
             <div class="checkbox-id-container">
               <div>
                 Status<button @click="toggleSort('status')">
-                  <div
-                    :class="{
-                      rotate: sortBy === 'status' && sortDirection === -1,
-                    }"
-                  >
+                  <div :class="{
+                    rotate: sortBy === 'status' && sortDirection === -1,
+                  }">
                     ▲
                   </div>
                 </button>
@@ -151,20 +115,10 @@
           <td>{{ employee.email }}</td>
           <td>{{ employee.address }}</td>
           <td>{{ employee.phoneNumber }}</td>
-
-          <td>{{ employee.tags.join(", ") }}</td>
           <td>
             <label class="status-toggle">
-              <input
-                type="checkbox"
-                :checked="employee.status"
-                @change="toggleStatus(employee)"
-              />
-              <img
-                class="eyesicon"
-                :src="employee.status ? eye : eyeBlink"
-                alt="Visibility Icon"
-              />
+              <input type="checkbox" :checked="employee.status" @change="toggleStatus(employee)" />
+              <img class="eyesicon" :src="employee.status ? eye : eyeBlink" alt="Visibility Icon" />
             </label>
           </td>
           <td class="action-buttons">
@@ -172,10 +126,7 @@
               <button @click="editItem(employee)" class="edit-btn">
                 <img src="/icon/pen.png" alt="" />
               </button>
-              <button
-                @click="askDelete(employee.id, employee.name)"
-                class="delete-btn"
-              >
+              <button @click="askDelete(employee.id, employee.name)" class="delete-btn">
                 <img src="/icon/trash.png" alt="" />
               </button>
             </div>
@@ -188,12 +139,8 @@
   <div v-if="showModal" class="modal-overlay">
     <div class="modal">
       <div class="text-alert-container">
-        <span
-          >ต้องการที่จะ
-          <span style="color: red; font-size: larger; font-weight: bolder"
-            >ลบ</span
-          ></span
-        >
+        <span>ต้องการที่จะ
+          <span style="color: red; font-size: larger; font-weight: bolder">ลบ</span></span>
         <p>" {{ deleteName }} "</p>
       </div>
       <div class="modal-actions">
@@ -210,144 +157,45 @@
       <div class="modal-content">
         <section>
           <label>ชื่อ</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.name"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter name"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.name" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
           <label>ชื่อ (อังกฤษ)</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.name_en"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter name in English"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.name_en" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
           <label>ที่อยู่</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.address"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter address"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.address" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
           <label>ที่อยู่ (อังกฤษ)</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.address_en"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter address in English"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.address_en" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
           <label>เบอร์โทร</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.phoneNumber"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter phone number"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.phoneNumber" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
           <label>Email</label>
-          <input
-            class="add-text-input"
-            v-model="currentEmployee.email"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter email"
-            required
-          />
+          <input class="add-text-input" v-model="currentEmployee.email" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
           <label>คำอธิบาย</label>
-          <textarea
-            class="add-text-input"
-            v-model="currentEmployee.description"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter description"
-          ></textarea>
+          <textarea class="add-text-input" v-model="currentEmployee.description" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description"></textarea>
           <label>คำอธิบาย (อังกฤษ)</label>
-          <textarea
-            class="add-text-input"
-            v-model="currentEmployee.description_en"
-            @input="handleInputChange"
-            @keydown.enter.prevent="preventFormSubmit"
-            placeholder="Enter description in English"
-          ></textarea>
-          <label>Tags</label>
-          <div class="tags-input-container">
-            <input
-              class="add-text-input"
-              v-model="newTag"
-              @input="
-                filterTags;
-                handleInputChange;
-              "
-              @keydown.enter.prevent="preventFormSubmit"
-              @keyup.enter.prevent="addTag"
-              placeholder="Add a tag"
-            />
-            <div
-              class="tag"
-              v-for="(tag, index) in currentEmployee.tags"
-              :key="index"
-            >
-              {{ tag }}
-              <button type="button" @click="removeTag(index)">x</button>
-            </div>
+          <textarea class="add-text-input" v-model="currentEmployee.description_en" @input="handleInputChange"
+            @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description in English"></textarea>
 
-            <div v-if="filteredTags.length" class="tags-suggestions">
-              <div
-                v-for="(tag, index) in filteredTags"
-                :key="index"
-                @click="selectTag(tag)"
-              >
-                {{ tag }}
-              </div>
-            </div>
-          </div>
           <label>Image</label>
           <div class="image-upload-container">
-            <div
-              class="image-input-drag-n-drop-container"
-              :class="{ dragover: isDragging }"
-              @dragover.prevent="isDragging = true"
-              @dragleave="isDragging = false"
-              @drop.prevent="handleFileUpload"
-            >
-              <img
-                v-if="!currentEmployee.image"
-                src="/icon/upload.svg"
-                draggable="false"
-              />
+            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+              @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleFileUpload">
+              <img v-if="!currentEmployee.image" src="/icon/upload.svg" draggable="false" />
               <h2 v-if="!currentEmployee.image">
                 Drag & Drop or Click to Upload
               </h2>
               <div v-if="currentEmployee.image" class="image-preview">
-                <img
-                  :src="currentEmployee.image"
-                  alt="Uploaded Image"
-                  class="preview-image"
-                />
+                <img :src="currentEmployee.image" alt="Uploaded Image" class="preview-image" />
                 <button class="remove-btn" @click="removeImage">X</button>
               </div>
-              <input
-                type="file"
-                accept="image/jpeg, image/png"
-                @change="handleFileUpload"
-                class="file-uploader"
-                ref="fileInput"
-              />
-              <button
-                type="button"
-                class="browse-btn"
-                @click="triggerFileInput"
-              >
+              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader"
+                ref="fileInput" />
+              <button type="button" class="browse-btn" @click="triggerFileInput">
                 Browse File
               </button>
             </div>
@@ -355,18 +203,10 @@
         </section>
       </div>
       <div class="modal-actions">
-        <button
-          type="button"
-          class="confirme-btn"
-          @click.prevent="submitEmployee(false)"
-        >
+        <button type="button" class="confirme-btn" @click.prevent="submitEmployee(false)">
           {{ showModalEdit ? "Update without publish" : "Add without publish" }}
         </button>
-        <button
-          type="button"
-          class="confirm-btn"
-          @click.prevent="submitEmployee(true)"
-        >
+        <button type="button" class="confirm-btn" @click.prevent="submitEmployee(true)">
           {{ showModalEdit ? "Update & Publish" : "Add & Publish" }}
         </button>
         <button type="button" @click="closeModal" class="cancel-btn">
@@ -376,13 +216,7 @@
     </form>
   </div>
 
-  <input
-    type="file"
-    ref="fileInput"
-    @change="handleFileUpload"
-    accept="image/jpeg, image/png"
-    hidden
-  />
+  <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden />
   <div v-if="showCropper" class="cropper-container">
     <div class="cropper-wrapper">
       <img ref="cropperImage" :src="croppingImage" class="cropper-preview" />
@@ -404,8 +238,12 @@ import { ref, onMounted, computed, nextTick } from "vue";
 import eye from "/icon/eye-alt-svgrepo-com.svg";
 import eyeBlink from "/icon/eye-slash-alt-svgrepo-com.svg";
 import "cropperjs/dist/cropper.css";
+import { useEmployees } from '~/composables/useEmployees'
+import { useUpload } from '~/composables/useUpload';
 
-const apiEndpoint = "employees";
+const { getEmployees, createEmployee, updateEmployee, deleteEmployee } = useEmployees();
+const { uploadImage } = useUpload();
+
 const searchQuery = ref("");
 const employees = ref([]);
 const employeesNum = ref(0);
@@ -420,45 +258,46 @@ const sortDirection = ref(1);
 const currentEmployee = ref({
   id: null,
   name: "",
-  name_en: "", // Add name_en property
+  name_en: "",
   address: "",
-  address_en: "", // Add address_en property
+  address_en: "",
   phoneNumber: "",
-  email: "", // Add email property
-  description: "", // Add description property
-  description_en: "", // Add description_en property
+  email: "",
+  description: "",
+  description_en: "",
   status: 1,
-  tags: [], // Add tags property
-  image: "", // Add image property
+  image: "",
 });
-const newTag = ref("");
 const isDragging = ref(false);
 const fileInput = ref(null);
-const filteredTags = ref([]);
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
-const allTags = ref(["tag1", "tag2", "tag3"]); // Example tags, replace with actual tags
-const originalImage = ref(""); // Store the original image before cropping
+const originalImage = ref("");
 
+
+const buildEmployeePayload = (employee, overrides = {}) => ({
+  id: employee.id,
+  name: employee.name?.trim() || "",
+  email: employee.email?.trim() || "",
+  address: employee.address || "",
+  phone_number: employee.phoneNumber || "", // adjust if API wants phoneNumber instead
+  description: employee.description || "",
+  status: overrides.status ?? employee.status ?? 1,
+  image: employee.image || "",
+});
+
+// File Upload + Cropper
 const triggerFileInput = () => {
   fileInput.value.click();
 };
-
-const handleDragDrop = (e) => {
-  const files = e.dataTransfer.files;
-  if (files.length > 0) {
-    handleFileUpload({ target: { files } });
-  }
-};
-
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
     const reader = new FileReader();
     reader.onload = () => {
-      originalImage.value = currentEmployee.value.image; // Save the original image
+      originalImage.value = currentEmployee.value.image;
       croppingImage.value = reader.result;
       showCropper.value = true;
       nextTick(() => {
@@ -474,116 +313,88 @@ const handleFileUpload = (event) => {
     alert("Only JPEG and PNG files are allowed.");
   }
 };
-
-const cropImage = () => {
+const cropImage = async () => {
   if (cropperInstance.value) {
     const canvas = cropperInstance.value.getCroppedCanvas();
-    currentEmployee.value.image = canvas.toDataURL("image/jpeg");
-    showCropper.value = false;
-    cropperInstance.value.destroy();
+    canvas.toBlob(async (blob) => {
+      if (blob) {
+        try {
+          const uploadedUrl = await uploadImage(blob);
+          currentEmployee.value.image = uploadedUrl;
+        } catch (e) {
+          alert("Image upload failed.");
+        }
+      }
+      showCropper.value = false;
+      cropperInstance.value.destroy();
+    }, "image/jpeg");
   }
 };
-
 const cancelCrop = () => {
-  currentEmployee.value.image = originalImage.value; // Restore the original image
+  currentEmployee.value.image = originalImage.value;
   showCropper.value = false;
   cropperInstance.value.destroy();
 };
-
 const removeImage = () => {
   currentEmployee.value.image = "";
 };
 
+// API
 const toggleStatus = async (employee) => {
   try {
-    const newStatus = !employee.status;
-    const response = await fetch(`/api/${apiEndpoint}/${employee.id}`, {
-      method: "PUT",
-      headers: { 'CKH': '541986Cocon' },
-      body: JSON.stringify({ ...employee, status: newStatus ? 1 : 0 }),
-    });
+    const newStatus = employee.status === 1 ? 0 : 1;
 
-    if (!response.ok) {
-      throw new Error("Failed to update employee status.");
-    }
+    const payload = buildEmployeePayload(employee, { status: newStatus });
 
-    employee.status = newStatus;
+    const updated = await updateEmployee(employee.id, payload);
+
+    // Sync UI with backend response
+    Object.assign(employee, updated);
+    alert("Employee status updated successfully.");
   } catch (error) {
     alert("Error updating employee status.");
-    console.error(error);
+    console.error("toggleStatus error:", error);
   }
 };
 
 const fetchEmployees = async () => {
   try {
-    const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
-    const employeesWithTags = await Promise.all(
-      response.map(async (employee) => {
-        const tagsResponse = await fetchAllTagsForEmployee(employee.id);
-        return {
-          ...employee,
-          selected: false,
-          tags: tagsResponse.map((tag) => tag.text),
-        };
-      })
-    );
-    employees.value = employeesWithTags;
+    const response = await getEmployees();
+    const employeesArray = Array.isArray(response) ? response : [];
+    const employeesWithData = employeesArray.map((employee) => ({
+      ...employee,
+      selected: false,
+    }));
+    employees.value = employeesWithData;
     employeesNum.value = employees.value.length;
   } catch (error) {
     alert("Error fetching employees.");
-    console.error("Error fetching employees:", error.message, error.stack);
+    console.error(error);
   }
 };
-
-const fetchAllTagsForEmployee = async (employeeId) => {
-  try {
-    const response = await $fetch(
-      `/api/tags_employee?employee_id=${employeeId}`
-    ,{headers: { 'CKH': '541986Cocon' },});
-    return Array.isArray(response) ? response : [];
-  } catch (error) {
-    console.error("Error fetching tags:", error.message, error.stack);
-    alert("Error fetching tags.");
-    return [];
-  }
-};
-
 const editItem = (employee) => {
   currentEmployee.value = {
     ...employee,
     status: !!employee.status,
-    tags: [...employee.tags],
     image: employee.image || "",
   };
   showModalEdit.value = true;
 };
-
 const filteredSortedEmployees = computed(() => {
   let filtered = employees.value.filter(
     (employee) =>
       employee.id.toString().includes(searchQuery.value) ||
       employee.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      employee.address
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
+      employee.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       employee.phoneNumber.includes(searchQuery.value) ||
-      employee.email.toLowerCase().includes(searchQuery.value.toLowerCase()) || // Search by email
-      employee.tags.some((tag) =>
-        tag.toLowerCase().startsWith(searchQuery.value.toLowerCase())
-      ) // Search by prefix
+      employee.email.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
-
   if (sortBy.value) {
     filtered.sort((a, b) => {
       let valA = a[sortBy.value];
       let valB = b[sortBy.value];
-
       if (sortBy.value === "id") return (valA - valB) * sortDirection.value;
-      if (
-        sortBy.value === "name" ||
-        sortBy.value === "address" ||
-        sortBy.value === "email"
-      )
+      if (["name", "address", "email"].includes(sortBy.value))
         return valA.localeCompare(valB, "th") * sortDirection.value;
       if (sortBy.value === "status") return (valB - valA) * sortDirection.value;
       if (sortBy.value === "phoneNumber")
@@ -593,7 +404,6 @@ const filteredSortedEmployees = computed(() => {
   }
   return filtered;
 });
-
 const toggleSort = (column) => {
   if (sortBy.value === column) {
     sortDirection.value *= -1;
@@ -602,7 +412,6 @@ const toggleSort = (column) => {
     sortDirection.value = column === "status" ? -1 : 1;
   }
 };
-
 const openAddEmployeeModal = () => {
   currentEmployee.value = {
     id: null,
@@ -611,119 +420,75 @@ const openAddEmployeeModal = () => {
     address: "",
     address_en: "",
     phoneNumber: "",
-    email: "", // Add email property
+    email: "",
     description: "",
     description_en: "",
     status: 1,
-    tags: [],
     image: "",
   };
   showModalAddEmployee.value = true;
 };
-
 const bulkUpdateStatus = async (publish) => {
   try {
-    const selectedEmployees = employees.value.filter(
-      (employee) => employee.selected
-    );
+    const selectedEmployees = employees.value.filter((e) => e.selected);
     if (selectedEmployees.length === 0) {
       alert("No employees selected.");
       return;
     }
 
-    const updatePromises = selectedEmployees.map((employee) =>
-      fetch(`/api/${apiEndpoint}/${employee.id}`, {
-        method: "PUT",
-        headers: { 'CKH': '541986Cocon' },
-        body: JSON.stringify({ ...employee, status: publish ? 1 : 0 }),
-      })
-    );
-
-    await Promise.all(updatePromises);
-
-    selectedEmployees.forEach((employee) => {
-      employee.status = publish ? 1 : 0;
+    const updatePromises = selectedEmployees.map((e) => {
+      const payload = buildEmployeePayload(e, { status: publish ? 1 : 0 });
+      return updateEmployee(e.id, payload);
     });
 
-    alert(
-      `Successfully ${
-        publish ? "published" : "unpublished"
-      } selected employees.`
-    );
-  } catch {
+    const results = await Promise.all(updatePromises);
+
+    results.forEach((updated, i) => {
+      Object.assign(selectedEmployees[i], updated);
+    });
+
+    alert(`Successfully ${publish ? "published" : "unpublished"} selected employees.`);
+  } catch (err) {
     alert("Failed to update employee status.");
+    console.error("bulkUpdateStatus error:", err);
   }
 };
 
 const submitEmployee = async (publish) => {
-  if (
-    !currentEmployee.value.name.trim() ||
-    !currentEmployee.value.name_en.trim() ||
-    !currentEmployee.value.address.trim() ||
-    !currentEmployee.value.address_en.trim() ||
-    !currentEmployee.value.phoneNumber.trim() ||
-    !currentEmployee.value.email.trim()
-  ) {
-    alert(
-      "Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email."
-    );
+  if (!currentEmployee.value.name.trim() || !currentEmployee.value.email.trim()) {
+    alert("Please fill in at least Name and Email.");
     return;
   }
 
   try {
     const isUpdate = !!currentEmployee.value.id;
-    const method = isUpdate ? "PUT" : "POST";
-    const url = isUpdate
-      ? `/api/${apiEndpoint}/${currentEmployee.value.id}`
-      : `/api/${apiEndpoint}`;
-
     const payload = {
-      id: currentEmployee.value.id,
       name: currentEmployee.value.name,
-      name_en: currentEmployee.value.name_en, // Include name_en in payload
+      email: currentEmployee.value.email,
       address: currentEmployee.value.address,
-      address_en: currentEmployee.value.address_en, // Include address_en in payload
-      phoneNumber: currentEmployee.value.phoneNumber,
-      email: currentEmployee.value.email, // Include email in payload
-      description: currentEmployee.value.description, // Include description in payload
-      description_en: currentEmployee.value.description_en, // Include description_en in payload
+      phone_number: currentEmployee.value.phoneNumber, // normalize if backend expects snake_case
+      description: currentEmployee.value.description,
       status: publish ? 1 : 0,
-      tags: currentEmployee.value.tags, // Include tags in payload
-      image: currentEmployee.value.image || "", // Include image in payload
+      image: currentEmployee.value.image || "",
     };
 
-    const response = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error response:", errorText);
-      throw new Error("Error saving the employee.");
-    }
-
-    const result = await response.json();
-    if (!isUpdate) {
+    let result;
+    if (isUpdate) {
+      result = await updateEmployee(currentEmployee.value.id, payload);
+      alert("Employee updated successfully.");
+    } else {
+      result = await createEmployee(payload);
       currentEmployee.value.id = result.id;
       alert("Employee added successfully.");
-    } else {
-      alert("Employee updated successfully.");
     }
 
     showModalAddEmployee.value = false;
     showModalEdit.value = false;
-    fetchEmployees();
+    await fetchEmployees();
   } catch (error) {
-    alert("Error while submitting employee.");
-    console.error("Submit Employee Error:", error);
+    alert("Error saving employee.");
+    console.error(error);
   }
-};
-
-const closeModal = () => {
-  showModalAddEmployee.value = false;
-  showModalEdit.value = false;
 };
 
 const askDelete = (id, name) => {
@@ -731,89 +496,53 @@ const askDelete = (id, name) => {
   deleteName.value = name;
   showModal.value = true;
 };
-
 const confirmDelete = async () => {
   try {
-    const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-      method: "DELETE",
-      headers: { 'CKH': '541986Cocon' },
-      body: JSON.stringify({ id: deleteId.value }),
-    });
-
-    const result = await response.json();
-    console.log("Delete API Response:", result);
-
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to delete employee.");
-    }
-
-    employees.value = employees.value.filter(
-      (employee) => employee.id !== deleteId.value
-    );
+    await deleteEmployee(deleteId.value);
+    employees.value = employees.value.filter((e) => e.id !== deleteId.value);
     employeesNum.value = employees.value.length;
-
     showModal.value = false;
     alert("Employee deleted successfully.");
   } catch (error) {
-    alert(`Error deleting employee: ${error.message}`);
+    alert("Error deleting employee.");
     console.error(error);
-  } finally {
-    deleteId.value = null;
   }
 };
-
 const cancelDelete = () => {
   showModal.value = false;
+  deleteId.value = null;
+  deleteName.value = null;
 };
-
-const addTag = () => {
-  if (
-    newTag.value.trim() !== "" &&
-    !currentEmployee.value.tags.includes(newTag.value.trim())
-  ) {
-    currentEmployee.value.tags.push(newTag.value.trim());
-  }
-  newTag.value = "";
-  filteredTags.value = [];
-  currentEmployee.value = { ...currentEmployee.value }; // Ensure the image is preserved
+const closeModal = () => {
+  showModalAddEmployee.value = false;
+  showModalEdit.value = false;
+  currentEmployee.value = {
+    id: null,
+    name: "",
+    name_en: "",
+    address: "",
+    address_en: "",
+    phoneNumber: "",
+    email: "",
+    description: "",
+    description_en: "",
+    status: 1,
+    image: "",
+  };
 };
-
-const removeTag = (index) => {
-  currentEmployee.value.tags.splice(index, 1);
-};
-
-const filterTags = () => {
-  const prefix = newTag.value.toLowerCase();
-  filteredTags.value = allTags.value.filter(
-    (tag) =>
-      tag.toLowerCase().startsWith(prefix) &&
-      !currentEmployee.value.tags.includes(tag)
-  );
-};
-
-const selectTag = (tag) => {
-  currentEmployee.value.tags.push(tag);
-  newTag.value = "";
-  filteredTags.value = [];
-};
-
-const handleInputChange = () => {
-  currentEmployee.value.image = currentEmployee.value.image; // Explicitly set the image property to preserve it
-};
-
+const handleInputChange = () => { };
 const preventFormSubmit = (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-  }
+  event.preventDefault();
+};
+const toggleSelectAll = () => {
+  employees.value.forEach((employee) => {
+    employee.selected = selectAll.value;
+  });
 };
 
 onMounted(() => {
   fetchEmployees();
 });
-
-const toggleSelectAll = () => {
-  employees.value.forEach((employee) => (employee.selected = selectAll.value));
-};
 </script>
 
 
@@ -977,7 +706,8 @@ const toggleSelectAll = () => {
 }
 
 .admin-content-r {
-  margin-left: 250px; /* This ensures content is pushed to the right */
+  margin-left: 250px;
+  /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -1530,15 +1260,16 @@ const toggleSelectAll = () => {
 }
 
 /* Checked State */
-input:checked + .hotnews-slider {
+input:checked+.hotnews-slider {
   background-color: #4e6d16;
 }
 
-input:checked + .hotnews-slider:before {
+input:checked+.hotnews-slider:before {
   transform: translateX(18px);
 }
 
 @media screen and (max-width: 1550px) {
+
   .item-list-table th:nth-child(4),
   .item-list-table td:nth-child(4) {
     display: none;
@@ -1546,6 +1277,7 @@ input:checked + .hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
   .item-list-table th:nth-child(2),
   .item-list-table td:nth-child(2) {
     width: 10%;
@@ -1572,6 +1304,7 @@ input:checked + .hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
   .item-list-table th:nth-child(4),
   .item-list-table td:nth-child(4) {
     display: none;
