@@ -39,6 +39,7 @@ const menuItems = [
   { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
   { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
    { label: "จัดการข้อมูลศัตรูพืช", path: "/backend/pests" },
+    { label: "จัดการข้อมูลห่วงโซ่คุณค่า", path: "/backend/chain-values" },
   { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
   { label: "จัดการฟุตเตอร์", path: "/backend/footer" },
 ];

@@ -1,23 +1,23 @@
 <template>
-    <Navbar selecto="coconutdata" />
+    <Navbar selecto="chainvalues" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
         <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('Chain Value') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>
     </div>
-    <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
+    <h1 class="context-header">{{ $t('Value Chain Information') }}</h1>
     <div style="height: 5rem;"></div>
 
     <!-- Search Input -->
     <label class="coconut-v-input">
         <img src="/icon/search.svg" alt="search icon">
-        <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterCoconuts" />
+        <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterChainvalues" />
     </label>
 
     <!-- Filters -->
     <div class="all-filter-container">
         <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
-            <select v-model="filter.model" class="filter-select" @change="filterCoconuts">
+            <select v-model="filter.model" class="filter-select" @change="filterChainvalues">
                 <option value="">{{ filter.label }}</option>
                 <option v-for="option in filter.options" :key="option.value" :value="option.value">
                     {{ option.text }}
@@ -30,18 +30,16 @@
     <div v-if="loading" class="all-event-card-container">
         <CardShimmer v-for="index in 30" :key="index" />
     </div>
-    <div v-else-if="filteredCoconuts.length === 0" class="no-results">
-        <img src="/icon/notfound.png" draggable="false" alt="No coconuts found">
-        {{ $t('No coconuts found') }}
+    <div v-else-if="filteredChainvalues.length === 0" class="no-results">
+        <img src="/icon/notfound.png" draggable="false" alt="No chain values found">
+        {{ $t('No chain values found') }}
     </div>
     <div v-else class="all-event-card-container">
-        <router-link v-for="(coconut, index) in paginatedCoconuts" :key="coconut.id" :to="`/coconut-information/chain-value/${coconut.id}`">
+        <router-link v-for="(chainvalue, index) in paginatedChainvalues" :key="chainvalue.id" :to="`/coconut-information/value-chain/${chainvalue.id}`">
             <CoconutCard
-                :image="coconut.image || defaultImage"
-                :title="currentLocale === 'th' ? coconut.title : coconut.title"
-                :description="coconut.description || 'No description available'"
-                :date="coconut.date"
-                :location="coconut.location"
+                :image="chainvalue.image || defaultImage"
+                :title="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en"
+                :description="chainvalue.description || 'No description available'"
             />
         </router-link>
     </div>
@@ -59,21 +57,22 @@
 import { useHead } from '@vueuse/head';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
-import InformationCard from '@/components/InformationCard.vue';
-import CoconutCard from '@/components/CoconutCard.vue'; // Add this import
-import { useI18n } from 'vue-i18n'; // Add this import
+import CoconutCard from '@/components/CoconutCard.vue';
+import { useI18n } from 'vue-i18n';
+import { useChainvalues } from '@/composables/useChainvalues'; // Import useChainvalues composable
+
+const { getChainvalues } = useChainvalues();
 
 export default {
     components: {
         Swiper,
         SwiperSlide,
-        InformationCard,
-        CoconutCard, // Register the component
+        CoconutCard,
     },
     data() {
         return {
-            coconuts: [],
-            filteredCoconuts: [],
+            chainvalues: [],
+            filteredChainvalues: [],
             searchQuery: '',
             loading: true,
             defaultImage: 'https://placehold.co/600x400',
@@ -82,18 +81,18 @@ export default {
                     label: this.$t('Category'),
                     model: '',
                     options: [
-
+                    
                         { value: '0', text: this.$t('Young Coconut') },
                         { value: '1', text: this.$t('Mature Coconut') },
                     ],
                 },
                 type: {
                     label: this.$t('Type'),
-                    model: '', // Default to 'upstream'
+                    model: '',
                     options: [
                         { value: '0', text: this.$t('Upstream') },
                         { value: '1', text: this.$t('Midstream') },
-                        { value: '2', text: this.$t('Downstream') },
+                        { value: '2', text: this.$t('Downstream')},
                     ],
                 },
             },
@@ -104,51 +103,41 @@ export default {
     },
     computed: {
         currentLocale() {
-            const { locale } = useI18n(); // Correct the usage of useI18n
+            const { locale } = useI18n();
             return locale.value;
         },
         totalPages() {
-            return Math.ceil(this.filteredCoconuts.length / this.itemsPerPage);
+            return Math.ceil(this.filteredChainvalues.length / this.itemsPerPage);
         },
-        paginatedCoconuts() {
+        paginatedChainvalues() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
-            return this.filteredCoconuts.slice(start, start + this.itemsPerPage);
+            return this.filteredChainvalues.slice(start, start + this.itemsPerPage);
         },
     },
     async mounted() {
         window.scrollTo(0, 0);
         try {
-            setTimeout(async () => {
-                const response = await fetch('/api/chain_values', {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-                if (!response.ok) throw new Error('Failed to fetch data');
-                const data = await response.json();
-                this.coconuts = data;
-                this.filteredCoconuts = data;
-                this.loading = false;
-            }, 200);
+            const data = await getChainvalues();
+            this.chainvalues = Array.isArray(data) ? data : [];
+            this.filteredChainvalues = this.chainvalues;
+            this.loading = false;
         } catch (error) {
-            console.error('Error fetching coconuts:', error);
+            console.error('Error fetching chain values:', error);
         }
     },
     methods: {
-        filterCoconuts() {
+        filterChainvalues() {
             const query = this.searchQuery.toLowerCase();
-            this.filteredCoconuts = this.coconuts.filter(coconut => {
-                const nameTh = (coconut.name_th || "").toLowerCase();
-                const nameEng = (coconut.name_eng || "").toLowerCase();
-                const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
-                const matchesCategory = this.filters.category.model === '' || coconut.category.toString() === this.filters.category.model;
-                const matchesType = this.filters.type.model === '' || coconut.type.toString() === this.filters.type.model;
+            this.filteredChainvalues = this.chainvalues.filter(chainvalue => {
+                const title = (chainvalue.title || '').toLowerCase();
+                const titleEn = (chainvalue.title_en || '').toLowerCase();
+                const matchesQuery = title.includes(query) || titleEn.includes(query);
+                const matchesCategory = this.filters.category.model === '' || chainvalue.category.toString() === this.filters.category.model;
+                const matchesType = this.filters.type.model === '' || chainvalue.type.toString() === this.filters.type.model;
 
                 return matchesQuery && matchesCategory && matchesType;
             });
         },
-
         changePage(direction) {
             if (direction === 'next' && this.currentPage < this.totalPages) {
                 this.currentPage++;
@@ -164,22 +153,22 @@ export default {
             }
         },
         resetFilters() {
-            this.filters.category.model = '0';
-            this.filters.type.model = '1';
-            this.filterCoconuts();
+            this.filters.category.model = '';
+            this.filters.type.model = '';
+            this.filterChainvalues();
         },
         clearSearch() {
             this.searchQuery = '';
-            this.filterCoconuts();
-        }
+            this.filterChainvalues();
+        },
     },
     setup() {
         useHead({
-            title: '🥥Coconut - Chain Value',
+            title: '🥥Coconut - Value Chain',
             meta: [
                 {
                     name: 'description',
-                    content: 'Chain Value page for Coconut Knowledge Hub',
+                    content: 'Value Chain page for Coconut Knowledge Hub',
                 },
             ],
         });

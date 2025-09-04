@@ -11,6 +11,7 @@ import imageUploadRoutes from './img-upload.js';
 import pdfUploadRoutes from './pdf-upload.js';
 import membersRoutes from './menbers.js'; 
 import pestsRoutes from './pests.js';
+import chainValuesRoutes from './chian_values.js';
 // import newsRoutes from './news.js';
 export default [
     { path: '/news', handler: newsRoutes },
@@ -26,5 +27,6 @@ export default [
     {path: '/pdf-upload', handler: pdfUploadRoutes },
     {path: '/members', handler: membersRoutes },
     {path: '/pests', handler: pestsRoutes },
+    {path: '/chain-values', handler: chainValuesRoutes },
     // { path: '/news', handler: newsRoutes },
 ];

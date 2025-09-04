@@ -1,31 +1,33 @@
 <template>
-    <Navbar selecto="coconutdata" />
+    <Navbar selecto="chainvalues" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
         <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/chain-value">{{ $t('Chain Value') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="'/coconut-information/chain-value/'+this.$route.params.id">{{ chain_values?.title || 'No Title'}}</NuxtLinkLocale>
+        <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>/
+        <NuxtLinkLocale :to="'/coconut-information/value-chain/' + this.$route.params.id">{{ chain_values?.title || 'No Title' }}</NuxtLinkLocale>
     </div>
     <div v-if="loading" class="loading-container">
         <CardShimmer v-for="index in 1" :key="index" />
         <div class="back-button shimmer"></div>
     </div>
     <div v-else class="details-container">
-        <img :src="chain_values.image || defaultImage" alt="Coconut Image" class="coconut-image" draggable =false
-         />
+        <img :src="chain_values.image || defaultImage" alt="Chain Value Image" class="chain-value-image" draggable="false" />
         <h1>{{ chain_values.title }}</h1>
         <p>{{ getCategoryLabel(chain_values.category) }}, {{ getTypeLabel(chain_values.type) }}</p>
         <div class="summary-container">
-            <h2>คำอธิบาย :</h2>
+            <h2>{{ $t('Description') }}:</h2>
             <p>{{ chain_values.description }}</p>
         </div>
-        <button @click="goBack" class="back-button">ดูข่าวอื่น</button>
+        <button @click="goBack" class="back-button">{{ $t('Back to Value Chain') }}</button>
     </div>
 </template>
 
 <script>
 import { useHead } from '@vueuse/head';
 import CardShimmer from '@/components/CardShimmer.vue';
+import { useChainvalues } from '@/composables/useChainvalues'; // Import useChainvalues composable
+
+const { getChainvalueById } = useChainvalues();
 
 export default {
     components: {
@@ -41,49 +43,43 @@ export default {
     async mounted() {
         const { id } = this.$route.params;
         try {
-            const response = await fetch(`/api/chain_values/${id}`, {
-                headers: {
-                    "CKH": '541986Cocon',
-                },
-            });
-            if (!response.ok) throw new Error('Failed to fetch data');
-            const data = await response.json();
+            const data = await getChainvalueById(id); // Fetch chain value by ID
             this.chain_values = data;
             this.loading = false;
         } catch (error) {
-            console.error('Error fetching coconut details:', error);
+            console.error('Error fetching chain value details:', error);
         }
     },
     setup() {
         useHead({
-            title: '🥥Coconut - Details',
+            title: '🥥Coconut - Value Chain Details',
             meta: [
                 {
                     name: 'description',
-                    content: 'Details page for Coconut Knowledge Hub',
+                    content: 'Details page for Value Chain in Coconut Knowledge Hub',
                 },
             ],
         });
     },
     methods: {
         goBack() {
-            this.$router.push('/coconut-information/chain-value');
+            this.$router.push('/coconut-information/value-chain');
         },
         getCategoryLabel(value) {
             const categories = {
-                '0': this.$t('Young Coconut'),
-                '1': this.$t('Mature Coconut'),
+                '0': this.$t('Upstream'),
+                '1': this.$t('Midstream'),
             };
             return categories[value] || value;
         },
         getTypeLabel(value) {
             const types = {
-                '0': this.$t('Upstream'),
-                '1': this.$t('Midstream'),
-                '2': this.$t('Downstream'),
+                '0': this.$t('Type 0'),
+                '1': this.$t('Type 1'),
+                '2': this.$t('Type 2'),
             };
             return types[value] || value;
-        }
+        },
     },
 };
 </script>
@@ -101,10 +97,9 @@ export default {
     padding: 20px;
     max-width: 1000px;
     margin: 6rem auto;
-
 }
 
-.coconut-image {
+.chain-value-image {
     width: 100%;
     max-height: 400px;
     object-fit: cover;
@@ -113,12 +108,6 @@ export default {
 
 h1 {
     font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.publish-info {
-    font-size: 1rem;
-    color: #666;
     margin-bottom: 1rem;
 }
 
@@ -138,14 +127,6 @@ h1 {
 .summary-container p {
     margin: 0;
     font-size: 1rem;
-}
-
-p {
-    padding: 20px;
-    max-width: 1000px;
-    font-size: 1rem;
-    margin: auto;
-
 }
 
 .back-button {
