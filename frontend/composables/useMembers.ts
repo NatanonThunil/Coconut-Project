@@ -1,6 +1,6 @@
 export const useMembers = () => {
     const config = useRuntimeConfig();
-    const apiBase = config.public.apiBase || '/env-notwork';
+    const apiBase = config.public.apiBase || '';
     const be_api_url = config.public.beUrl;
     const apiKey = 'Cocon541986'; // Same as before — can be moved to env later
 
