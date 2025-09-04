@@ -2,7 +2,7 @@ export const useFooters = () => {
     const config = useRuntimeConfig();
     const be_api_url = config.public.beUrl; // ดึง มาจาก nuxt config
     const apiKey = 'Cocon541986'; // ยังติดปัญหาใช้า env ใน composable ไม่ได้ ให้มันอยู่ตรงนี้ไปก่อน
-    const apiBase = config.public.apiBase || '/env-notwork';
+    const apiBase = config.public.apiBase || '';
 
     const getFooterById = async (id: number) => {
         const url = `${be_api_url}${apiBase}/footers/${id}`;

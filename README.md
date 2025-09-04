@@ -5,6 +5,7 @@
 
 ### Update List
 - เพิ่ม ``Chain value`` GET, GET(id), POST, PUT, DELETE รอทดสอบ ✅
+- เพิ่ม ``Service & Benefit``  GET, GET(id), POST, PUT, DELETE รอทดสอบ ✅
 - แก้ ``Upload image`` ให้สามารถอัโหลด`` 50MB ``ได้บางอันอาจจะใช้ไม่ได้ ✅
 - ลบ ``Server`` เก่าที่ไม่ใช้แล้ว
 - เพิ่ม employees และ member ของ back  ยังไม่เสร็จ
