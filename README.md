@@ -11,6 +11,7 @@
 - เพิ่ม employees GET, GET(id), POST, PUT, DELETE ✅
 - แก้ member GET, GET(id), POST, PUT, DELETE✅
 - แก้ ``Service & Benefit``  ให้แสดง ตรง aboutus  ✅
+- เพิ่ม Events GET, GET(id), POST, PUT, DELETE ✅
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 
