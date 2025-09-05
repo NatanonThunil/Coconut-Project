@@ -20,33 +20,36 @@
             :to="(currentLocale === 'th') ? (event?.location_url || 'https://www.google.co.th/maps/') : (event?.location_url_en || 'https://www.google.co.th/maps/')">
             <img :src="locationIcon">
             {{ (currentLocale === 'th') ? (event?.location_name || 'Unknown location') : (event?.location_name_en ||
-            'Unknown location')}}
+                'Unknown location') }}
         </NuxtLinkLocale>
     </div>
 
     <div class="divider"></div>
 
     <!-- Event Title -->
-    <h1 style="text-align: center;">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') : (event?.title_en
-        || 'No English title name') }}</h1>
+    <h1 style="text-align: center;">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') :
+        (event?.title_en
+            || 'No English title name') }}</h1>
 
     <!-- Event Details -->
     <div class="brief-details">
         <div class="toline">
-            <div class="event-head">{{ $t('Organizer') }}</div>: <div class="event-main-detail">{{ (currentLocale === 'th') ?
+            <div class="event-head">{{ $t('Organizer') }}</div>: <div class="event-main-detail">{{ (currentLocale ===
+                'th') ?
                 (event?.organizer || 'N/A') : (event?.organizer_en || 'N/A')}}
             </div>
         </div>
         <div class="toline">
-            <div class="event-head">{{ $t('Event_Date') }}</div>: <div class="event-main-detail">{{ formatDate(event?.date_start) }} - {{
-                formatDate(event?.date_end) }}</div>
+            <div class="event-head">{{ $t('Event_Date') }}</div>: <div class="event-main-detail">{{
+                formatDate(event?.date_start) }} - {{
+                    formatDate(event?.date_end) }}</div>
         </div>
         <div class="toline">
             <div class="event-head">{{ $t('Location') }}</div>: <div class="event-main-detail">
                 <NuxtLinkLocale :to="event?.location_url || 'https://www.google.co.th/maps/'">{{ (currentLocale ===
                     'th') ? (event?.location_name ||
                         'N/A') : (event?.location_name_en ||
-                    'N/A')}}</NuxtLinkLocale>
+                            'N/A') }}</NuxtLinkLocale>
             </div>
         </div>
         <div class="toline">
@@ -59,10 +62,10 @@
 
     <div class="divider"></div>
     <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">{{ $t('Description') }}</h2>
-    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="(currentLocale === 'th')? (event?.description ||
-        'ไม่มีคำอธิบาย') :  (event?.description_en ||
-        'No English description') "></p>
-    <SeeAllButton :text=" $t('Back to All Events')" link="/events" />
+    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="(currentLocale === 'th') ? (event?.description ||
+        'ไม่มีคำอธิบาย') : (event?.description_en ||
+            'No English description')"></p>
+    <SeeAllButton :text="$t('Back to All Events')" link="/events" />
 
 </template>
 
@@ -72,6 +75,9 @@ import { useHead } from '@vueuse/head';
 import calendarIcon from '/icon/calenda.svg';
 import locationIcon from '/icon/location.png';
 import tlImage from '/img/tl.png';
+import { useEvents } from '~/composables/useEvents'
+
+const { getEventById } = useEvents()
 
 export default {
     setup() {
@@ -92,23 +98,22 @@ export default {
         const cid = this.$route.params.id;
 
         try {
-            const response = await fetch(`/api/events`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-            if (!response.ok) throw new Error('Failed to fetch event details');
-            const data = await response.json();
-            this.event = data.find(event => (event.id === parseInt(cid)) && event.status) || null;
+            this.loading = true;
+            const data = await getEventById(cid);
+            this.event = data.status ? data : null;
 
-            if (this.event) {
+            // If you expect an array, use this instead:
+            // this.event = data.find((event) => event.id === parseInt(cid) && event.status) || null;
+
+            if (!this.event) {
+                this.error = "ไม่พบข้อมูลอีเวนต์ กรุณาตรวจสอบหมายเลขอีกครั้ง";
+            } else {
                 this.updateHead();
             }
         } catch (error) {
-            console.error('Error fetching event details:', error);
-            this.error = 'Failed to load event data. Please try again later.';
+            this.error = "ไม่สามารถโหลดข้อมูลอีเวนต์ได้ กรุณาลองใหม่อีกครั้ง";
         }
+        this.loading = false;
     },
     methods: {
         updateHead() {

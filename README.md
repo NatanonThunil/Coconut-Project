@@ -14,6 +14,7 @@
 - แก้ ``pdf upload `` รอตรวจสอบ
 - แก้ ``Achievements`` เพิ่มความเสถียร รอตรวจสอบ
 - เพิ่ม Component ``Loading`` ไว้ป้องกันการก็ซ้ำ กรณีกดแล้วคิดว่าปุ่มไมทำงาน ✅
+- เพิ่ม Events GET, GET(id), POST, PUT, DELETE ✅
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 

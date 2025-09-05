@@ -1,8 +1,8 @@
 export const useEvents = () => {
     const config = useRuntimeConfig();
-    const apiBase = config.public.apiBase || ''; // Ensure apiBase has a default value
-    const be_api_url = config.public.beUrl; // ดึง มาจาก nuxt config
-    const apiKey = 'Cocon541986'; // ยังติดปัญหาใช้า env ใน composable ไม่ได้ ให้มันอยู่ตรงนี้ไปก่อน
+    const apiBase = config.public.apiBase || '';
+    const be_api_url = config.public.beUrl;
+    const apiKey = 'Cocon541986';
 
     const getEvents = async () => {
         const url = `${be_api_url}${apiBase}/events`;
@@ -35,10 +35,10 @@ export const useEvents = () => {
             throw error;
         }
     };
-   
+
     const createEvent = async (
-        image: string, ///ยังไม่ได้ทำรับรองรูปภาพ
-        title: string, 
+        image: string,
+        title: string,
         organizer: string,
         date_start: Date,
         date_end: Date,
@@ -78,5 +78,46 @@ export const useEvents = () => {
         });
     };
 
-    return { getEvents, getEventById, createEvent };
+    const updateEvent = async (
+        id: number,
+        eventData: {
+            image?: string,
+            title?: string,
+            organizer?: string,
+            date_start?: Date,
+            date_end?: Date,
+            location_name?: string,
+            location_url?: string,
+            register_url?: string,
+            description?: string,
+            event_category?: 'educate' | 'conference' | 'other',
+            status?: boolean,
+            location_name_en?: string,
+            title_en?: string,
+            description_en?: string
+        }
+    ) => {
+        const url = `${be_api_url}${apiBase}/events/${id}`;
+        console.log('Requesting URL:', url);
+        return await $fetch(url, {
+            method: 'PUT',
+            headers: {
+                'cocon-key': apiKey,
+            },
+            body: eventData,
+        });
+    };
+
+    const deleteEvent = async (id: number) => {
+        const url = `${be_api_url}${apiBase}/events/${id}`;
+        console.log('Requesting URL:', url);
+        return await $fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'cocon-key': apiKey,
+            },
+        });
+    };
+
+    return { getEvents, getEventById, createEvent, updateEvent, deleteEvent };
 };
