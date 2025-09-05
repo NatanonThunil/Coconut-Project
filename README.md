@@ -11,6 +11,9 @@
 - เพิ่ม employees GET, GET(id), POST, PUT, DELETE ✅
 - แก้ member GET, GET(id), POST, PUT, DELETE✅
 - แก้ ``Service & Benefit``  ให้แสดง ตรง aboutus  ✅
+- แก้ ``pdf upload `` รอตรวจสอบ
+- แก้ ``Achievements`` เพิ่มความเสถียร รอตรวจสอบ
+- เพิ่ม Component ``Loading`` ไว้ป้องกันการก็ซ้ำ กรณีกดแล้วคิดว่าปุ่มไมทำงาน ✅
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 

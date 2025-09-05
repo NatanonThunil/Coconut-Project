@@ -43,6 +43,7 @@
     <button @click="cropImage">Crop & Upload</button>
     <button @click="cancelCrop">Cancel</button>
   </div>
+  <Loading :isLoading="loadingstate" :LoadingText="loadingstatetext" />
 </template>
 <script setup>
 import { useHerobars } from '~/composables/useHerobars'
@@ -55,7 +56,8 @@ import 'cropperjs/dist/cropper.css';
 
 // NEW
 import imageCompression from 'browser-image-compression';
-
+const loadingstate = ref(false);
+const loadingstatetext = ref('Loading');
 const apibase = useRuntimeConfig().public.apiBase;
 const beurl = useRuntimeConfig().public.urlBase;
 const apiEndpoint = 'headline';
@@ -186,6 +188,8 @@ const updateHeadline = async () => {
   }
 
   try {
+    loadingstatetext.value = 'Updating headline...';
+    loadingstate.value = true;
     let imagePath = headline.value.image;
 
     // If a new (compressed) image is present as data URL → upload it
@@ -216,12 +220,14 @@ const updateHeadline = async () => {
       imagePath
     );
 
-    alert('Headline updated successfully!');
+    
+    loadingstatetext.value = 'Headline updated successfully';
     await fetchHeadline();
   } catch (error) {
     console.error('Error updating headline:', error);
     alert('An error occurred while updating the headline. Please try again.');
   }
+  loadingstate.value = false;
 };
 
 definePageMeta({

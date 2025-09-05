@@ -4,7 +4,7 @@
   <div style="height: 8rem"></div>
   <div class="faqs-path">
     <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus/achievements">{{ $t('Achievement') }}</NuxtLinkLocale>
+    <NuxtLinkLocale to="/aboutus/achievements">{{ $t('Achievements') }}</NuxtLinkLocale>
   </div>
   <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t("Achievement") }}</h1>
@@ -27,10 +27,16 @@
 
   <!-- Achievements Display -->
   <div class="card-achivments-container">
-    <Achievemento v-for="achievement in paginatedAchievements" :key="achievement.id"
-      :picture="achievement.thumbnail || noimageHandle" :title="achievement.title"
-      :text="achievement.description" :url="`/aboutus/achievements/details/${achievement.id}`" color="white"
-      :author="achievement.author" />
+    <Achievemento
+      v-for="achievement in paginatedAchievements"
+      :key="achievement.id"
+      :picture="achievement.thumbnail || noimageHandle"
+      :title="achievement.title"
+      :text="achievement.description"
+      :url="`/aboutus/achievements/details/${achievement.id}`"
+      color="white"
+      :author="achievement.author"
+    />
   </div>
 
   <!-- Pagination -->
@@ -38,8 +44,14 @@
     <div class="pagination-line"></div>
     <div class="pagination-controller">
       <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
-      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
-        class="page-input" />
+      <input
+        type="number"
+        v-model.number="pageInput"
+        @change="goToPage"
+        :min="1"
+        :max="totalPages"
+        class="page-input"
+      />
       <span style="display: flex; align-self: center">จาก {{ totalPages }}</span>
       <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
     </div>
@@ -53,18 +65,27 @@
 import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
 const currentLocale = computed(() => locale.value);
+
 import { ref, onMounted, computed, watch } from 'vue';
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
-import 'pdfjs-dist/legacy/build/pdf.worker';
+
+// ✅ Use modern pdfjs build and a resolvable worker URL
+import * as pdfjsLib from 'pdfjs-dist';
+import workerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url';
+if (process.client) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+}
+
 import noimageHandle from '/img/no-image-handle.png';
 import { useAchievements } from '~/composables/useAchievements';
 const { getAchievements } = useAchievements();
+
 const Achievements = ref([]);
 const searchQuery = ref("");
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const pageInput = ref(1);
 const loading = ref(true);
+
 const filters = ref([
   {
     label: 'Sort By',
@@ -76,15 +97,28 @@ const filters = ref([
   },
 ]);
 
+// 🔧 helper: accept absolute or relative '/pdfs/...' and make absolute
+const toAbsoluteUrl = (u) => {
+  if (!process.client || !u) return '';
+  try {
+    return new URL(u, window.location.origin).href; // handles relative paths
+  } catch {
+    return '';
+  }
+};
+
+// 🔧 relaxed check: looks like a PDF path or URL
+const isValidPdfUrl = (u) =>
+  typeof u === 'string' && /\.pdf(\?|#|$)/i.test(u.trim());
 
 const fetchAchievements = async () => {
   try {
-    
     loading.value = true;
-     /// รับมาเป็น json
-     const raw = await getAchievements();
 
- ///แปลงเป็น 
+    // fetch raw
+    const raw = await getAchievements();
+
+    // normalize list
     const list = Array.isArray(raw)
       ? raw
       : Array.isArray(raw?.achievements)
@@ -94,14 +128,20 @@ const fetchAchievements = async () => {
     if (!list.length) {
       console.warn("No achievements found or unexpected response format:", raw);
     }
-    const filteredAchievements = list.filter(achievement => achievement.status === 1);
 
+    // only published
+    const filteredAchievements = list.filter(ach => ach.status === 1);
 
-    await Promise.all(filteredAchievements.map(async (achievement) => {
-      if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {
-        achievement.thumbnail = await generateThumbnail(achievement.pdf);
-      }
-    }));
+    // generate thumbnails (first page) if pdf exists
+    await Promise.all(
+      filteredAchievements.map(async (achievement) => {
+        if (achievement.pdf && isValidPdfUrl(achievement.pdf)) {
+          achievement.thumbnail = await generateThumbnail(achievement.pdf);
+        } else {
+          achievement.thumbnail = noimageHandle;
+        }
+      })
+    );
 
     Achievements.value = filteredAchievements;
   } catch (e) {
@@ -111,46 +151,42 @@ const fetchAchievements = async () => {
   }
 };
 
-const isValidPdfUrl = (url) => {
-  try {
-    new URL(url);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
 const generateThumbnail = async (pdfUrl) => {
   try {
-    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+    const absolute = toAbsoluteUrl(pdfUrl);
+    if (!absolute) throw new Error('Bad PDF URL');
+
+    const loadingTask = pdfjsLib.getDocument({
+      url: absolute,
+      withCredentials: false, // set true only if your /pdfs needs cookies
+    });
+
     const pdf = await loadingTask.promise;
-    if (!pdf.numPages) throw new Error('Invalid PDF structure');
     const page = await pdf.getPage(1);
 
-    const scale = 1.5;
+    const scale = 1.25; // a bit smaller for performance
     const viewport = page.getViewport({ scale });
+
     const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas 2D not available');
 
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
 
-    const renderContext = { canvasContext: context, viewport };
-    await page.render(renderContext).promise;
+    await page.render({ canvasContext: ctx, viewport }).promise;
 
-    return canvas.toDataURL();
+    return canvas.toDataURL('image/png');
   } catch (e) {
-    console.error(`Error generating thumbnail for PDF: ${pdfUrl}`, e.message);
+    console.error(`Error generating thumbnail for PDF: ${pdfUrl}`, e?.message || e);
     return 'https://placehold.co/600x400';
   }
 };
 
-// Watch search query and reset to first page
-watch(searchQuery, () => {
-  currentPage.value = 1;
-});
+// reset page on search
+watch(searchQuery, () => { currentPage.value = 1; });
 
-// Filter achievements based on search query
+// filtered list by query
 const filteredAchievements = computed(() => {
   const query = searchQuery.value?.toString().trim().toLowerCase() || "";
   return Achievements.value.filter(achievement => {
@@ -159,40 +195,32 @@ const filteredAchievements = computed(() => {
   });
 });
 
-// Handle the filters applied
+// apply sort
 const filterEvents = () => {
-  const sortBy = filters.value.find(filter => filter.label === 'Sort By').model;
+  const sortBy = filters.value.find(f => f.label === 'Sort By').model;
+  let filteredList = [...filteredAchievements.value];
 
-  let filteredList = filteredAchievements.value;
-
-  // Apply sorting based on the selected option
   if (sortBy === 'newest') {
-    filteredList = filteredList.sort((a, b) => b.id - a.id); // Higher ID first
+    filteredList.sort((a, b) => b.id - a.id);
   } else if (sortBy === 'oldest') {
-    filteredList = filteredList.sort((a, b) => a.id - b.id); // Lower ID first
+    filteredList.sort((a, b) => a.id - b.id);
   }
-
   return filteredList;
 };
 
-// Total number of pages
-const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filterEvents().length / itemsPerPage.value));
-});
+// pagination
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filterEvents().length / itemsPerPage.value))
+);
 
-// Paginated achievements for the current page
 const paginatedAchievements = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   return filterEvents().slice(start, start + itemsPerPage.value);
 });
 
-// Pagination handlers
 const changePage = (direction) => {
-  if (direction === "next" && currentPage.value < totalPages.value) {
-    currentPage.value++;
-  } else if (direction === "prev" && currentPage.value > 1) {
-    currentPage.value--;
-  }
+  if (direction === "next" && currentPage.value < totalPages.value) currentPage.value++;
+  else if (direction === "prev" && currentPage.value > 1) currentPage.value--;
 };
 
 const goToPage = () => {
@@ -203,7 +231,6 @@ const goToPage = () => {
   }
 };
 
-// Fetch achievements on mounted
 onMounted(fetchAchievements);
 </script>
 
@@ -211,7 +238,6 @@ onMounted(fetchAchievements);
 .filter-dropdown {
   width: 100%;
 }
-
 .filter-select {
   width: 100%;
   padding: 0.8rem;
@@ -220,7 +246,6 @@ onMounted(fetchAchievements);
   background-color: #fff;
   cursor: pointer;
 }
-
 .all-filter-container {
   margin-top: 1rem;
   gap: 1rem;
@@ -229,7 +254,6 @@ onMounted(fetchAchievements);
   justify-self: center;
   width: 60%;
 }
-
 .card-achivments-container {
   display: flex;
   flex-direction: column;
@@ -238,7 +262,6 @@ onMounted(fetchAchievements);
   gap: 1rem;
   margin: 0% 10%;
 }
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -246,7 +269,6 @@ onMounted(fetchAchievements);
   gap: 1rem;
   margin: 2rem;
 }
-
 .pagination button {
   padding: 0.5rem 1rem;
   background-color: #4e6d16;
@@ -255,12 +277,10 @@ onMounted(fetchAchievements);
   border-radius: 5px;
   cursor: pointer;
 }
-
 .pagination button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 .pagination .page-input {
   width: 3rem;
   text-align: center;
@@ -268,14 +288,12 @@ onMounted(fetchAchievements);
   border-radius: 5px;
   padding: 0.3rem;
 }
-
 .pagination .pagination-line {
   width: fit-content;
   min-width: 20%;
   height: 4px;
   background-color: #4e6d16;
 }
-
 .pagination-controller {
   justify-content: center;
   display: flex;
