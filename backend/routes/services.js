@@ -27,7 +27,7 @@ router.use((req, res, next) => {
 router.get('/', async (_req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT id, image, title, description, status, title_en, description_en FROM service ORDER BY id DESC'
+      'SELECT * FROM service ORDER BY id DESC'
     );
     res.json(rows);
   } catch (e) {
