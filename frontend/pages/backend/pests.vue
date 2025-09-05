@@ -363,7 +363,7 @@ const submitPest = async (publish) => {
         // Upload image if it’s new
         if (imagePath?.startsWith('data:image')) {
             const base64Image = imagePath.split(',')[1];
-            const imageName = `pest_${Date.now()}.jpg`;
+            const imageName = `pest_${Date.now()}`;
             imagePath = `/images/${imageName}`;
             const uploadResponse = await uploadImage(base64Image, imagePath);
             if (uploadResponse.error) throw new Error(uploadResponse.error);
