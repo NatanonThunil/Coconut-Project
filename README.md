@@ -9,6 +9,8 @@
 - แก้ ``Upload image`` ให้สามารถอัโหลด`` 50MB `` ✅
 - ลบ ``Server`` เก่าที่ไม่ใช้แล้ว
 - เพิ่ม employees GET, GET(id), POST, PUT, DELETE ✅
+- แก้ member GET, GET(id), POST, PUT, DELETE✅
+- แก้ ``Service & Benefit``  ให้แสดง ตรง aboutus  ✅
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 

@@ -63,6 +63,7 @@ export default {
       members: [], // Stores the fetched member data
       employees: [], // Stores the fetched employee data
       achievements: [], // Stores the fetched achievement data
+      services: [], // Stores the fetched service data
     };
   },
 

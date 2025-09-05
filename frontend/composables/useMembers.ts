@@ -2,99 +2,97 @@ export const useMembers = () => {
     const config = useRuntimeConfig();
     const apiBase = config.public.apiBase || '';
     const be_api_url = config.public.beUrl;
-    const apiKey = 'Cocon541986'; // Same as before — can be moved to env later
+    const apiKey = 'Cocon541986'; // can move to env
 
+    // GET all members
     const getMembers = async () => {
         const url = `${be_api_url}${apiBase}/members`;
         console.log('Requesting members from URL:', url);
         return await $fetch(url, {
-            headers: {
-                'cocon-key': apiKey,
-            },
+            headers: { 'cocon-key': apiKey },
         });
     };
+
+    // GET member by ID
     const getMemberById = async (id: number) => {
         if (!id || isNaN(id)) {
-            console.error('Invalid members ID:', id);
-            throw new Error('Invalid members ID');
+            console.error('Invalid member ID:', id);
+            throw new Error('Invalid member ID');
         }
 
         const url = `${be_api_url}${apiBase}/members/${id}`;
-        console.log('Requesting URL:', url);
+        console.log('Requesting member at URL:', url);
         try {
-            const response = await $fetch(url, {
-                headers: {
-                    'cocon-key': apiKey,
-                },
-            });
-            return response;
+            return await $fetch(url, { headers: { 'cocon-key': apiKey } });
         } catch (error) {
-            console.error(`Error fetching news by ID (${id}):`, error);
+            console.error(`Error fetching member by ID (${id}):`, error);
             throw error;
         }
     };
 
+    // CREATE member
     const createMember = async (
-        image: string,
-        name: string,
-        name_en: string,
-        email: string,
-        address: string,
-        address_en: string,
-        phoneNumber: string,
-        status: boolean,
-        description: string,
-        description_en: string
+        payload: {
+            image: string;
+            name: string;
+            name_en: string;
+            email: string;
+            address: string;
+            address_en: string;
+            phoneNumber: string;
+            status: boolean | number;
+            description: string;
+            description_en: string;
+        }
     ) => {
         const url = `${be_api_url}${apiBase}/members`;
         console.log('Creating member at URL:', url);
         return await $fetch(url, {
             method: 'POST',
-            headers: {
-                'cocon-key': apiKey,
-            },
-            body: {
-                image, name, name_en, email, address, address_en,
-                phoneNumber, status, description, description_en
-            },
+            headers: { 'cocon-key': apiKey },
+            body: payload,
         });
     };
 
-    const deleteMember = async (id: number) => {
-        const url = `${be_api_url}${apiBase}/members/${id}`;
-        console.log('Deleting member at URL:', url);
-        return await $fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'cocon-key': apiKey,
-            },
-        });
-    };
-
+    // UPDATE member
     const updateMember = async (
         id: number,
-        image: string,
-        name: string,
-        name_en: string,
-        email: string,
-        address: string,
-        address_en: string,
-        phoneNumber: string,
-        status: boolean,
-        description: string,
-        description_en: string
+        payload: {
+            image?: string;
+            name?: string;
+            name_en?: string;
+            email?: string;
+            address?: string;
+            address_en?: string;
+            phoneNumber?: string;
+            status?: boolean | number;
+            description?: string;
+            description_en?: string;
+        }
     ) => {
+        if (!id || isNaN(id)) throw new Error('Invalid member ID');
+
         const url = `${be_api_url}${apiBase}/members/${id}`;
         console.log('Updating member at URL:', url);
         return await $fetch(url, {
             method: 'PUT',
-            headers: {
-                'cocon-key': apiKey,
-            },
-            body: {
-                image, name, name_en, email, address, address_en,
-                phoneNumber, status, description, description_en
-            },
+            headers: { 'cocon-key': apiKey },
+            body: payload,
+        });
+    };
+
+    // DELETE member
+    const deleteMember = async (id: number) => {
+        if (!id || isNaN(id)) {
+            console.error('Invalid member ID:', id);
+            throw new Error('Invalid member ID');
+        }
+
+        const url = `${be_api_url}${apiBase}/members/${id}`;
+        console.log('Deleting member at URL:', url);
+        return await $fetch(url, {
+            method: 'DELETE',
+            headers: { 'cocon-key': apiKey },
         });
     };
 
@@ -102,7 +100,7 @@ export const useMembers = () => {
         getMembers,
         getMemberById,
         createMember,
-        deleteMember,
         updateMember,
+        deleteMember,
     };
 };

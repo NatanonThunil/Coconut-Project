@@ -15,28 +15,19 @@
 
     <!-- Services Swiper -->
     <div v-if="!isLoading && filteredServices.length > 0" class="swiper-container">
-      <Swiper
-        :slides-per-view="4"
-        :space-between="10"
-        :slides-per-group="4"
-        @swiper="onSwiper"
-        :breakpoints="{
-          480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
-          768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
-          1024: { slidesPerView: 3, spaceBetween: 10, slidesPerGroup: 3 },
-          1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 }
-        }"
-      >
+      <Swiper :slides-per-view="4" :space-between="10" :slides-per-group="4" @swiper="onSwiper" :breakpoints="{
+        480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
+        768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
+        1024: { slidesPerView: 3, spaceBetween: 10, slidesPerGroup: 3 },
+        1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 }
+      }">
         <SwiperSlide v-for="(service, index) in filteredServices" :key="index">
-          <AboutusCard
-            :url="`/aboutus/${lurl}/details/${service.id}`"
-            :image="getServiceImage(service.image)"
-            :name="getTitle(service)"
-            :description="service.description"
-          />
+          <AboutusCard :url="`/aboutus/${lurl}/details/${service.id}`" :image="getServiceImage(service.image)"
+            :name="getTitle(service)" :description="service.description" />
         </SwiperSlide>
       </Swiper>
     </div>
+
     <div v-if="!isLoading && filteredServices.length === 0">
       No services available at the moment.
     </div>
@@ -56,7 +47,7 @@ import AboutusCard from "./aboutusCard.vue";
 import CardShimmer from "./CardShimmer.vue";
 import { useServices } from "~/composables/useServices";
 
-const { getService } = useServices();
+const { getServices } = useServices(); // ✅ fixed function name
 
 export default {
   props: {
@@ -100,14 +91,12 @@ export default {
     async fetchData() {
       this.isLoading = true;
       try {
-        const [svcRaw] = await Promise.allSettled([
-          getService(),
-        ]);
+        const [svcRaw] = await Promise.allSettled([getServices()]);
 
-        // Services
         if (svcRaw.status === "fulfilled") {
           let services = [];
           const raw = svcRaw.value;
+
           if (Array.isArray(raw)) services = raw;
           else if (raw && Array.isArray(raw.data)) services = raw.data;
           else if (raw && Array.isArray(raw.services)) services = raw.services;
@@ -115,7 +104,6 @@ export default {
 
           this.services = services.filter(s => s.status === 1);
         }
-
       } catch (error) {
         console.error("Error fetching services:", error);
       } finally {
