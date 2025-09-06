@@ -11,8 +11,8 @@
 - เพิ่ม employees GET, GET(id), POST, PUT, DELETE ✅
 - แก้ member GET, GET(id), POST, PUT, DELETE✅
 - แก้ ``Service & Benefit``  ให้แสดง ตรง aboutus  ✅
-- แก้ ``pdf upload `` รอตรวจสอบ
-- แก้ ``Achievements`` เพิ่มความเสถียร รอตรวจสอบ
+- แก้ ``pdf upload ``  อัพได้แต่ไฟล์ห้ามเกิน 1MB ✅
+- แก้ ``Achievements`` เพิ่มความเสถียร ✅
 - เพิ่ม Component ``Loading`` ไว้ป้องกันการก็ซ้ำ กรณีกดแล้วคิดว่าปุ่มไมทำงาน ✅
 - เพิ่ม Events GET, GET(id), POST, PUT, DELETE ✅
 
