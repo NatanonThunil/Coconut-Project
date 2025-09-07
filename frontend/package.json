@@ -37,6 +37,7 @@
     "@vueuse/head": "^2.0.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
+    "browser-image-compression": "^2.0.2",
     "consola": "^3.4.0",
     "cors": "^2.8.5",
     "cropperjs": "^1.6.2",

@@ -43,8 +43,8 @@
     <button @click="cropImage">Crop & Upload</button>
     <button @click="cancelCrop">Cancel</button>
   </div>
+  <Loading :isLoading="loadingstate" :LoadingText="loadingstatetext" />
 </template>
-
 <script setup>
 import { useHerobars } from '~/composables/useHerobars'
 const { getHerobarById, updateHerobarById } = useHerobars()
@@ -53,6 +53,11 @@ const { uploadImage } = useUpload()
 import { ref, onMounted, nextTick, computed } from 'vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+
+// NEW
+import imageCompression from 'browser-image-compression';
+const loadingstate = ref(false);
+const loadingstatetext = ref('Loading');
 const apibase = useRuntimeConfig().public.apiBase;
 const beurl = useRuntimeConfig().public.urlBase;
 const apiEndpoint = 'headline';
@@ -114,18 +119,64 @@ const handleImageUpload = (event) => {
   reader.readAsDataURL(file);
 };
 
-const cropImage = () => {
-  if (cropperInstance.value) {
-    const canvas = cropperInstance.value.getCroppedCanvas();
-    headline.value.image = canvas.toDataURL('image/jpeg');
-    showCropper.value = false;
-    cropperInstance.value.destroy();
+// NEW: small helpers
+const blobToDataURL = (blob) =>
+  new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(fr.result);
+    fr.onerror = reject;
+    fr.readAsDataURL(blob);
+  });
+
+const base64Bytes = (dataUrl) => {
+  const i = dataUrl.indexOf(',');
+  const raw = i !== -1 ? dataUrl.slice(i + 1) : dataUrl;
+  return Math.floor((raw.length * 3) / 4); // ≈ binary size
+};
+
+// NEW: after crop → compress to WebP under ~50MB base64
+const cropImage = async () => {
+  if (!cropperInstance.value) return;
+
+  // 1) get cropped canvas → blob (use PNG here to keep max quality before compression)
+  const canvas = cropperInstance.value.getCroppedCanvas();
+  const croppedBlob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
+
+  // 2) compress to WebP using browser-image-compression
+  const fileLike = new File([croppedBlob], 'crop.png', { type: 'image/png' });
+  const compressed = await imageCompression(fileLike, {
+    maxWidthOrHeight: 2560,   // adjust if you want smaller images by default (e.g., 1920)
+    maxSizeMB: 37.5,          // ~<= 50MB base64 after overhead
+    useWebWorker: true,
+    initialQuality: 0.9,
+    fileType: 'image/webp',   // force WebP output
+  });
+
+  // 3) preview in UI (DataURL) and keep it for upload
+  const dataUrl = await blobToDataURL(compressed);
+  // quick guard (optional)
+  if (base64Bytes(dataUrl) > 50 * 1024 * 1024) {
+    // If somehow still big (rare), you can warn or recompress with smaller maxWidthOrHeight
+    alert('Compressed image is still larger than 50MB. Try cropping smaller or we can auto-reduce resolution.');
+    // Example auto-retry: uncomment to retry smaller
+    // const smaller = await imageCompression(fileLike, {
+    //   maxWidthOrHeight: 1920,
+    //   maxSizeMB: 30,
+    //   useWebWorker: true,
+    //   initialQuality: 0.85,
+    //   fileType: 'image/webp',
+    // });
+    // headline.value.image = await blobToDataURL(smaller);
   }
+
+  headline.value.image = dataUrl; // keep as DataURL for preview & upload
+  showCropper.value = false;
+  cropperInstance.value.destroy();
 };
 
 const cancelCrop = () => {
   showCropper.value = false;
-  cropperInstance.value.destroy();
+  cropperInstance.value?.destroy();
 };
 
 const updateHeadline = async () => {
@@ -137,27 +188,29 @@ const updateHeadline = async () => {
   }
 
   try {
+    loadingstatetext.value = 'Updating headline...';
+    loadingstate.value = true;
     let imagePath = headline.value.image;
 
-    // Check if a new image is provided
-    if (headline.value.image.startsWith('data:image')) {
+    // If a new (compressed) image is present as data URL → upload it
+    if (headline.value.image?.startsWith('data:image')) {
+      // send pure base64 (strip prefix)
       const base64Image = headline.value.image.split(',')[1];
-      const imageName = `herobar_${Date.now()}.jpg`;
-      imagePath = `${beurl}/images/${imageName}`; // Save to public/images/
+      const imageName = `herobar_${Date.now()}.webp`; // WebP after compression
+      imagePath = `${beurl}/images/${imageName}`;
 
-      // Use composable for upload
       let uploadResponse;
       try {
         uploadResponse = await uploadImage(base64Image, imagePath);
       } catch (err) {
+        console.error(err);
         throw new Error('Failed to upload image');
       }
-      if (uploadResponse.error) {
+      if (uploadResponse?.error) {
         throw new Error(uploadResponse.error);
       }
     }
 
-    // Update the headline with the image path using composable
     await updateHerobarById(
       1,
       headline.value.text,
@@ -167,14 +220,15 @@ const updateHeadline = async () => {
       imagePath
     );
 
-    alert('Headline updated successfully!');
-    await fetchHeadline(); // Refresh the data
+    
+    loadingstatetext.value = 'Headline updated successfully';
+    await fetchHeadline();
   } catch (error) {
     console.error('Error updating headline:', error);
     alert('An error occurred while updating the headline. Please try again.');
   }
+  loadingstate.value = false;
 };
-
 
 definePageMeta({
   layout: "admin",
@@ -184,6 +238,7 @@ onMounted(() => {
   fetchHeadline();
 });
 </script>
+
 <style scoped>
 .labslider {
   width: 100%;

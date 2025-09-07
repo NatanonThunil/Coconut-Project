@@ -7,6 +7,8 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ หรือ รายละเอียด" />
         <div class="news-check-publish">
+             <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
             <button class="add-news-btn" @click="openAddServiceModal">เพิ่มบริการ</button>
         </div>
     </div>
@@ -172,299 +174,263 @@
 </template>
 
 <script setup>
-definePageMeta({
-    layout: "admin",
-});
+definePageMeta({ layout: "admin" });
 
 import { ref, onMounted, computed, nextTick } from 'vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
-const apiEndpoint = 'services';
+
+import { useServices } from '~/composables/useServices';
+import { useUpload } from '~/composables/useUpload';
+
+const { getServices, createService, updateService, deleteService } = useServices();
+const { uploadImage } = useUpload();
+
 const searchQuery = ref('');
 const Services = ref([]);
 const ServicesNum = ref(0);
+
 const selectAll = ref(false);
 const deleteId = ref(null);
 const deleteName = ref(null);
 const showModal = ref(false);
 const showModalAddService = ref(false);
 const showModalEdit = ref(false);
+
 const isDragging = ref(false);
 const fileInput = ref(null);
+
 const sortBy = ref(null);
 const sortDirection = ref(1);
+
 const currentService = ref({
-    id: null,
-    title: '',
-    title_en: '',
-    image: '',
-    description: '',
-    description_en: ''
+  id: null,
+  title: '',
+  title_en: '',
+  image: '',
+  description: '',
+  description_en: '',
+  status: 0,
 });
+
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
 const activeLang = ref(true);
 
-const toggleLang = () => {
-    activeLang.value = activeLang.value === true ? false : true;
-};
+const toggleLang = () => { activeLang.value = !activeLang.value; };
+
 const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
-        sortBy.value = column;
-        sortDirection.value = 1;
-    }
+  if (sortBy.value === column) sortDirection.value *= -1;
+  else { sortBy.value = column; sortDirection.value = 1; }
 };
-const toggleStatus = async (services) => {
-    try {
-        const newStatus = !news.status;
-
-  
-        const payload = { status: newStatus ? 1 : 0 };
-
-        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error('Failed to update news status:', {
-                status: response.status,
-                statusText: response.statusText,
-                body: errorBody,
-            });
-            throw new Error('Failed to update news status.');
-        }
-
-        // Update status only after successful response
-        news.status = newStatus;
-    } catch (error) {
-        alert('Error updating news status.');
-        console.error('Error in toggleStatus:', error);
-    }
-};
-const fetchServices = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`, { headers: { 'CKH': '541986Cocon' } });
-        // If response is an object with a 'services' property, use that; otherwise, try response.data or use response itself.
-        const data = Array.isArray(response)
-            ? response
-            : response.services || response.data || [];
-        Services.value = data.map(service => ({ ...service, selected: false }));
-        ServicesNum.value = Services.value.length;
-    } catch (error) {
-        alert('Error fetching services.');
-        console.error(error);
-    }
-};
-
 
 const filteredSortedServices = computed(() => {
-    let filtered = Services.value.filter(service =>
-        service.id.toString().includes(searchQuery.value) ||
-        service.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+  const q = (searchQuery.value || '').toLowerCase().trim();
+  let filtered = Services.value.filter(s => {
+    const idStr = String(s.id || '');
+    const t  = String(s.title || '').toLowerCase();
+    const te = String(s.title_en || '').toLowerCase();
+    const d  = String(s.description || '').toLowerCase();
+    const de = String(s.description_en || '').toLowerCase();
+    return (
+      idStr.includes(q) ||
+      t.includes(q) || te.includes(q) ||
+      d.includes(q) || de.includes(q)
     );
-    if (sortBy.value) {
-        filtered.sort((a, b) => {
-            let valA = a[sortBy.value];
-            let valB = b[sortBy.value];
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            return valA.localeCompare(valB, 'th') * sortDirection.value;
-        });
-    }
-    return filtered;
+  });
+
+  if (sortBy.value) {
+    filtered.sort((a, b) => {
+      const A = a[sortBy.value];
+      const B = b[sortBy.value];
+      if (sortBy.value === 'id') {
+        return ((Number(A) || 0) - (Number(B) || 0)) * sortDirection.value;
+      }
+      return String(A ?? '').localeCompare(String(B ?? ''), 'th') * sortDirection.value;
+    });
+  }
+  return filtered;
 });
 
 const toggleSelectAll = () => {
-    Services.value.forEach(service => service.selected = selectAll.value);
+  Services.value.forEach(s => (s.selected = selectAll.value));
 };
 
 const openAddServiceModal = () => {
-    currentService.value = {
-        id: null,
-        title: '',
-        title_en: '',
-        image: '',
-        description: '',
-        description_en: ''
-    };
-    showModalAddService.value = true;
+  currentService.value = {
+    id: null,
+    title: '',
+    title_en: '',
+    image: '',
+    description: '',
+    description_en: '',
+    status: 0,
+  };
+  showModalAddService.value = true;
 };
 
 const editItem = (service) => {
-    currentService.value = { ...service };
-    showModalEdit.value = true;
-    nextTick(() => {
-        console.log("Editing service:", currentService.value);
-    });
+  currentService.value = { ...service };
+  showModalEdit.value = true;
+  nextTick(() => console.log('Editing service:', currentService.value));
 };
 
 const askDelete = (id, title) => {
-    deleteId.value = id;
-    deleteName.value = title;
-    showModal.value = true;
+  deleteId.value = id;
+  deleteName.value = title;
+  showModal.value = true;
 };
 
 const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' }
-        });
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete service.');
-        }
-        Services.value = Services.value.filter(service => service.id !== deleteId.value);
-        ServicesNum.value = Services.value.length;
-        showModal.value = false;
-        alert('Service deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting service: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-const cancelDelete = () => {
+  try {
+    await deleteService(deleteId.value);
+    Services.value = Services.value.filter(s => s.id !== deleteId.value);
+    ServicesNum.value = Services.value.length;
     showModal.value = false;
+    alert('Service deleted successfully.');
+  } catch (err) {
+    alert(`Error deleting service: ${err?.message || err}`);
+    console.error(err);
+  } finally {
+    deleteId.value = null;
+  }
 };
 
-const submitService = async (publish) => {
-    if (!currentService.value.title.trim() || !currentService.value.description.trim()) {
-        alert('Please fill in all required fields: Title and Description.');
-        return;
-    }
-    try {
-        const isUpdate = !!currentService.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentService.value.id}` : `/api/${apiEndpoint}`;
-        const payload = {
-            title: currentService.value.title,
-            title_en: currentService.value.title_en,
-            description: currentService.value.description,
-            description_en: currentService.value.description_en,
-            image: currentService.value.image || '',
-            status: publish ? 1 : 0
-        };
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                'CKH': '541986Cocon'
-            },
-            body: JSON.stringify(payload)
-        });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the service.');
-        }
-        const result = await response.json();
-        if (!isUpdate) {
-            currentService.value.id = result.insertId;
-            alert('Service added successfully.');
-        } else {
-            alert('Service updated successfully.');
-        }
-        showModalAddService.value = false;
-        showModalEdit.value = false;
-        fetchServices();
-    } catch (error) {
-        alert('Error while submitting service.');
-        console.error('Submit Service Error:', error);
-    }
-};
+const cancelDelete = () => { showModal.value = false; };
 
 const closeModal = () => {
-    showModalAddService.value = false;
-    showModalEdit.value = false;
+  showModalAddService.value = false;
+  showModalEdit.value = false;
 };
 
-const triggerFileInput = () => {
-    fileInput.value.click();
-};
+/* ----------------- Image: pick → crop → preview ----------------- */
+const triggerFileInput = () => fileInput.value?.click();
 
-const removeImage = () => {
-    currentService.value.image = '';
-};
+const removeImage = () => { currentService.value.image = ''; };
 
 const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
+  const files = e.dataTransfer.files;
+  if (files?.length) handleFileUpload({ target: { files } });
 };
 
 const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            croppingImage.value = reader.result;
-            showCropper.value = true;
-            nextTick(() => {
-                cropperInstance.value = new Cropper(cropperImage.value, {
-                    aspectRatio: 16 / 9,
-                    viewMode: 1,
-                    autoCropArea: 1,
-                    background: false,
-                    zoomable: false,
-                    movable: false,
-                    rotatable: false,
-                    scalable: false
-                });
-            });
-        };
-        reader.readAsDataURL(file);
-    }
+  const file = event.target.files?.[0];
+  if (!file || !file.type.startsWith('image/')) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    croppingImage.value = reader.result;
+    showCropper.value = true;
+    nextTick(() => {
+      cropperInstance.value = new Cropper(cropperImage.value, {
+        aspectRatio: 16 / 9,
+        viewMode: 1,
+        autoCropArea: 1,
+        background: false,
+        zoomable: false,
+        movable: false,
+        rotatable: false,
+        scalable: false,
+      });
+    });
+  };
+  reader.readAsDataURL(file);
 };
 
-const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-        croppingImage.value = reader.result;
-        showCropper.value = true;
-        nextTick(() => {
-            cropperInstance.value = new Cropper(cropperImage.value, {
-                aspectRatio: 16 / 9,
-                viewMode: 1,
-                autoCropArea: 1,
-            });
-        });
-    };
-    reader.readAsDataURL(file);
-};
+const handleImageUpload = (event) => handleFileUpload(event);
 
 const cropImage = () => {
-    if (cropperInstance.value) {
-        const canvas = cropperInstance.value.getCroppedCanvas();
-        currentService.value.image = canvas.toDataURL('image/jpeg');
-        showCropper.value = false;
-        cropperInstance.value.destroy();
-    }
+  if (!cropperInstance.value) return;
+  const canvas = cropperInstance.value.getCroppedCanvas();
+  if (!canvas) return;
+  // preview as DataURL; upload on submit
+  currentService.value.image = canvas.toDataURL('image/png');
+  showCropper.value = false;
+  cropperInstance.value.destroy();
+  cropperInstance.value = null;
 };
 
 const cancelCrop = () => {
-    showCropper.value = false;
-    cropperInstance.value.destroy();
+  showCropper.value = false;
+  cropperInstance.value?.destroy();
+  cropperInstance.value = null;
 };
 
-onMounted(() => {
-    fetchServices();
-});
+const fetchServices = async () => {
+  try {
+    const data = await getServices();
+    Services.value = (data || []).map(s => ({ ...s, selected: false }));
+    ServicesNum.value = Services.value.length;
+  } catch (err) {
+    alert('Error fetching services.');
+    console.error(err);
+  }
+};
+
+const toggleStatus = async (service) => {
+  try {
+    const newStatus = Number(!service.status ? 1 : 0);
+    await updateService(service.id, { status: newStatus });
+    service.status = newStatus;
+  } catch (err) {
+    alert('Error updating service status.');
+    console.error(err);
+  }
+};
+
+const submitService = async (publish) => {
+  if (!currentService.value.title.trim() || !currentService.value.title_en.trim()) {
+    alert('Please fill in Title (TH/EN).');
+    return;
+  }
+
+  try {
+    let imagePath = currentService.value.image || '';
+
+    // If DataURL, upload and get path via /img-upload
+    if (imagePath && imagePath.startsWith('data:image')) {
+      const fileName = `service_${Date.now()}.webp`;
+      const resp = await uploadImage(imagePath, fileName); // useUpload accepts dataURL or File
+      if (resp?.error) throw new Error(resp.error);
+      imagePath = resp.path || `/images/${fileName}`;
+    }
+
+    const payload = {
+      title: currentService.value.title,
+      title_en: currentService.value.title_en,
+      description: currentService.value.description || '',
+      description_en: currentService.value.description_en || '',
+      image: imagePath,
+      status: publish ? 1 : 0,
+    };
+
+    if (currentService.value.id) {
+      // UPDATE
+      await updateService(currentService.value.id, payload);
+      alert('Service updated successfully.');
+    } else {
+      // CREATE
+      const created = await createService(payload);
+      currentService.value.id = created.id;
+      alert('Service added successfully.');
+    }
+
+    showModalAddService.value = false;
+    showModalEdit.value = false;
+    await fetchServices();
+  } catch (err) {
+    alert('Error while submitting service.');
+    console.error(err);
+  }
+};
+
+onMounted(fetchServices);
 </script>
+
 
 <style scoped>
 .service-image {

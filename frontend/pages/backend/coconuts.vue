@@ -180,6 +180,7 @@
 <script setup>
 import noimageHandle from '/img/no-image-handle.png';
 definePageMeta({ layout: "admin" });
+
 import { ref, onMounted, nextTick, computed } from 'vue';
 import { useCoconuts } from '~/composables/useCoconuts';
 import { useUpload } from '~/composables/useUpload';
@@ -202,18 +203,18 @@ const deleteId = ref(null);
 const deleteName = ref(null);
 
 const currentCoconut = ref({
-    id: null,
-    name_eng: '',
-    name_th: '',
-    description: '',
-    origin: '',
-    sci_name_f: '',
-    sci_name_m: '',
-    sci_name_l: '',
-    characteristics: '',
-    youngold: 'Young',
-    image: null,
-    status: false,
+  id: null,
+  name_eng: '',
+  name_th: '',
+  description: '',
+  origin: '',
+  sci_name_f: '',
+  sci_name_m: '',
+  sci_name_l: '',
+  characteristics: '',
+  youngold: 'Young',
+  image: null,      // for preview (dataURL or path)
+  status: false,
 });
 
 const selectAll = ref(false);
@@ -227,201 +228,269 @@ const croppingImage = ref(null);
 const cropperInstance = ref(null);
 const cropperImage = ref(null);
 
+// NEW: keep the cropped image as a real File for upload
+const pendingImageFile = ref(null);
+
+// helper: Blob -> dataURL for preview
+const blobToDataURL = (blob) =>
+  new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(fr.result);
+    fr.onerror = reject;
+    fr.readAsDataURL(blob);
+  });
 
 const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-        croppingImage.value = reader.result;
-        showCropper.value = true;
-        nextTick(() => {
-            cropperInstance.value = new Cropper(cropperImage.value, {
-                aspectRatio: 1, // square crop for coconut
-                viewMode: 2,
-                autoCropArea: 1,
-            });
-        });
-    };
-    reader.readAsDataURL(file);
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    croppingImage.value = reader.result;
+    showCropper.value = true;
+    nextTick(() => {
+      cropperInstance.value = new Cropper(cropperImage.value, {
+        aspectRatio: 1, // square crop for coconut
+        viewMode: 2,
+        autoCropArea: 1,
+      });
+    });
+  };
+  reader.readAsDataURL(file);
 };
 
-const cropImage = () => {
-    if (cropperInstance.value) {
-        const canvas = cropperInstance.value.getCroppedCanvas();
-        currentCoconut.value.image = canvas.toDataURL('image/jpeg');
-        showCropper.value = false;
-        cropperInstance.value.destroy();
-    }
+const cropImage = async () => {
+  if (!cropperInstance.value) return;
+  const canvas = cropperInstance.value.getCroppedCanvas();
+  if (!canvas) {
+    alert('Crop failed. Please try again.');
+    return;
+  }
+
+  // Make a Blob from canvas (keep high quality here; compression happens in useUpload)
+  const blob = await new Promise((res) =>
+    canvas.toBlob((b) => res(b), 'image/png', 1)
+  );
+  if (!blob) {
+    alert('Could not create image blob');
+    return;
+  }
+
+  // Keep a File for uploading
+  pendingImageFile.value = new File([blob], `coconut_${Date.now()}.png`, {
+    type: 'image/png',
+  });
+
+  // Preview in UI
+  currentCoconut.value.image = await blobToDataURL(blob);
+
+  showCropper.value = false;
+  cropperInstance.value?.destroy();
+  cropperInstance.value = null;
 };
 
 const cancelCrop = () => {
-    showCropper.value = false;
-    cropperInstance.value.destroy();
+  showCropper.value = false;
+  cropperInstance.value?.destroy();
+  cropperInstance.value = null;
 };
 
 // --- Table logic ---
-const toggleSelectAll = () => apisdatas.value.forEach(c => c.selected = selectAll.value);
+const toggleSelectAll = () =>
+  apisdatas.value.forEach((c) => (c.selected = selectAll.value));
 
 const toggleSort = (column) => {
-    if (sortBy.value === column) sortDirection.value *= -1;
-    else {
-        sortBy.value = column;
-        sortDirection.value = column === 'status' ? -1 : 1;
-    }
+  if (sortBy.value === column) sortDirection.value *= -1;
+  else {
+    sortBy.value = column;
+    sortDirection.value = column === 'status' ? -1 : 1;
+  }
 };
 
 const filteredSortedCoconuts = computed(() => {
-    let filtered = apisdatas.value.filter(c =>
-        c.id.toString().includes(searchQuery.value) ||
-        c.name_eng.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        c.name_th.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        c.origin.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-    if (sortBy.value) {
-        filtered.sort((a, b) => {
-            let valA = a[sortBy.value], valB = b[sortBy.value];
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (['name_eng', 'name_th', 'origin'].includes(sortBy.value)) return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            return 0;
-        });
-    }
-    return filtered;
+  let filtered = apisdatas.value.filter(
+    (c) =>
+      c.id.toString().includes(searchQuery.value) ||
+      c.name_eng.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      c.name_th.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      c.origin.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+  if (sortBy.value) {
+    filtered.sort((a, b) => {
+      let valA = a[sortBy.value],
+        valB = b[sortBy.value];
+      if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
+      if (['name_eng', 'name_th', 'origin'].includes(sortBy.value))
+        return valA.localeCompare(valB, 'th') * sortDirection.value;
+      if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
+      return 0;
+    });
+  }
+  return filtered;
 });
 
 // --- Fetch API ---
 const fetchApi = async () => {
-    try {
-        const data = await getCoconuts();
-        apisdatas.value = data.map(c => ({ ...c, selected: false }));
-        dataCount.value = apisdatas.value.length;
-    } catch (error) {
-        console.error('Error fetching data:', error.message);
-        apisdatas.value = [];
-        dataCount.value = 0;
-    }
+  try {
+    const data = await getCoconuts();
+    apisdatas.value = data.map((c) => ({ ...c, selected: false }));
+    dataCount.value = apisdatas.value.length;
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    apisdatas.value = [];
+    dataCount.value = 0;
+  }
 };
 
 // --- Status toggle ---
 const toggleStatus = async (coconut) => {
-    try {
-        const newStatus = !coconut.status;
-        coconut.status = newStatus;
+  try {
+    const newStatus = !coconut.status;
+    coconut.status = newStatus;
 
-        const payload = { ...coconut, status: newStatus ? 1 : 0 };
-        const updated = await updateCoconut(coconut.id, payload);
-        Object.assign(coconut, updated);
-    } catch (error) {
-        alert('Error updating coconut status.');
-        console.error(error);
-    }
+    const payload = { ...coconut, status: newStatus ? 1 : 0 };
+    const updated = await updateCoconut(coconut.id, payload);
+    Object.assign(coconut, updated);
+  } catch (error) {
+    alert('Error updating coconut status.');
+    console.error(error);
+  }
 };
 
 // --- Add/Edit modal ---
 const openAddCoconutModal = () => {
-    currentCoconut.value = {
-        id: null, name_eng: '', name_th: '', description: '', origin: '',
-        sci_name_f: '', sci_name_m: '', sci_name_l: '', characteristics: '',
-        youngold: 'Young', image: null, status: false
-    };
-    showModalAddCoconut.value = true;
+  currentCoconut.value = {
+    id: null,
+    name_eng: '',
+    name_th: '',
+    description: '',
+    origin: '',
+    sci_name_f: '',
+    sci_name_m: '',
+    sci_name_l: '',
+    characteristics: '',
+    youngold: 'Young',
+    image: null,
+    status: false,
+  };
+  pendingImageFile.value = null; // reset pending file
+  showModalAddCoconut.value = true;
 };
 
 const editItem = (coconut) => {
-    currentCoconut.value = { ...coconut };
-    showModalEdit.value = true;
+  currentCoconut.value = { ...coconut };
+  pendingImageFile.value = null; // reset; only set when user crops a new one
+  showModalEdit.value = true;
 };
 
 const bulkUpdateStatus = async (statusValue) => {
-    try {
-
-        const selectedCoconuts = apisdatas.value.filter(c => c.selected);
-        if (!selectedCoconuts.length) {
-            alert('Please select at least one coconut.');
-            return;
-        }
-
-
-        const updatePromises = selectedCoconuts.map(coconut => {
-            const payload = { ...coconut, status: statusValue ? 1 : 0 };
-            return updateCoconut(coconut.id, payload);
-        });
-
-
-        await Promise.all(updatePromises);
-
-
-        apisdatas.value.forEach(c => {
-            if (c.selected) c.status = statusValue ? 1 : 0;
-        });
-
-        alert(`Updated ${selectedCoconuts.length} coconuts successfully!`);
-    } catch (error) {
-        alert(`Error updating coconuts: ${error.message}`);
-        console.error(error);
+  try {
+    const selectedCoconuts = apisdatas.value.filter((c) => c.selected);
+    if (!selectedCoconuts.length) {
+      alert('Please select at least one coconut.');
+      return;
     }
+
+    const updatePromises = selectedCoconuts.map((coconut) => {
+      const payload = { ...coconut, status: statusValue ? 1 : 0 };
+      return updateCoconut(coconut.id, payload);
+    });
+
+    await Promise.all(updatePromises);
+
+    apisdatas.value.forEach((c) => {
+      if (c.selected) c.status = statusValue ? 1 : 0;
+    });
+
+    alert(`Updated ${selectedCoconuts.length} coconuts successfully!`);
+  } catch (error) {
+    alert(`Error updating coconuts: ${error.message}`);
+    console.error(error);
+  }
 };
 
 const submitCoconut = async (publish) => {
-    if (!currentCoconut.value.name_eng.trim() || !currentCoconut.value.name_th.trim()) {
-        alert('Please fill in required fields.');
-        return;
+  if (!currentCoconut.value.name_eng.trim() || !currentCoconut.value.name_th.trim()) {
+    alert('Please fill in required fields.');
+    return;
+  }
+
+  try {
+    let imagePath = currentCoconut.value.image;
+
+    // If user cropped a new image, upload the real File (useUpload compresses to WebP ≤ 50MB)
+    if (pendingImageFile.value) {
+      const imageName = `coconut_${Date.now()}.webp`; // final saved name
+      const uploadResponse = await uploadImage(pendingImageFile.value, imageName);
+      if (uploadResponse?.error) throw new Error(uploadResponse.error);
+
+      // backend returns { path: "/images/<imageName>" }
+      imagePath = uploadResponse.path || `/images/${imageName}`;
     }
 
-    try {
-        let imagePath = currentCoconut.value.image;
+    const payload = {
+      ...currentCoconut.value,
+      image: imagePath,
+      status: publish ? 1 : 0,
+    };
 
-        // Upload image if it’s new
-        if (imagePath?.startsWith('data:image')) {
-            const base64Image = imagePath.split(',')[1];
-            const imageName = `coconut_${Date.now()}.jpg`;
-            imagePath = `/images/${imageName}`;
-            const uploadResponse = await uploadImage(base64Image, imagePath);
-            if (uploadResponse.error) throw new Error(uploadResponse.error);
-        }
-
-        const payload = { ...currentCoconut.value, image: imagePath, status: publish ? 1 : 0 };
-
-        if (currentCoconut.value.id) {
-            await updateCoconut(currentCoconut.value.id, payload);
-            alert('Coconut updated successfully.');
-        } else {
-            const newCoconut = await createCoconut(
-                payload.description, payload.origin, payload.status,
-                payload.name_eng, payload.name_th, payload.sci_name_f,
-                payload.sci_name_m, payload.sci_name_l, payload.characteristics,
-                payload.youngold, payload.image
-            );
-            currentCoconut.value.id = newCoconut.id;
-            alert('Coconut added successfully.');
-        }
-
-        showModalAddCoconut.value = false;
-        showModalEdit.value = false;
-        fetchApi();
-    } catch (error) {
-        alert(`Error: ${error.message}`);
-        console.error(error);
+    if (currentCoconut.value.id) {
+      await updateCoconut(currentCoconut.value.id, payload);
+      alert('Coconut updated successfully.');
+    } else {
+      const newCoconut = await createCoconut(
+        payload.description,
+        payload.origin,
+        payload.status,
+        payload.name_eng,
+        payload.name_th,
+        payload.sci_name_f,
+        payload.sci_name_m,
+        payload.sci_name_l,
+        payload.characteristics,
+        payload.youngold,
+        payload.image
+      );
+      currentCoconut.value.id = newCoconut.id;
+      alert('Coconut added successfully.');
     }
+
+    showModalAddCoconut.value = false;
+    showModalEdit.value = false;
+    pendingImageFile.value = null;
+    fetchApi();
+  } catch (error) {
+    alert(`Error: ${error.message}`);
+    console.error(error);
+  }
 };
 
 // --- Delete ---
-const askDelete = (id, name) => { deleteId.value = id; deleteName.value = name; showModal.value = true; };
-const confirmDelete = async () => {
-    try {
-        await deleteCoconut(deleteId.value);
-        apisdatas.value = apisdatas.value.filter(c => c.id !== deleteId.value);
-        dataCount.value = apisdatas.value.length;
-        showModal.value = false;
-        alert('Coconut deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting coconut: ${error.message}`);
-        console.error(error);
-    } finally { deleteId.value = null; }
+const askDelete = (id, name) => {
+  deleteId.value = id;
+  deleteName.value = name;
+  showModal.value = true;
 };
-const cancelDelete = () => showModal.value = false;
-const closeModal = () => { showModalAddCoconut.value = false; showModalEdit.value = false; };
+
+const confirmDelete = async () => {
+  try {
+    await deleteCoconut(deleteId.value);
+    apisdatas.value = apisdatas.value.filter((c) => c.id !== deleteId.value);
+    dataCount.value = apisdatas.value.length;
+    showModal.value = false;
+    alert('Coconut deleted successfully.');
+  } catch (error) {
+    alert(`Error deleting coconut: ${error.message}`);
+    console.error(error);
+  } finally {
+    deleteId.value = null;
+  }
+};
+
+const cancelDelete = () => (showModal.value = false);
+const closeModal = () => {
+  showModalAddCoconut.value = false;
+  showModalEdit.value = false;
+};
 
 onMounted(fetchApi);
 </script>

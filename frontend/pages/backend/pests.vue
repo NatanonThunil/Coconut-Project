@@ -165,7 +165,7 @@
         </div>
     </div>
     <div style="height: 5rem;"></div>
-
+    <Loading :isLoading="loadingstate" :LoadingText="loadingstatetext" />
 
 </template>
 <script setup>
@@ -181,7 +181,8 @@ import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 
 const { getPests, createPest, updatePest, deletePest } = usePests();
 const { uploadImage } = useUpload();
-
+const loadingstate = ref(false);
+const loadingstatetext = ref('Loading');
 const searchQuery = ref('');
 const apisdatas = ref([]);
 const dataCount = ref(0);
@@ -322,6 +323,8 @@ const editItem = (pest) => {
 };
 
 const bulkUpdateStatus = async (statusValue) => {
+    loadingstatetext.value = statusValue ? 'Publishing selected pests' : 'Unpublishing selected pests';
+    loadingstate.value = true;
     try {
 
         const selectedPests = apisdatas.value.filter(p => p.selected);
@@ -344,14 +347,18 @@ const bulkUpdateStatus = async (statusValue) => {
             if (p.selected) p.status = statusValue ? 1 : 0;
         });
 
-        alert(`Updated ${selectedPests.length} pests successfully!`);
+        
     } catch (error) {
         alert(`Error updating pests: ${error.message}`);
         console.error(error);
     }
+     loadingstatetext.value = statusValue ? 'Publishing selected pests' : 'Unpublishing selected pests';
+    loadingstate.value = false;
 };
 
 const submitPest = async (publish) => {
+    loadingstatetext.value = publish ? 'Adding & Publishing pest' : 'Adding pest';
+    loadingstate.value = true;
     if (!currentPest.value.name_en.trim() || !currentPest.value.name.trim()) {
         alert('Please fill in required fields.');
         return;
@@ -363,8 +370,8 @@ const submitPest = async (publish) => {
         // Upload image if it’s new
         if (imagePath?.startsWith('data:image')) {
             const base64Image = imagePath.split(',')[1];
-            const imageName = `pest_${Date.now()}.jpg`;
-            imagePath = `/images/${imageName}`;
+            const imageName = `pest_${Date.now()}`;
+            imagePath = `/images/${imageName}.webp`;
             const uploadResponse = await uploadImage(base64Image, imagePath);
             if (uploadResponse.error) throw new Error(uploadResponse.error);
         }
@@ -373,7 +380,7 @@ const submitPest = async (publish) => {
 
         if (currentPest.value.id) {
             await updatePest(currentPest.value.id, payload);
-            alert('Pest updated successfully.');
+            
         } else {
             const newPest = await createPest(
                 payload.image, payload.name, payload.name_en, payload.sci_name,
@@ -381,8 +388,9 @@ const submitPest = async (publish) => {
                 payload.prevent_en, payload.status, payload.type
             );
             currentPest.value.id = newPest.id;
-            alert('Pest added successfully.');
+            loadingstatetext.value = 'Successfully added pest';
         }
+        loadingstate.value = false;
 
         showModalAddPest.value = false;
         showModalEdit.value = false;
@@ -390,7 +398,9 @@ const submitPest = async (publish) => {
     } catch (error) {
         alert(`Error: ${error.message}`);
         console.error(error);
+        
     }
+    loadingstate.value = false;
 };
 
 // --- Delete ---

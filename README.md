@@ -4,8 +4,17 @@
 [สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
 
 ### Update List
-- เพิ่ม Chain value ยังไม่เสร็จ Back
-- เพิ่ม employees และ member ของ back  ยังไม่เสร็จ
+- เพิ่ม ``Chain value`` GET, GET(id), POST, PUT, DELETE  ✅
+- เพิ่ม ``Service & Benefit``  GET, GET(id), POST, PUT, DELETE  ✅
+- แก้ ``Upload image`` ให้สามารถอัโหลด`` 50MB `` ✅
+- ลบ ``Server`` เก่าที่ไม่ใช้แล้ว
+- เพิ่ม employees GET, GET(id), POST, PUT, DELETE ✅
+- แก้ member GET, GET(id), POST, PUT, DELETE✅
+- แก้ ``Service & Benefit``  ให้แสดง ตรง aboutus  ✅
+- แก้ ``pdf upload ``  อัพได้แต่ไฟล์ห้ามเกิน 1MB ✅
+- แก้ ``Achievements`` เพิ่มความเสถียร ✅
+- เพิ่ม Component ``Loading`` ไว้ป้องกันการก็ซ้ำ กรณีกดแล้วคิดว่าปุ่มไมทำงาน ✅
+- เพิ่ม Events GET, GET(id), POST, PUT, DELETE ✅
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 

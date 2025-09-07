@@ -19,10 +19,11 @@
                 <tr>
                     <th>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                class="checkbox-decorate" />
                             <span>ID</span>
                             <button @click="toggleSort('id')">
-                                <div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div>
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
                             </button>
                         </div>
                     </th>
@@ -34,39 +35,39 @@
                     <th>
                         <div class="checkbox-id-container">
                             <div>Title<button @click="toggleSort('title')">
-                                <div :class="{'rotate': sortBy === 'title' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'title' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Organizer<button @click="toggleSort('organizer')">
-                                <div :class="{'rotate': sortBy === 'organizer' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'organizer' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Date start<button @click="toggleSort('date_start')">
-                                <div :class="{'rotate': sortBy === 'date_start' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'date_start' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Date end<button @click="toggleSort('date_end')">
-                                <div :class="{'rotate': sortBy === 'date_end' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'date_end' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Status<button @click="toggleSort('status')">
-                                <div :class="{'rotate': sortBy === 'status' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
-                    
+
                     <th></th>
                 </tr>
             </thead>
@@ -75,7 +76,7 @@
                 <tr v-for="event in filteredSortedEvents" :key="event.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="event.selected" class="checkbox-decorate"  />
+                            <input type="checkbox" v-model="event.selected" class="checkbox-decorate" />
                             <p>{{ event.id }}</p>
                         </div>
                     </td>
@@ -92,11 +93,12 @@
                             <img class="eyesicon" :src="event.status ? eye : eyeBlink" alt="Visibility Icon" />
                         </label>
                     </td>
-                    
+
                     <td class="action-buttons">
                         <div class="action-btn-container">
                             <button @click="editItem(event)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
-                            <button @click="askDelete(event.id, event.title)" class="delete-btn"><img src="/icon/trash.png" alt=""></button>
+                            <button @click="askDelete(event.id, event.title)" class="delete-btn"><img
+                                    src="/icon/trash.png" alt=""></button>
                         </div>
                     </td>
                 </tr>
@@ -126,30 +128,39 @@
                     <label>พาดหัวข่าว</label>
                     <input class="add-text-input" v-model="currentEvent.title" placeholder="Enter title" required />
                     <label>Title (English)</label>
-                    <input class="add-text-input" v-model="currentEvent.title_en" placeholder="Enter title in English" required />
+                    <input class="add-text-input" v-model="currentEvent.title_en" placeholder="Enter title in English"
+                        required />
                     <label>ชื่อผู้เขียน</label>
-                    <input class="add-text-input" v-model="currentEvent.organizer" placeholder="Enter author name" required />
+                    <input class="add-text-input" v-model="currentEvent.organizer" placeholder="Enter author name"
+                        required />
                     <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
                     <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }" @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
+                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+                            @drop.prevent="handleDragDrop">
                             <img v-if="!currentEvent.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentEvent.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
                             <div v-if="currentEvent.image" class="image-preview">
                                 <img :src="currentEvent.image" alt="Uploaded Image" class="preview-image" />
                                 <button class="remove-btn" @click="removeImage">X</button>
                             </div>
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader" ref="fileInput" />
+                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                                class="file-uploader" ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
                         </div>
                     </div>
                     <label>Location Name</label>
-                    <input class="add-text-input" v-model="currentEvent.location_name" placeholder="Enter location name" required />
+                    <input class="add-text-input" v-model="currentEvent.location_name" placeholder="Enter location name"
+                        required />
                     <label>Location Name (English)</label>
-                    <input class="add-text-input" v-model="currentEvent.location_name_en" placeholder="Enter location name in English" required />
+                    <input class="add-text-input" v-model="currentEvent.location_name_en"
+                        placeholder="Enter location name in English" required />
                     <label>Location URL</label>
-                    <input class="add-text-input" v-model="currentEvent.location_url" placeholder="Enter location URL" required />
+                    <input class="add-text-input" v-model="currentEvent.location_url" placeholder="Enter location URL"
+                        required />
                     <label>Register URL</label>
-                    <input class="add-text-input" v-model="currentEvent.register_url" placeholder="Enter register URL" required />
+                    <input class="add-text-input" v-model="currentEvent.register_url" placeholder="Enter register URL"
+                        required />
                 </section>
                 <section>
                     <label>Date Start</label>
@@ -169,7 +180,8 @@
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitEvent(false)">{{ showModalEdit ? 'Update without publish' : 'Add without publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitEvent(false)">{{ showModalEdit ?
+                    'Update without publish' : 'Add without publish' }}</button>
                 <button type="button" class="confirm-btn" @click.prevent="submitEvent(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
@@ -200,7 +212,11 @@ import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import { useEvents } from "~/composables/useEvents";
+import { useUpload } from "~/composables/useUpload";
 
+const { getEvents, createEvent, updateEvent, deleteEvent } = useEvents();
+const { uploadImage } = useUpload();
 
 const apiEndpoint = 'events';
 const searchQuery = ref('');
@@ -234,20 +250,42 @@ const currentEvent = ref({
     register_url: '',
 });
 const cropper = ref(null);
+const cropperInstance = ref(null);
+const croppingImage = ref(null);
+const showCropper = ref(false);
+const cropperImage = ref(null);
+const pendingImageFile = ref(null);
+
+const fetchEvents = async () => {
+    try {
+        const data = await getEvents();
+        Events.value = data.map(event => ({ ...event, selected: false }));
+        EventsNum.value = Events.value.length;
+    } catch (error) {
+        alert('Error fetching events.');
+    }
+};
 
 const toggleStatus = async (event) => {
     try {
         const newStatus = !event.status;
-        const response = await fetch(`/api/${apiEndpoint}/${event.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...event, status: newStatus ? 1 : 0 }),
+        // Format dates to MySQL format
+        const formatDateForMySQL = (dateStr) => {
+            if (!dateStr) return null;
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                return `${dateStr} 00:00:00`;
+            }
+            const date = new Date(dateStr);
+            const pad = n => n.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+        };
+
+        await updateEvent(event.id, {
+            ...event,
+            status: newStatus ? 1 : 0,
+            date_start: formatDateForMySQL(event.date_start),
+            date_end: formatDateForMySQL(event.date_end),
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to update event status.');
-        }
-
         event.status = newStatus;
     } catch (error) {
         alert('Error updating event status.');
@@ -257,16 +295,6 @@ const toggleStatus = async (event) => {
 
 const triggerFileInput = () => {
     fileInput.value.click();
-};
-
-const fetchEvents = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
-        Events.value = response.map(event => ({ ...event, selected: false }));
-        EventsNum.value = Events.value.length;
-    } catch (error) {
-        alert('Error fetching events.');
-    }
 };
 
 const editItem = (event) => {
@@ -282,14 +310,13 @@ const editItem = (event) => {
         description_en: event.description_en || '',
         location_name_en: event.location_name_en || '',
         status: !!event.status,
-        description: event.description || "", // Ensure description is set
-        date_start: event.date_start ? toBangkokTime(event.date_start) : '', // Ensure date_start is set
-        date_end: event.date_end ? toBangkokTime(event.date_end) : '', // Ensure date_end is set
-        category: event.event_category || 'other', // Ensure category is set
+        description: event.description || "",
+        date_start: event.date_start ? toBangkokTime(event.date_start) : '',
+        date_end: event.date_end ? toBangkokTime(event.date_end) : '',
+        category: event.event_category || 'other',
     };
 
-    showModalEdit.value = true; // Open modal first
-
+    showModalEdit.value = true;
     nextTick(() => {
         console.log("Setting Tiptap Content:", currentEvent.value.description);
     });
@@ -346,6 +373,7 @@ const openAddEventModal = () => {
         location_url: '',
         register_url: '',
     };
+    pendingImageFile.value = null;
     showModalAddEvent.value = true;
 };
 
@@ -358,11 +386,7 @@ const bulkUpdateStatus = async (publish) => {
         }
 
         const updatePromises = selectedEvents.map(event =>
-            fetch(`/api/${apiEndpoint}/${event.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...event, status: publish ? 1 : 0 })
-            })
+            updateEvent(event.id, { ...event, status: publish ? 1 : 0 })
         );
 
         await Promise.all(updatePromises);
@@ -376,6 +400,17 @@ const bulkUpdateStatus = async (publish) => {
         alert('Failed to update event status.');
     }
 };
+function formatDateForMySQL(dateStr) {
+    if (!dateStr) return null;
+    // If input is 'YYYY-MM-DD', just append time
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return `${dateStr} 00:00:00`;
+    }
+    // Otherwise, parse and format
+    const date = new Date(dateStr);
+    const pad = n => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
 
 const submitEvent = async (publish) => {
     if (!currentEvent.value.title.trim() || !currentEvent.value.organizer.trim()) {
@@ -384,21 +419,25 @@ const submitEvent = async (publish) => {
     }
 
     try {
-        const toBangkokTime = (dateStr) => {
-            const date = new Date(dateStr);
-            const bangkokOffset = 7 * 60 * 60 * 1000;
-            return new Date(date.getTime() + bangkokOffset).toISOString().slice(0, 19).replace('T', ' ');
-        };
+        const formattedDateStart = formatDateForMySQL(currentEvent.value.date_start);
+        const formattedDateEnd = formatDateForMySQL(currentEvent.value.date_end);
 
-        const formattedDateStart = currentEvent.value.date_start ? toBangkokTime(currentEvent.value.date_start) : null;
-        const formattedDateEnd = currentEvent.value.date_end ? toBangkokTime(currentEvent.value.date_end) : null;
-
-        const isUpdate = !!currentEvent.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentEvent.value.id}` : `/api/${apiEndpoint}`;
+        let imagePath = currentEvent.value.image;
+        if (pendingImageFile.value) {
+            const fileName = `event_${Date.now()}.webp`;
+            const resp = await uploadImage(pendingImageFile.value, fileName);
+            if (resp?.error) throw new Error(resp.error);
+            imagePath = resp.path || `/images/${fileName}`;
+        } else if (typeof imagePath === 'string' && imagePath.startsWith('data:image')) {
+            const fileName = `event_${Date.now()}`;
+            const resp = await uploadImage(imagePath, fileName);
+            if (resp?.error) throw new Error(resp.error);
+            imagePath = resp.path || `/images/${fileName}`;
+        }
 
         const payload = {
             ...currentEvent.value,
+            image: imagePath,
             title_en: currentEvent.value.title_en,
             description_en: currentEvent.value.description_en,
             location_name_en: currentEvent.value.location_name_en,
@@ -407,28 +446,33 @@ const submitEvent = async (publish) => {
             status: publish ? 1 : 0,
         };
 
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the event.');
-        }
-
-        const result = await response.json();
-        if (!isUpdate) {
-            currentEvent.value.id = result.id;
-            alert('Event added successfully.');
-        } else {
+        if (currentEvent.value.id) {
+            await updateEvent(currentEvent.value.id, payload);
             alert('Event updated successfully.');
+        } else {
+            const newEvent = await createEvent(
+                payload.image,
+                payload.title,
+                payload.organizer,
+                payload.date_start,
+                payload.date_end,
+                payload.location_name,
+                payload.location_url,
+                payload.register_url,
+                payload.description,
+                payload.category,
+                payload.status,
+                payload.location_name_en,
+                payload.title_en,
+                payload.description_en
+            );
+            currentEvent.value.id = newEvent.id;
+            alert('Event added successfully.');
         }
 
         showModalAddEvent.value = false;
         showModalEdit.value = false;
+        pendingImageFile.value = null;
         fetchEvents();
     } catch (error) {
         alert('Error while submitting event.');
@@ -484,22 +528,9 @@ const askDelete = (id, title) => {
 
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete event.');
-        }
-
+        await deleteEvent(deleteId.value);
         Events.value = Events.value.filter(event => event.id !== deleteId.value);
         EventsNum.value = Events.value.length;
-
         showModal.value = false;
         alert('Event deleted successfully.');
     } catch (error) {
@@ -521,11 +552,6 @@ onMounted(() => {
 const toggleSelectAll = () => {
     Events.value.forEach(event => event.selected = selectAll.value);
 };
-
-const cropperInstance = ref(null);
-const croppingImage = ref(null);
-const showCropper = ref(false);
-const cropperImage = ref(null);
 
 const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -549,6 +575,7 @@ const handleImageUpload = (event) => {
 const cropImage = () => {
     if (cropperInstance.value) {
         const canvas = cropperInstance.value.getCroppedCanvas();
+        pendingImageFile.value = new File([canvas.toDataURL('image/jpeg')], `event_${Date.now()}.jpg`, { type: 'image/jpeg' });
         currentEvent.value.image = canvas.toDataURL('image/jpeg');
         showCropper.value = false;
         cropperInstance.value.destroy();
@@ -613,7 +640,8 @@ const cancelCrop = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -720,7 +748,8 @@ const cancelCrop = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -1288,6 +1317,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
+
     .item-list-table th:nth-child(3),
     .item-list-table td:nth-child(3) {
         display: none;
@@ -1295,6 +1325,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1321,6 +1352,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;

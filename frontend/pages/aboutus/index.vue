@@ -26,7 +26,7 @@
   <Aboutusslide apiEndPoint="/coconut-api/employees" lurl="employees"/>
   <SeeAllButton text="คณะทำงานทั้งหมด" link="/aboutus/employees" />
   <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
-  <Aboutusslide apiEndPoint="/coconut-api/employees" lurl="benefitandservice"/>
+  <AboutusslideServices apiEndPoint="/coconut-api/employees" lurl="benefitandservice"/>
   <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/aboutus/benefitandservice" />
   <ContentHeader contexto="สมาชิก" />
   <AboutusslideMember apiEndPoint="/coconut-api/members" lurl="members"/>
@@ -43,6 +43,7 @@ import "swiper/css/pagination";
 import Cardemployees from "~/components/Aboutusslide.vue";
 import Aboutusslide from "~/components/Aboutusslide.vue";
 import AboutusslideMember from "~/components/AboutusslideMember.vue";
+import AboutusslideServices from "~/components/AboutusslideServices.vue";
 
 
 export default {
@@ -62,6 +63,7 @@ export default {
       members: [], // Stores the fetched member data
       employees: [], // Stores the fetched employee data
       achievements: [], // Stores the fetched achievement data
+      services: [], // Stores the fetched service data
     };
   },
 

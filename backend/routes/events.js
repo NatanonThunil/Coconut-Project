@@ -119,4 +119,87 @@ router.post('/', async (req, res) => {
     }
 });
 
+/////////////////////////////// PUT (Update Event)
+router.put('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            image,
+            title,
+            organizer,
+            date_start,
+            date_end,
+            location_name,
+            location_url,
+            register_url,
+            description,
+            event_category,
+            status,
+            location_name_en,
+            title_en,
+            description_en
+        } = req.body;
+
+        const [result] = await db.query(
+            `UPDATE event SET
+                image = ?,
+                title = ?,
+                organizer = ?,
+                date_start = ?,
+                date_end = ?,
+                location_name = ?,
+                location_url = ?,
+                register_url = ?,
+                description = ?,
+                event_category = ?,
+                status = ?,
+                location_name_en = ?,
+                title_en = ?,
+                description_en = ?
+            WHERE id = ?`,
+            [
+                image,
+                title,
+                organizer,
+                date_start,
+                date_end,
+                location_name,
+                location_url,
+                register_url,
+                description,
+                event_category,
+                status,
+                location_name_en,
+                title_en,
+                description_en,
+                id
+            ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        res.json({ message: 'Event updated successfully' });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+/////////////////////////////// DELETE (Remove Event)
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [result] = await db.query('DELETE FROM event WHERE id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        res.json({ message: 'Event deleted successfully' });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 export default router;

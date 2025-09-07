@@ -63,6 +63,8 @@
 import nfi from '/img/News404.png';
 import { computed, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useEvents } from '~/composables/useEvents'
+const { getEvents } = useEvents()
 
 export default {
   setup() {
@@ -123,18 +125,39 @@ export default {
   async mounted() {
     window.scrollTo(0, 0);
     try {
-      const response = await fetch('/api/events', {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-      if (!response.ok) throw new Error('Failed to fetch events');
-      const data = await response.json();
-      this.events = Array.isArray(data) ? data.filter(event => event.status === 1) : [];
+      this.loading = true;
+      const raw = await getEvents();
+
+      const list = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw?.events)
+          ? raw.events
+          : [];
+
+      if (!list.length) {
+        console.warn("No events found or unexpected response format:", raw);
+      }
+
+      this.events = list
+        .filter((event) => event.status === 1)
+        .map((item) => ({
+          id: item.id,
+          image: item.image,
+          title: item.title,
+          title_en: item.title_en || item.title,
+          event_category: item.event_category,
+          date_start: item.date_start,
+          date_end: item.date_end,
+          location_name: item.location_name,
+          location_name_en: item.location_name_en || item.location_name,
+          status: item.status,
+          description: item.description,
+          description_en: item.description_en || item.description,
+        }));
       this.filterEvents();
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
+      this.events = [];
     } finally {
       this.loading = false;
     }

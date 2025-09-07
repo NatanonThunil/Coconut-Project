@@ -4,8 +4,7 @@ import { config } from 'dotenv';
 config();
 import db from '../db.js';
 
-// ดึง API_KEY จาก .env (/backend/.env)
-const API_KEY = process.env.API_SECRET
+const API_KEY = process.env.API_SECRET;
 
 // Middleware to validate API key
 router.use((req, res, next) => {
@@ -16,16 +15,16 @@ router.use((req, res, next) => {
     next();
 });
 
-/////////////////////////////// GET
+/////////////////////////////// GET ALL
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM employee');
-        res.json(rows); // <-- wrap in object
+        res.json(rows);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
-// ...existing code...
+
 /////////////////////////////// GET BY ID
 router.get('/:id', async (req, res) => {
     try {
@@ -36,7 +35,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Employee not found' });
         }
 
-        res.json( rows[0] ); // <-- wrap in object
+        res.json(rows[0]);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -78,6 +77,70 @@ router.post('/', async (req, res) => {
             description_en,
             email
         });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+/////////////////////////////// PUT (Update)
+router.put('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            name,
+            name_en,
+            image,
+            address,
+            address_en,
+            phoneNumber,
+            status,
+            description,
+            description_en,
+            email
+        } = req.body;
+
+        const [result] = await db.query(
+            `UPDATE employee 
+             SET name = ?, name_en = ?, image = ?, address = ?, address_en = ?, 
+                 phoneNumber = ?, status = ?, description = ?, description_en = ?, email = ?
+             WHERE id = ?`,
+            [name, name_en, image, address, address_en, phoneNumber, status, description, description_en, email, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+
+        res.json({
+            id,
+            name,
+            name_en,
+            image,
+            address,
+            address_en,
+            phoneNumber,
+            status,
+            description,
+            description_en,
+            email
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+/////////////////////////////// DELETE
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [result] = await db.query('DELETE FROM employee WHERE id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+
+        res.json({ success: true, message: 'Employee deleted successfully' });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
