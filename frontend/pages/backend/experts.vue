@@ -55,7 +55,7 @@
                                 </button></div>
                         </div>
                     </th>
-                    
+
                     <th>
                         <div class="checkbox-id-container">
                             <div>Tags<button @click="toggleSort('tags')">
@@ -86,7 +86,7 @@
                     <td>{{ expert.email }}</td>
                     <td>{{ expert.address }}</td>
                     <td>{{ expert.phoneNumber }}</td>
-                    
+
                     <td>{{ expert.tags.join(', ') }}</td>
                     <td>
                         <label class="status-toggle">
@@ -96,8 +96,7 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png"
-                                    alt=""></button>
+                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
                             <button @click="askDelete(expert.id, expert.name)" class="delete-btn"><img
                                     src="/icon/trash.png" alt=""></button>
                         </div>
@@ -127,36 +126,40 @@
             <div class="modal-content">
                 <section>
                     <label>ชื่อ</label>
-                    <input class="add-text-input" v-model="currentExpert.name" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
+                    <input class="add-text-input" v-model="currentExpert.name" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
                     <label>ชื่อ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentExpert.name_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.name_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
                     <label>ที่อยู่</label>
-                    <input class="add-text-input" v-model="currentExpert.address" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.address" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
                     <label>ที่อยู่ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentExpert.address_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter address in English" required />
+                    <input class="add-text-input" v-model="currentExpert.address_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
                     <label>เบอร์โทร</label>
-                    <input class="add-text-input" v-model="currentExpert.phoneNumber" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.phoneNumber" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
                     <label>Email</label>
-                    <input class="add-text-input" v-model="currentExpert.email" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
+                    <input class="add-text-input" v-model="currentExpert.email" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
                     <label>คำอธิบาย</label>
-                    <textarea class="add-text-input" v-model="currentExpert.description" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter description"></textarea>
+                    <textarea class="add-text-input" v-model="currentExpert.description" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description"></textarea>
                     <label>คำอธิบาย (อังกฤษ)</label>
-                    <textarea class="add-text-input" v-model="currentExpert.description_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                    <textarea class="add-text-input" v-model="currentExpert.description_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit"
                         placeholder="Enter description in English"></textarea>
                     <label>Tags</label>
                     <div class="tags-input-container">
-                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange" @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
+                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange"
+                            @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
                             placeholder="Add a tag" />
                         <div class="tag" v-for="(tag, index) in currentExpert.tags" :key="index">
                             {{ tag }}
                             <button type="button" @click="removeTag(index)">x</button>
                         </div>
-                        
+
 
                         <div v-if="filteredTags.length" class="tags-suggestions">
                             <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
@@ -169,7 +172,7 @@
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
                         <option value="3">Type 3</option>
-                        
+
                     </select>
                     <label>Image</label>
                     <div class="image-upload-container">
@@ -190,7 +193,8 @@
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">{{ showModalEdit ? 'Update without publish' : 'Add without publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">{{ showModalEdit ?
+                    'Update without publish' : 'Add without publish' }}</button>
                 <button type="button" class="confirm-btn" @click.prevent="submitExpert(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
@@ -212,13 +216,19 @@
 </template>
 
 <script setup>
-definePageMeta({
-    layout: "admin",
-});
+definePageMeta({ layout: "admin" });
+
 import { ref, onMounted, computed, nextTick } from 'vue';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
+import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+
+import { useExperts } from '~/composables/useExperts';
+import { useUpload } from '~/composables/useUpload';
+
+const { getExperts, updateExpert, createExpert, deleteExpert } = useExperts();
+const { uploadImage } = useUpload();
 
 const apiEndpoint = 'experts';
 const searchQuery = ref('');
@@ -232,363 +242,333 @@ const showModalAddExpert = ref(false);
 const showModalEdit = ref(false);
 const sortBy = ref(null);
 const sortDirection = ref(1);
+
 const currentExpert = ref({
-    id: null,
-    name: '',
-    name_en: '', // Add name_en property
-    address: '',
-    address_en: '', // Add address_en property
-    phoneNumber: '',
-    email: '', // Add email property
-    description: '', // Add description property
-    description_en: '', // Add description_en property
-    status: 1,
-    tags: [], // Add tags property
-    image: '', // Add image property
-    type: 1, // Add type property
+  id: null,
+  name: '',
+  name_en: '',
+  address: '',
+  address_en: '',
+  phoneNumber: '',
+  email: '',
+  description: '',
+  description_en: '',
+  status: 1,
+  tags: [],
+  image: null,   // preview: dataURL or path
+  type: 1,
 });
-const newTag = ref('');
-const isDragging = ref(false);
+
+// -------- Image cropper --------
 const fileInput = ref(null);
-const filteredTags = ref([]);
-const cropperInstance = ref(null);
-const croppingImage = ref(null);
 const showCropper = ref(false);
+const croppingImage = ref(null);   // dataURL for cropper
+const cropperInstance = ref(null);
 const cropperImage = ref(null);
-const allTags = ref(['tag1', 'tag2', 'tag3']); // Example tags, replace with actual tags
-const originalImage = ref(''); // Store the original image before cropping
 
-const triggerFileInput = () => {
-    fileInput.value.click();
-};
+// keep the cropped image as a real File to upload
+const pendingImageFile = ref(null);
 
-const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
-};
+// helper: Blob -> dataURL for preview
+const blobToDataURL = (blob) =>
+  new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result));
+    fr.onerror = reject;
+    fr.readAsDataURL(blob);
+  });
+
+const triggerFileInput = () => fileInput.value && fileInput.value.click();
 
 const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            originalImage.value = currentExpert.value.image; // Save the original image
-            croppingImage.value = reader.result;
-            showCropper.value = true;
-            nextTick(() => {
-                cropperInstance.value = new Cropper(cropperImage.value, {
-                    aspectRatio: 2 / 3,
-                    viewMode: 2,
-                    autoCropArea: 1
-                });
-            });
-        };
-        reader.readAsDataURL(file);
-    } else {
-        alert('Only JPEG and PNG files are allowed.');
-    }
+  const input = event.target;
+  const file = input && input.files ? input.files[0] : null;
+  if (!file) return;
+  if (!(file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp')) {
+    alert('Only JPEG, PNG or WebP files are allowed.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    croppingImage.value = reader.result;
+    showCropper.value = true;
+    nextTick(() => {
+      cropperInstance.value = new Cropper(cropperImage.value, {
+        aspectRatio: 2 / 3, // portrait for expert
+        viewMode: 2,
+        autoCropArea: 1,
+      });
+    });
+  };
+  reader.readAsDataURL(file);
 };
 
-const cropImage = () => {
-    if (cropperInstance.value) {
-        const canvas = cropperInstance.value.getCroppedCanvas();
-        currentExpert.value.image = canvas.toDataURL('image/jpeg');
-        showCropper.value = false;
-        cropperInstance.value.destroy();
-    }
+const cropImage = async () => {
+  if (!cropperInstance.value) return;
+  const canvas = cropperInstance.value.getCroppedCanvas();
+  if (!canvas) {
+    alert('Crop failed. Please try again.');
+    return;
+  }
+  const blob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
+  if (!blob) {
+    alert('Could not create image blob');
+    return;
+  }
+  pendingImageFile.value = new File([blob], `expert_${Date.now()}.png`, { type: 'image/png' });
+  currentExpert.value.image = await blobToDataURL(blob); // preview
+  showCropper.value = false;
+  cropperInstance.value.destroy();
+  cropperInstance.value = null;
 };
 
 const cancelCrop = () => {
-    currentExpert.value.image = originalImage.value; // Restore the original image
-    showCropper.value = false;
-    cropperInstance.value.destroy();
+  showCropper.value = false;
+  if (cropperInstance.value) cropperInstance.value.destroy();
+  cropperInstance.value = null;
 };
 
 const removeImage = () => {
-    currentExpert.value.image = '';
+  currentExpert.value.image = null;
+  pendingImageFile.value = null;
 };
 
-const toggleStatus = async (expert) => {
-    try {
-        const newStatus = !expert.status;
-        const response = await fetch(`/api/${apiEndpoint}/${expert.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...expert, status: newStatus ? 1 : 0 }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update expert status.');
-        }
-
-        expert.status = newStatus;
-    } catch (error) {
-        alert('Error updating expert status.');
-        console.error(error);
-    }
-};
-
-const fetchExperts = async () => {
-    try {
-        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
-        const expertsWithTags = await Promise.all(response.map(async (expert) => {
-            const tagsResponse = await fetchAllTagsForExpert(expert.id);
-            return { ...expert, selected: false, tags: tagsResponse.map(tag => tag.text) };
-        }));
-        experts.value = expertsWithTags;
-        expertsNum.value = experts.value.length;
-    } catch (error) {
-        alert('Error fetching experts.');
-        console.error('Error fetching experts:', error.message, error.stack);
-    }
-};
-
-const fetchAllTagsForExpert = async (expertId) => {
-    try {
-        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`,{headers: { 'CKH': '541986Cocon' },});
-        return Array.isArray(response) ? response : [];
-    } catch (error) {
-        console.error('Error fetching tags:', error.message, error.stack);
-        alert('Error fetching tags.');
-        return [];
-    }
-};
-
-const editItem = (expert) => {
-    currentExpert.value = { 
-        ...expert, 
-        status: !!expert.status,
-        tags: [...expert.tags], 
-        image: expert.image || '' 
-    };
-    showModalEdit.value = true;
-};
-
-
-const filteredSortedExperts = computed(() => {
-    let filtered = experts.value.filter(expert =>
-        expert.id.toString().includes(searchQuery.value) ||
-        expert.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        expert.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        expert.phoneNumber.includes(searchQuery.value) ||
-        expert.email.toLowerCase().includes(searchQuery.value.toLowerCase()) || // Search by email
-        expert.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase())) // Search by prefix
-    );
-
-    if (sortBy.value) {
-        filtered.sort((a, b) => {
-            let valA = a[sortBy.value];
-            let valB = b[sortBy.value];
-
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'name' || sortBy.value === 'address' || sortBy.value === 'email') return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            if (sortBy.value === 'phoneNumber') return (valA - valB) * sortDirection.value;
-            return 0;
-        });
-    }
-    return filtered;
-});
-
-const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
-        sortBy.value = column;
-        sortDirection.value = column === 'status' ? -1 : 1;
-    }
-};
-
-const openAddExpertModal = () => {
-    currentExpert.value = {
-        id: null,
-        name: '',
-        name_en: '', 
-        address: '',
-        address_en: '',
-        phoneNumber: '',
-        email: '', // Add email property
-        description: '',
-        description_en: '',
-        status: 1,
-        tags: [],
-        image: '',
-        type: 1, // Add type property
-    };
-    showModalAddExpert.value = true;
-};
-
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedExperts = experts.value.filter(expert => expert.selected);
-        if (selectedExperts.length === 0) {
-            alert('No experts selected.');
-            return;
-        }
-
-        const updatePromises = selectedExperts.map(expert =>
-            fetch(`/api/${apiEndpoint}/${expert.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...expert, status: publish ? 1 : 0 })
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedExperts.forEach(expert => {
-            expert.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
-    } catch {
-        alert('Failed to update expert status.');
-    }
-};
-
-const submitExpert = async (publish) => {
-    if (!currentExpert.value.name.trim() || !currentExpert.value.name_en.trim() || !currentExpert.value.address.trim() || !currentExpert.value.address_en.trim() || !currentExpert.value.phoneNumber.trim() || !currentExpert.value.email.trim()) {
-        alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
-        return;
-    }
-
-    try {
-        const isUpdate = !!currentExpert.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentExpert.value.id}` : `/api/${apiEndpoint}`;
-
-        const payload = {
-            id: currentExpert.value.id,
-            name: currentExpert.value.name,
-            name_en: currentExpert.value.name_en, // Include name_en in payload
-            address: currentExpert.value.address,
-            address_en: currentExpert.value.address_en, // Include address_en in payload
-            phoneNumber: currentExpert.value.phoneNumber,
-            email: currentExpert.value.email, // Include email in payload
-            description: currentExpert.value.description, // Include description in payload
-            description_en: currentExpert.value.description_en, // Include description_en in payload
-            status: publish ? 1 : 0,
-            tags: currentExpert.value.tags, // Include tags in payload
-            image: currentExpert.value.image || '', // Include image in payload
-            type: currentExpert.value.type, // Include type in payload
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the expert.');
-        }
-
-        const result = await response.json();
-        if (!isUpdate) {
-            currentExpert.value.id = result.id;
-            alert('Expert added successfully.');
-        } else {
-            alert('Expert updated successfully.');
-        }
-
-        showModalAddExpert.value = false;
-        showModalEdit.value = false;
-        fetchExperts();
-    } catch (error) {
-        alert('Error while submitting expert.');
-        console.error('Submit Expert Error:', error);
-    }
-};
-
-const closeModal = () => {
-    showModalAddExpert.value = false;
-    showModalEdit.value = false;
-};
-
-const askDelete = (id, name) => {
-    deleteId.value = id;
-    deleteName.value = name;
-    showModal.value = true;
-};
-
-const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete expert.');
-        }
-
-        experts.value = experts.value.filter(expert => expert.id !== deleteId.value);
-        expertsNum.value = experts.value.length;
-
-        showModal.value = false;
-        alert('Expert deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting expert: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-const cancelDelete = () => {
-    showModal.value = false;
-};
+// -------- Tags --------
+const newTag = ref('');
+const filteredTags = ref([]);
+const allTags = ref(['tag1', 'tag2', 'tag3']); // TODO replace
 
 const addTag = () => {
-    if (newTag.value.trim() !== '' && !currentExpert.value.tags.includes(newTag.value.trim())) {
-        currentExpert.value.tags.push(newTag.value.trim());
-    }
-    newTag.value = ''; 
-    filteredTags.value = [];
-    currentExpert.value = { ...currentExpert.value }; // Ensure the image is preserved
+  const t = newTag.value.trim();
+  if (t && !currentExpert.value.tags.includes(t)) currentExpert.value.tags.push(t);
+  newTag.value = '';
+  filteredTags.value = [];
 };
 
-const removeTag = (index) => {
-    currentExpert.value.tags.splice(index, 1);
-};
+const removeTag = (index) => currentExpert.value.tags.splice(index, 1);
 
 const filterTags = () => {
-    const prefix = newTag.value.toLowerCase();
-    filteredTags.value = allTags.value.filter(tag => tag.toLowerCase().startsWith(prefix) && !currentExpert.value.tags.includes(tag));
+  const prefix = newTag.value.toLowerCase();
+  filteredTags.value = allTags.value.filter(
+    (tag) => tag.toLowerCase().startsWith(prefix) && !currentExpert.value.tags.includes(tag)
+  );
 };
 
 const selectTag = (tag) => {
-    currentExpert.value.tags.push(tag);
-    newTag.value = '';
-    filteredTags.value = [];
+  currentExpert.value.tags.push(tag);
+  newTag.value = '';
+  filteredTags.value = [];
 };
 
-const handleInputChange = () => {
-    currentExpert.value.image = currentExpert.value.image; // Explicitly set the image property to preserve it
+// -------- Fetch + table --------
+const fetchExperts = async () => {
+  try {
+    const list = await getExperts();
+    experts.value = list.map((e) => ({ ...e, selected: false, tags: Array.isArray(e.tags) ? e.tags : [] }));
+    expertsNum.value = experts.value.length;
+  } catch (error) {
+    alert('Error fetching experts.');
+    console.error('Error fetching experts:', error);
+  }
 };
 
-const preventFormSubmit = (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-    }
+const editItem = (expert) => {
+  currentExpert.value = {
+    ...expert,
+    status: expert.status ? 1 : 0,
+    tags: Array.isArray(expert.tags) ? [...expert.tags] : [],
+    image: expert.image || null, // path for existing
+  };
+  pendingImageFile.value = null; // only set when user crops a new one
+  showModalEdit.value = true;
 };
 
-onMounted(() => {
-    fetchExperts();
+const filteredSortedExperts = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase();
+  let filtered = experts.value.filter((expert) => {
+    const byId = String(expert.id || '').includes(q);
+    const byName = (expert.name || '').toLowerCase().includes(q);
+    const byAddr = (expert.address || '').toLowerCase().includes(q);
+    const byPhone = (expert.phoneNumber || '').includes(q);
+    const byEmail = (expert.email || '').toLowerCase().includes(q);
+    const byTag = Array.isArray(expert.tags) && expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
+    return byId || byName || byAddr || byPhone || byEmail || byTag;
+  });
+
+  if (sortBy.value) {
+    filtered.sort((a, b) => {
+      let valA = a[sortBy.value];
+      let valB = b[sortBy.value];
+      if (sortBy.value === 'id') return (Number(valA) - Number(valB)) * sortDirection.value;
+      if (['name', 'address', 'email'].includes(sortBy.value)) {
+        return String(valA || '').localeCompare(String(valB || ''), 'th') * sortDirection.value;
+      }
+      if (sortBy.value === 'status') return ((Number(valB) || 0) - (Number(valA) || 0)) * sortDirection.value;
+      if (sortBy.value === 'phoneNumber') return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
+      return 0;
+    });
+  }
+  return filtered;
 });
 
+const toggleSort = (column) => {
+  if (sortBy.value === column) sortDirection.value *= -1;
+  else {
+    sortBy.value = column;
+    sortDirection.value = column === 'status' ? -1 : 1;
+  }
+};
+
+const openAddExpertModal = () => {
+  currentExpert.value = {
+    id: null,
+    name: '',
+    name_en: '',
+    address: '',
+    address_en: '',
+    phoneNumber: '',
+    email: '',
+    description: '',
+    description_en: '',
+    status: 1,
+    tags: [],
+    image: null,  // no preview
+    type: 1,
+  };
+  pendingImageFile.value = null;
+  showModalAddExpert.value = true;
+};
+
+// -------- Status toggle (no image change) --------
+const toggleStatus = async (expert) => {
+  try {
+    const newStatus = expert.status ? 0 : 1;
+    // keep existing image path; do NOT send base64
+    await updateExpert(expert.id, { status: newStatus, image: expert.image ?? null });
+    expert.status = newStatus;
+  } catch (error) {
+    alert('Error updating expert status.');
+    console.error(error);
+  }
+};
+
+const bulkUpdateStatus = async (publish) => {
+  try {
+    const selected = experts.value.filter((e) => e.selected);
+    if (selected.length === 0) {
+      alert('No experts selected.');
+      return;
+    }
+    await Promise.all(
+      selected.map((e) =>
+        updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null })
+      )
+    );
+    selected.forEach((e) => (e.status = publish ? 1 : 0));
+    alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
+  } catch (e) {
+    console.error(e);
+    alert('Failed to update expert status.');
+  }
+};
+
+// -------- Submit (upload image if cropped, send PATH) --------
+const submitExpert = async (publish) => {
+  if (
+    !currentExpert.value.name.trim() ||
+    !currentExpert.value.name_en.trim() ||
+    !currentExpert.value.address.trim() ||
+    !currentExpert.value.address_en.trim() ||
+    !currentExpert.value.phoneNumber.trim() ||
+    !currentExpert.value.email.trim()
+  ) {
+    alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
+    return;
+  }
+
+  try {
+    const isUpdate = !!currentExpert.value.id;
+
+    // If user cropped a new image, upload the File
+    let imagePath = typeof currentExpert.value.image === 'string' ? currentExpert.value.image : null;
+
+    if (pendingImageFile.value) {
+      const finalName = `expert_${Date.now()}.webp`;
+      const uploadRes = await uploadImage(pendingImageFile.value, finalName);
+      if (uploadRes && uploadRes.error) throw new Error(uploadRes.error);
+      imagePath = (uploadRes && uploadRes.path) || `/images/${finalName}`;
+    }
+
+    const payload = {
+      name: currentExpert.value.name,
+      name_en: currentExpert.value.name_en,
+      address: currentExpert.value.address,
+      address_en: currentExpert.value.address_en,
+      phoneNumber: currentExpert.value.phoneNumber,
+      email: currentExpert.value.email,
+      description: currentExpert.value.description,
+      description_en: currentExpert.value.description_en,
+      status: publish ? 1 : 0,
+      image: imagePath || '', // PATH only
+      type: Number.isFinite(Number(currentExpert.value.type)) ? Number(currentExpert.value.type) : 1,
+      // tags: currentExpert.value.tags, // include if backend supports it
+    };
+
+    if (isUpdate) {
+      await updateExpert(currentExpert.value.id, payload);
+      alert('Expert updated successfully.');
+    } else {
+      const res = await createExpert(payload);
+      currentExpert.value.id = res && res.id ? res.id : null;
+      alert('Expert added successfully.');
+    }
+
+    showModalAddExpert.value = false;
+    showModalEdit.value = false;
+    pendingImageFile.value = null;
+    fetchExperts();
+  } catch (error) {
+    alert('Error while submitting expert.');
+    console.error('Submit Expert Error:', error);
+  }
+};
+
+// -------- Delete --------
+const askDelete = (id, name) => {
+  deleteId.value = id;
+  deleteName.value = name;
+  showModal.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    await deleteExpert(deleteId.value);
+    experts.value = experts.value.filter((e) => e.id !== deleteId.value);
+    expertsNum.value = experts.value.length;
+    showModal.value = false;
+    alert('Expert deleted successfully.');
+  } catch (error) {
+    alert(`Error deleting expert: ${error && error.message ? error.message : 'Unknown error'}`);
+    console.error(error);
+  } finally {
+    deleteId.value = null;
+  }
+};
+
+const cancelDelete = () => (showModal.value = false);
+const closeModal = () => {
+  showModalAddExpert.value = false;
+  showModalEdit.value = false;
+};
+
+onMounted(fetchExperts);
+
 const toggleSelectAll = () => {
-    experts.value.forEach(expert => expert.selected = selectAll.value);
+  experts.value.forEach((e) => (e.selected = selectAll.value));
 };
 </script>
+
+
 
 <style scoped>
 .status-toggle {
@@ -642,7 +622,8 @@ const toggleSelectAll = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -749,7 +730,8 @@ const toggleSelectAll = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -1311,6 +1293,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1550px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
@@ -1318,6 +1301,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1344,6 +1328,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;

@@ -3,9 +3,9 @@
     <Navbar selecto="expert" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/experts">{{ $t('Expert') }}</NuxtLinkLocale> /
-        <NuxtLinkLocale :to="'/experts/details/'+this.$route.params.id">{{ expert?.name || 'No Name'}}</NuxtLinkLocale>
+      <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+      <NuxtLinkLocale to="/experts">{{ $t('Expert') }}</NuxtLinkLocale> /
+      <NuxtLinkLocale :to="'/experts/details/' + this.$route.params.id">{{ expert?.name || 'No Name' }}</NuxtLinkLocale>
     </div>
     <div class="all-container">
       <div style="height: 10rem"></div>
@@ -23,12 +23,7 @@
       <!-- Expert Profile Section -->
       <div class="expert-container" v-if="expert">
         <div class="expert-content">
-          <img
-            :src="expert?.image || tlImage"
-            class="expert-image"
-            alt="Expert Image"
-            draggable="false"
-          />
+          <img :src="expert?.image || tlImage" class="expert-image" alt="Expert Image" draggable="false" />
 
           <div class="expert-details">
             <h1 class="expert-name">{{ expert?.name }}</h1>
@@ -42,12 +37,7 @@
             <div class="tags">
               <p><strong>แท็ก:</strong></p>
               <div v-if="expert?.tags && expert.tags.length">
-                <span
-                  v-for="(tag, index) in expert.tags"
-                  :key="index"
-                  class="tag"
-                  @click="filterByTag(tag)"
-                >
+                <span v-for="(tag, index) in expert.tags" :key="index" class="tag" @click="filterByTag(tag)">
                   {{ tag }}
                 </span>
               </div>
@@ -73,6 +63,9 @@
 <script>
 import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
+import { useExperts } from '~/composables/useExperts';
+
+const { getExpertById } = useExperts();
 
 export default {
   data() {
@@ -83,55 +76,69 @@ export default {
     };
   },
   async mounted() {
-    const cid = this.$route.params.id;
+    const rawId = this.$route.params.id;
+    const id = Number(rawId);
+    if (!Number.isFinite(id)) {
+      this.error = "รหัสผู้เชี่ยวชาญไม่ถูกต้อง";
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/experts`, {
-      headers: {
-       "CKH": '541986Cocon',
-       
-      },
-    });
-      if (!response.ok)
-        throw new Error(
-          `Failed to fetch expert details: ${response.statusText}`
-        );
-      const data = await response.json();
-      this.expert =
-        data.find((expert) => expert.id === parseInt(cid) && expert.status) ||
-        null;
-
-      // Ensure expert tags are properly formatted
-      if (this.expert && typeof this.expert.tags === "string") {
-        try {
-          this.expert.tags = JSON.parse(this.expert.tags);
-        } catch (error) {
-          console.error("Error parsing tags in frontend:", error);
-          this.expert.tags = [];
-        }
-      }
-
-      if (this.expert) {
-        this.updateHead();
-      } else {
+      const data = await getExpertById(id); // returns a single object
+      if (!data) {
         this.error = "ไม่พบข้อมูลผู้เชี่ยวชาญ กรุณาตรวจสอบหมายเลขอีกครั้ง";
+        return;
       }
-    } catch (error) {
+
+      // If you want to hide unpublished profiles on the public page:
+      if (data.status === 0 || data.status === false) {
+        this.error = "หน้านี้ยังไม่พร้อมแสดง (ผู้เชี่ยวชาญยังไม่เผยแพร่)";
+        return;
+      }
+
+      // Normalize tags
+      let tags = data.tags;
+      if (typeof tags === "string") {
+        try {
+          // try JSON first
+          tags = JSON.parse(tags);
+          if (!Array.isArray(tags)) {
+            // fallback: split by comma
+            tags = String(data.tags)
+              .split(",")
+              .map(s => s.trim())
+              .filter(Boolean);
+          }
+        } catch {
+          // comma-separated fallback
+          tags = String(data.tags || "")
+            .split(",")
+            .map(s => s.trim())
+            .filter(Boolean);
+        }
+      } else if (!Array.isArray(tags)) {
+        tags = [];
+      }
+
+      this.expert = { ...data, tags };
+      this.updateHead();
+    } catch (e) {
+      console.error(e);
       this.error = "ไม่สามารถโหลดข้อมูลผู้เชี่ยวชาญได้ กรุณาลองใหม่อีกครั้ง";
     }
   },
   methods: {
     updateHead() {
-      if (this.expert) {
-        useHead({
-          title: `🥥 Expert - ${this.expert.name}`,
-          meta: [
-            {
-              name: "description",
-              content: `ข้อมูลเกี่ยวกับ ${this.expert.name || "ผู้เชี่ยวชาญ"}.`,
-            },
-          ],
-        });
-      }
+      if (!this.expert) return;
+      useHead({
+        title: `🥥 Expert - ${this.expert.name}`,
+        meta: [
+          {
+            name: "description",
+            content: `ข้อมูลเกี่ยวกับ ${this.expert.name || "ผู้เชี่ยวชาญ"}.`,
+          },
+        ],
+      });
     },
     filterByTag(tag) {
       this.$router.push({ path: "/experts", query: { tag } });
@@ -139,6 +146,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .back-btn-container {

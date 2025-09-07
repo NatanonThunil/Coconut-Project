@@ -91,6 +91,8 @@
 </template>
 
 <script>
+import { useExperts } from '~/composables/useExperts';
+const { getExperts } = useExperts();
 export default {
   data() {
     return {
@@ -122,17 +124,12 @@ export default {
     async fetchExperts() {
       try {
         this.isLoading = true;
-        const response = await fetch("/api/experts", {
-      headers: {
-       "CKH": '541986Cocon',
        
-      },
-    });
-        if (!response.ok) throw new Error("Failed to fetch experts");
-        const data = await response.json();
+        const data = await getExperts();
         this.experts = data.map((expert) => ({
           ...expert,
           category: this.mapCategory(expert.type),
+          // status: expert.status === 1,
         }));
       } catch (error) {
         console.error("Error fetching experts:", error);
