@@ -2,7 +2,8 @@
   <Navbar selecto="coconutdata" />
      <div style="height: 8rem"></div>
     <div class="faqs-path">
-     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/<NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
+     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
+     <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
     </div>
     <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>

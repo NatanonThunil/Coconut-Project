@@ -2,7 +2,7 @@
     <Navbar selecto="chainvalues" />
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>/
         <NuxtLinkLocale :to="'/coconut-information/value-chain/' + this.$route.params.id">{{ chain_values?.title || 'No Title' }}</NuxtLinkLocale>
     </div>

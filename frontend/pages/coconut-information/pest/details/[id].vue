@@ -5,6 +5,7 @@
       <div style="height: 8rem"></div>
       <!-- Breadcrumb -->
       <div class="pest-path">
+        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
         <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
           {{

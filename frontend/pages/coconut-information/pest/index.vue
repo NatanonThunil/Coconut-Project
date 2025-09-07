@@ -2,7 +2,8 @@
   <Navbar selecto="pests" />
   <div style="height: 8rem"></div>
   <div class="faqs-path">
-    <NuxtLinkLocale to="/pests">{{$t('Pest') }}</NuxtLinkLocale>
+    <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/pests">{{ $t('Pest') }}</NuxtLinkLocale>
   </div>
   <h1 class="context-header">{{ $t("Pest") }}</h1>
   <div style="height: 5rem"></div>
@@ -43,7 +44,8 @@
     <CardShimmer v-for="index in 30" :key="index" />
   </div>
   <div v-else-if="filteredPests.length === 0" class="no-results">
-    <img class="no-result-image"
+    <img
+      class="no-result-image"
       src="/icon/notfound.png"
       draggable="false"
       alt="No pests found"
@@ -56,11 +58,16 @@
       :key="pest.id"
       :to="`/coconut-information/pest/details/${pest.id}`"
     >
-      <PestCard
-        :image="pest.image || defaultImage"
-        :title="currentLocale === 'th' ? pest.name : pest.name_en"
-        :description="pest.sci_name || 'No description available'"
-      />
+      <!-- ✅ PestCard inline -->
+      <div class="pest-card">
+        <img :src="pest.image || defaultImage" alt="pest image" />
+        <div class="card-content">
+          <h3>
+            {{ currentLocale === "th" ? pest.name : pest.name_en }}
+          </h3>
+          <p>{{ pest.sci_name || 'No description available' }}</p>
+        </div>
+      </div>
     </NuxtLinkLocale>
   </div>
 
@@ -85,18 +92,12 @@
 
 <script>
 import { useHead } from "@vueuse/head";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/swiper-bundle.css";
-import PestCard from "@/components/PestCard.vue"; // Add this import
-import { useI18n } from "vue-i18n"; // Add this import
+import { useI18n } from "vue-i18n";
 import { usePests } from "@/composables/usePests";
+
 const { getPests } = usePests();
+
 export default {
-  components: {
-    Swiper,
-    SwiperSlide,
-    PestCard, // Register the component
-  },
   data() {
     return {
       pests: [],
@@ -132,7 +133,7 @@ export default {
   },
   computed: {
     currentLocale() {
-      const { locale } = useI18n(); // Correct the usage of useI18n
+      const { locale } = useI18n();
       return locale.value;
     },
     totalPages() {
@@ -146,17 +147,15 @@ export default {
   async mounted() {
     window.scrollTo(0, 0);
     try {
-        setTimeout(async () => {
-            const data = await getPests(); // Ensure `await` is used to resolve the promise
-            this.pests = Array.isArray(data) ? data : []; // Ensure `data` is an array
-            this.filteredPests = this.pests;
-            this.loading = false;
-        }, 200);
+      const data = await getPests();
+      this.pests = Array.isArray(data) ? data : [];
+      this.filteredPests = this.pests;
+      this.loading = false;
     } catch (error) {
-        console.error("Error fetching pests:", error);
-        this.pests = [];
-        this.filteredPests = [];
-        this.loading = false;
+      console.error("Error fetching pests:", error);
+      this.pests = [];
+      this.filteredPests = [];
+      this.loading = false;
     }
   },
   methods: {
@@ -176,7 +175,6 @@ export default {
         return matchesQuery && matchesCategory && matchesType;
       });
     },
-
     changePage(direction) {
       if (direction === "next" && this.currentPage < this.totalPages) {
         this.currentPage++;
@@ -190,15 +188,6 @@ export default {
       } else {
         this.pageInput = this.currentPage;
       }
-    },
-    resetFilters() {
-      this.filters.category.model = "0";
-      this.filters.type.model = "1";
-      this.filterPests();
-    },
-    clearSearch() {
-      this.searchQuery = "";
-      this.filterPests();
     },
   },
   setup() {
@@ -216,6 +205,7 @@ export default {
 </script>
 
 <style scoped>
+/* ===== Filters ===== */
 .all-filter-container {
   margin-top: 1rem;
   gap: 1rem;
@@ -224,16 +214,9 @@ export default {
   justify-self: center;
   width: 60%;
 }
-
-.filters-container {
-  display: flex;
-  justify-content: center;
-}
-
 .filter-dropdown {
   width: 100%;
 }
-
 .filter-select {
   width: 100%;
   padding: 0.8rem;
@@ -242,122 +225,15 @@ export default {
   background-color: #fff;
   cursor: pointer;
 }
-
 .filter-select:focus {
   border-color: #4e6d16;
 }
 
-/* Swiper Styles */
-.filter-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  padding: 0rem 20%;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.swiper-pagination-bullet {
-  background: #4e6d16;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  color: #4e6d16;
-}
-
-.information-card {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
-  min-width: 300px;
-  /* Minimum size for big cards */
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.information-card:hover {
-  transform: scale(1.05);
-}
-
-.information-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-}
-
-.information-card .card-content {
-  padding: 1rem;
-  text-align: center;
-}
-
-/* PestCards Styles */
-.pest-card {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
-  min-width: 300px;
-  /* Minimum size for big cards */
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.pest-card:hover {
-  transform: scale(1.05);
-}
-
-.pest-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-}
-
-.pest-card .card-content {
-  padding: 1rem;
-  text-align: center;
-}
-
-/* Small Card Styles */
-.small-card {
-  width: 100%;
-  max-width: 200px;
-  opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.small-card:hover {
-  opacity: 1;
-}
-
-/* Existing Styles */
+/* ===== Search Box ===== */
 .context-header {
   display: flex;
   justify-self: center;
 }
-
 label.coconut-v-input {
   transition: ease-in-out 0.5s;
   display: flex;
@@ -370,11 +246,9 @@ label.coconut-v-input {
   cursor: text;
   animation: btnexpand 0.5s ease-in-out forwards;
 }
-
 label.coconut-v-input:hover {
   outline: 4px solid #4e6d16;
 }
-
 label.coconut-v-input img {
   display: flex;
   align-self: center;
@@ -382,7 +256,6 @@ label.coconut-v-input img {
   width: 10%;
   height: 2rem;
 }
-
 label.coconut-v-input input {
   all: unset;
   padding-left: 1rem;
@@ -391,17 +264,8 @@ label.coconut-v-input input {
   width: 90%;
 }
 
-@keyframes shimmer-effect {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.coconut-v-cards-container {
+/* ===== Cards Container (เหมือน coconut) ===== */
+.all-event-card-container {
   height: auto;
   width: 80%;
   display: flex;
@@ -412,6 +276,32 @@ label.coconut-v-input input {
   margin: 2rem;
 }
 
+/* ===== PestCard เท่ากับ CoconutCard ===== */
+.pest-card {
+  height: 18rem;
+  width: 15rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+.pest-card:hover {
+  transform: scale(1.05);
+}
+.pest-card img {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+}
+.pest-card .card-content {
+  padding: 0.5rem;
+  text-align: center;
+}
+
+/* ===== Loading Shimmer ===== */
 .CardShimmer {
   height: 18rem;
   width: 15rem;
@@ -420,8 +310,16 @@ label.coconut-v-input input {
   background-size: 200% 100%;
   animation: shimmer-effect 1.5s infinite;
 }
+@keyframes shimmer-effect {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
 
-/* Pagination */
+/* ===== Pagination ===== */
 .pagination {
   display: flex;
   justify-content: center;
@@ -429,7 +327,6 @@ label.coconut-v-input input {
   gap: 1rem;
   margin: 2rem;
 }
-
 .pagination button {
   padding: 0.5rem 1rem;
   background-color: #4e6d16;
@@ -438,12 +335,10 @@ label.coconut-v-input input {
   border-radius: 5px;
   cursor: pointer;
 }
-
 .pagination button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 .pagination .page-input {
   width: 3rem;
   text-align: center;
@@ -452,22 +347,9 @@ label.coconut-v-input input {
   padding: 0.3rem;
 }
 
-.pagination .pagination-line {
-  width: fit-content;
-  min-width: 20%;
-  height: 4px;
-  background-color: #4e6d16;
-}
-
-.pagination-controller {
-  justify-content: center;
-  display: flex;
-  justify-content: space-around;
-  width: 20rem;
-}
-
+/* ===== Responsive ===== */
 @media (max-width: 662px) {
-  .coconut-v-cards-container {
+  .all-event-card-container {
     width: 90%;
   }
 }
@@ -477,95 +359,9 @@ label.coconut-v-input input {
     opacity: 0;
     width: 20%;
   }
-
   100% {
     opacity: 1;
     width: 60%;
   }
-}
-
-.bulge-card {
-  transform: scale(1.1);
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Filter Container Styles */
-.homeeventfiltercontainer {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.filtli {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.filtli.selecto {
-  background-color: #4e6d16;
-  color: white;
-}
-
-.filtli:hover {
-  background-color: #4e6d16;
-  color: white;
-}
-
-/* New Filter Styles */
-.filtli.upstream {
-  background-color: #e0f7fa;
-}
-
-.filtli.midstream {
-  background-color: #ffecb3;
-}
-
-.filtli.downstream {
-  background-color: #ffe0b2;
-}
-
-.filtli.young-coconut {
-  background-color: #c8e6c9;
-}
-
-.filtli.mature-coconut {
-  background-color: #d1c4e9;
-}
-
-/* Dropdown Filter Styles */
-.dropdown-filter {
-  margin: 1rem 0;
-  display: flex;
-  justify-content: center;
-}
-
-.dropdown-filter select {
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-/* Fade-in effect for cards */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.all-event-card-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-  margin: 2rem;
-  justify-items: center;
 }
 </style>
