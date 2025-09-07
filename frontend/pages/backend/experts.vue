@@ -1,11 +1,13 @@
 <template>
-    <div style="height: 5rem;"></div>
+    <div style="height: 5 rem;"></div>
     <div class="table-head-text-container">
         <h1>จัดการผู้เชี่ยวชาญ</h1>
         <p>มีผู้เชี่ยวชาญทั้งหมด {{ expertsNum }}</p>
     </div>
+
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
+
         <div class="expert-check-publish">
             <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
             <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
@@ -29,45 +31,62 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Name<button @click="toggleSort('name')">
+                            <div>
+                                Name
+                                <button @click="toggleSort('name')">
                                     <div :class="{ 'rotate': sortBy === 'name' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Email<button @click="toggleSort('email')">
+                            <div>
+                                Email
+                                <button @click="toggleSort('email')">
                                     <div :class="{ 'rotate': sortBy === 'email' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Address<button @click="toggleSort('address')">
+                            <div>
+                                Address
+                                <button @click="toggleSort('address')">
                                     <div :class="{ 'rotate': sortBy === 'address' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Phone Number<button @click="toggleSort('phoneNumber')">
+                            <div>
+                                Phone Number
+                                <button @click="toggleSort('phoneNumber')">
                                     <div :class="{ 'rotate': sortBy === 'phoneNumber' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
-
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Tags<button @click="toggleSort('tags')">
+                            <div>
+                                Tags
+                                <button @click="toggleSort('tags')">
                                     <div :class="{ 'rotate': sortBy === 'tags' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Status<button @click="toggleSort('status')">
+                            <div>
+                                Status
+                                <button @click="toggleSort('status')">
                                     <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th></th>
@@ -86,7 +105,6 @@
                     <td>{{ expert.email }}</td>
                     <td>{{ expert.address }}</td>
                     <td>{{ expert.phoneNumber }}</td>
-
                     <td>{{ expert.tags.join(', ') }}</td>
                     <td>
                         <label class="status-toggle">
@@ -96,9 +114,10 @@
                     </td>
                     <td class="action-buttons">
                         <div class="action-btn-container">
-                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png" alt=""></button>
+                            <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png"
+                                    alt="" /></button>
                             <button @click="askDelete(expert.id, expert.name)" class="delete-btn"><img
-                                    src="/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt="" /></button>
                         </div>
                     </td>
                 </tr>
@@ -106,6 +125,7 @@
         </table>
     </div>
 
+    <!-- Delete modal -->
     <div v-if="showModal" class="modal-overlay">
         <div class="modal">
             <div class="text-alert-container">
@@ -119,10 +139,12 @@
         </div>
     </div>
 
+    <!-- Add/Edit modal -->
     <div v-if="showModalAddExpert || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขผู้เชี่ยวชาญ' : 'เพิ่มผู้เชี่ยวชาญ' }}</h2>
             <div class="divider"></div>
+
             <div class="modal-content">
                 <section>
                     <label>ชื่อ</label>
@@ -150,41 +172,43 @@
                     <textarea class="add-text-input" v-model="currentExpert.description_en" @input="handleInputChange"
                         @keydown.enter.prevent="preventFormSubmit"
                         placeholder="Enter description in English"></textarea>
+
+                    <!-- TAGS with Google-like predictions -->
                     <label>Tags</label>
-                    <div class="tags-input-container">
-                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange"
-                            @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
-                            placeholder="Add a tag" />
+                    <div class="tags-input-container" style="position: relative;">
+                        <input class="add-text-input" v-model="newTag" @input="onTagInput" @focus="onTagFocus"
+                            @keydown.down.prevent="moveTagHighlight(1)" @keydown.up.prevent="moveTagHighlight(-1)"
+                            @keydown.enter.prevent="confirmTag" @keydown.esc.prevent="closeTagDropdown"
+                            placeholder="Add a tag (max 5)" autocomplete="off" />
+
                         <div class="tag" v-for="(tag, index) in currentExpert.tags" :key="index">
                             {{ tag }}
                             <button type="button" @click="removeTag(index)">x</button>
                         </div>
 
-
-                        <div v-if="filteredTags.length" class="tags-suggestions">
-                            <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
-                                {{ tag }}
-                            </div>
-                        </div>
+                        
                     </div>
+
                     <label>ประเภท</label>
                     <select class="add-text-input" v-model="currentExpert.type" @input="handleInputChange" required>
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
                         <option value="3">Type 3</option>
-
                     </select>
+
                     <label>Image</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleFileUpload">
+                            @drop.prevent="handleDragDrop">
                             <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
+
                             <div v-if="currentExpert.image" class="image-preview">
                                 <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
                                 <button class="remove-btn" @click="removeImage">X</button>
                             </div>
+
                             <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
                                 class="file-uploader" ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
@@ -192,19 +216,24 @@
                     </div>
                 </section>
             </div>
+
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">{{ showModalEdit ?
-                    'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitExpert(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">
+                    {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+                </button>
+                <button type="button" class="confirm-btn" @click.prevent="submitExpert(true)">
+                    {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+                </button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
     </div>
 
-    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden>
+    <!-- Hidden input + Cropper -->
+    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden />
     <div v-if="showCropper" class="cropper-container">
         <div class="cropper-wrapper">
-            <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
+            <img ref="cropperImage" :src="croppingImage" class="cropper-preview" />
         </div>
         <div class="cropper-actions">
             <button @click="cropImage" class="crop-btn">Crop & Upload</button>
@@ -214,6 +243,7 @@
 
     <div style="height: 5rem;"></div>
 </template>
+
 
 <script setup>
 definePageMeta({ layout: "admin" });
@@ -227,10 +257,18 @@ import 'cropperjs/dist/cropper.css';
 import { useExperts } from '~/composables/useExperts';
 import { useUpload } from '~/composables/useUpload';
 
-const { getExperts, updateExpert, createExpert, deleteExpert } = useExperts();
+const {
+  getExperts,
+  updateExpert,
+  createExpert,
+  deleteExpert,
+  getTagsByExpert,
+  setTagsForExpert,
+} = useExperts();
+
 const { uploadImage } = useUpload();
 
-const apiEndpoint = 'experts';
+/* ---------------- Table / State ---------------- */
 const searchQuery = ref('');
 const experts = ref([]);
 const expertsNum = ref(0);
@@ -242,6 +280,7 @@ const showModalAddExpert = ref(false);
 const showModalEdit = ref(false);
 const sortBy = ref(null);
 const sortDirection = ref(1);
+const isDragging = ref(false);
 
 const currentExpert = ref({
   id: null,
@@ -255,21 +294,18 @@ const currentExpert = ref({
   description_en: '',
   status: 1,
   tags: [],
-  image: null,   // preview: dataURL or path
+  image: null,
   type: 1,
 });
 
-// -------- Image cropper --------
+/* ---------------- Image cropper ---------------- */
 const fileInput = ref(null);
 const showCropper = ref(false);
-const croppingImage = ref(null);   // dataURL for cropper
+const croppingImage = ref(null);
 const cropperInstance = ref(null);
 const cropperImage = ref(null);
-
-// keep the cropped image as a real File to upload
 const pendingImageFile = ref(null);
 
-// helper: Blob -> dataURL for preview
 const blobToDataURL = (blob) =>
   new Promise((resolve, reject) => {
     const fr = new FileReader();
@@ -280,11 +316,17 @@ const blobToDataURL = (blob) =>
 
 const triggerFileInput = () => fileInput.value && fileInput.value.click();
 
+const handleDragDrop = (e) => {
+  isDragging.value = false;
+  const files = e.dataTransfer?.files;
+  if (!files?.length) return;
+  handleFileUpload({ target: { files } });
+};
+
 const handleFileUpload = (event) => {
-  const input = event.target;
-  const file = input && input.files ? input.files[0] : null;
+  const file = event.target?.files?.[0];
   if (!file) return;
-  if (!(file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp')) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
     alert('Only JPEG, PNG or WebP files are allowed.');
     return;
   }
@@ -294,7 +336,7 @@ const handleFileUpload = (event) => {
     showCropper.value = true;
     nextTick(() => {
       cropperInstance.value = new Cropper(cropperImage.value, {
-        aspectRatio: 2 / 3, // portrait for expert
+        aspectRatio: 2 / 3,
         viewMode: 2,
         autoCropArea: 1,
       });
@@ -306,17 +348,11 @@ const handleFileUpload = (event) => {
 const cropImage = async () => {
   if (!cropperInstance.value) return;
   const canvas = cropperInstance.value.getCroppedCanvas();
-  if (!canvas) {
-    alert('Crop failed. Please try again.');
-    return;
-  }
+  if (!canvas) return alert('Crop failed. Please try again.');
   const blob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
-  if (!blob) {
-    alert('Could not create image blob');
-    return;
-  }
+  if (!blob) return alert('Could not create image blob');
   pendingImageFile.value = new File([blob], `expert_${Date.now()}.png`, { type: 'image/png' });
-  currentExpert.value.image = await blobToDataURL(blob); // preview
+  currentExpert.value.image = await blobToDataURL(blob);
   showCropper.value = false;
   cropperInstance.value.destroy();
   cropperInstance.value = null;
@@ -324,7 +360,7 @@ const cropImage = async () => {
 
 const cancelCrop = () => {
   showCropper.value = false;
-  if (cropperInstance.value) cropperInstance.value.destroy();
+  cropperInstance.value?.destroy();
   cropperInstance.value = null;
 };
 
@@ -333,53 +369,74 @@ const removeImage = () => {
   pendingImageFile.value = null;
 };
 
-// -------- Tags --------
+/* ---------------- TAGS (no suggestions) ---------------- */
 const newTag = ref('');
-const filteredTags = ref([]);
-const allTags = ref(['tag1', 'tag2', 'tag3']); // TODO replace
 
-const addTag = () => {
-  const t = newTag.value.trim();
-  if (t && !currentExpert.value.tags.includes(t)) currentExpert.value.tags.push(t);
+// normalize: trim, collapse spaces, strip leading/trailing commas
+const normalizeTag = (s) =>
+  String(s || '').replace(/^[,\s]+|[,\s]+$/g, '').replace(/\s+/g, ' ').trim();
+
+const hasTag = (val) =>
+  currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
+
+// commit tag on Enter/Tab/Comma or blur
+const commitTag = (fromBlur = false) => {
+  let t = normalizeTag(newTag.value);
+  if (!t) return;
+
+  if (currentExpert.value.tags.length >= 5) {
+    alert('An expert can have up to 5 tags.');
+    if (!fromBlur) newTag.value = '';
+    return;
+  }
+
+  if (!hasTag(t)) currentExpert.value.tags.push(t);
   newTag.value = '';
-  filteredTags.value = [];
 };
 
-const removeTag = (index) => currentExpert.value.tags.splice(index, 1);
-
-const filterTags = () => {
-  const prefix = newTag.value.toLowerCase();
-  filteredTags.value = allTags.value.filter(
-    (tag) => tag.toLowerCase().startsWith(prefix) && !currentExpert.value.tags.includes(tag)
-  );
+// catch commas as separators
+const handleTagKeydown = (e) => {
+  if (e.key === ',') {
+    e.preventDefault();
+    commitTag();
+  }
 };
 
-const selectTag = (tag) => {
-  currentExpert.value.tags.push(tag);
-  newTag.value = '';
-  filteredTags.value = [];
+const removeTag = (index) => {
+  currentExpert.value.tags.splice(index, 1);
 };
 
-// -------- Fetch + table --------
+/* ---------------- Fetch + table ---------------- */
 const fetchExperts = async () => {
   try {
     const list = await getExperts();
-    experts.value = list.map((e) => ({ ...e, selected: false, tags: Array.isArray(e.tags) ? e.tags : [] }));
-    expertsNum.value = experts.value.length;
+    const withTags = await Promise.all(
+      list.map(async (e) => {
+        let tags = [];
+        try { tags = await getTagsByExpert(e.id); } catch {}
+        return { ...e, selected: false, tags };
+      })
+    );
+    experts.value = withTags;
+    expertsNum.value = withTags.length;
   } catch (error) {
     alert('Error fetching experts.');
     console.error('Error fetching experts:', error);
   }
 };
 
-const editItem = (expert) => {
+const editItem = async (expert) => {
+  let tags = expert.tags;
+  if (!Array.isArray(tags)) {
+    try { tags = await getTagsByExpert(expert.id); } catch { tags = []; }
+  }
   currentExpert.value = {
     ...expert,
     status: expert.status ? 1 : 0,
-    tags: Array.isArray(expert.tags) ? [...expert.tags] : [],
-    image: expert.image || null, // path for existing
+    tags: Array.isArray(tags) ? [...tags] : [],
+    image: expert.image || null,
   };
-  pendingImageFile.value = null; // only set when user crops a new one
+  pendingImageFile.value = null;
   showModalEdit.value = true;
 };
 
@@ -391,7 +448,8 @@ const filteredSortedExperts = computed(() => {
     const byAddr = (expert.address || '').toLowerCase().includes(q);
     const byPhone = (expert.phoneNumber || '').includes(q);
     const byEmail = (expert.email || '').toLowerCase().includes(q);
-    const byTag = Array.isArray(expert.tags) && expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
+    const byTag = Array.isArray(expert.tags) &&
+      expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
     return byId || byName || byAddr || byPhone || byEmail || byTag;
   });
 
@@ -404,7 +462,9 @@ const filteredSortedExperts = computed(() => {
         return String(valA || '').localeCompare(String(valB || ''), 'th') * sortDirection.value;
       }
       if (sortBy.value === 'status') return ((Number(valB) || 0) - (Number(valA) || 0)) * sortDirection.value;
-      if (sortBy.value === 'phoneNumber') return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
+      if (sortBy.value === 'phoneNumber') {
+        return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
+      }
       return 0;
     });
   }
@@ -432,18 +492,18 @@ const openAddExpertModal = () => {
     description_en: '',
     status: 1,
     tags: [],
-    image: null,  // no preview
+    image: null,
     type: 1,
   };
+  newTag.value = '';
   pendingImageFile.value = null;
   showModalAddExpert.value = true;
 };
 
-// -------- Status toggle (no image change) --------
+/* ---------------- Status toggle ---------------- */
 const toggleStatus = async (expert) => {
   try {
     const newStatus = expert.status ? 0 : 1;
-    // keep existing image path; do NOT send base64
     await updateExpert(expert.id, { status: newStatus, image: expert.image ?? null });
     expert.status = newStatus;
   } catch (error) {
@@ -455,14 +515,9 @@ const toggleStatus = async (expert) => {
 const bulkUpdateStatus = async (publish) => {
   try {
     const selected = experts.value.filter((e) => e.selected);
-    if (selected.length === 0) {
-      alert('No experts selected.');
-      return;
-    }
+    if (selected.length === 0) return alert('No experts selected.');
     await Promise.all(
-      selected.map((e) =>
-        updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null })
-      )
+      selected.map((e) => updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null }))
     );
     selected.forEach((e) => (e.status = publish ? 1 : 0));
     alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
@@ -472,7 +527,7 @@ const bulkUpdateStatus = async (publish) => {
   }
 };
 
-// -------- Submit (upload image if cropped, send PATH) --------
+/* ---------------- Submit (upload + save tags) ---------------- */
 const submitExpert = async (publish) => {
   if (
     !currentExpert.value.name.trim() ||
@@ -488,15 +543,13 @@ const submitExpert = async (publish) => {
 
   try {
     const isUpdate = !!currentExpert.value.id;
-
-    // If user cropped a new image, upload the File
     let imagePath = typeof currentExpert.value.image === 'string' ? currentExpert.value.image : null;
 
     if (pendingImageFile.value) {
       const finalName = `expert_${Date.now()}.webp`;
       const uploadRes = await uploadImage(pendingImageFile.value, finalName);
-      if (uploadRes && uploadRes.error) throw new Error(uploadRes.error);
-      imagePath = (uploadRes && uploadRes.path) || `/images/${finalName}`;
+      if (uploadRes?.error) throw new Error(uploadRes.error);
+      imagePath = uploadRes?.path || `/images/${finalName}`;
     }
 
     const payload = {
@@ -509,17 +562,18 @@ const submitExpert = async (publish) => {
       description: currentExpert.value.description,
       description_en: currentExpert.value.description_en,
       status: publish ? 1 : 0,
-      image: imagePath || '', // PATH only
+      image: imagePath || '',
       type: Number.isFinite(Number(currentExpert.value.type)) ? Number(currentExpert.value.type) : 1,
-      // tags: currentExpert.value.tags, // include if backend supports it
     };
 
     if (isUpdate) {
       await updateExpert(currentExpert.value.id, payload);
+      await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
       alert('Expert updated successfully.');
     } else {
       const res = await createExpert(payload);
-      currentExpert.value.id = res && res.id ? res.id : null;
+      currentExpert.value.id = res?.id ?? null;
+      await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
       alert('Expert added successfully.');
     }
 
@@ -533,7 +587,7 @@ const submitExpert = async (publish) => {
   }
 };
 
-// -------- Delete --------
+/* ---------------- Delete ---------------- */
 const askDelete = (id, name) => {
   deleteId.value = id;
   deleteName.value = name;
@@ -548,7 +602,7 @@ const confirmDelete = async () => {
     showModal.value = false;
     alert('Expert deleted successfully.');
   } catch (error) {
-    alert(`Error deleting expert: ${error && error.message ? error.message : 'Unknown error'}`);
+    alert(`Error deleting expert: ${error?.message || 'Unknown error'}`);
     console.error(error);
   } finally {
     deleteId.value = null;
@@ -561,6 +615,10 @@ const closeModal = () => {
   showModalEdit.value = false;
 };
 
+/* ---------------- Helpers ---------------- */
+const handleInputChange = () => {};
+const preventFormSubmit = () => {};
+
 onMounted(fetchExperts);
 
 const toggleSelectAll = () => {
@@ -570,7 +628,199 @@ const toggleSelectAll = () => {
 
 
 
+
+
+
+
+
+
 <style scoped>
+/* ===== Tag input + chips ===== */
+.tags-input-container {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+
+.tags-input-container .add-text-input {
+  padding-right: 40px;
+}
+
+/* Tag chip */
+.tags-input-container .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 4px 10px;
+  margin: 4px 6px 0 0;
+  border-radius: 999px;
+  border: 1px solid #b9d99a;
+  background: #e9f5dc;
+  color: #2e6b0c;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1;
+  user-select: none;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.tags-input-container .tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
+.tags-input-container .tag > button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+}
+.tags-input-container .tag > button:hover {
+  filter: brightness(.9);
+}
+
+/* ===== Suggestions dropdown ===== */
+.tags-suggestions {
+  /* your inline :style controls position, size, etc. */
+  padding: 6px;
+  backdrop-filter: blur(6px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow:
+    0 16px 40px rgba(33, 43, 54, .12),
+    0 2px 6px rgba(33, 43, 54, .04);
+  overflow-y: auto;
+}
+
+/* Pretty scrollbar */
+.tags-suggestions::-webkit-scrollbar {
+  width: 10px;
+}
+.tags-suggestions::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tags-suggestions::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.tags-suggestions:hover::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+/* Suggestion row */
+.tag-suggestion {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .12s ease, transform .08s ease, border-color .12s ease;
+  border: 1px solid transparent;
+  position: relative;
+}
+
+/* Icon slot (your first <span>) */
+.tag-suggestion > span:first-child {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #eef7e6;
+  color: #2e6b0c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Hover/active state */
+.tag-suggestion:hover {
+  background: #f7fbf2;
+  border-color: #e7f1dc;
+}
+.tag-suggestion.active {
+  background: #ecf7e5;
+  border-color: #cfe8bb;
+  transform: translateX(1px);
+}
+
+/* Create row gets a subtle accent */
+.tag-suggestion.create {
+  background: linear-gradient(0deg, #f5faf0, #ffffff);
+  border-color: #e7f1dc;
+}
+.tag-suggestion.create > span:first-child {
+  background: #dff0cf;
+  color: #216a00;
+}
+
+/* Disabled row (e.g., “Start typing…”, “Searching…”) */
+.tag-suggestion.disabled {
+  opacity: .65;
+  cursor: default;
+}
+
+/* Highlighted substring from v-html */
+.tag-suggestion mark {
+  background: #ffef9c;
+  color: #5b4b00;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* Optional: soft divider between groups */
+.tag-suggestion + .tag-suggestion {
+  margin-top: 2px;
+}
+
+/* ===== Dark mode (optional; auto if user prefers dark) ===== */
+@media (prefers-color-scheme: dark) {
+  .tags-suggestions {
+    background: #121417;
+    border-color: #1f242a;
+    box-shadow:
+      0 16px 40px rgba(0,0,0,.45),
+      0 2px 6px rgba(0,0,0,.25);
+  }
+  .tag-suggestion {
+    color: #e6eaf0;
+  }
+  .tag-suggestion:hover {
+    background: #182028;
+    border-color: #1f2a33;
+  }
+  .tag-suggestion.active {
+    background: #15232d;
+    border-color: #214657;
+  }
+  .tag-suggestion > span:first-child {
+    background: #1a2a18;
+    color: #cdecc2;
+  }
+  .tag-suggestion.create {
+    background: linear-gradient(0deg, #162018, #121417);
+    border-color: #1c2a20;
+  }
+  .tag-suggestion.create > span:first-child {
+    background: #204321;
+    color: #d4ffd1;
+  }
+  .tag-suggestion mark {
+    background: #594a00;
+    color: #ffe89a;
+  }
+  .tags-suggestions::-webkit-scrollbar-thumb {
+    background: #2a2f36;
+  }
+  .tags-suggestions:hover::-webkit-scrollbar-thumb {
+    background: #3a4048;
+  }
+}
+
+
 .status-toggle {
     display: flex;
     justify-content: center;
