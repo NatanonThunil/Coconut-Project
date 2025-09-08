@@ -5,7 +5,12 @@
 
 ### Update List
 - เพิ่ม ``Expert Tags`` GET, GET(id), POST, PUT, DELETE  รอเช็ค
-
+- เพิ่ม ``Nodemon`` ใน package ของ backend ทำให้แก้โดยไม่ต้องรีรัน backend
+วิธีใช้
+``` bash
+npm run dev
+```
+หรือ กด RUN แบบเดิมก็ได้
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
 

@@ -34,7 +34,7 @@ start "Frontend" cmd /k "cd /d %ROOT_DIR%\frontend && npm run dev"
 
 REM === START BACKEND SERVER ===
 echo Launching backend...
-start "Backend" cmd /k "cd /d %ROOT_DIR%\backend && npm start"
+start "Backend" cmd /k "cd /d %ROOT_DIR%\backend && npm run dev"
 
 REM === OPEN LOCALHOST IN DEFAULT BROWSER ===
 echo Opening http://localhost:5000 in browser...
