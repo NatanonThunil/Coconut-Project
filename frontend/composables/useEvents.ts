@@ -40,8 +40,8 @@ export const useEvents = () => {
         image: string,
         title: string,
         organizer: string,
-        date_start: Date,
-        date_end: Date,
+        date_start: Date | string, // <-- allow both
+        date_end: Date | string, // <-- allow both
         location_name: string,
         location_url: string,
         register_url: string,

@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
+    <div v-if="showModalAddNews || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
             <div class="lang-toggle">
@@ -288,6 +288,9 @@ const toggleStatus = async (news) => {
         console.error(error);
     }
 };
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
 
 // ✅ Sorting & Searching
 const filteredSortedNews = computed(() => {
@@ -398,7 +401,19 @@ const submitNews = async (publish) => {
             await updateNews(currentNews.value.id, payload);
             alert("News updated successfully.");
         } else {
-            const newNews = await createNews(payload);
+            const newNews = await createNews(
+                payload.image,
+                payload.title,
+                payload.title_en,
+                payload.description,
+                payload.description_en,
+                payload.summerize,
+                payload.summerize_en,
+                payload.author,
+                payload.upload_date,
+                payload.status,
+                payload.hot_new
+            );
             currentNews.value.id = newNews.id;
             alert("News added successfully.");
         }
