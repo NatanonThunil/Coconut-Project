@@ -89,72 +89,96 @@
     </div>
   </div>
 </template>
-
 <script>
-import { useExperts } from '~/composables/useExperts';
-const { getExperts } = useExperts();
+import { useExperts } from '~/composables/useExperts'
+const { getExperts } = useExperts()
+
 export default {
   data() {
     return {
-      selectedFilter: "farmer",
+      selectedFilter: 'farmer',
       experts: [],
       isLoading: true,
-      searchQuery: "",
-      selectedTag: this.$route.query.tag || null,
-    };
+      searchQuery: '',
+      selectedTag: null, // set from route in mounted()
+    }
   },
+
   computed: {
     filteredExperts() {
-      const query = this.searchQuery.toLowerCase();
-      return this.experts
-        .filter((expert) =>
-          expert.name.toLowerCase().includes(query) || 
-          (expert.tags && expert.tags.some(tag => tag.toLowerCase().includes(query)))
-        )
-        .filter((expert) => expert.category === this.selectedFilter && expert.status)
-        .filter((expert) => this.selectedTag ? expert.tags.includes(this.selectedTag) : true);
+      const q = (this.searchQuery || '').toLowerCase()
+
+      return (this.experts || []).filter((expert) => {
+        // normalize fields
+        const name = (expert?.name || '').toLowerCase()
+        const tags = Array.isArray(expert?.tags)
+          ? expert.tags
+          : typeof expert?.tags === 'string'
+          ? expert.tags.split(',').map(t => t.trim())
+          : []
+
+        const matchesQuery =
+          !q ||
+          name.includes(q) ||
+          tags.some(t => (t || '').toLowerCase().includes(q))
+
+        const matchesCategory =
+          expert?.category === this.selectedFilter && Boolean(expert?.status)
+
+        const matchesTag =
+          !this.selectedTag || tags.includes(this.selectedTag)
+
+        return matchesQuery && matchesCategory && matchesTag
+      })
     },
   },
+
   watch: {
     '$route.query.tag'(newTag) {
-      this.selectedTag = newTag;
+      this.selectedTag = newTag || null
     },
   },
+
   methods: {
     async fetchExperts() {
       try {
-        this.isLoading = true;
-       
-        const data = await getExperts();
-        this.experts = data.map((expert) => ({
-          ...expert,
-          category: this.mapCategory(expert.type),
-          // status: expert.status === 1,
-        }));
+        this.isLoading = true
+        const data = await getExperts()
+
+        this.experts = (data || []).map((expert) => {
+          // normalize tags once here
+          const tags = Array.isArray(expert?.tags)
+            ? expert.tags
+            : typeof expert?.tags === 'string'
+            ? expert.tags.split(',').map(t => t.trim())
+            : []
+
+          return {
+            ...expert,
+            tags,
+            category: this.mapCategory(expert?.type),
+            // status: expert.status === 1, // if your API returns 0/1
+          }
+        })
       } catch (error) {
-        console.error("Error fetching experts:", error);
-        this.experts = [];
+        console.error('Error fetching experts:', error)
+        this.experts = []
       } finally {
-        this.isLoading = false;
+        this.isLoading = false
       }
     },
-    filterByName() {
-      this.filteredExperts;
-    },
+
     mapCategory(type) {
-      // Map expert_tags_id to category names
-      const categories = {
-        1: "farmer",
-        2: "private",
-        3: "academic",
-      };
-      return categories[type] || "unknown";
+      const categories = { 1: 'farmer', 2: 'private', 3: 'academic' }
+      return categories?.[type] || 'unknown'
     },
   },
+
   mounted() {
-    this.fetchExperts();
+    this.selectedTag = this.$route?.query?.tag || null
+    this.fetchExperts()
   },
-};
+}
 </script>
 
 <style scoped>

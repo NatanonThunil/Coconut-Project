@@ -12,6 +12,7 @@ import membersRoutes from './menbers.js';
 import pestsRoutes from './pests.js';
 import chainValuesRoutes from './chian_values.js';
 import servicesRoutes from './services.js';
+import searchRoutes from './search.js';
 
 // import newsRoutes from './news.js';
 export default [
@@ -30,6 +31,7 @@ export default [
     { path: '/pests', handler: pestsRoutes },
     { path: '/chain-values', handler: chainValuesRoutes },
     { path: '/services', handler: servicesRoutes },
+    { path: '/search', handler: searchRoutes },
    
     // { path: '/news', handler: newsRoutes },
 ];
