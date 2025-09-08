@@ -65,7 +65,7 @@ import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
 import { useExperts } from '~/composables/useExperts';
 
-const { getExpertById } = useExperts();
+const { getExpertById, getTagsByExpert } = useExperts();
 
 export default {
   data() {
@@ -84,41 +84,38 @@ export default {
     }
 
     try {
-      const data = await getExpertById(id); // returns a single object
+      const data = await getExpertById(id);
       if (!data) {
         this.error = "ไม่พบข้อมูลผู้เชี่ยวชาญ กรุณาตรวจสอบหมายเลขอีกครั้ง";
         return;
       }
 
-      // If you want to hide unpublished profiles on the public page:
+
       if (data.status === 0 || data.status === false) {
         this.error = "หน้านี้ยังไม่พร้อมแสดง (ผู้เชี่ยวชาญยังไม่เผยแพร่)";
         return;
       }
 
-      // Normalize tags
-      let tags = data.tags;
-      if (typeof tags === "string") {
-        try {
-          // try JSON first
-          tags = JSON.parse(tags);
-          if (!Array.isArray(tags)) {
-            // fallback: split by comma
-            tags = String(data.tags)
-              .split(",")
-              .map(s => s.trim())
-              .filter(Boolean);
-          }
-        } catch {
-          // comma-separated fallback
-          tags = String(data.tags || "")
-            .split(",")
-            .map(s => s.trim())
-            .filter(Boolean);
+
+      let tags = [];
+      try {
+        const apiTags = await getTagsByExpert(id);
+        if (Array.isArray(apiTags) && apiTags.length) {
+          tags = apiTags;
         }
-      } else if (!Array.isArray(tags)) {
-        tags = [];
+      } catch (_) {
+
       }
+
+      if (!tags.length) {
+        tags = this.normalizeTags(data.tags);
+      }
+
+
+      const seen = new Set();
+      tags = tags
+        .map(t => String(t || '').trim())
+        .filter(t => t && !seen.has(t.toLowerCase()) && (seen.add(t.toLowerCase()) || true));
 
       this.expert = { ...data, tags };
       this.updateHead();
@@ -128,6 +125,27 @@ export default {
     }
   },
   methods: {
+    normalizeTags(raw) {
+      if (Array.isArray(raw)) {
+        return raw.map(x => String(x || '').trim()).filter(Boolean);
+      }
+      if (typeof raw === 'string') {
+
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.map(x => String(x || '').trim()).filter(Boolean);
+          }
+        } catch (_) {
+
+        }
+        return String(raw)
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+      }
+      return [];
+    },
     updateHead() {
       if (!this.expert) return;
       useHead({

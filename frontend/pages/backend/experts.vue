@@ -379,27 +379,51 @@ const normalizeTag = (s) =>
 const hasTag = (val) =>
   currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
 
-// commit tag on Enter/Tab/Comma or blur
-const commitTag = (fromBlur = false) => {
-  let t = normalizeTag(newTag.value);
+// commit one tag (Enter/Tab/Comma or programmatic)
+const commitTag = () => {
+  const t = normalizeTag(newTag.value);
   if (!t) return;
-
   if (currentExpert.value.tags.length >= 5) {
     alert('An expert can have up to 5 tags.');
-    if (!fromBlur) newTag.value = '';
+    newTag.value = '';
     return;
   }
-
   if (!hasTag(t)) currentExpert.value.tags.push(t);
   newTag.value = '';
 };
 
-// catch commas as separators
-const handleTagKeydown = (e) => {
-  if (e.key === ',') {
-    e.preventDefault();
-    commitTag();
+// --- handlers the template expects (lightweight no-suggest versions) ---
+const onTagInput = () => {
+  // support comma-separated typing (e.g., "ai, data, ml")
+  const raw = String(newTag.value);
+  if (!raw.includes(',')) return;
+
+  const parts = raw.split(',');
+  // last piece stays in input (user is still typing it)
+  const last = parts.pop() ?? '';
+  for (const p of parts) {
+    if (currentExpert.value.tags.length >= 5) break;
+    const t = normalizeTag(p);
+    if (t && !hasTag(t)) currentExpert.value.tags.push(t);
   }
+  newTag.value = last; // keep the unfinished part in the box
+};
+
+const onTagFocus = () => {
+  /* no suggestions anymore; nothing to do */
+};
+
+const moveTagHighlight = () => {
+  /* no dropdown; nothing to do */
+};
+
+const closeTagDropdown = () => {
+  /* no dropdown; nothing to do */
+};
+
+// Enter key in template calls this
+const confirmTag = () => {
+  commitTag();
 };
 
 const removeTag = (index) => {
@@ -625,6 +649,7 @@ const toggleSelectAll = () => {
   experts.value.forEach((e) => (e.selected = selectAll.value));
 };
 </script>
+
 
 
 
