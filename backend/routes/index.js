@@ -8,7 +8,6 @@ import faqsRoutes from './faqs.js';
 import expertsRoutes from './experts.js';
 import herobarsRoutes from './herobars.js';
 import tagsRoutes from './tags.js';
-import pdfUploadRoutes from './pdf-upload.js';
 import membersRoutes from './menbers.js';
 import pestsRoutes from './pests.js';
 import chainValuesRoutes from './chian_values.js';
@@ -26,7 +25,7 @@ export default [
     { path: '/experts', handler: expertsRoutes },
     { path: '/herobars', handler: herobarsRoutes },
     { path: '/tags', handler: tagsRoutes },
-    { path: '/pdf-upload', handler: pdfUploadRoutes },
+   
     { path: '/members', handler: membersRoutes },
     { path: '/pests', handler: pestsRoutes },
     { path: '/chain-values', handler: chainValuesRoutes },

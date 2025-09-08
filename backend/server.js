@@ -4,15 +4,11 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import routes from './routes/index.js';
 import imgUploadRoutes from './routes/img-upload.js';
-import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import MySQLStore from 'express-mysql-session';
-import rateLimit from 'express-rate-limit';
+import pdfUploadRoutes from './routes/pdf-upload.js';
 
 config();
 const app = express();
-app.use(helmet());
+
 const FE_ORIGIN = process.env.FE_BASE_URL || 'http://localhost:5000';
 const corsOptions = {
   origin: FE_ORIGIN,
@@ -41,7 +37,7 @@ app.use(express.static('public'));
 
 
 app.use('/img-upload', imgUploadRoutes); 
-
+app.use('/pdf-upload', pdfUploadRoutes);
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
