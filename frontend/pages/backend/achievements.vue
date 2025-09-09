@@ -401,6 +401,14 @@ const handleFileUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file || (file.type && file.type !== 'application/pdf') || !file.name.toLowerCase().endsWith('.pdf')) {
         alert('Please upload a valid PDF file.');
+        loadd.value = false;
+        return;
+    }
+    // Check file size (max 30 MB)
+    const maxSizeMB = 30;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+        alert('PDF file size must not exceed 30 MB.');
+        loadd.value = false;
         return;
     }
 
@@ -409,6 +417,7 @@ const handleFileUpload = async (event) => {
         const pdfData = reader.result; // data URL
         if (!pdfData || typeof pdfData !== 'string') {
             alert("Failed to read PDF file.");
+            loadd.value = false;
             return;
         }
 
@@ -427,10 +436,10 @@ const handleFileUpload = async (event) => {
         } finally {
             isUploadingPdf.value = false;
         }
+        loadd.value = false;
     };
 
     reader.readAsDataURL(file);
-    loadd.value = false;
 };
 
 const handleDragDrop = (e) => {

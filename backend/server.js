@@ -18,8 +18,10 @@ const corsOptions = {
 };
 
 
-app.use(cors(corsOptions));
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
@@ -32,15 +34,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(express.static('public'));
-
 
 app.use('/img-upload', imgUploadRoutes); 
 app.use('/pdf-upload', pdfUploadRoutes);
-
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 
 app.use((req, res, next) => {

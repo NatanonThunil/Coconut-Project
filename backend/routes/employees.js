@@ -44,7 +44,7 @@ router.get('/:id', async (req, res) => {
 /////////////////////////////// POST
 router.post('/', async (req, res) => {
     try {
-        const {
+        let {
             name,
             name_en,
             image,
@@ -56,6 +56,9 @@ router.post('/', async (req, res) => {
             description_en,
             email
         } = req.body;
+
+        // image is optional, default to null
+        image = image || null;
 
         const [result] = await db.query(
             `INSERT INTO employee 
@@ -101,29 +104,17 @@ router.put('/:id', async (req, res) => {
 
         const [result] = await db.query(
             `UPDATE employee 
-             SET name = ?, name_en = ?, image = ?, address = ?, address_en = ?, 
-                 phoneNumber = ?, status = ?, description = ?, description_en = ?, email = ?
+             SET name = COALESCE(?, name), name_en = COALESCE(?, name_en), image = COALESCE(?, image), address = COALESCE(?, address), address_en = COALESCE(?, address_en), 
+                 phoneNumber = COALESCE(?, phoneNumber), status = COALESCE(?, status), description = COALESCE(?, description), description_en = COALESCE(?, description_en), email = COALESCE(?, email)
              WHERE id = ?`,
             [name, name_en, image, address, address_en, phoneNumber, status, description, description_en, email, id]
         );
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Employee not found' });
+            return res.status(404).json({ error: 'Employee not found or no changes made' });
         }
 
-        res.json({
-            id,
-            name,
-            name_en,
-            image,
-            address,
-            address_en,
-            phoneNumber,
-            status,
-            description,
-            description_en,
-            email
-        });
+        res.json({ message: 'Employee updated successfully' });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

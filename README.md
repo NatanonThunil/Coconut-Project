@@ -6,6 +6,8 @@
 ### Update List
 - เพิ่ม ``search`` API
 - แก้ ``event`` GET, GET(id), POST, PUT, DELETE  ✅
+- แก้ ``employees`` GET, GET(id), POST, PUT, DELETE  ✅
+- แก้ ``achivements`` ยังไม่เสร็จ
 
 โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
 
