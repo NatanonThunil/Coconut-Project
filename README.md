@@ -5,8 +5,9 @@
 
 ### Update List
 - เพิ่ม ``search`` API
+- แก้ ``event`` GET, GET(id), POST, PUT, DELETE  ✅
 
-โดย [Poom](https://github.com/WasitpolKuekkong)
+โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
 
 
 # อัพเดต 8 Sep.

@@ -256,6 +256,15 @@ const showCropper = ref(false);
 const cropperImage = ref(null);
 const pendingImageFile = ref(null);
 
+// helper: format Date -> "YYYY-MM-DD HH:mm:ss"
+const formatDate = (date) => {
+    if (!date) return "";
+    const d = typeof date === "string" ? new Date(date) : date;
+    if (isNaN(d.getTime())) return "";
+    const pad = n => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 const fetchEvents = async () => {
     try {
         const data = await getEvents();
@@ -498,7 +507,7 @@ const handleDragDrop = (e) => {
 
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onload = () => {
             croppingImage.value = reader.result;
@@ -511,8 +520,6 @@ const handleFileUpload = (event) => {
                     background: false,
                     zoomable: false,
                     movable: false,
-                    rotatable: false,
-                    scalable: false,
                 });
             });
         };
@@ -575,8 +582,8 @@ const handleImageUpload = (event) => {
 const cropImage = () => {
     if (cropperInstance.value) {
         const canvas = cropperInstance.value.getCroppedCanvas();
-        pendingImageFile.value = new File([canvas.toDataURL('image/jpeg')], `event_${Date.now()}.jpg`, { type: 'image/jpeg' });
-        currentEvent.value.image = canvas.toDataURL('image/jpeg');
+        pendingImageFile.value = canvas.toDataURL("image/jpeg");
+        currentEvent.value.image = canvas.toDataURL("image/jpeg");
         showCropper.value = false;
         cropperInstance.value.destroy();
     }
