@@ -1,148 +1,244 @@
 <template>
-  <nav class="navbar" id="nav-header">
-    <a class="logo" href="/">
-      <img class="btn-icons" src="/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
-    </a>
-    <ul class="main-menu">
-      <li :class="{ Selected: selecto === 'aboutus' }">
-        <NuxtLinkLocale to='/aboutus'>
-          <img class="btn-icons" :src="selecto === 'aboutus' ? '/icon/w/people.svg' : '/icon/people.svg'"
-            alt="เกี่ยวกับเรา" />{{ $t('AboutUs') }}
-        </NuxtLinkLocale>
-      </li>
+  <div>
+    <!-- NAVBAR -->
+    <div class="navbar-container-and-search">
+      <nav class="navbar" id="nav-header">
+        <a class="logo" href="/">
+          <img class="btn-icons" src="/logo/CKH.png" alt="Logo" loading="lazy" draggable="false" />
+        </a>
 
-
-      <li :class="[{ Selected: ((selecto === 'news') || (selecto === 'events') ) }, 'nnedd']">
-        <p class="img-dd-adjust">
-          <img class="btn-icons"
-            :src="selecto === 'news' || selecto === 'events' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
-            alt="ข้อมูลมะพร้าว" />
-          {{ $t("News & Events") }} <span> ▼</span>
-        </p>
-        <ul class="dropdown">
-          <li>
-            <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+        <ul class="main-menu">
+          <li :class="{ Selected: selecto === 'aboutus' }">
+            <NuxtLinkLocale to="/aboutus">
+              <img class="btn-icons" :src="selecto === 'aboutus' ? '/icon/w/people.svg' : '/icon/people.svg'"
+                alt="เกี่ยวกับเรา" />
+              {{ $t('AboutUs') }}
+            </NuxtLinkLocale>
           </li>
-          <li>
-            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+
+          <li :class="[{ Selected: (selecto === 'news' || selecto === 'events') }, 'nnedd']">
+            <p class="img-dd-adjust">
+              <img class="btn-icons"
+                :src="selecto === 'news' || selecto === 'events' ? '/icon/w/newsnevents.svg' : '/icon/newsnevents.svg'"
+                alt="ข้อมูลมะพร้าว" />
+              {{ $t('News & Events') }} <span> ▼</span>
+            </p>
+            <ul class="dropdown">
+              <li>
+                <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+              </li>
+              <li>
+                <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+              </li>
+            </ul>
+          </li>
+
+          <li :class="[{ Selected: (selecto === 'coconutdata' || selecto === 'pests') }, 'nnedd']">
+            <p class="img-dd-adjust">
+              <img class="btn-icons"
+                :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/icons8-info-W.svg' : '/icon/icons8-info.svg'"
+                alt="ข้อมูลมะพร้าว" />
+              {{ $t('CoconutInfo') }} <span> ▼</span>
+            </p>
+            <ul class="dropdown">
+              <li>
+                <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}
+                </NuxtLinkLocale>
+              </li>
+              <li>
+                <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
+              </li>
+              <li>
+                <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>
+              </li>
+            </ul>
+          </li>
+
+          <li :class="{ Selected: selecto === 'expert' }">
+            <NuxtLinkLocale to="/experts">
+              <img class="btn-icons" :src="selecto === 'expert' ? '/icon/w/expert.svg' : '/icon/expert.svg'"
+                alt="ผู้เชี่ยวชาญ" />
+              {{ $t('Experts') }}
+            </NuxtLinkLocale>
+          </li>
+
+          <li :class="{ Selected: selecto === 'faqs' }">
+            <NuxtLinkLocale to="/faqs">
+              <img class="btn-icons" :src="selecto === 'faqs' ? '/icon/w/questions.svg' : '/icon/questions.svg'"
+                alt="FAQs" />
+              FAQs
+            </NuxtLinkLocale>
           </li>
         </ul>
-      </li>
 
+        <Langswitch class="Ls-repon" :Ismobile="false" />
 
-      <li :class="[{ Selected: ((selecto === 'coconutdata') || (selecto === 'pests')) }, 'nnedd']">
-        <p class="img-dd-adjust">
-          <img class="btn-icons"
-            :src="selecto === 'coconutdata' || selecto === 'pests' ? '/icon/w/icons8-info-W.svg' : '/icon/icons8-info.svg'"
-            alt="ข้อมูลมะพร้าว" />
-          {{ $t('CoconutInfo') }} <span> ▼</span>
-        </p>
-        <ul class="dropdown">
-          <li>
-            <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{ $t('Coconut-varieties') }}</NuxtLinkLocale>
+        <div class="hamburger-container" @click="toggleMenu">
+          <div :class="{ 'hamburger-icon': true, open: isMenuOpen }">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <ul class="mobile-main-menu" v-show="isMenuOpen">
+          <li :class="{ mobileSelected: selecto === 'home' }">
+            <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>
+          </li>
+          <li :class="{ mobileSelected: selecto === 'aboutus' }">
+            <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>
+          </li>
+          <li :class="{ mobileSelected: selecto === 'coconutdata' }">
+            <NuxtLinkLocale to="/coconut-information">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
+          </li>
+          <li :class="{ mobileSelected: selecto === 'expert' }">
+            <!-- NOTE: fixed your old '/expert' -> '/experts' -->
+            <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
+          </li>
+          <li :class="{ mobileSelected: selecto === 'faqs' }">
+            <NuxtLinkLocale to="/faqs">{{ $t('FAQs') }}</NuxtLinkLocale>
           </li>
           <li>
-            <NuxtLinkLocale to="/coconut-information/pest">{{ $t('Pest') }}</NuxtLinkLocale>
-          </li>
-          <li>
-            <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>
+            <Langswitch class="Ls-repon" :Ismobile="true" />
           </li>
         </ul>
-      </li>
-      <li :class="{ Selected: selecto === 'expert' }">
-        <NuxtLinkLocale to="/experts">
-          <img class="btn-icons" :src="selecto === 'expert' ? '/icon/w/expert.svg' : '/icon/expert.svg'"
-            alt="ผู้เชี่ยวชาญ" />{{ $t('Experts') }}
-        </NuxtLinkLocale>
-      </li>
-      <li :class="{ Selected: selecto === 'faqs' }">
-        <NuxtLinkLocale to="/faqs">
-          <img class="btn-icons" :src="selecto === 'faqs' ? '/icon/w/questions.svg' : '/icon/questions.svg'"
-            alt="FAQs" />FAQs
-        </NuxtLinkLocale>
-      </li>
-    </ul>
+        <label class="nav-search-input">
+          <img src="/icon/search.svg" alt="">
+          <input type="text" placeholder="Search..." v-model="navsearch" @input="emitSearch" />
 
-    <Langswitch class="Ls-repon" :Ismobile="false" />
+        </label>
+      </nav>
 
-    <div class="hamburger-container" @click="toggleMenu">
-      <div :class="{ 'hamburger-icon': true, open: isMenuOpen }">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
     </div>
 
-    <ul class="mobile-main-menu" v-show="isMenuOpen">
-      <li :class="{ mobileSelected: selecto === 'home' }">
-        <NuxtLinkLocale to="/">
-          {{ $t('Home') }}
-        </NuxtLinkLocale>
-      </li>
-      <li :class="{ mobileSelected: selecto === 'aboutus' }">
-        <NuxtLinkLocale to="/aboutus">
-          {{ $t('AboutUs') }}
-        </NuxtLinkLocale>
-      </li>
-      <li :class="{ mobileSelected: selecto === 'coconutdata' }">
-        <NuxtLinkLocale to="/coconut-information">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
-      </li>
-      <li :class="{ mobileSelected: selecto === 'expert' }">
-        <NuxtLinkLocale to="/expert">
-          {{ $t('Experts') }}
-        </NuxtLinkLocale>
-      </li>
-      <li :class="{ mobileSelected: selecto === 'faqs' }">
-        <NuxtLinkLocale to="/faqs">{{ $t('FAQs') }}</NuxtLinkLocale>
-      </li>
-      <li>
-        <Langswitch class="Ls-repon" :Ismobile="true" />
-      </li>
-    </ul>
-  </nav>
+
+
+
+
+
+  </div>
 </template>
 
-<script>
+<script setup lang="ts">
+const navsearch = ref('');
+import { onMounted, onBeforeUnmount, ref, computed, defineEmits } from 'vue'
+import { useRoute } from '#app'
+const emit = defineEmits(["update:search"]);
 
-
-export default {
-  props: {
-    selecto: {
-      type: String,
-      required: true,
-    }
-  },
-  data() {
-    return {
-      isMenuOpen: false,
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-    handleScroll() {
-      const navbar = document.getElementById('nav-header');
-      if (window.scrollY > 0) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    },
-
-  },
-
-  mounted() {
-    window.scrollTo(0, 0);
-    window.addEventListener('scroll', this.handleScroll);
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll);
-  }
+const emitSearch = () => {
+  emit("update:search", navsearch.value);
 };
+// Mobile menu state
+const isMenuOpen = ref(false)
+const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
+
+// Scroll effect
+const handleScroll = () => {
+  const navbar = document.getElementById('nav-header')
+  if (!navbar) return
+  if (window.scrollY > 0) navbar.classList.add('scrolled')
+  else navbar.classList.remove('scrolled')
+}
+
+onMounted(() => {
+  window.scrollTo(0, 0)
+  window.addEventListener('scroll', handleScroll)
+})
+onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
+
+// Auto-detect active section (selecto) from route
+const route = useRoute()
+const selecto = computed<'home' | 'aboutus' | 'news' | 'events' | 'coconutdata' | 'pests' | 'expert' | 'faqs'>(() => {
+  const p = route.path
+
+  if (p === '/' || p.startsWith('/home')) return 'home'
+  if (p.startsWith('/aboutus')) return 'aboutus'
+  if (p.startsWith('/news')) return 'news'
+  if (p.startsWith('/events')) return 'events'
+  if (p.startsWith('/experts')) return 'expert'
+  if (p.startsWith('/faqs')) return 'faqs'
+  if (p.startsWith('/coconut-information/pest')) return 'pests'
+  if (p.startsWith('/coconut-information')) return 'coconutdata'
+
+  return 'home'
+})
 </script>
 
 <style scoped>
+.nav-search-input img {
+  position: absolute;
+  left: 20px;
+  top: calc(50% - 15px);
+  width: 30px;
+  height: 30px;
+  transition: all 0.3s ease;
+
+  z-index: 600;
+}
+
+
+
+
+.nav-search-input:focus-within input {
+
+  border: none;
+  border-radius: 0px 0px 20px 20px;
+  padding: 8px 12px 8px 55px;
+  font-size: 14px;
+  width: 300px;
+  height: 50px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+
+}
+
+.nav-search-input:focus-within input {
+  outline: none
+}
+
+.nav-search-input input {
+  position: sticky;
+  border: #4e6d16 3px solid;
+  border: none;
+  border-radius: 0px 0px 20px 20px;
+  padding: 8px 12px 8px 55px;
+  font-size: 14px;
+  width: 60px;
+  height: 50px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;
+  transition: all 0.3s ease-in-out;
+  z-index: 500;
+
+}
+
+
+.nav-search-input {
+  cursor: pointer;
+  position: absolute;
+  right: 2rem;
+  bottom: -50px;
+
+
+}
+
+.nav-search-input::after {
+  content: "";
+  position: absolute;
+
+  left: 60px;
+  bottom: 6px;
+  height: 3px;
+  width: calc(100% - 80px);
+  background-color: #4E6D16;
+  border-radius: 2rem;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s ease;
+  z-index: 600;
+}
+
+.nav-search-input:hover::after {
+  transform: scaleX(1);
+}
+
 .img-dd-adjust {
   display: flex;
   align-items: center;
@@ -169,7 +265,6 @@ export default {
 }
 
 .nnedd {
-
   position: relative;
   display: inline-block;
   cursor: pointer;
@@ -182,14 +277,13 @@ export default {
 }
 
 .main-menu .nnedd:hover {
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 10px 10px 0 0;
   height: inherit;
   background: #e6e6e6;
 }
 
 .nnedd:hover p span {
   rotate: 30deg;
-
 }
 
 .nnedd:hover .dropdown {
@@ -199,7 +293,7 @@ export default {
   height: auto;
   max-height: 200px;
   width: 100%;
-  border-radius: 0px 0px 5px 5px;
+  border-radius: 0 0 5px 5px;
   overflow: visible;
 }
 
@@ -216,24 +310,19 @@ export default {
   overflow: hidden;
   transform: translateY(90%);
   transition: 0.4s ease-out;
-
-
 }
 
 .nnedd:hover .dropdown li {
-
   text-align: left;
   transition: ease-out 0.2s;
 }
 
 .dropdown li {
-
   text-align: left;
   transition: ease-out 0.2s;
   width: inherit;
   overflow: hidden;
 }
-
 
 .dropdown li:hover {
   background: #4E6D16;
@@ -241,8 +330,6 @@ export default {
   border-radius: 10px;
   transform: scale(1.1);
   outline: #000 3px solid;
-
-
 }
 
 .dropdown li:hover:active {
@@ -250,8 +337,6 @@ export default {
   outline: black 3px solid;
   box-shadow: inset 0px 0px 0px 3px white;
 }
-
-
 
 a,
 nuxt-link {
@@ -262,14 +347,12 @@ nuxt-link {
 
 a:hover,
 nuxt-link:hover {
-
   transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
 .main-menu li a {
   display: flex;
   padding: 10px 15px;
-  ;
   text-wrap: nowrap;
   width: 100%;
   align-items: center;
@@ -279,23 +362,19 @@ nuxt-link:hover {
   margin-left: 2.5%;
   margin-right: 2.5%;
   margin-top: 0.5%;
-  width: 100%;
-  border-radius: 15px;
   width: 95%;
+  border-radius: 15px;
   background-color: #dbdbdb;
-  color: rgb(0, 0, 0);
+  color: #000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
   height: 80px;
   position: absolute;
-
   top: 0;
-
   z-index: 1000;
   box-shadow: rgba(0, 0, 0, 0.6) 0rem 1rem 2rem;
-
   transition: 0.3s ease-in-out;
 }
 
@@ -303,14 +382,9 @@ nuxt-link:hover {
   margin: 0;
   background-color: #dbdbdb;
   position: fixed;
-  border-radius: 0px;
+  border-radius: 0;
   width: 100%;
-  
-
-
 }
-
-
 
 .logo {
   margin-right: 2rem;
@@ -331,8 +405,6 @@ nuxt-link:hover {
   align-items: center;
   gap: 20px;
   flex: 1;
-
-
 }
 
 .main-menu>li {
@@ -342,36 +414,34 @@ nuxt-link:hover {
   justify-content: center;
   position: relative;
   cursor: pointer;
-  color: rgb(0, 0, 0);
+  color: #000;
   border-radius: 20px;
   font-size: 16px;
   background-color: white;
   box-shadow: #0000003c 4px 4px 4px;
   transition: ease-in-out 0.2s;
-
   opacity: 0;
   animation: fadeIn 1s ease-in-out forwards;
 }
 
-
 .main-menu li:nth-child(2) {
-  animation-delay: 0.2s;
+  animation-delay: .2s
 }
 
 .main-menu li:nth-child(3) {
-  animation-delay: 0.4s;
+  animation-delay: .4s
 }
 
 .main-menu li:nth-child(4) {
-  animation-delay: 0.6s;
+  animation-delay: .6s
 }
 
 .main-menu li:nth-child(5) {
-  animation-delay: 0.8s;
+  animation-delay: .8s
 }
 
 .main-menu li:nth-child(6) {
-  animation-delay: 1s;
+  animation-delay: 1s
 }
 
 .main-menu>li.Selected {
@@ -396,7 +466,6 @@ nuxt-link:hover {
 
 .btn-icons {
   display: inline-flex;
-
   height: 1.2rem;
   margin-right: 0.5rem;
 }
@@ -404,7 +473,7 @@ nuxt-link:hover {
 .mobile-main-menu>li {
   cursor: pointer;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #fff;
   text-align: center;
   transition: ease-in-out 0.4s;
   border-bottom: 3px #4E6D16 solid;
@@ -415,22 +484,18 @@ nuxt-link:hover {
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
-
 }
 
 .mobile-main-menu li:nth-child(6) {
   border-bottom: none;
-
 }
 
 .mobile-main-menu li:hover {
   background-color: #dbdbdb;
-
 }
 
 .mobile-main-menu li.mobileSelected:hover {
   background-color: #2a3b0b;
-
 }
 
 .mobile-main-menu {
@@ -505,45 +570,32 @@ nuxt-link:hover {
   }
 }
 
-
 @media (max-width: 1205px) {
 
   li a img.btn-icons,
   .img-dd-adjust .btn-icons {
     display: none;
   }
-
 }
 
-
 @media (max-width: 1039px) {
-  .main-menu {
 
-    display: none;
-  }
-
-  .lang-toggle {
-    display: none;
-  }
-
-  .Ls-repon {
+  .main-menu,
+  .lang-toggle,
+  .Ls-repon,
+  .nav-search-input {
     display: none;
   }
 
   .hamburger-container {
     display: block;
   }
-
-
-
-
 }
 
 @media (min-width: 1039px) {
   .mobile-main-menu {
     display: none;
   }
-
 }
 
 @keyframes fadeIn {
@@ -585,7 +637,6 @@ nuxt-link:hover {
 @keyframes disappear {
   100% {
     opacity: 1;
-
   }
 
   0% {

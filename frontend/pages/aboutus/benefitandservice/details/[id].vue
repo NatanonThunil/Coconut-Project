@@ -1,5 +1,5 @@
 <template>
-  <Navbar selecto="aboutus" />
+ 
   <div class="all-container">
     <div style="height: 8rem"></div>
 

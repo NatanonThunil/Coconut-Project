@@ -1,5 +1,5 @@
 <template>
-  <Navbar selecto="aboutus" />
+
   <div style="height: 8rem"></div>
   <div class="faqs-path">
     <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/

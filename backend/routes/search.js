@@ -42,7 +42,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: [],
     statusCol: 'status',
-    url: (id) => `/coconuts/${id}`,
+    url: (id) => `/coconut-information/coconut-varieties/details/${id}`,
     boost: 1.0,
   },
 
@@ -60,7 +60,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: [],                 // ไม่มีคอลัมน์วันที่ใน schema นี้
     statusCol: 'status',
-    url: (id) => `/pests/${id}`,
+    url: (id) => `/coconut-information/pest/details/${id}`,
     boost: 1.15,
   },
 
@@ -76,7 +76,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: ['uploadDate'],     // ใช้คิด freshness ได้
     statusCol: 'status',
-    url: (id) => `/achievements/${id}`,
+    url: (id) => `/aboutus/achievements/details/${id}`,
     boost: 1.05,
   },
 
@@ -92,7 +92,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: [],                 // ไม่มีวันตาม schema
     statusCol: 'status',
-    url: (id) => `/chain-values/${id}`, // ปรับ path ให้ตรง FE ของคุณถ้าใช้ชื่ออื่น
+    url: (id) => `/coconut-information/value-chain/details/${id}`, // ปรับ path ให้ตรง FE ของคุณถ้าใช้ชื่ออื่น
     boost: 0.98,
   },
 
@@ -109,7 +109,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: [],                 // ไม่มีวันตาม schema
     statusCol: 'status',
-    url: (id) => `/employees/${id}`,
+    url: (id) => `/aboutus/employees/details/${id}`,
     boost: 1.12,
   },
 
@@ -129,7 +129,7 @@ const TABLE_CONFIGS = [
   // ใช้ date_start เป็นหลัก ถ้าไม่มีให้ลอง date_end
   dateCandidates: ['date_start', 'date_end', 'created_at', 'updated_at'],
   statusCol: 'status',
-  url: (id) => `/events/${id}`,
+  url: (id) => `/events/details/${id}`,
   boost: 1.10,
 },
 
@@ -163,7 +163,7 @@ const TABLE_CONFIGS = [
   ],
   dateCandidates: ['created_at', 'updated_at'],
   statusCol: 'status',
-  url: (id) => `/faqs/${id}`,
+  url: (id) => `/faqs`,
   boost: 0.95,
 },
 
@@ -181,7 +181,7 @@ const TABLE_CONFIGS = [
   ],
   dateCandidates: ['created_at', 'updated_at'],
   statusCol: 'status',
-  url: (id) => `/members/${id}`,
+  url: (id) => `/aboutus/members/details/${id}`,
   boost: 1.05,
 },
 

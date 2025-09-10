@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar selecto="expert" />
+
     <div style="height: 8rem"></div>
     <div class="faqs-path">
       <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/

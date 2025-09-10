@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar selecto="pest" />
+
     <div class="all-container">
       <div style="height: 8rem"></div>
       <!-- Breadcrumb -->

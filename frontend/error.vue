@@ -9,7 +9,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <Navbar selecto="" />
+
   <div class="error-page">
     <div class="error-container">
       <h1 class="error-code">{{ error.statusCode || 404 }}</h1>
