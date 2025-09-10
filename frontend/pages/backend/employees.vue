@@ -36,6 +36,13 @@
           </th>
           <th>
             <div class="checkbox-id-container">
+              <div>Image
+
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
               <div>
                 Name<button @click="toggleSort('name')">
                   <div :class="{
@@ -110,6 +117,9 @@
               <input type="checkbox" v-model="employee.selected" />
               <p>{{ employee.id }}</p>
             </div>
+          </td>
+          <td>
+            <img v-if="employee.image" :src="employee.image" alt="Employee Image" class="employee-image" />
           </td>
           <td>{{ employee.name }}</td>
           <td>{{ employee.email }}</td>
@@ -1492,6 +1502,13 @@ input:checked+.hotnews-slider:before {
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.employee-image {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .add-text-input:focus {

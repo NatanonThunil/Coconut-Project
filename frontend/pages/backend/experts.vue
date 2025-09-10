@@ -41,6 +41,13 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
+                            <div>Image
+
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
                             <div>
                                 Email
                                 <button @click="toggleSort('email')">
@@ -100,6 +107,9 @@
                             <input type="checkbox" v-model="expert.selected" />
                             <p>{{ expert.id }}</p>
                         </div>
+                    </td>
+                    <td>
+                        <img v-if="expert.image" :src="expert.image" alt="Expert Image" class="expert-image" />
                     </td>
                     <td>{{ expert.name }}</td>
                     <td>{{ expert.email }}</td>
@@ -186,7 +196,7 @@
                             <button type="button" @click="removeTag(index)">x</button>
                         </div>
 
-                        
+
                     </div>
 
                     <label>ประเภท</label>
@@ -242,7 +252,7 @@
     </div>
 
     <div style="height: 5rem;"></div>
- 
+
 </template>
 
 
@@ -259,12 +269,12 @@ import { useExperts } from '~/composables/useExperts';
 import { useUpload } from '~/composables/useUpload';
 
 const {
-  getExperts,
-  updateExpert,
-  createExpert,
-  deleteExpert,
-  getTagsByExpert,
-  setTagsForExpert,
+    getExperts,
+    updateExpert,
+    createExpert,
+    deleteExpert,
+    getTagsByExpert,
+    setTagsForExpert,
 } = useExperts();
 
 const { uploadImage } = useUpload();
@@ -284,228 +294,6 @@ const sortDirection = ref(1);
 const isDragging = ref(false);
 
 const currentExpert = ref({
-  id: null,
-  name: '',
-  name_en: '',
-  address: '',
-  address_en: '',
-  phoneNumber: '',
-  email: '',
-  description: '',
-  description_en: '',
-  status: 1,
-  tags: [],
-  image: null,
-  type: 1,
-});
-
-/* ---------------- Image cropper ---------------- */
-const fileInput = ref(null);
-const showCropper = ref(false);
-const croppingImage = ref(null);
-const cropperInstance = ref(null);
-const cropperImage = ref(null);
-const pendingImageFile = ref(null);
-
-const blobToDataURL = (blob) =>
-  new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => resolve(String(fr.result));
-    fr.onerror = reject;
-    fr.readAsDataURL(blob);
-  });
-
-const triggerFileInput = () => fileInput.value && fileInput.value.click();
-
-const handleDragDrop = (e) => {
-  isDragging.value = false;
-  const files = e.dataTransfer?.files;
-  if (!files?.length) return;
-  handleFileUpload({ target: { files } });
-};
-
-const handleFileUpload = (event) => {
-  const file = event.target?.files?.[0];
-  if (!file) return;
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-    alert('Only JPEG, PNG or WebP files are allowed.');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = () => {
-    croppingImage.value = reader.result;
-    showCropper.value = true;
-    nextTick(() => {
-      cropperInstance.value = new Cropper(cropperImage.value, {
-        aspectRatio: 2 / 3,
-        viewMode: 2,
-        autoCropArea: 1,
-      });
-    });
-  };
-  reader.readAsDataURL(file);
-};
-
-const cropImage = async () => {
-  if (!cropperInstance.value) return;
-  const canvas = cropperInstance.value.getCroppedCanvas();
-  if (!canvas) return alert('Crop failed. Please try again.');
-  const blob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
-  if (!blob) return alert('Could not create image blob');
-  pendingImageFile.value = new File([blob], `expert_${Date.now()}.png`, { type: 'image/png' });
-  currentExpert.value.image = await blobToDataURL(blob);
-  showCropper.value = false;
-  cropperInstance.value.destroy();
-  cropperInstance.value = null;
-};
-
-const cancelCrop = () => {
-  showCropper.value = false;
-  cropperInstance.value?.destroy();
-  cropperInstance.value = null;
-};
-
-const removeImage = () => {
-  currentExpert.value.image = null;
-  pendingImageFile.value = null;
-};
-
-/* ---------------- TAGS (no suggestions) ---------------- */
-const newTag = ref('');
-
-// normalize: trim, collapse spaces, strip leading/trailing commas
-const normalizeTag = (s) =>
-  String(s || '').replace(/^[,\s]+|[,\s]+$/g, '').replace(/\s+/g, ' ').trim();
-
-const hasTag = (val) =>
-  currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
-
-// commit one tag (Enter/Tab/Comma or programmatic)
-const commitTag = () => {
-  const t = normalizeTag(newTag.value);
-  if (!t) return;
-  if (currentExpert.value.tags.length >= 5) {
-    alert('An expert can have up to 5 tags.');
-    newTag.value = '';
-    return;
-  }
-  if (!hasTag(t)) currentExpert.value.tags.push(t);
-  newTag.value = '';
-};
-
-// --- handlers the template expects (lightweight no-suggest versions) ---
-const onTagInput = () => {
-  // support comma-separated typing (e.g., "ai, data, ml")
-  const raw = String(newTag.value);
-  if (!raw.includes(',')) return;
-
-  const parts = raw.split(',');
-  // last piece stays in input (user is still typing it)
-  const last = parts.pop() ?? '';
-  for (const p of parts) {
-    if (currentExpert.value.tags.length >= 5) break;
-    const t = normalizeTag(p);
-    if (t && !hasTag(t)) currentExpert.value.tags.push(t);
-  }
-  newTag.value = last; // keep the unfinished part in the box
-};
-
-const onTagFocus = () => {
-  /* no suggestions anymore; nothing to do */
-};
-
-const moveTagHighlight = () => {
-  /* no dropdown; nothing to do */
-};
-
-const closeTagDropdown = () => {
-  /* no dropdown; nothing to do */
-};
-
-// Enter key in template calls this
-const confirmTag = () => {
-  commitTag();
-};
-
-const removeTag = (index) => {
-  currentExpert.value.tags.splice(index, 1);
-};
-
-/* ---------------- Fetch + table ---------------- */
-const fetchExperts = async () => {
-  try {
-    const list = await getExperts();
-    const withTags = await Promise.all(
-      list.map(async (e) => {
-        let tags = [];
-        try { tags = await getTagsByExpert(e.id); } catch {}
-        return { ...e, selected: false, tags };
-      })
-    );
-    experts.value = withTags;
-    expertsNum.value = withTags.length;
-  } catch (error) {
-    alert('Error fetching experts.');
-    console.error('Error fetching experts:', error);
-  }
-};
-
-const editItem = async (expert) => {
-  let tags = expert.tags;
-  if (!Array.isArray(tags)) {
-    try { tags = await getTagsByExpert(expert.id); } catch { tags = []; }
-  }
-  currentExpert.value = {
-    ...expert,
-    status: expert.status ? 1 : 0,
-    tags: Array.isArray(tags) ? [...tags] : [],
-    image: expert.image || null,
-  };
-  pendingImageFile.value = null;
-  showModalEdit.value = true;
-};
-
-const filteredSortedExperts = computed(() => {
-  const q = searchQuery.value.trim().toLowerCase();
-  let filtered = experts.value.filter((expert) => {
-    const byId = String(expert.id || '').includes(q);
-    const byName = (expert.name || '').toLowerCase().includes(q);
-    const byAddr = (expert.address || '').toLowerCase().includes(q);
-    const byPhone = (expert.phoneNumber || '').includes(q);
-    const byEmail = (expert.email || '').toLowerCase().includes(q);
-    const byTag = Array.isArray(expert.tags) &&
-      expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
-    return byId || byName || byAddr || byPhone || byEmail || byTag;
-  });
-
-  if (sortBy.value) {
-    filtered.sort((a, b) => {
-      let valA = a[sortBy.value];
-      let valB = b[sortBy.value];
-      if (sortBy.value === 'id') return (Number(valA) - Number(valB)) * sortDirection.value;
-      if (['name', 'address', 'email'].includes(sortBy.value)) {
-        return String(valA || '').localeCompare(String(valB || ''), 'th') * sortDirection.value;
-      }
-      if (sortBy.value === 'status') return ((Number(valB) || 0) - (Number(valA) || 0)) * sortDirection.value;
-      if (sortBy.value === 'phoneNumber') {
-        return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
-      }
-      return 0;
-    });
-  }
-  return filtered;
-});
-
-const toggleSort = (column) => {
-  if (sortBy.value === column) sortDirection.value *= -1;
-  else {
-    sortBy.value = column;
-    sortDirection.value = column === 'status' ? -1 : 1;
-  }
-};
-
-const openAddExpertModal = () => {
-  currentExpert.value = {
     id: null,
     name: '',
     name_en: '',
@@ -519,135 +307,357 @@ const openAddExpertModal = () => {
     tags: [],
     image: null,
     type: 1,
-  };
-  newTag.value = '';
-  pendingImageFile.value = null;
-  showModalAddExpert.value = true;
+});
+
+/* ---------------- Image cropper ---------------- */
+const fileInput = ref(null);
+const showCropper = ref(false);
+const croppingImage = ref(null);
+const cropperInstance = ref(null);
+const cropperImage = ref(null);
+const pendingImageFile = ref(null);
+
+const blobToDataURL = (blob) =>
+    new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(String(fr.result));
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+    });
+
+const triggerFileInput = () => fileInput.value && fileInput.value.click();
+
+const handleDragDrop = (e) => {
+    isDragging.value = false;
+    const files = e.dataTransfer?.files;
+    if (!files?.length) return;
+    handleFileUpload({ target: { files } });
+};
+
+const handleFileUpload = (event) => {
+    const file = event.target?.files?.[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert('Only JPEG, PNG or WebP files are allowed.');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+        croppingImage.value = reader.result;
+        showCropper.value = true;
+        nextTick(() => {
+            cropperInstance.value = new Cropper(cropperImage.value, {
+                aspectRatio: 2 / 3,
+                viewMode: 2,
+                autoCropArea: 1,
+            });
+        });
+    };
+    reader.readAsDataURL(file);
+};
+
+const cropImage = async () => {
+    if (!cropperInstance.value) return;
+    const canvas = cropperInstance.value.getCroppedCanvas();
+    if (!canvas) return alert('Crop failed. Please try again.');
+    const blob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
+    if (!blob) return alert('Could not create image blob');
+    pendingImageFile.value = new File([blob], `expert_${Date.now()}.png`, { type: 'image/png' });
+    currentExpert.value.image = await blobToDataURL(blob);
+    showCropper.value = false;
+    cropperInstance.value.destroy();
+    cropperInstance.value = null;
+};
+
+const cancelCrop = () => {
+    showCropper.value = false;
+    cropperInstance.value?.destroy();
+    cropperInstance.value = null;
+};
+
+const removeImage = () => {
+    currentExpert.value.image = null;
+    pendingImageFile.value = null;
+};
+
+/* ---------------- TAGS (no suggestions) ---------------- */
+const newTag = ref('');
+
+// normalize: trim, collapse spaces, strip leading/trailing commas
+const normalizeTag = (s) =>
+    String(s || '').replace(/^[,\s]+|[,\s]+$/g, '').replace(/\s+/g, ' ').trim();
+
+const hasTag = (val) =>
+    currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
+
+// commit one tag (Enter/Tab/Comma or programmatic)
+const commitTag = () => {
+    const t = normalizeTag(newTag.value);
+    if (!t) return;
+    if (currentExpert.value.tags.length >= 5) {
+        alert('An expert can have up to 5 tags.');
+        newTag.value = '';
+        return;
+    }
+    if (!hasTag(t)) currentExpert.value.tags.push(t);
+    newTag.value = '';
+};
+
+// --- handlers the template expects (lightweight no-suggest versions) ---
+const onTagInput = () => {
+    // support comma-separated typing (e.g., "ai, data, ml")
+    const raw = String(newTag.value);
+    if (!raw.includes(',')) return;
+
+    const parts = raw.split(',');
+    // last piece stays in input (user is still typing it)
+    const last = parts.pop() ?? '';
+    for (const p of parts) {
+        if (currentExpert.value.tags.length >= 5) break;
+        const t = normalizeTag(p);
+        if (t && !hasTag(t)) currentExpert.value.tags.push(t);
+    }
+    newTag.value = last; // keep the unfinished part in the box
+};
+
+const onTagFocus = () => {
+    /* no suggestions anymore; nothing to do */
+};
+
+const moveTagHighlight = () => {
+    /* no dropdown; nothing to do */
+};
+
+const closeTagDropdown = () => {
+    /* no dropdown; nothing to do */
+};
+
+// Enter key in template calls this
+const confirmTag = () => {
+    commitTag();
+};
+
+const removeTag = (index) => {
+    currentExpert.value.tags.splice(index, 1);
+};
+
+/* ---------------- Fetch + table ---------------- */
+const fetchExperts = async () => {
+    try {
+        const list = await getExperts();
+        const withTags = await Promise.all(
+            list.map(async (e) => {
+                let tags = [];
+                try { tags = await getTagsByExpert(e.id); } catch { }
+                return { ...e, selected: false, tags };
+            })
+        );
+        experts.value = withTags;
+        expertsNum.value = withTags.length;
+    } catch (error) {
+        alert('Error fetching experts.');
+        console.error('Error fetching experts:', error);
+    }
+};
+
+const editItem = async (expert) => {
+    let tags = expert.tags;
+    if (!Array.isArray(tags)) {
+        try { tags = await getTagsByExpert(expert.id); } catch { tags = []; }
+    }
+    currentExpert.value = {
+        ...expert,
+        status: expert.status ? 1 : 0,
+        tags: Array.isArray(tags) ? [...tags] : [],
+        image: expert.image || null,
+    };
+    pendingImageFile.value = null;
+    showModalEdit.value = true;
+};
+
+const filteredSortedExperts = computed(() => {
+    const q = searchQuery.value.trim().toLowerCase();
+    let filtered = experts.value.filter((expert) => {
+        const byId = String(expert.id || '').includes(q);
+        const byName = (expert.name || '').toLowerCase().includes(q);
+        const byAddr = (expert.address || '').toLowerCase().includes(q);
+        const byPhone = (expert.phoneNumber || '').includes(q);
+        const byEmail = (expert.email || '').toLowerCase().includes(q);
+        const byTag = Array.isArray(expert.tags) &&
+            expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
+        return byId || byName || byAddr || byPhone || byEmail || byTag;
+    });
+
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            let valA = a[sortBy.value];
+            let valB = b[sortBy.value];
+            if (sortBy.value === 'id') return (Number(valA) - Number(valB)) * sortDirection.value;
+            if (['name', 'address', 'email'].includes(sortBy.value)) {
+                return String(valA || '').localeCompare(String(valB || ''), 'th') * sortDirection.value;
+            }
+            if (sortBy.value === 'status') return ((Number(valB) || 0) - (Number(valA) || 0)) * sortDirection.value;
+            if (sortBy.value === 'phoneNumber') {
+                return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
+            }
+            return 0;
+        });
+    }
+    return filtered;
+});
+
+const toggleSort = (column) => {
+    if (sortBy.value === column) sortDirection.value *= -1;
+    else {
+        sortBy.value = column;
+        sortDirection.value = column === 'status' ? -1 : 1;
+    }
+};
+
+const openAddExpertModal = () => {
+    currentExpert.value = {
+        id: null,
+        name: '',
+        name_en: '',
+        address: '',
+        address_en: '',
+        phoneNumber: '',
+        email: '',
+        description: '',
+        description_en: '',
+        status: 1,
+        tags: [],
+        image: null,
+        type: 1,
+    };
+    newTag.value = '';
+    pendingImageFile.value = null;
+    showModalAddExpert.value = true;
 };
 
 /* ---------------- Status toggle ---------------- */
 const toggleStatus = async (expert) => {
-  try {
-    const newStatus = expert.status ? 0 : 1;
-    await updateExpert(expert.id, { status: newStatus, image: expert.image ?? null });
-    expert.status = newStatus;
-  } catch (error) {
-    alert('Error updating expert status.');
-    console.error(error);
-  }
+    try {
+        const newStatus = expert.status ? 0 : 1;
+        await updateExpert(expert.id, { status: newStatus, image: expert.image ?? null });
+        expert.status = newStatus;
+    } catch (error) {
+        alert('Error updating expert status.');
+        console.error(error);
+    }
 };
 
 const bulkUpdateStatus = async (publish) => {
-  try {
-    const selected = experts.value.filter((e) => e.selected);
-    if (selected.length === 0) return alert('No experts selected.');
-    await Promise.all(
-      selected.map((e) => updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null }))
-    );
-    selected.forEach((e) => (e.status = publish ? 1 : 0));
-    alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
-  } catch (e) {
-    console.error(e);
-    alert('Failed to update expert status.');
-  }
+    try {
+        const selected = experts.value.filter((e) => e.selected);
+        if (selected.length === 0) return alert('No experts selected.');
+        await Promise.all(
+            selected.map((e) => updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null }))
+        );
+        selected.forEach((e) => (e.status = publish ? 1 : 0));
+        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
+    } catch (e) {
+        console.error(e);
+        alert('Failed to update expert status.');
+    }
 };
 
 /* ---------------- Submit (upload + save tags) ---------------- */
 const submitExpert = async (publish) => {
-  if (
-    !currentExpert.value.name.trim() ||
-    !currentExpert.value.name_en.trim() ||
-    !currentExpert.value.address.trim() ||
-    !currentExpert.value.address_en.trim() ||
-    !currentExpert.value.phoneNumber.trim() ||
-    !currentExpert.value.email.trim()
-  ) {
-    alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
-    return;
-  }
-
-  try {
-    const isUpdate = !!currentExpert.value.id;
-    let imagePath = typeof currentExpert.value.image === 'string' ? currentExpert.value.image : null;
-
-    if (pendingImageFile.value) {
-      const finalName = `expert_${Date.now()}.webp`;
-      const uploadRes = await uploadImage(pendingImageFile.value, finalName);
-      if (uploadRes?.error) throw new Error(uploadRes.error);
-      imagePath = uploadRes?.path || `/images/${finalName}`;
+    if (
+        !currentExpert.value.name.trim() ||
+        !currentExpert.value.name_en.trim() ||
+        !currentExpert.value.address.trim() ||
+        !currentExpert.value.address_en.trim() ||
+        !currentExpert.value.phoneNumber.trim() ||
+        !currentExpert.value.email.trim()
+    ) {
+        alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
+        return;
     }
 
-    const payload = {
-      name: currentExpert.value.name,
-      name_en: currentExpert.value.name_en,
-      address: currentExpert.value.address,
-      address_en: currentExpert.value.address_en,
-      phoneNumber: currentExpert.value.phoneNumber,
-      email: currentExpert.value.email,
-      description: currentExpert.value.description,
-      description_en: currentExpert.value.description_en,
-      status: publish ? 1 : 0,
-      image: imagePath || '',
-      type: Number.isFinite(Number(currentExpert.value.type)) ? Number(currentExpert.value.type) : 1,
-    };
+    try {
+        const isUpdate = !!currentExpert.value.id;
+        let imagePath = typeof currentExpert.value.image === 'string' ? currentExpert.value.image : null;
 
-    if (isUpdate) {
-      await updateExpert(currentExpert.value.id, payload);
-      await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
-      alert('Expert updated successfully.');
-    } else {
-      const res = await createExpert(payload);
-      currentExpert.value.id = res?.id ?? null;
-      await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
-      alert('Expert added successfully.');
+        if (pendingImageFile.value) {
+            const finalName = `expert_${Date.now()}.webp`;
+            const uploadRes = await uploadImage(pendingImageFile.value, finalName);
+            if (uploadRes?.error) throw new Error(uploadRes.error);
+            imagePath = uploadRes?.path || `/images/${finalName}`;
+        }
+
+        const payload = {
+            name: currentExpert.value.name,
+            name_en: currentExpert.value.name_en,
+            address: currentExpert.value.address,
+            address_en: currentExpert.value.address_en,
+            phoneNumber: currentExpert.value.phoneNumber,
+            email: currentExpert.value.email,
+            description: currentExpert.value.description,
+            description_en: currentExpert.value.description_en,
+            status: publish ? 1 : 0,
+            image: imagePath || '',
+            type: Number.isFinite(Number(currentExpert.value.type)) ? Number(currentExpert.value.type) : 1,
+        };
+
+        if (isUpdate) {
+            await updateExpert(currentExpert.value.id, payload);
+            await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
+            alert('Expert updated successfully.');
+        } else {
+            const res = await createExpert(payload);
+            currentExpert.value.id = res?.id ?? null;
+            await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
+            alert('Expert added successfully.');
+        }
+
+        showModalAddExpert.value = false;
+        showModalEdit.value = false;
+        pendingImageFile.value = null;
+        fetchExperts();
+    } catch (error) {
+        alert('Error while submitting expert.');
+        console.error('Submit Expert Error:', error);
     }
-
-    showModalAddExpert.value = false;
-    showModalEdit.value = false;
-    pendingImageFile.value = null;
-    fetchExperts();
-  } catch (error) {
-    alert('Error while submitting expert.');
-    console.error('Submit Expert Error:', error);
-  }
 };
 
 /* ---------------- Delete ---------------- */
 const askDelete = (id, name) => {
-  deleteId.value = id;
-  deleteName.value = name;
-  showModal.value = true;
+    deleteId.value = id;
+    deleteName.value = name;
+    showModal.value = true;
 };
 
 const confirmDelete = async () => {
-  try {
-    await deleteExpert(deleteId.value);
-    experts.value = experts.value.filter((e) => e.id !== deleteId.value);
-    expertsNum.value = experts.value.length;
-    showModal.value = false;
-    alert('Expert deleted successfully.');
-  } catch (error) {
-    alert(`Error deleting expert: ${error?.message || 'Unknown error'}`);
-    console.error(error);
-  } finally {
-    deleteId.value = null;
-  }
+    try {
+        await deleteExpert(deleteId.value);
+        experts.value = experts.value.filter((e) => e.id !== deleteId.value);
+        expertsNum.value = experts.value.length;
+        showModal.value = false;
+        alert('Expert deleted successfully.');
+    } catch (error) {
+        alert(`Error deleting expert: ${error?.message || 'Unknown error'}`);
+        console.error(error);
+    } finally {
+        deleteId.value = null;
+    }
 };
 
 const cancelDelete = () => (showModal.value = false);
 const closeModal = () => {
-  showModalAddExpert.value = false;
-  showModalEdit.value = false;
+    showModalAddExpert.value = false;
+    showModalEdit.value = false;
 };
 
 /* ---------------- Helpers ---------------- */
-const handleInputChange = () => {};
-const preventFormSubmit = () => {};
+const handleInputChange = () => { };
+const preventFormSubmit = () => { };
 
 onMounted(fetchExperts);
 
 const toggleSelectAll = () => {
-  experts.value.forEach((e) => (e.selected = selectAll.value));
+    experts.value.forEach((e) => (e.selected = selectAll.value));
 };
 </script>
 
@@ -663,187 +673,204 @@ const toggleSelectAll = () => {
 <style scoped>
 /* ===== Tag input + chips ===== */
 .tags-input-container {
-  position: relative;
-  display: grid;
-  gap: 8px;
+    position: relative;
+    display: grid;
+    gap: 8px;
 }
 
 .tags-input-container .add-text-input {
-  padding-right: 40px;
+    padding-right: 40px;
 }
 
 /* Tag chip */
 .tags-input-container .tag {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  padding: 4px 10px;
-  margin: 4px 6px 0 0;
-  border-radius: 999px;
-  border: 1px solid #b9d99a;
-  background: #e9f5dc;
-  color: #2e6b0c;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1;
-  user-select: none;
-  transition: transform .12s ease, box-shadow .12s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 4px 10px;
+    margin: 4px 6px 0 0;
+    border-radius: 999px;
+    border: 1px solid #b9d99a;
+    background: #e9f5dc;
+    color: #2e6b0c;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    user-select: none;
+    transition: transform .12s ease, box-shadow .12s ease;
 }
+
 .tags-input-container .tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .05);
 }
-.tags-input-container .tag > button {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-weight: 800;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 2px;
+
+.tags-input-container .tag>button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
 }
-.tags-input-container .tag > button:hover {
-  filter: brightness(.9);
+
+.tags-input-container .tag>button:hover {
+    filter: brightness(.9);
 }
 
 /* ===== Suggestions dropdown ===== */
 .tags-suggestions {
-  /* your inline :style controls position, size, etc. */
-  padding: 6px;
-  backdrop-filter: blur(6px);
-  background: #fff;
-  border-radius: 12px;
-  box-shadow:
-    0 16px 40px rgba(33, 43, 54, .12),
-    0 2px 6px rgba(33, 43, 54, .04);
-  overflow-y: auto;
+    /* your inline :style controls position, size, etc. */
+    padding: 6px;
+    backdrop-filter: blur(6px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow:
+        0 16px 40px rgba(33, 43, 54, .12),
+        0 2px 6px rgba(33, 43, 54, .04);
+    overflow-y: auto;
 }
 
 /* Pretty scrollbar */
 .tags-suggestions::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
+
 .tags-suggestions::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
+
 .tags-suggestions::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background-clip: content-box;
+    background: #e5e7eb;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
 }
+
 .tags-suggestions:hover::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+    background: #d1d5db;
 }
 
 /* Suggestion row */
 .tag-suggestion {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  padding: 10px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background .12s ease, transform .08s ease, border-color .12s ease;
-  border: 1px solid transparent;
-  position: relative;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .12s ease, transform .08s ease, border-color .12s ease;
+    border: 1px solid transparent;
+    position: relative;
 }
 
 /* Icon slot (your first <span>) */
-.tag-suggestion > span:first-child {
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: #eef7e6;
-  color: #2e6b0c;
-  font-size: 13px;
-  font-weight: 700;
+.tag-suggestion>span:first-child {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #eef7e6;
+    color: #2e6b0c;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 /* Hover/active state */
 .tag-suggestion:hover {
-  background: #f7fbf2;
-  border-color: #e7f1dc;
+    background: #f7fbf2;
+    border-color: #e7f1dc;
 }
+
 .tag-suggestion.active {
-  background: #ecf7e5;
-  border-color: #cfe8bb;
-  transform: translateX(1px);
+    background: #ecf7e5;
+    border-color: #cfe8bb;
+    transform: translateX(1px);
 }
 
 /* Create row gets a subtle accent */
 .tag-suggestion.create {
-  background: linear-gradient(0deg, #f5faf0, #ffffff);
-  border-color: #e7f1dc;
+    background: linear-gradient(0deg, #f5faf0, #ffffff);
+    border-color: #e7f1dc;
 }
-.tag-suggestion.create > span:first-child {
-  background: #dff0cf;
-  color: #216a00;
+
+.tag-suggestion.create>span:first-child {
+    background: #dff0cf;
+    color: #216a00;
 }
 
 /* Disabled row (e.g., “Start typing…”, “Searching…”) */
 .tag-suggestion.disabled {
-  opacity: .65;
-  cursor: default;
+    opacity: .65;
+    cursor: default;
 }
 
 /* Highlighted substring from v-html */
 .tag-suggestion mark {
-  background: #ffef9c;
-  color: #5b4b00;
-  padding: 0 2px;
-  border-radius: 3px;
+    background: #ffef9c;
+    color: #5b4b00;
+    padding: 0 2px;
+    border-radius: 3px;
 }
 
 /* Optional: soft divider between groups */
-.tag-suggestion + .tag-suggestion {
-  margin-top: 2px;
+.tag-suggestion+.tag-suggestion {
+    margin-top: 2px;
 }
 
 /* ===== Dark mode (optional; auto if user prefers dark) ===== */
 @media (prefers-color-scheme: dark) {
-  .tags-suggestions {
-    background: #121417;
-    border-color: #1f242a;
-    box-shadow:
-      0 16px 40px rgba(0,0,0,.45),
-      0 2px 6px rgba(0,0,0,.25);
-  }
-  .tag-suggestion {
-    color: #e6eaf0;
-  }
-  .tag-suggestion:hover {
-    background: #182028;
-    border-color: #1f2a33;
-  }
-  .tag-suggestion.active {
-    background: #15232d;
-    border-color: #214657;
-  }
-  .tag-suggestion > span:first-child {
-    background: #1a2a18;
-    color: #cdecc2;
-  }
-  .tag-suggestion.create {
-    background: linear-gradient(0deg, #162018, #121417);
-    border-color: #1c2a20;
-  }
-  .tag-suggestion.create > span:first-child {
-    background: #204321;
-    color: #d4ffd1;
-  }
-  .tag-suggestion mark {
-    background: #594a00;
-    color: #ffe89a;
-  }
-  .tags-suggestions::-webkit-scrollbar-thumb {
-    background: #2a2f36;
-  }
-  .tags-suggestions:hover::-webkit-scrollbar-thumb {
-    background: #3a4048;
-  }
+    .tags-suggestions {
+        background: #121417;
+        border-color: #1f242a;
+        box-shadow:
+            0 16px 40px rgba(0, 0, 0, .45),
+            0 2px 6px rgba(0, 0, 0, .25);
+    }
+
+    .tag-suggestion {
+        color: #e6eaf0;
+    }
+
+    .tag-suggestion:hover {
+        background: #182028;
+        border-color: #1f2a33;
+    }
+
+    .tag-suggestion.active {
+        background: #15232d;
+        border-color: #214657;
+    }
+
+    .tag-suggestion>span:first-child {
+        background: #1a2a18;
+        color: #cdecc2;
+    }
+
+    .tag-suggestion.create {
+        background: linear-gradient(0deg, #162018, #121417);
+        border-color: #1c2a20;
+    }
+
+    .tag-suggestion.create>span:first-child {
+        background: #204321;
+        color: #d4ffd1;
+    }
+
+    .tag-suggestion mark {
+        background: #594a00;
+        color: #ffe89a;
+    }
+
+    .tags-suggestions::-webkit-scrollbar-thumb {
+        background: #2a2f36;
+    }
+
+    .tags-suggestions:hover::-webkit-scrollbar-thumb {
+        background: #3a4048;
+    }
 }
 
 
@@ -1755,6 +1782,13 @@ input:checked+.hotnews-slider:before {
     z-index: 1000;
     max-height: 150px;
     overflow-y: auto;
+}
+
+.expert-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 .tags-suggestions div {
