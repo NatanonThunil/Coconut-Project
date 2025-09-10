@@ -5,10 +5,12 @@
 
 ### Update List
 - แก้ ``member`` GET, GET(id), POST, PUT, DELETE  ✅
+- ย้าย ``Navbar`` ไปอยู่ใน Layout
+- เพิ่ม ``Searchbar`` หน้าบ้าน เหลือ แปลภาษา และทดสอบ✅
 
 
 
-โดย [Sujeff] 
+โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
 
 
 # อัพเดต 9 Sep.
@@ -21,8 +23,6 @@
 - แก้ ``event`` GET, GET(id), POST, PUT, DELETE  ✅
 - แก้ ``employees`` GET, GET(id), POST, PUT, DELETE  ✅
 - แก้ ``achivements`` ยังไม่เสร็จ
-- ย้าย ``Navbar`` ไปอยู่ใน Layout
-- เพิ่ม ``Searchbar`` หน้าบ้าน เหลือ แปลภาษา และทดสอบ✅
 
 โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
 
