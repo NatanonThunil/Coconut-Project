@@ -91,17 +91,7 @@ const searchLoading = ref(false)
 const searchError = ref('')
 
 const isSearching = computed(() => searchQuery.value.trim().length >= 2)
-const TYPE_TO_PATH: Partial<Record<SearchType, (id: number) => string>> = {
-  coconut:      (id) => `/coconuts/${id}`,
-  pest:         (id) => `/pests/${id}`,
-  achievement:  (id) => `/achievements/${id}`,
-  chain_values: (id) => `/aboutus/chain-values/${id}`,   // ← example fix
-  employee:     (id) => `/aboutus/employees/${id}`,       // ← example fix
-  event:        (id) => `/events/${id}`,
-  expert:       (id) => `/experts/details/${id}`,         // ← example fix
-  faq:          (id) => `/faqs/${id}`,
-  member:       (id) => `/members/${id}`,
-}
+
 watch(
   () => searchQuery.value,
   async (q) => {
@@ -180,7 +170,7 @@ function highlight(text: string) {
   return safe.replace(rx, '<mark>$1</mark>')
 }
 
-/* ---------- Thai labels ---------- */
+
 function typeLabel(t: SearchType) {
   switch (t) {
     case 'coconut': return 'พันธุ์มะพร้าว'

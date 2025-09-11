@@ -17,20 +17,9 @@ router.use((req, res, next) => {
   next();
 });
 
-/**
- * CONFIG ต่อชนิดข้อมูล (เพิ่มชนิดใหม่ได้ด้วยการเติมบล็อคเดียว)
- * - table: ชื่อตารางจริง
- * - type: label ที่จะคืนให้ FE
- * - titleCandidates: ตัวเลือกคอลัมน์สำหรับ title (เรียงลำดับความสำคัญ)
- * - bodyCandidates: ตัวเลือกคอลัมน์สำหรับข้อความค้น/snippet
- * - dateCandidates: ตัวเลือกคอลัมน์วันที่ (คิด freshness ได้)
- * - statusCol: ชื่อคอลัมน์สถานะ (ถ้ามี)
- * - url: ฟังก์ชันสร้างลิงก์ไปหน้า FE
- * - boost: น้ำหนักต่อชนิด (ไว้จัดอันดับรวม)
- */
-// === วางแทน const TABLE_CONFIGS = [...] เดิม ===
+
 const TABLE_CONFIGS = [
-  // --- Coconut ---
+
   {
     table: 'coconut',
     type: 'coconut',
@@ -107,7 +96,7 @@ const TABLE_CONFIGS = [
       'address', 'address_en',
       'email', 'phoneNumber'
     ],
-    dateCandidates: [],                 // ไม่มีวันตาม schema
+    dateCandidates: [],                 
     statusCol: 'status',
     url: (id) => `/aboutus/employees/details/${id}`,
     boost: 1.12,

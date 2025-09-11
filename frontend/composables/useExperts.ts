@@ -1,4 +1,4 @@
-// ~/composables/useExperts.ts
+
 export type Expert = {
     id?: number
     image?: string | null
@@ -18,7 +18,7 @@ export const useExperts = () => {
     const config = useRuntimeConfig()
     const apiBase = config.public.apiBase || ''
     const be_api_url = config.public.beUrl
-    const apiKey = 'Cocon541986' // Hardcoded for now (must match backend API_SECRET)
+    const apiKey = 'Cocon541986' 
 
     const headers = { 'cocon-key': apiKey } as const
 

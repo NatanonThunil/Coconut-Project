@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import express from 'express'; // Only import once at the top
+import express from 'express';
 const router = Router();
 import { config } from 'dotenv';
 config();

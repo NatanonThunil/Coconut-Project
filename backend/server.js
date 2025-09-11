@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 
 routes.forEach(({ path, handler }) => app.use(path, handler));
 
-app.get('/', (_req, res) => res.send('Starting Front-End...'));
+
 
 const PORT = process.env.BE_PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server is running on port: ${PORT}`));

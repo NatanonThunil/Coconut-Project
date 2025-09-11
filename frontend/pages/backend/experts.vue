@@ -309,7 +309,7 @@ const currentExpert = ref({
     type: 1,
 });
 
-/* ---------------- Image cropper ---------------- */
+
 const fileInput = ref(null);
 const showCropper = ref(false);
 const croppingImage = ref(null);
@@ -380,17 +380,17 @@ const removeImage = () => {
     pendingImageFile.value = null;
 };
 
-/* ---------------- TAGS (no suggestions) ---------------- */
+
 const newTag = ref('');
 
-// normalize: trim, collapse spaces, strip leading/trailing commas
+
 const normalizeTag = (s) =>
     String(s || '').replace(/^[,\s]+|[,\s]+$/g, '').replace(/\s+/g, ' ').trim();
 
 const hasTag = (val) =>
     currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
 
-// commit one tag (Enter/Tab/Comma or programmatic)
+
 const commitTag = () => {
     const t = normalizeTag(newTag.value);
     if (!t) return;
@@ -562,7 +562,7 @@ const bulkUpdateStatus = async (publish) => {
     }
 };
 
-/* ---------------- Submit (upload + save tags) ---------------- */
+
 const submitExpert = async (publish) => {
     if (
         !currentExpert.value.name.trim() ||

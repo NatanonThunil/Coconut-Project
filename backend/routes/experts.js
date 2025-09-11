@@ -3,11 +3,9 @@ const router = Router();
 import { config } from 'dotenv';
 config();
 import db from '../db.js';
-
-// ดึง API_KEY จาก .env (/backend/.env)
 const API_KEY = process.env.API_SECRET;
 
-// Middleware to validate API key
+
 router.use((req, res, next) => {
     const apiKey = req.headers['cocon-key'];
     if (apiKey !== API_KEY) {
@@ -167,7 +165,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 router.put('/:id/tags', async (req, res) => {
-  const conn = await db.getConnection(); // if db is mysql2/promise pool
+  const conn = await db.getConnection(); 
   try {
     const id = Number(req.params.id);
     if (!Number.isFinite(id)) {
@@ -175,13 +173,10 @@ router.put('/:id/tags', async (req, res) => {
     }
 
     let tags = Array.isArray(req.body.tags) ? req.body.tags : [];
-    // normalize: trim, dedupe, max 5
     tags = [...new Set(tags.map(t => String(t || '').trim()).filter(Boolean))].slice(0, 5);
 
-    // replace set transaction
     await conn.beginTransaction();
 
-    // 1) ensure tag rows exist, collect their ids
     const tagIds = [];
     for (const text of tags) {
       const [existing] = await conn.query('SELECT id FROM tag WHERE text = ?', [text]);

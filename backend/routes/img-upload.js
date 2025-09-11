@@ -9,7 +9,7 @@ const router = Router();
 router.use(express.json({ limit: '200mb' }));
 
 
-const MAX_BYTES = 50 * 1024 * 1024; // 50 MB
+const MAX_BYTES = 50 * 1024 * 1024; 
 
 router.post('/', async (req, res) => {
   try {
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Image data or path is missing', code: 'IMAGE_BODY_MISSING' });
     }
 
-    // Only size-check — unlimited width/height is allowed
+
     const buffer = Buffer.from(image, 'base64');
     if (buffer.length > MAX_BYTES) {
       return res.status(413).json({
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Clean filename and save
+   
     const fileName = path.basename(String(imagePath).replace(/^\/+/, ''));
     const baseDir = path.resolve(process.cwd(), process.env.IMG_PATH || '../frontend/.output/public/images');
     await fs.mkdir(baseDir, { recursive: true });
@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
 
     await fs.writeFile(fullPath, buffer);
 
-    console.log('Image file written successfully:', fullPath);
+    console.log('Save image at', fullPath);
     return res.status(200).json({ message: 'Image uploaded successfully', path: `/images/${fileName}` });
   } catch (error) {
     console.error('Error uploading image:', error);

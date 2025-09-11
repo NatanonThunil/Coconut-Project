@@ -78,10 +78,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * GET /experts/:id/tags
- * Returns the tags for an expert: ["tag1","tag2",...]
- */
 router.get('/experts/:id/tags', async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,11 +95,6 @@ router.get('/experts/:id/tags', async (req, res) => {
   }
 });
 
-/**
- * PUT /experts/:id/tags
- * Body: { tags: ["a","b","c"] }  // up to 5, strings
- * Replaces expert's tags with provided list.
- */
 router.put('/experts/:id/tags', async (req, res) => {
   const conn = await db.getConnection();
   try {

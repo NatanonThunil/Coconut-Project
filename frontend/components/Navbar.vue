@@ -126,7 +126,7 @@ const emit = defineEmits(["update:search"]);
 const emitSearch = () => {
   emit("update:search", navsearch.value);
 };
-// Mobile menu state
+
 const isMenuOpen = ref(false)
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 
