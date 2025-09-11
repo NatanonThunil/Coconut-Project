@@ -1,159 +1,248 @@
 <template>
-    <Navbar selecto="chainvalues" />
-    <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="'/coconut-information/value-chain/' + this.$route.params.id">{{ chain_values?.title || 'No Title' }}</NuxtLinkLocale>
-    </div>
-    <div v-if="loading" class="loading-container">
-        <CardShimmer v-for="index in 1" :key="index" />
-        <div class="back-button shimmer"></div>
-    </div>
-    <div v-else class="details-container">
-        <img :src="chain_values.image || defaultImage" alt="Chain Value Image" class="chain-value-image" draggable="false" />
-        <h1>{{ chain_values.title }}</h1>
-        <p>{{ getCategoryLabel(chain_values.category) }}, {{ getTypeLabel(chain_values.type) }}</p>
+  <Navbar selecto="chainvalues" />
+  <div style="height: 8rem"></div>
+
+  <!-- Breadcrumb -->
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale :to="'/coconut-information/value-chain/' + $route.params.id">
+      {{ chain_values?.title || 'No Title' }}
+    </NuxtLinkLocale>
+  </div>
+
+  <!-- Loading -->
+  <div v-if="loading" class="loading-container">
+    <CardShimmer v-for="index in 1" :key="index" />
+    <div class="back-button shimmer"></div>
+  </div>
+
+  <!-- Details -->
+  <div v-else class="details-wrapper">
+    <div class="details-card">
+      <!-- รูปฝั่งซ้าย -->
+      <div class="image-container">
+        <img
+          :src="chain_values.image || defaultImage"
+          alt="Chain Value Image"
+          class="chain-value-image"
+          draggable="false"
+        />
+      </div>
+
+      <!-- ข้อมูลฝั่งขวา -->
+      <div class="details-content">
+        <h1 class="title">{{ chain_values.title }}</h1>
+        <p class="meta">
+          <span class="badge">{{ getCategoryLabel(chain_values.category) }}</span>
+          <span class="badge badge-outline">{{ getTypeLabel(chain_values.type) }}</span>
+        </p>
+
         <div class="summary-container">
-            <h2>{{ $t('Description') }}:</h2>
-            <p>{{ chain_values.description }}</p>
+          <h2>{{ $t('Description') }}</h2>
+          <p>{{ chain_values.description || $t('No description available') }}</p>
         </div>
-        <button @click="goBack" class="back-button">{{ $t('Back to Value Chain') }}</button>
+
+        <button @click="goBack" class="back-button">
+          ← {{ $t('Back to Value Chain') }}
+        </button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { useHead } from '@vueuse/head';
 import CardShimmer from '@/components/CardShimmer.vue';
-import { useChainvalues } from '@/composables/useChainvalues'; // Import useChainvalues composable
+import { useChainvalues } from '@/composables/useChainvalues';
 
 const { getChainvalueById } = useChainvalues();
 
 export default {
-    components: {
-        CardShimmer,
-    },
-    data() {
-        return {
-            chain_values: null,
-            loading: true,
-            defaultImage: 'https://placehold.co/600x400',
-        };
-    },
-    async mounted() {
-        const { id } = this.$route.params;
-        try {
-            const data = await getChainvalueById(id); // Fetch chain value by ID
-            this.chain_values = data;
-            this.loading = false;
-        } catch (error) {
-            console.error('Error fetching chain value details:', error);
-        }
-    },
-    setup() {
-        useHead({
-            title: '🥥Coconut - Value Chain Details',
-            meta: [
-                {
-                    name: 'description',
-                    content: 'Details page for Value Chain in Coconut Knowledge Hub',
-                },
-            ],
-        });
-    },
-    methods: {
-        goBack() {
-            this.$router.push('/coconut-information/value-chain');
+  components: { CardShimmer },
+  data() {
+    return {
+      chain_values: null,
+      loading: true,
+      defaultImage: 'https://placehold.co/800x600',
+    };
+  },
+  async mounted() {
+    const { id } = this.$route.params;
+    try {
+      const data = await getChainvalueById(id);
+      this.chain_values = data;
+      this.loading = false;
+    } catch (error) {
+      console.error('Error fetching chain value details:', error);
+    }
+  },
+  setup() {
+    useHead({
+      title: '🥥Coconut - Value Chain Details',
+      meta: [
+        {
+          name: 'description',
+          content: 'Details page for Value Chain in Coconut Knowledge Hub',
         },
-        getCategoryLabel(value) {
-            const categories = {
-                '0': this.$t('Upstream'),
-                '1': this.$t('Midstream'),
-            };
-            return categories[value] || value;
-        },
-        getTypeLabel(value) {
-            const types = {
-                '0': this.$t('Type 0'),
-                '1': this.$t('Type 1'),
-                '2': this.$t('Type 2'),
-            };
-            return types[value] || value;
-        },
+      ],
+    });
+  },
+  methods: {
+    goBack() {
+      this.$router.push('/coconut-information/value-chain');
     },
+    getCategoryLabel(value) {
+      const categories = {
+        '0': this.$t('Upstream'),
+        '1': this.$t('Midstream'),
+      };
+      return categories[value] || value;
+    },
+    getTypeLabel(value) {
+      const types = {
+        '0': this.$t('Type 0'),
+        '1': this.$t('Type 1'),
+        '2': this.$t('Type 2'),
+      };
+      return types[value] || value;
+    },
+  },
 };
 </script>
 
 <style scoped>
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.details-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
 }
 
-.details-container {
-    padding: 20px;
-    max-width: 1000px;
-    margin: 6rem auto;
+.details-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.image-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 300px;
 }
 
 .chain-value-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    margin-bottom: 15px;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
-h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+.details-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .summary-container {
-    background-color: #d9e8c5;
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    width: 100%;
+  background-color: #f4f8ef;
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
 }
 
 .summary-container h2 {
-    margin: 0;
-    font-size: 1.5rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #2d3a22;
 }
 
 .summary-container p {
-    margin: 0;
-    font-size: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+    overflow-wrap: anywhere;     /* modern way */
+  white-space: normal;  
 }
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #2d3a22;
+}
+
+.meta {
+  margin-bottom: 1.5rem;
+}
+
+.badge {
+  display: inline-block;
+  background: #4e6d16;
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+.badge-outline {
+  background: transparent;
+  border: 1px solid #4e6d16;
+  color: #4e6d16;
+}
+
+
 
 .back-button {
-    display: flex;
-    margin: 2rem auto;
-    padding: 0.8rem 2rem;
-    border: 2px solid #4e6d16;
-    background: transparent;
-    color: #4e6d16;
-    font-size: 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #4e6d16;
+  background: #fff;
+  color: #4e6d16;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
 }
 
-.shimmer {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+.back-button:hover {
+  background: #4e6d16;
+  color: #fff;
 }
 
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .details-card {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .image-container {
+    width: 100%;
+  }
+
+    .chain-value-image {
+    width: 100%;
+    max-height: none; /* allow taller image */
+  }
 }
 </style>

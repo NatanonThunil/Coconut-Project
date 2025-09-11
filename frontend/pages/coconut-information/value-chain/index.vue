@@ -10,16 +10,33 @@
 
   <!-- Search Input -->
   <label class="coconut-v-input">
-    <img src="/icon/search.svg" alt="search icon">
-    <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterChainvalues" />
+    <img src="/icon/search.svg" alt="search icon" />
+    <input
+      type="text"
+      placeholder="ค้นหาด้วยชื่อ..."
+      v-model="searchQuery"
+      @input="filterChainvalues"
+    />
   </label>
 
   <!-- Filters -->
   <div class="all-filter-container">
-    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
-      <select v-model="filter.model" class="filter-select" @change="filterChainvalues">
+    <label
+      class="filter-dropdown"
+      v-for="(filter, key) in filters"
+      :key="key"
+    >
+      <select
+        v-model="filter.model"
+        class="filter-select"
+        @change="filterChainvalues"
+      >
         <option value="">{{ filter.label }}</option>
-        <option v-for="option in filter.options" :key="option.value" :value="option.value">
+        <option
+          v-for="option in filter.options"
+          :key="option.value"
+          :value="option.value"
+        >
           {{ option.text }}
         </option>
       </select>
@@ -27,27 +44,39 @@
   </div>
 
   <!-- Loading State -->
-  <div v-if="loading" class="all-event-card-container">
+  <div v-if="loading" class="coconut-v-cards-container">
     <CardShimmer v-for="index in 30" :key="index" />
   </div>
+
   <div v-else-if="filteredChainvalues.length === 0" class="no-results">
-    <img src="/icon/notfound.png" draggable="false" alt="No chain values found">
+    <img src="/icon/notfound.png" draggable="false" alt="No chain values found" />
     {{ $t('No chain values found') }}
   </div>
-  <div v-else class="all-event-card-container">
-    <router-link v-for="(chainvalue, index) in paginatedChainvalues" :key="chainvalue.id" :to="`/coconut-information/value-chain/details/${chainvalue.id}`">
-      <CoconutCard
-        :image="chainvalue.image || defaultImage"
-        :title="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en"
-        :description="chainvalue.description || 'No description available'"
-      />
-    </router-link>
+
+  <div v-else class="coconut-v-cards-container">
+    <CoconutCards
+      v-for="chainvalue in paginatedChainvalues"
+      :key="chainvalue.id"
+      :img="chainvalue.image || defaultImage"
+      :url="`/coconut-information/value-chain/details/${chainvalue.id}`"
+      :name="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en"
+      :sci_front="''"
+      :sci_middle="''"
+      :sci_back="''"
+      @click="goToDetails(chainvalue.id)"
+    />
   </div>
 
   <!-- Pagination -->
   <div v-if="!loading" class="pagination">
     <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
-    <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
+    <input
+      type="number"
+      v-model.number="pageInput"
+      @change="goToPage"
+      :min="1"
+      :max="totalPages"
+    />
     <span>{{ currentPage }} / {{ totalPages }}</span>
     <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
   </div>
@@ -55,14 +84,15 @@
 
 <script>
 import { useHead } from '@vueuse/head';
-import CoconutCard from '@/components/CoconutCard.vue';
+import CoconutCards from '@/components/CoconutCards.vue';
+import CardShimmer from '@/components/CardShimmer.vue';
 import { useI18n } from 'vue-i18n';
 import { useChainvalues } from '@/composables/useChainvalues';
 
 const { getChainvalues } = useChainvalues();
 
 export default {
-  components: { CoconutCard },
+  components: { CoconutCards, CardShimmer },
   data() {
     return {
       chainvalues: [],
@@ -121,37 +151,43 @@ export default {
   methods: {
     filterChainvalues() {
       const query = this.searchQuery.toLowerCase();
-      this.filteredChainvalues = this.chainvalues.filter(chainvalue => {
+      this.filteredChainvalues = this.chainvalues.filter((chainvalue) => {
         const title = (chainvalue.title || '').toLowerCase();
         const titleEn = (chainvalue.title_en || '').toLowerCase();
         const matchesQuery = title.includes(query) || titleEn.includes(query);
-        const matchesCategory = this.filters.category.model === '' || chainvalue.category.toString() === this.filters.category.model;
-        const matchesType = this.filters.type.model === '' || chainvalue.type.toString() === this.filters.type.model;
+        const matchesCategory =
+          this.filters.category.model === '' ||
+          chainvalue.category.toString() === this.filters.category.model;
+        const matchesType =
+          this.filters.type.model === '' ||
+          chainvalue.type.toString() === this.filters.type.model;
         return matchesQuery && matchesCategory && matchesType;
       });
     },
     changePage(direction) {
-      if (direction === 'next' && this.currentPage < this.totalPages) this.currentPage++;
-      else if (direction === 'prev' && this.currentPage > 1) this.currentPage--;
+      if (direction === 'next' && this.currentPage < this.totalPages)
+        this.currentPage++;
+      else if (direction === 'prev' && this.currentPage > 1)
+        this.currentPage--;
     },
     goToPage() {
-      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) this.currentPage = this.pageInput;
+      if (this.pageInput >= 1 && this.pageInput <= this.totalPages)
+        this.currentPage = this.pageInput;
       else this.pageInput = this.currentPage;
     },
-    resetFilters() {
-      this.filters.category.model = '';
-      this.filters.type.model = '';
-      this.filterChainvalues();
-    },
-    clearSearch() {
-      this.searchQuery = '';
-      this.filterChainvalues();
+    goToDetails(id) {
+      this.$router.push(`/coconut-information/value-chain/details/${id}`);
     },
   },
   setup() {
     useHead({
       title: '🥥Coconut - Value Chain',
-      meta: [{ name: 'description', content: 'Value Chain page for Coconut Knowledge Hub' }],
+      meta: [
+        {
+          name: 'description',
+          content: 'Value Chain page for Coconut Knowledge Hub',
+        },
+      ],
     });
   },
 };
@@ -228,12 +264,15 @@ label.coconut-v-input input {
 }
 
 @keyframes shimmer-effect {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.coconut-v-cards-container,
-.all-event-card-container {
+.coconut-v-cards-container {
   height: auto;
   width: 80%;
   display: flex;
@@ -299,23 +338,28 @@ label.coconut-v-input input {
 }
 
 @media (max-width: 662px) {
-  .coconut-v-cards-container,
-  .all-event-card-container {
+  .coconut-v-cards-container {
     width: 90%;
   }
 }
 
 @keyframes btnexpand {
-  0% { opacity: 0; width: 20%; }
-  100% { opacity: 1; width: 60%; }
+  0% {
+    opacity: 0;
+    width: 20%;
+  }
+  100% {
+    opacity: 1;
+    width: 60%;
+  }
 }
 
-/* เปลี่ยนขนาดการ์ดให้เท่ากับ Coconut Varieties */
+/* ✅ ใช้ขนาดการ์ดเดียวกับ Coconut Varieties */
 .coconut-card {
-  height: 18rem;  /* จาก Varieties */
-  width: 15rem;   /* จาก Varieties */
+  height: 18rem;
+  width: 15rem;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;

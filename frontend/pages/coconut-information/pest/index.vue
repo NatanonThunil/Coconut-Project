@@ -13,7 +13,7 @@
     <img src="/icon/search.svg" alt="search icon" />
     <input
       type="text"
-      placeholder="Search by name..."
+      :placeholder="currentLocale === 'th' ? 'ค้นหาด้วยชื่อ...' : 'Search by name...'"
       v-model="searchQuery"
       @input="filterPests"
     />
@@ -21,28 +21,39 @@
 
   <!-- Filters -->
   <div class="all-filter-container">
-    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+    <label class="filter-dropdown">
       <select
-        v-model="filter.model"
+        v-model="filters.category"
         class="filter-select"
         @change="filterPests"
       >
-        <option value="">{{ filter.label }}</option>
-        <option
-          v-for="option in filter.options"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.text }}
-        </option>
+        <option value="">{{ $t("Category") }}</option>
+        <option value="0">{{ $t("Young-coconut") }}</option>
+        <option value="1">{{ $t("Old-coconut") }}</option>
+      </select>
+    </label>
+    <label class="filter-dropdown">
+      <select
+        v-model="filters.type"
+        class="filter-select"
+        @change="filterPests"
+      >
+        <option value="">{{ $t("All") }}</option>
+        <option value="0">{{ $t("Pest") }}</option>
+        <option value="1">{{ $t("Weed") }}</option>
+        <option value="2">{{ $t("Disease") }}</option>
+        <option value="3">{{ $t("Insect") }}</option>
+        <option value="4">{{ $t("Other enemies") }}</option>
       </select>
     </label>
   </div>
 
   <!-- Loading State -->
-  <div v-if="loading" class="all-event-card-container">
+  <div v-if="loading" class="coconut-v-cards-container">
     <CardShimmer v-for="index in 30" :key="index" />
   </div>
+
+  <!-- No Results -->
   <div v-else-if="filteredPests.length === 0" class="no-results">
     <img
       class="no-result-image"
@@ -52,29 +63,26 @@
     />
     {{ $t("No pests found") }}
   </div>
-  <div v-else class="all-event-card-container">
-    <NuxtLinkLocale
-      v-for="(pest, index) in paginatedPests"
+
+  <!-- Pest Cards -->
+  <div v-else class="coconut-v-cards-container">
+    <CoconutCards
+      v-for="pest in paginatedPests"
       :key="pest.id"
-      :to="`/coconut-information/pest/details/${pest.id}`"
-    >
-      <!-- ✅ PestCard inline -->
-      <div class="pest-card">
-        <img :src="pest.image || defaultImage" alt="pest image" />
-        <div class="card-content">
-          <h3>
-            {{ currentLocale === "th" ? pest.name : pest.name_en }}
-          </h3>
-          <p>{{ pest.sci_name || 'No description available' }}</p>
-        </div>
-      </div>
-    </NuxtLinkLocale>
+      :img="pest.image || defaultImage"
+      :url="`/coconut-information/pest/details/${pest.id}`"
+      :name="currentLocale === 'th' ? pest.name : pest.name_en"
+      :sci_front="pest.sci_name || ''"
+      :sci_middle="''"
+      :sci_back="''"
+      @click="goToDetails(pest.id)"
+    />
   </div>
 
   <!-- Pagination -->
   <div v-if="!loading" class="pagination">
     <button @click="changePage('prev')" :disabled="currentPage === 1">
-      Prev
+      {{ currentLocale === 'th' ? 'กลับ' : 'Prev' }}
     </button>
     <input
       type="number"
@@ -82,10 +90,13 @@
       @change="goToPage"
       :min="1"
       :max="totalPages"
+      class="page-input"
     />
-    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <span style="display: flex; align-self: center;">
+      {{ currentLocale === 'th' ? 'จาก' : 'of' }} {{ totalPages }}
+    </span>
     <button @click="changePage('next')" :disabled="currentPage === totalPages">
-      Next
+      {{ currentLocale === 'th' ? 'ถัดไป' : 'Next' }}
     </button>
   </div>
 </template>
@@ -93,7 +104,10 @@
 <script>
 import { useHead } from "@vueuse/head";
 import { useI18n } from "vue-i18n";
+import { computed } from "vue";
 import { usePests } from "@/composables/usePests";
+import CoconutCards from "@/components/CoconutCards.vue";
+import noimageHandle from "/img/no-image-handle.png";
 
 const { getPests } = usePests();
 
@@ -103,39 +117,34 @@ export default {
       pests: [],
       filteredPests: [],
       searchQuery: "",
-      loading: true,
-      defaultImage: "https://placehold.co/600x400",
       filters: {
-        category: {
-          label: this.$t("Category"),
-          model: "",
-          options: [
-            { value: "0", text: this.$t("Young-coconut") },
-            { value: "1", text: this.$t("Old-coconut") },
-          ],
-        },
-        type: {
-          label: this.$t("All"),
-          model: "",
-          options: [
-            { value: "0", text: this.$t("Pest") },
-            { value: "1", text: this.$t("Weed") },
-            { value: "2", text: this.$t("Disease") },
-            { value: "3", text: this.$t("Insect") },
-            { value: "4", text: this.$t("Other enemies") },
-          ],
-        },
+        category: "",
+        type: "",
       },
+      loading: true,
+      defaultImage: noimageHandle,
       currentPage: 1,
       itemsPerPage: 30,
       pageInput: 1,
     };
   },
+  setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+
+    useHead({
+      title: "🥥Coconut - Pest Information",
+      meta: [
+        {
+          name: "description",
+          content: "Pest Information page for Coconut Knowledge Hub",
+        },
+      ],
+    });
+
+    return { currentLocale };
+  },
   computed: {
-    currentLocale() {
-      const { locale } = useI18n();
-      return locale.value;
-    },
     totalPages() {
       return Math.ceil(this.filteredPests.length / this.itemsPerPage);
     },
@@ -166,14 +175,16 @@ export default {
         const nameEng = (pest.name_en || "").toLowerCase();
         const matchesQuery = nameTh.includes(query) || nameEng.includes(query);
         const matchesCategory =
-          this.filters.category.model === "" ||
-          pest.category?.toString() === this.filters.category.model;
+          this.filters.category === "" ||
+          pest.category?.toString() === this.filters.category;
         const matchesType =
-          this.filters.type.model === "" ||
-          pest.type?.toString() === this.filters.type.model;
+          this.filters.type === "" ||
+          pest.type?.toString() === this.filters.type;
 
         return matchesQuery && matchesCategory && matchesType;
       });
+
+      this.currentPage = 1;
     },
     changePage(direction) {
       if (direction === "next" && this.currentPage < this.totalPages) {
@@ -189,17 +200,9 @@ export default {
         this.pageInput = this.currentPage;
       }
     },
-  },
-  setup() {
-    useHead({
-      title: "🥥Coconut - Pest Information",
-      meta: [
-        {
-          name: "description",
-          content: "Pest Information page for Coconut Knowledge Hub",
-        },
-      ],
-    });
+    goToDetails(id) {
+      this.$router.push(`/coconut-information/pest/details/${id}`);
+    },
   },
 };
 </script>
@@ -264,8 +267,8 @@ label.coconut-v-input input {
   width: 90%;
 }
 
-/* ===== Cards Container (เหมือน coconut) ===== */
-.all-event-card-container {
+/* ===== Cards Container ===== */
+.coconut-v-cards-container {
   height: auto;
   width: 80%;
   display: flex;
@@ -274,31 +277,6 @@ label.coconut-v-input input {
   flex-wrap: wrap;
   gap: 2rem;
   margin: 2rem;
-}
-
-/* ===== PestCard เท่ากับ CoconutCard ===== */
-.pest-card {
-  height: 18rem;
-  width: 15rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-}
-.pest-card:hover {
-  transform: scale(1.05);
-}
-.pest-card img {
-  width: 100%;
-  height: 60%;
-  object-fit: cover;
-}
-.pest-card .card-content {
-  padding: 0.5rem;
-  text-align: center;
 }
 
 /* ===== Loading Shimmer ===== */
@@ -349,7 +327,7 @@ label.coconut-v-input input {
 
 /* ===== Responsive ===== */
 @media (max-width: 662px) {
-  .all-event-card-container {
+  .coconut-v-cards-container {
     width: 90%;
   }
 }
