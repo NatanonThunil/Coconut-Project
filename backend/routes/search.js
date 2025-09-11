@@ -19,6 +19,25 @@ router.use((req, res, next) => {
 
 
 const TABLE_CONFIGS = [
+  {
+    table: 'new',
+    type: 'new',
+    titleCandidates: [ 'title_en', 'title'],
+    bodyCandidates: [
+      `summerize`,
+      `summerize_en`,
+      `description`,
+      `description_en`,
+       'author',
+      'upload_date',
+      
+      
+    ],
+    dateCandidates: [],
+    statusCol: 'status',
+    url: (id) => `/news/details/${id}`,
+    boost: 1.0,
+  },
 
   {
     table: 'coconut',

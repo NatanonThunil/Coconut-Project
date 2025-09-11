@@ -2,6 +2,7 @@
 import { useRuntimeConfig } from '#app'
 
 export type SearchType =
+  | 'new'
   | 'coconut'
   | 'pest'
   | 'achievement'

@@ -173,6 +173,7 @@ function highlight(text: string) {
 
 function typeLabel(t: SearchType) {
   switch (t) {
+    case 'new': return 'ข่าวสาร'
     case 'coconut': return 'พันธุ์มะพร้าว'
     case 'pest': return 'ศัตรูพืช'
     case 'achievement': return 'ผลงาน'

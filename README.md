@@ -5,8 +5,8 @@
 
 ### Update List
 - แก้ ``TiptapEditor`` Highlight heading ``H1, H2, H3`` ✅
-- แก้ ``News`` etc news
-
+- แก้ ``News`` etc news ✅
+- แก้ ``Search ``เอา ``news`` เข้า ✅
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
