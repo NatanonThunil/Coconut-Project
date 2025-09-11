@@ -161,6 +161,7 @@ export default {
 
 .news-content {
     font-size: 1.5rem;
+    max-width: 100dvw;
     overflow: visible;
     display: -webkit-box;
     -webkit-box-orient: vertical;
