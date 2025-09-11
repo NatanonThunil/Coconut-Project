@@ -10,13 +10,8 @@
 
   <div class="hot-news-section">
     <section class="beeg-news">
-      <HotBigAllNews
-        :url="`/news/details/${hotNews.id}`"
-        :image="hotNews.image || notfound"
-        :title="hotNews.title || ''"
-        :date="formatDate(hotNews.upload_date) || ''"
-        v-if="hotNews"
-      />
+      <HotBigAllNews :url="`/news/details/${hotNews.id}`" :image="hotNews.image || notfound"
+        :title="hotNews.title || ''" :date="formatDate(hotNews.upload_date) || ''" v-if="hotNews" />
       <div v-else style="height:100%">
         <HotBigAllNewsShimmer />
       </div>
@@ -29,12 +24,8 @@
     <section class="smol-news" v-else>
       <HotSmallAllNews
         v-for="news in newsItems.filter(news => (news.hot_new && news.id !== hotNews?.id) && news.status).slice(0, 2)"
-        :key="news.id"
-        :url="`/news/details/${news.id}`"
-        :image="news.image || notfound"
-        :title="news.title || ''"
-        :date="formatDate(news.upload_date) || ''"
-      />
+        :key="news.id" :url="`/news/details/${news.id}`" :image="news.image || notfound" :title="news.title || ''"
+        :date="formatDate(news.upload_date) || ''" />
     </section>
   </div>
 
@@ -42,15 +33,9 @@
 
   <section class="news-etc-container">
     <section class="news-etc">
-      <etcNews
-        v-for="news in regularNews"
-        :key="news.id"
-        :url="`/news/details/${news.id}`"
-        :image="news.image || notfound"
-        :title="news.title || ''"
-        :date="formatDate(news.upload_date) || ''"
-        :isHotnews="news.hot_new"
-      />
+      <etcNews v-for="news in regularNews" :key="news.id" :url="`/news/details/${news.id}`"
+        :image="news.image || notfound" :title="news.title || ''" :date="formatDate(news.upload_date) || ''"
+        :isHotnews="news.hot_new" />
     </section>
   </section>
 </template>
@@ -68,13 +53,13 @@ const fetchNews = async () => {
   try {
     const response = await getNews(); // Corrected the invocation of getNews
     // Sort news items by descending id (highest id first)
-    newsItems.value = response.sort((a, b) => b.id - a.id);
+    newsItems.value = response.sort((a, b) => b.upload_date - a.upload_date);
 
     // Find the most recent hot news from the sorted list
     hotNews.value = newsItems.value.find(news => news.hot_new && news.status) || null;
 
     // For regular news, filter out hot news items and include only published news
-    regularNews.value = newsItems.value.filter(news => news.status && !news.hot_new);
+    regularNews.value = newsItems.value.filter(news => news.status && (news.hot_new || news.id !== hotNews.value?.id));
   } catch (error) {
     console.error('Error fetching news:', error);
   } finally {
@@ -92,15 +77,19 @@ onMounted(fetchNews);
   justify-self: center;
   justify-content: center;
 }
+
 .news-etc {
   display: grid;
-  justify-content: flex-start; /* Align items from left to right */
+  justify-content: flex-start;
+  
+  grid-template-columns: 1fr;
+justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
-  width: fit-content;
+  width: 100%;
   height: auto;
   grid-template-columns: repeat(5, auto);
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 

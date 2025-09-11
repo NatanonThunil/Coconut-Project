@@ -204,13 +204,7 @@ function buildTitleExpr(existing, candidates, fallbackLabel) {
   return `COALESCE(${parts.join(', ')}, CONCAT('${fallbackLabel} #', id))`;
 }
 
-/**
- * GET /search?q=...&types=coconut,pest&limit=20&page=1&statusOnly=true
- * - q: คำค้น (จำเป็น)
- * - types: จำกัดชนิดข้อมูล (เว้นว่าง = ทุกชนิดใน config)
- * - limit/page: หน้าและจำนวนต่อหน้า
- * - statusOnly: true จะบังคับกรอง status=1 ถ้าตารางนั้นมีคอลัมน์ status
- */
+
 router.get('/', async (req, res) => {
   try {
     const q = String(req.query.q || '').trim().slice(0, 100);
