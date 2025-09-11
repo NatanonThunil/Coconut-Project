@@ -50,16 +50,26 @@ const loading = ref(true);
 const regularNews = ref([]);
 
 const fetchNews = async () => {
+  loading.value = true
   try {
-    const response = await getNews(); // Corrected the invocation of getNews
-    // Sort news items by descending id (highest id first)
-    newsItems.value = response.sort((a, b) => b.upload_date - a.upload_date);
+    const response = await getNews();
 
-    // Find the most recent hot news from the sorted list
-    hotNews.value = newsItems.value.find(news => news.hot_new && news.status) || null;
+    const items = [...(response ?? [])]
+      .filter(Boolean)
+      .sort((a, b) => new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime());
 
-    // For regular news, filter out hot news items and include only published news
-    regularNews.value = newsItems.value.filter(news => news.status && (news.hot_new || news.id !== hotNews.value?.id));
+    newsItems.value = items;
+
+    const published = items.filter(n => n?.status === 1 || n?.status === true);
+
+
+    const hotTop3 = published.filter(n => !!n?.hot_new).slice(0, 3);
+
+    hotNews.value = hotTop3[0] || null;
+
+    const hotIds = new Set(hotTop3.map(h => h.id));
+    regularNews.value = published.filter(n => !hotIds.has(n.id));
+
   } catch (error) {
     console.error('Error fetching news:', error);
   } finally {
