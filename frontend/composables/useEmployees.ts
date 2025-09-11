@@ -32,17 +32,28 @@ export const useEmployees = () => {
     }
   };
 
+  // helper: format Date -> "YYYY-MM-DD HH:mm:ss"
+  const formatDate = (date: Date | string): string => {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(d.getTime())) return '';
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  };
+
   const createEmployee = async (
-    name: string,
-    name_en: string,
-    image: string,
-    address: string,
-    address_en: string,
-    phoneNumber: string,
-    status: boolean,
-    description: string,
-    description_en: string,
-    email: string
+    payload: {
+      name: string;
+      name_en: string;
+      image?: string;
+      address: string;
+      address_en: string;
+      phoneNumber: string;
+      status: boolean | number;
+      description: string;
+      description_en: string;
+      email: string;
+    }
   ) => {
     const url = `${be_api_url}${apiBase}/employees`;
     console.log('Creating employee at URL:', url);
@@ -51,16 +62,8 @@ export const useEmployees = () => {
       method: 'POST',
       headers: { 'cocon-key': apiKey },
       body: {
-        name,
-        name_en,
-        image,
-        address,
-        address_en,
-        phoneNumber,
-        status,
-        description,
-        description_en,
-        email,
+        ...payload,
+        image: payload.image || null,
       },
     });
   };
@@ -88,11 +91,16 @@ export const useEmployees = () => {
     const url = `${be_api_url}${apiBase}/employees/${id}`;
     console.log('Updating employee at URL:', url);
 
+    const body = {
+      ...payload,
+      ...(payload.image ? { image: payload.image } : {}),
+    };
+
     try {
       return await $fetch(url, {
         method: 'PUT',
         headers: { 'cocon-key': apiKey },
-        body: payload,
+        body,
       });
     } catch (error) {
       console.error(`Error updating employee (${id}):`, error);

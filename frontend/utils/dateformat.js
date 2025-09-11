@@ -1,4 +1,4 @@
-import { useI18n } from 'vue-i18n';  // Make sure to import the useI18n if you are using Vue I18n
+import { useI18n } from 'vue-i18n';  
 
 export const formatDate = (dateString) => {
     const toBangkokTime = (dateStr) => {

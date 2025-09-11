@@ -4,6 +4,7 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import routes from './routes/index.js';
 import imgUploadRoutes from './routes/img-upload.js';
+import pdfUploadRoutes from './routes/pdf-upload.js';
 
 config();
 const app = express();
@@ -17,8 +18,10 @@ const corsOptions = {
 };
 
 
-app.use(cors(corsOptions));
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
@@ -31,15 +34,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(express.static('public'));
 
-
 app.use('/img-upload', imgUploadRoutes); 
-
-
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use('/pdf-upload', pdfUploadRoutes);
 
 
 app.use((req, res, next) => {
@@ -53,7 +51,7 @@ app.use((req, res, next) => {
 
 routes.forEach(({ path, handler }) => app.use(path, handler));
 
-app.get('/', (_req, res) => res.send('Starting Front-End...'));
+
 
 const PORT = process.env.BE_PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server is running on port: ${PORT}`));

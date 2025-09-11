@@ -1,5 +1,5 @@
 <template>
-  <Navbar selecto="coconutdata" />
+
   <div style="height: 8rem"></div>
 
   <div class="faqs-path">

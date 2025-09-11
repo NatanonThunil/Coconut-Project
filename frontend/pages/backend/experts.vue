@@ -1,11 +1,13 @@
 <template>
-    <div style="height: 5rem;"></div>
+    <div style="height: 5 rem;"></div>
     <div class="table-head-text-container">
         <h1>จัดการผู้เชี่ยวชาญ</h1>
         <p>มีผู้เชี่ยวชาญทั้งหมด {{ expertsNum }}</p>
     </div>
+
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
+
         <div class="expert-check-publish">
             <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
             <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
@@ -29,45 +31,69 @@
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Name<button @click="toggleSort('name')">
+                            <div>
+                                Name
+                                <button @click="toggleSort('name')">
                                     <div :class="{ 'rotate': sortBy === 'name' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Email<button @click="toggleSort('email')">
+                            <div>Image
+
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>
+                                Email
+                                <button @click="toggleSort('email')">
                                     <div :class="{ 'rotate': sortBy === 'email' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Address<button @click="toggleSort('address')">
+                            <div>
+                                Address
+                                <button @click="toggleSort('address')">
                                     <div :class="{ 'rotate': sortBy === 'address' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Phone Number<button @click="toggleSort('phoneNumber')">
+                            <div>
+                                Phone Number
+                                <button @click="toggleSort('phoneNumber')">
                                     <div :class="{ 'rotate': sortBy === 'phoneNumber' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
-                    
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Tags<button @click="toggleSort('tags')">
+                            <div>
+                                Tags
+                                <button @click="toggleSort('tags')">
                                     <div :class="{ 'rotate': sortBy === 'tags' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
-                            <div>Status<button @click="toggleSort('status')">
+                            <div>
+                                Status
+                                <button @click="toggleSort('status')">
                                     <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
-                                </button></div>
+                                </button>
+                            </div>
                         </div>
                     </th>
                     <th></th>
@@ -82,11 +108,13 @@
                             <p>{{ expert.id }}</p>
                         </div>
                     </td>
+                    <td>
+                        <img v-if="expert.image" :src="expert.image" alt="Expert Image" class="expert-image" />
+                    </td>
                     <td>{{ expert.name }}</td>
                     <td>{{ expert.email }}</td>
                     <td>{{ expert.address }}</td>
                     <td>{{ expert.phoneNumber }}</td>
-                    
                     <td>{{ expert.tags.join(', ') }}</td>
                     <td>
                         <label class="status-toggle">
@@ -97,9 +125,9 @@
                     <td class="action-buttons">
                         <div class="action-btn-container">
                             <button @click="editItem(expert)" class="edit-btn"><img src="/icon/pen.png"
-                                    alt=""></button>
+                                    alt="" /></button>
                             <button @click="askDelete(expert.id, expert.name)" class="delete-btn"><img
-                                    src="/icon/trash.png" alt=""></button>
+                                    src="/icon/trash.png" alt="" /></button>
                         </div>
                     </td>
                 </tr>
@@ -107,6 +135,7 @@
         </table>
     </div>
 
+    <!-- Delete modal -->
     <div v-if="showModal" class="modal-overlay">
         <div class="modal">
             <div class="text-alert-container">
@@ -120,68 +149,76 @@
         </div>
     </div>
 
+    <!-- Add/Edit modal -->
     <div v-if="showModalAddExpert || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขผู้เชี่ยวชาญ' : 'เพิ่มผู้เชี่ยวชาญ' }}</h2>
             <div class="divider"></div>
+
             <div class="modal-content">
                 <section>
                     <label>ชื่อ</label>
-                    <input class="add-text-input" v-model="currentExpert.name" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
+                    <input class="add-text-input" v-model="currentExpert.name" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
                     <label>ชื่อ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentExpert.name_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.name_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
                     <label>ที่อยู่</label>
-                    <input class="add-text-input" v-model="currentExpert.address" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.address" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
                     <label>ที่อยู่ (อังกฤษ)</label>
-                    <input class="add-text-input" v-model="currentExpert.address_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter address in English" required />
+                    <input class="add-text-input" v-model="currentExpert.address_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
                     <label>เบอร์โทร</label>
-                    <input class="add-text-input" v-model="currentExpert.phoneNumber" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number"
-                        required />
+                    <input class="add-text-input" v-model="currentExpert.phoneNumber" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
                     <label>Email</label>
-                    <input class="add-text-input" v-model="currentExpert.email" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
+                    <input class="add-text-input" v-model="currentExpert.email" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter email" required />
                     <label>คำอธิบาย</label>
-                    <textarea class="add-text-input" v-model="currentExpert.description" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
-                        placeholder="Enter description"></textarea>
+                    <textarea class="add-text-input" v-model="currentExpert.description" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description"></textarea>
                     <label>คำอธิบาย (อังกฤษ)</label>
-                    <textarea class="add-text-input" v-model="currentExpert.description_en" @input="handleInputChange" @keydown.enter.prevent="preventFormSubmit"
+                    <textarea class="add-text-input" v-model="currentExpert.description_en" @input="handleInputChange"
+                        @keydown.enter.prevent="preventFormSubmit"
                         placeholder="Enter description in English"></textarea>
+
+                    <!-- TAGS with Google-like predictions -->
                     <label>Tags</label>
-                    <div class="tags-input-container">
-                        <input class="add-text-input" v-model="newTag" @input="filterTags; handleInputChange" @keydown.enter.prevent="preventFormSubmit" @keyup.enter.prevent="addTag"
-                            placeholder="Add a tag" />
+                    <div class="tags-input-container" style="position: relative;">
+                        <input class="add-text-input" v-model="newTag" @input="onTagInput" @focus="onTagFocus"
+                            @keydown.down.prevent="moveTagHighlight(1)" @keydown.up.prevent="moveTagHighlight(-1)"
+                            @keydown.enter.prevent="confirmTag" @keydown.esc.prevent="closeTagDropdown"
+                            placeholder="Add a tag (max 5)" autocomplete="off" />
+
                         <div class="tag" v-for="(tag, index) in currentExpert.tags" :key="index">
                             {{ tag }}
                             <button type="button" @click="removeTag(index)">x</button>
                         </div>
-                        
 
-                        <div v-if="filteredTags.length" class="tags-suggestions">
-                            <div v-for="(tag, index) in filteredTags" :key="index" @click="selectTag(tag)">
-                                {{ tag }}
-                            </div>
-                        </div>
+
                     </div>
+
                     <label>ประเภท</label>
                     <select class="add-text-input" v-model="currentExpert.type" @input="handleInputChange" required>
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
                         <option value="3">Type 3</option>
-                        
                     </select>
+
                     <label>Image</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleFileUpload">
+                            @drop.prevent="handleDragDrop">
                             <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
                             <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
+
                             <div v-if="currentExpert.image" class="image-preview">
                                 <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
                                 <button class="remove-btn" @click="removeImage">X</button>
                             </div>
+
                             <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
                                 class="file-uploader" ref="fileInput" />
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
@@ -189,18 +226,24 @@
                     </div>
                 </section>
             </div>
+
             <div class="modal-actions">
-                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">{{ showModalEdit ? 'Update without publish' : 'Add without publish' }}</button>
-                <button type="button" class="confirm-btn" @click.prevent="submitExpert(true)">{{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitExpert(false)">
+                    {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+                </button>
+                <button type="button" class="confirm-btn" @click.prevent="submitExpert(true)">
+                    {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+                </button>
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
     </div>
 
-    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden>
+    <!-- Hidden input + Cropper -->
+    <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png" hidden />
     <div v-if="showCropper" class="cropper-container">
         <div class="cropper-wrapper">
-            <img ref="cropperImage" :src="croppingImage" class="cropper-preview">
+            <img ref="cropperImage" :src="croppingImage" class="cropper-preview" />
         </div>
         <div class="cropper-actions">
             <button @click="cropImage" class="crop-btn">Crop & Upload</button>
@@ -209,18 +252,34 @@
     </div>
 
     <div style="height: 5rem;"></div>
+
 </template>
 
+
 <script setup>
-definePageMeta({
-    layout: "admin",
-});
+definePageMeta({ layout: "admin" });
+
 import { ref, onMounted, computed, nextTick } from 'vue';
 import eye from '/icon/eye-alt-svgrepo-com.svg';
 import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
+import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 
-const apiEndpoint = 'experts';
+import { useExperts } from '~/composables/useExperts';
+import { useUpload } from '~/composables/useUpload';
+
+const {
+    getExperts,
+    updateExpert,
+    createExpert,
+    deleteExpert,
+    getTagsByExpert,
+    setTagsForExpert,
+} = useExperts();
+
+const { uploadImage } = useUpload();
+
+/* ---------------- Table / State ---------------- */
 const searchQuery = ref('');
 const experts = ref([]);
 const expertsNum = ref(0);
@@ -232,160 +291,215 @@ const showModalAddExpert = ref(false);
 const showModalEdit = ref(false);
 const sortBy = ref(null);
 const sortDirection = ref(1);
+const isDragging = ref(false);
+
 const currentExpert = ref({
     id: null,
     name: '',
-    name_en: '', // Add name_en property
+    name_en: '',
     address: '',
-    address_en: '', // Add address_en property
+    address_en: '',
     phoneNumber: '',
-    email: '', // Add email property
-    description: '', // Add description property
-    description_en: '', // Add description_en property
+    email: '',
+    description: '',
+    description_en: '',
     status: 1,
-    tags: [], // Add tags property
-    image: '', // Add image property
-    type: 1, // Add type property
+    tags: [],
+    image: null,
+    type: 1,
 });
-const newTag = ref('');
-const isDragging = ref(false);
-const fileInput = ref(null);
-const filteredTags = ref([]);
-const cropperInstance = ref(null);
-const croppingImage = ref(null);
-const showCropper = ref(false);
-const cropperImage = ref(null);
-const allTags = ref(['tag1', 'tag2', 'tag3']); // Example tags, replace with actual tags
-const originalImage = ref(''); // Store the original image before cropping
 
-const triggerFileInput = () => {
-    fileInput.value.click();
-};
+
+const fileInput = ref(null);
+const showCropper = ref(false);
+const croppingImage = ref(null);
+const cropperInstance = ref(null);
+const cropperImage = ref(null);
+const pendingImageFile = ref(null);
+
+const blobToDataURL = (blob) =>
+    new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(String(fr.result));
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+    });
+
+const triggerFileInput = () => fileInput.value && fileInput.value.click();
 
 const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
+    isDragging.value = false;
+    const files = e.dataTransfer?.files;
+    if (!files?.length) return;
+    handleFileUpload({ target: { files } });
 };
 
 const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            originalImage.value = currentExpert.value.image; // Save the original image
-            croppingImage.value = reader.result;
-            showCropper.value = true;
-            nextTick(() => {
-                cropperInstance.value = new Cropper(cropperImage.value, {
-                    aspectRatio: 2 / 3,
-                    viewMode: 2,
-                    autoCropArea: 1
-                });
-            });
-        };
-        reader.readAsDataURL(file);
-    } else {
-        alert('Only JPEG and PNG files are allowed.');
+    const file = event.target?.files?.[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert('Only JPEG, PNG or WebP files are allowed.');
+        return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+        croppingImage.value = reader.result;
+        showCropper.value = true;
+        nextTick(() => {
+            cropperInstance.value = new Cropper(cropperImage.value, {
+                aspectRatio: 2 / 3,
+                viewMode: 2,
+                autoCropArea: 1,
+            });
+        });
+    };
+    reader.readAsDataURL(file);
 };
 
-const cropImage = () => {
-    if (cropperInstance.value) {
-        const canvas = cropperInstance.value.getCroppedCanvas();
-        currentExpert.value.image = canvas.toDataURL('image/jpeg');
-        showCropper.value = false;
-        cropperInstance.value.destroy();
-    }
+const cropImage = async () => {
+    if (!cropperInstance.value) return;
+    const canvas = cropperInstance.value.getCroppedCanvas();
+    if (!canvas) return alert('Crop failed. Please try again.');
+    const blob = await new Promise((res) => canvas.toBlob((b) => res(b), 'image/png', 1));
+    if (!blob) return alert('Could not create image blob');
+    pendingImageFile.value = new File([blob], `expert_${Date.now()}.png`, { type: 'image/png' });
+    currentExpert.value.image = await blobToDataURL(blob);
+    showCropper.value = false;
+    cropperInstance.value.destroy();
+    cropperInstance.value = null;
 };
 
 const cancelCrop = () => {
-    currentExpert.value.image = originalImage.value; // Restore the original image
     showCropper.value = false;
-    cropperInstance.value.destroy();
+    cropperInstance.value?.destroy();
+    cropperInstance.value = null;
 };
 
 const removeImage = () => {
-    currentExpert.value.image = '';
+    currentExpert.value.image = null;
+    pendingImageFile.value = null;
 };
 
-const toggleStatus = async (expert) => {
-    try {
-        const newStatus = !expert.status;
-        const response = await fetch(`/api/${apiEndpoint}/${expert.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ ...expert, status: newStatus ? 1 : 0 }),
-        });
 
-        if (!response.ok) {
-            throw new Error('Failed to update expert status.');
-        }
+const newTag = ref('');
 
-        expert.status = newStatus;
-    } catch (error) {
-        alert('Error updating expert status.');
-        console.error(error);
+
+const normalizeTag = (s) =>
+    String(s || '').replace(/^[,\s]+|[,\s]+$/g, '').replace(/\s+/g, ' ').trim();
+
+const hasTag = (val) =>
+    currentExpert.value.tags.some(t => t.toLowerCase() === String(val).toLowerCase());
+
+
+const commitTag = () => {
+    const t = normalizeTag(newTag.value);
+    if (!t) return;
+    if (currentExpert.value.tags.length >= 5) {
+        alert('An expert can have up to 5 tags.');
+        newTag.value = '';
+        return;
     }
+    if (!hasTag(t)) currentExpert.value.tags.push(t);
+    newTag.value = '';
 };
 
+// --- handlers the template expects (lightweight no-suggest versions) ---
+const onTagInput = () => {
+    // support comma-separated typing (e.g., "ai, data, ml")
+    const raw = String(newTag.value);
+    if (!raw.includes(',')) return;
+
+    const parts = raw.split(',');
+    // last piece stays in input (user is still typing it)
+    const last = parts.pop() ?? '';
+    for (const p of parts) {
+        if (currentExpert.value.tags.length >= 5) break;
+        const t = normalizeTag(p);
+        if (t && !hasTag(t)) currentExpert.value.tags.push(t);
+    }
+    newTag.value = last; // keep the unfinished part in the box
+};
+
+const onTagFocus = () => {
+    /* no suggestions anymore; nothing to do */
+};
+
+const moveTagHighlight = () => {
+    /* no dropdown; nothing to do */
+};
+
+const closeTagDropdown = () => {
+    /* no dropdown; nothing to do */
+};
+
+// Enter key in template calls this
+const confirmTag = () => {
+    commitTag();
+};
+
+const removeTag = (index) => {
+    currentExpert.value.tags.splice(index, 1);
+};
+
+/* ---------------- Fetch + table ---------------- */
 const fetchExperts = async () => {
     try {
-        const response = await $fetch(`/api/${apiEndpoint}`,{headers: { 'CKH': '541986Cocon' },});
-        const expertsWithTags = await Promise.all(response.map(async (expert) => {
-            const tagsResponse = await fetchAllTagsForExpert(expert.id);
-            return { ...expert, selected: false, tags: tagsResponse.map(tag => tag.text) };
-        }));
-        experts.value = expertsWithTags;
-        expertsNum.value = experts.value.length;
+        const list = await getExperts();
+        const withTags = await Promise.all(
+            list.map(async (e) => {
+                let tags = [];
+                try { tags = await getTagsByExpert(e.id); } catch { }
+                return { ...e, selected: false, tags };
+            })
+        );
+        experts.value = withTags;
+        expertsNum.value = withTags.length;
     } catch (error) {
         alert('Error fetching experts.');
-        console.error('Error fetching experts:', error.message, error.stack);
+        console.error('Error fetching experts:', error);
     }
 };
 
-const fetchAllTagsForExpert = async (expertId) => {
-    try {
-        const response = await $fetch(`/api/tags_expert?expert_id=${expertId}`,{headers: { 'CKH': '541986Cocon' },});
-        return Array.isArray(response) ? response : [];
-    } catch (error) {
-        console.error('Error fetching tags:', error.message, error.stack);
-        alert('Error fetching tags.');
-        return [];
+const editItem = async (expert) => {
+    let tags = expert.tags;
+    if (!Array.isArray(tags)) {
+        try { tags = await getTagsByExpert(expert.id); } catch { tags = []; }
     }
-};
-
-const editItem = (expert) => {
-    currentExpert.value = { 
-        ...expert, 
-        status: !!expert.status,
-        tags: [...expert.tags], 
-        image: expert.image || '' 
+    currentExpert.value = {
+        ...expert,
+        status: expert.status ? 1 : 0,
+        tags: Array.isArray(tags) ? [...tags] : [],
+        image: expert.image || null,
     };
+    pendingImageFile.value = null;
     showModalEdit.value = true;
 };
 
-
 const filteredSortedExperts = computed(() => {
-    let filtered = experts.value.filter(expert =>
-        expert.id.toString().includes(searchQuery.value) ||
-        expert.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        expert.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        expert.phoneNumber.includes(searchQuery.value) ||
-        expert.email.toLowerCase().includes(searchQuery.value.toLowerCase()) || // Search by email
-        expert.tags.some(tag => tag.toLowerCase().startsWith(searchQuery.value.toLowerCase())) // Search by prefix
-    );
+    const q = searchQuery.value.trim().toLowerCase();
+    let filtered = experts.value.filter((expert) => {
+        const byId = String(expert.id || '').includes(q);
+        const byName = (expert.name || '').toLowerCase().includes(q);
+        const byAddr = (expert.address || '').toLowerCase().includes(q);
+        const byPhone = (expert.phoneNumber || '').includes(q);
+        const byEmail = (expert.email || '').toLowerCase().includes(q);
+        const byTag = Array.isArray(expert.tags) &&
+            expert.tags.some((t) => (t || '').toLowerCase().startsWith(q));
+        return byId || byName || byAddr || byPhone || byEmail || byTag;
+    });
 
     if (sortBy.value) {
         filtered.sort((a, b) => {
             let valA = a[sortBy.value];
             let valB = b[sortBy.value];
-
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'name' || sortBy.value === 'address' || sortBy.value === 'email') return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            if (sortBy.value === 'phoneNumber') return (valA - valB) * sortDirection.value;
+            if (sortBy.value === 'id') return (Number(valA) - Number(valB)) * sortDirection.value;
+            if (['name', 'address', 'email'].includes(sortBy.value)) {
+                return String(valA || '').localeCompare(String(valB || ''), 'th') * sortDirection.value;
+            }
+            if (sortBy.value === 'status') return ((Number(valB) || 0) - (Number(valA) || 0)) * sortDirection.value;
+            if (sortBy.value === 'phoneNumber') {
+                return String(valA || '').localeCompare(String(valB || '')) * sortDirection.value;
+            }
             return 0;
         });
     }
@@ -393,9 +507,8 @@ const filteredSortedExperts = computed(() => {
 });
 
 const toggleSort = (column) => {
-    if (sortBy.value === column) {
-        sortDirection.value *= -1;
-    } else {
+    if (sortBy.value === column) sortDirection.value *= -1;
+    else {
         sortBy.value = column;
         sortDirection.value = column === 'status' ? -1 : 1;
     }
@@ -405,98 +518,103 @@ const openAddExpertModal = () => {
     currentExpert.value = {
         id: null,
         name: '',
-        name_en: '', 
+        name_en: '',
         address: '',
         address_en: '',
         phoneNumber: '',
-        email: '', // Add email property
+        email: '',
         description: '',
         description_en: '',
         status: 1,
         tags: [],
-        image: '',
-        type: 1, // Add type property
+        image: null,
+        type: 1,
     };
+    newTag.value = '';
+    pendingImageFile.value = null;
     showModalAddExpert.value = true;
+};
+
+/* ---------------- Status toggle ---------------- */
+const toggleStatus = async (expert) => {
+    try {
+        const newStatus = expert.status ? 0 : 1;
+        await updateExpert(expert.id, { status: newStatus, image: expert.image ?? null });
+        expert.status = newStatus;
+    } catch (error) {
+        alert('Error updating expert status.');
+        console.error(error);
+    }
 };
 
 const bulkUpdateStatus = async (publish) => {
     try {
-        const selectedExperts = experts.value.filter(expert => expert.selected);
-        if (selectedExperts.length === 0) {
-            alert('No experts selected.');
-            return;
-        }
-
-        const updatePromises = selectedExperts.map(expert =>
-            fetch(`/api/${apiEndpoint}/${expert.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon' },
-                body: JSON.stringify({ ...expert, status: publish ? 1 : 0 })
-            })
+        const selected = experts.value.filter((e) => e.selected);
+        if (selected.length === 0) return alert('No experts selected.');
+        await Promise.all(
+            selected.map((e) => updateExpert(e.id, { status: publish ? 1 : 0, image: e.image ?? null }))
         );
-
-        await Promise.all(updatePromises);
-
-        selectedExperts.forEach(expert => {
-            expert.status = publish ? 1 : 0;
-        });
-
+        selected.forEach((e) => (e.status = publish ? 1 : 0));
         alert(`Successfully ${publish ? 'published' : 'unpublished'} selected experts.`);
-    } catch {
+    } catch (e) {
+        console.error(e);
         alert('Failed to update expert status.');
     }
 };
 
+
 const submitExpert = async (publish) => {
-    if (!currentExpert.value.name.trim() || !currentExpert.value.name_en.trim() || !currentExpert.value.address.trim() || !currentExpert.value.address_en.trim() || !currentExpert.value.phoneNumber.trim() || !currentExpert.value.email.trim()) {
+    if (
+        !currentExpert.value.name.trim() ||
+        !currentExpert.value.name_en.trim() ||
+        !currentExpert.value.address.trim() ||
+        !currentExpert.value.address_en.trim() ||
+        !currentExpert.value.phoneNumber.trim() ||
+        !currentExpert.value.email.trim()
+    ) {
         alert('Please fill in all required fields: Name, Name (English), Address, Address (English), Phone Number, and Email.');
         return;
     }
 
     try {
         const isUpdate = !!currentExpert.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/${apiEndpoint}/${currentExpert.value.id}` : `/api/${apiEndpoint}`;
+        let imagePath = typeof currentExpert.value.image === 'string' ? currentExpert.value.image : null;
 
-        const payload = {
-            id: currentExpert.value.id,
-            name: currentExpert.value.name,
-            name_en: currentExpert.value.name_en, // Include name_en in payload
-            address: currentExpert.value.address,
-            address_en: currentExpert.value.address_en, // Include address_en in payload
-            phoneNumber: currentExpert.value.phoneNumber,
-            email: currentExpert.value.email, // Include email in payload
-            description: currentExpert.value.description, // Include description in payload
-            description_en: currentExpert.value.description_en, // Include description_en in payload
-            status: publish ? 1 : 0,
-            tags: currentExpert.value.tags, // Include tags in payload
-            image: currentExpert.value.image || '', // Include image in payload
-            type: currentExpert.value.type, // Include type in payload
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon' ,'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', errorText);
-            throw new Error('Error saving the expert.');
+        if (pendingImageFile.value) {
+            const finalName = `expert_${Date.now()}.webp`;
+            const uploadRes = await uploadImage(pendingImageFile.value, finalName);
+            if (uploadRes?.error) throw new Error(uploadRes.error);
+            imagePath = uploadRes?.path || `/images/${finalName}`;
         }
 
-        const result = await response.json();
-        if (!isUpdate) {
-            currentExpert.value.id = result.id;
-            alert('Expert added successfully.');
-        } else {
+        const payload = {
+            name: currentExpert.value.name,
+            name_en: currentExpert.value.name_en,
+            address: currentExpert.value.address,
+            address_en: currentExpert.value.address_en,
+            phoneNumber: currentExpert.value.phoneNumber,
+            email: currentExpert.value.email,
+            description: currentExpert.value.description,
+            description_en: currentExpert.value.description_en,
+            status: publish ? 1 : 0,
+            image: imagePath || '',
+            type: Number.isFinite(Number(currentExpert.value.type)) ? Number(currentExpert.value.type) : 1,
+        };
+
+        if (isUpdate) {
+            await updateExpert(currentExpert.value.id, payload);
+            await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
             alert('Expert updated successfully.');
+        } else {
+            const res = await createExpert(payload);
+            currentExpert.value.id = res?.id ?? null;
+            await setTagsForExpert(currentExpert.value.id, currentExpert.value.tags);
+            alert('Expert added successfully.');
         }
 
         showModalAddExpert.value = false;
         showModalEdit.value = false;
+        pendingImageFile.value = null;
         fetchExperts();
     } catch (error) {
         alert('Error while submitting expert.');
@@ -504,11 +622,7 @@ const submitExpert = async (publish) => {
     }
 };
 
-const closeModal = () => {
-    showModalAddExpert.value = false;
-    showModalEdit.value = false;
-};
-
+/* ---------------- Delete ---------------- */
 const askDelete = (id, name) => {
     deleteId.value = id;
     deleteName.value = name;
@@ -517,80 +631,249 @@ const askDelete = (id, name) => {
 
 const confirmDelete = async () => {
     try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: { 'CKH': '541986Cocon' },
-            body: JSON.stringify({ id: deleteId.value }),
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete expert.');
-        }
-
-        experts.value = experts.value.filter(expert => expert.id !== deleteId.value);
+        await deleteExpert(deleteId.value);
+        experts.value = experts.value.filter((e) => e.id !== deleteId.value);
         expertsNum.value = experts.value.length;
-
         showModal.value = false;
         alert('Expert deleted successfully.');
     } catch (error) {
-        alert(`Error deleting expert: ${error.message}`);
+        alert(`Error deleting expert: ${error?.message || 'Unknown error'}`);
         console.error(error);
     } finally {
         deleteId.value = null;
     }
 };
 
-const cancelDelete = () => {
-    showModal.value = false;
+const cancelDelete = () => (showModal.value = false);
+const closeModal = () => {
+    showModalAddExpert.value = false;
+    showModalEdit.value = false;
 };
 
-const addTag = () => {
-    if (newTag.value.trim() !== '' && !currentExpert.value.tags.includes(newTag.value.trim())) {
-        currentExpert.value.tags.push(newTag.value.trim());
-    }
-    newTag.value = ''; 
-    filteredTags.value = [];
-    currentExpert.value = { ...currentExpert.value }; // Ensure the image is preserved
-};
+/* ---------------- Helpers ---------------- */
+const handleInputChange = () => { };
+const preventFormSubmit = () => { };
 
-const removeTag = (index) => {
-    currentExpert.value.tags.splice(index, 1);
-};
-
-const filterTags = () => {
-    const prefix = newTag.value.toLowerCase();
-    filteredTags.value = allTags.value.filter(tag => tag.toLowerCase().startsWith(prefix) && !currentExpert.value.tags.includes(tag));
-};
-
-const selectTag = (tag) => {
-    currentExpert.value.tags.push(tag);
-    newTag.value = '';
-    filteredTags.value = [];
-};
-
-const handleInputChange = () => {
-    currentExpert.value.image = currentExpert.value.image; // Explicitly set the image property to preserve it
-};
-
-const preventFormSubmit = (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-    }
-};
-
-onMounted(() => {
-    fetchExperts();
-});
+onMounted(fetchExperts);
 
 const toggleSelectAll = () => {
-    experts.value.forEach(expert => expert.selected = selectAll.value);
+    experts.value.forEach((e) => (e.selected = selectAll.value));
 };
 </script>
 
+
+
+
+
+
+
+
+
+
 <style scoped>
+/* ===== Tag input + chips ===== */
+.tags-input-container {
+    position: relative;
+    display: grid;
+    gap: 8px;
+}
+
+.tags-input-container .add-text-input {
+    padding-right: 40px;
+}
+
+/* Tag chip */
+.tags-input-container .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 4px 10px;
+    margin: 4px 6px 0 0;
+    border-radius: 999px;
+    border: 1px solid #b9d99a;
+    background: #e9f5dc;
+    color: #2e6b0c;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    user-select: none;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.tags-input-container .tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .05);
+}
+
+.tags-input-container .tag>button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.tags-input-container .tag>button:hover {
+    filter: brightness(.9);
+}
+
+/* ===== Suggestions dropdown ===== */
+.tags-suggestions {
+    /* your inline :style controls position, size, etc. */
+    padding: 6px;
+    backdrop-filter: blur(6px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow:
+        0 16px 40px rgba(33, 43, 54, .12),
+        0 2px 6px rgba(33, 43, 54, .04);
+    overflow-y: auto;
+}
+
+/* Pretty scrollbar */
+.tags-suggestions::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tags-suggestions::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tags-suggestions::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.tags-suggestions:hover::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+}
+
+/* Suggestion row */
+.tag-suggestion {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .12s ease, transform .08s ease, border-color .12s ease;
+    border: 1px solid transparent;
+    position: relative;
+}
+
+/* Icon slot (your first <span>) */
+.tag-suggestion>span:first-child {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #eef7e6;
+    color: #2e6b0c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Hover/active state */
+.tag-suggestion:hover {
+    background: #f7fbf2;
+    border-color: #e7f1dc;
+}
+
+.tag-suggestion.active {
+    background: #ecf7e5;
+    border-color: #cfe8bb;
+    transform: translateX(1px);
+}
+
+/* Create row gets a subtle accent */
+.tag-suggestion.create {
+    background: linear-gradient(0deg, #f5faf0, #ffffff);
+    border-color: #e7f1dc;
+}
+
+.tag-suggestion.create>span:first-child {
+    background: #dff0cf;
+    color: #216a00;
+}
+
+/* Disabled row (e.g., “Start typing…”, “Searching…”) */
+.tag-suggestion.disabled {
+    opacity: .65;
+    cursor: default;
+}
+
+/* Highlighted substring from v-html */
+.tag-suggestion mark {
+    background: #ffef9c;
+    color: #5b4b00;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+/* Optional: soft divider between groups */
+.tag-suggestion+.tag-suggestion {
+    margin-top: 2px;
+}
+
+/* ===== Dark mode (optional; auto if user prefers dark) ===== */
+@media (prefers-color-scheme: dark) {
+    .tags-suggestions {
+        background: #121417;
+        border-color: #1f242a;
+        box-shadow:
+            0 16px 40px rgba(0, 0, 0, .45),
+            0 2px 6px rgba(0, 0, 0, .25);
+    }
+
+    .tag-suggestion {
+        color: #e6eaf0;
+    }
+
+    .tag-suggestion:hover {
+        background: #182028;
+        border-color: #1f2a33;
+    }
+
+    .tag-suggestion.active {
+        background: #15232d;
+        border-color: #214657;
+    }
+
+    .tag-suggestion>span:first-child {
+        background: #1a2a18;
+        color: #cdecc2;
+    }
+
+    .tag-suggestion.create {
+        background: linear-gradient(0deg, #162018, #121417);
+        border-color: #1c2a20;
+    }
+
+    .tag-suggestion.create>span:first-child {
+        background: #204321;
+        color: #d4ffd1;
+    }
+
+    .tag-suggestion mark {
+        background: #594a00;
+        color: #ffe89a;
+    }
+
+    .tags-suggestions::-webkit-scrollbar-thumb {
+        background: #2a2f36;
+    }
+
+    .tags-suggestions:hover::-webkit-scrollbar-thumb {
+        background: #3a4048;
+    }
+}
+
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -642,7 +925,8 @@ const toggleSelectAll = () => {
     gap: 10px;
 }
 
-.crop-btn, .cancel-btn {
+.crop-btn,
+.cancel-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -749,7 +1033,8 @@ const toggleSelectAll = () => {
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -1311,6 +1596,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1550px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
@@ -1318,6 +1604,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1344,6 +1631,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;
@@ -1494,6 +1782,13 @@ input:checked+.hotnews-slider:before {
     z-index: 1000;
     max-height: 150px;
     overflow-y: auto;
+}
+
+.expert-image {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 .tags-suggestions div {

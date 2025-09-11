@@ -36,6 +36,13 @@
           </th>
           <th>
             <div class="checkbox-id-container">
+              <div>Image
+
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="checkbox-id-container">
               <div>
                 Name<button @click="toggleSort('name')">
                   <div :class="{
@@ -110,6 +117,9 @@
               <input type="checkbox" v-model="employee.selected" />
               <p>{{ employee.id }}</p>
             </div>
+          </td>
+          <td>
+            <img v-if="employee.image" :src="employee.image" alt="Employee Image" class="employee-image" />
           </td>
           <td>{{ employee.name }}</td>
           <td>{{ employee.email }}</td>
@@ -233,10 +243,11 @@
 <script setup>
 definePageMeta({ layout: "admin" });
 
+import eye from '/icon/eye-alt-svgrepo-com.svg';
+import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
 import { ref, onMounted, computed, nextTick } from "vue";
-import eye from "/icon/eye-alt-svgrepo-com.svg";
-import eyeBlink from "/icon/eye-slash-alt-svgrepo-com.svg";
 import "cropperjs/dist/cropper.css";
+import Cropper from "cropperjs";
 import { useEmployees } from "~/composables/useEmployees";
 import { useUpload } from "~/composables/useUpload";
 
@@ -265,83 +276,84 @@ const currentEmployee = ref({
   email: "",
   description: "",
   description_en: "",
-  status: 1,
+  status: false,
   image: "",
 });
 
-const isDragging = ref(false);
 const fileInput = ref(null);
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
-const originalImage = ref("");
+const pendingImageFile = ref(null); // ✅ same as news
+
+// helper: normalize status to numeric 0/1 for API and boolean for UI
+const statusToNumber = (s) => (s === true || s === 1 ? 1 : 0);
+const statusToBool = (s) => (s === 1 || s === true ? true : false);
 
 // ✅ Build consistent payload for API
 const buildEmployeePayload = (employee, overrides = {}) => ({
-  name: employee.name?.trim() || "",
+  name: (employee.name || "").trim(),
   name_en: employee.name_en || "",
-  email: employee.email?.trim() || "",
+  email: (employee.email || "").trim(),
   address: employee.address || "",
   address_en: employee.address_en || "",
-  phoneNumber: employee.phoneNumber || "", // adjust if API wants phone_number
+  phoneNumber: employee.phoneNumber || "",
   description: employee.description || "",
   description_en: employee.description_en || "",
-  status: overrides.status ?? employee.status ?? 1,
+  // always send numeric status to backend (0/1). Prefer override if provided.
+  status: overrides.status ?? statusToNumber(employee.status),
   image: employee.image || "",
 });
 
 // ---------- File Upload + Cropper ----------
-const triggerFileInput = () => fileInput.value.click();
+const triggerFileInput = () => fileInput.value && fileInput.value.click();
 
 const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+  const file = event.target.files && event.target.files[0];
+  if (file && file.type.startsWith("image/")) {
     const reader = new FileReader();
     reader.onload = () => {
-      originalImage.value = currentEmployee.value.image;
       croppingImage.value = reader.result;
       showCropper.value = true;
       nextTick(() => {
+        // cropperImage.value should be bound to an <img ref="cropperImage" /> in template
         cropperInstance.value = new Cropper(cropperImage.value, {
-          aspectRatio: 2 / 3,
-          viewMode: 2,
+          aspectRatio: 2 / 3, // employee photos usually portrait
+          viewMode: 1,
           autoCropArea: 1,
+          background: false,
+          zoomable: false,
+          movable: false,
         });
       });
     };
     reader.readAsDataURL(file);
   } else {
-    alert("Only JPEG and PNG files are allowed.");
+    alert("Only image files are allowed.");
   }
 };
 
-const cropImage = async () => {
+const cropImage = () => {
   if (cropperInstance.value) {
     const canvas = cropperInstance.value.getCroppedCanvas();
-    canvas.toBlob(async (blob) => {
-      if (blob) {
-        try {
-          const uploadedUrl = await uploadImage(blob);
-          currentEmployee.value.image = uploadedUrl;
-        } catch {
-          alert("Image upload failed.");
-        }
-      }
-      showCropper.value = false;
-      cropperInstance.value.destroy();
-    }, "image/jpeg");
+    pendingImageFile.value = canvas.toDataURL("image/jpeg"); // ✅ store dataURL
+    currentEmployee.value.image = canvas.toDataURL("image/jpeg");
+    showCropper.value = false;
+    cropperInstance.value.destroy();
+    cropperInstance.value = null;
   }
 };
 
 const cancelCrop = () => {
-  currentEmployee.value.image = originalImage.value;
   showCropper.value = false;
-  cropperInstance.value.destroy();
+  cropperInstance.value?.destroy();
+  cropperInstance.value = null;
 };
 
 const removeImage = () => {
   currentEmployee.value.image = "";
+  pendingImageFile.value = null;
 };
 
 // ---------- API ----------
@@ -349,7 +361,12 @@ const fetchEmployees = async () => {
   try {
     const response = await getEmployees();
     const employeesArray = Array.isArray(response) ? response : [];
-    employees.value = employeesArray.map((e) => ({ ...e, selected: false }));
+    // ensure each employee has a boolean `status` and `selected` flag
+    employees.value = employeesArray.map((e) => ({
+      ...e,
+      selected: false,
+      status: statusToBool(e.status),
+    }));
     employeesNum.value = employees.value.length;
   } catch (error) {
     alert("Error fetching employees.");
@@ -357,12 +374,19 @@ const fetchEmployees = async () => {
   }
 };
 
+// ---------- toggle status (fixed coconut typo + normalized status) ----------
 const toggleStatus = async (employee) => {
   try {
-    const newStatus = employee.status === 1 ? 0 : 1;
-    const payload = buildEmployeePayload(employee, { status: newStatus });
+    // flip boolean view-state
+    const newStatusBool = !Boolean(employee.status);
+    // prepare payload with numeric status for API
+    const payload = { ...employee, status: statusToNumber(newStatusBool) };
     const updated = await updateEmployee(employee.id, payload);
-    Object.assign(employee, updated);
+    // apply updated fields and normalize status to boolean for UI
+    Object.assign(employee, {
+      ...updated,
+      status: statusToBool(updated.status ?? payload.status),
+    });
   } catch (error) {
     alert("Error updating employee status.");
     console.error("toggleStatus error:", error);
@@ -376,22 +400,32 @@ const submitEmployee = async (publish) => {
   }
 
   try {
-    const payload = buildEmployeePayload(currentEmployee.value, {
-      status: publish ? 1 : 0,
-    });
+    // ✅ Upload image if pending
+    let imagePath = currentEmployee.value.image;
+    if (pendingImageFile.value) {
+      const fileName = `employee_${Date.now()}.webp`;
+      const resp = await uploadImage(pendingImageFile.value, fileName);
+      if (resp?.error) throw new Error(resp.error);
+      imagePath = resp.path || `/images/${fileName}`;
+    }
 
-    let result;
+    const payload = {
+      ...buildEmployeePayload(currentEmployee.value, { status: publish ? 1 : 0 }),
+      image: imagePath,
+    };
+
     if (currentEmployee.value.id) {
-      result = await updateEmployee(currentEmployee.value.id, payload);
+      await updateEmployee(currentEmployee.value.id, payload);
       alert("Employee updated successfully.");
     } else {
-      result = await createEmployee(payload);
+      const result = await createEmployee(payload);
       currentEmployee.value.id = result.id;
       alert("Employee added successfully.");
     }
 
     showModalAddEmployee.value = false;
     showModalEdit.value = false;
+    pendingImageFile.value = null;
     await fetchEmployees();
   } catch (error) {
     alert("Error saving employee.");
@@ -399,28 +433,7 @@ const submitEmployee = async (publish) => {
   }
 };
 
-const bulkUpdateStatus = async (publish) => {
-  try {
-    const selectedEmployees = employees.value.filter((e) => e.selected);
-    if (!selectedEmployees.length) {
-      alert("No employees selected.");
-      return;
-    }
-
-    const promises = selectedEmployees.map((e) =>
-      updateEmployee(e.id, buildEmployeePayload(e, { status: publish ? 1 : 0 }))
-    );
-
-    const results = await Promise.all(promises);
-    results.forEach((updated, i) => Object.assign(selectedEmployees[i], updated));
-
-    alert(`Successfully ${publish ? "published" : "unpublished"} selected employees.`);
-  } catch (error) {
-    alert("Failed to update employee status.");
-    console.error("bulkUpdateStatus error:", error);
-  }
-};
-
+// ---------- Delete ----------
 const askDelete = (id, name) => {
   deleteId.value = id;
   deleteName.value = name;
@@ -448,6 +461,8 @@ const cancelDelete = () => {
 
 const editItem = (employee) => {
   currentEmployee.value = { ...employee, image: employee.image || "" };
+  // ensure status normalized (boolean) in the form
+  currentEmployee.value.status = statusToBool(employee.status);
   showModalEdit.value = true;
 };
 
@@ -462,30 +477,61 @@ const openAddEmployeeModal = () => {
     email: "",
     description: "",
     description_en: "",
-    status: 1,
+    status: false,
     image: "",
   };
+  pendingImageFile.value = null;
   showModalAddEmployee.value = true;
 };
 
 // ---------- Sorting + Filtering ----------
 const filteredSortedEmployees = computed(() => {
+  const q = (searchQuery.value || "").toLowerCase().trim();
   let filtered = employees.value.filter((e) =>
-    [e.id, e.name, e.address, e.phoneNumber, e.email]
+    [
+      e.id,
+      e.name,
+      e.address,
+      e.phoneNumber,
+      e.email,
+      e.name_en,
+      e.address_en,
+    ]
+      .map((v) => (v === null || v === undefined ? "" : String(v)))
       .join(" ")
       .toLowerCase()
-      .includes(searchQuery.value.toLowerCase())
+      .includes(q)
   );
 
   if (sortBy.value) {
     filtered.sort((a, b) => {
       const valA = a[sortBy.value];
       const valB = b[sortBy.value];
-      if (sortBy.value === "id") return (valA - valB) * sortDirection.value;
-      if (["name", "address", "email"].includes(sortBy.value))
-        return valA.localeCompare(valB, "th") * sortDirection.value;
-      if (sortBy.value === "status") return (valB - valA) * sortDirection.value;
-      if (sortBy.value === "phoneNumber") return (valA - valB) * sortDirection.value;
+
+      // id numeric
+      if (sortBy.value === "id") {
+        return (Number(valA || 0) - Number(valB || 0)) * sortDirection.value;
+      }
+
+      // name/address/email: string compare safe-guarded
+      if (["name", "address", "email", "name_en", "address_en"].includes(sortBy.value)) {
+        const aStr = String(valA || "");
+        const bStr = String(valB || "");
+        return aStr.localeCompare(bStr, "th") * sortDirection.value;
+      }
+
+      // status: normalize to number then compare
+      if (sortBy.value === "status") {
+        const aNum = statusToNumber(a.status);
+        const bNum = statusToNumber(b.status);
+        return (aNum - bNum) * sortDirection.value;
+      }
+
+      // phoneNumber: compare as strings (some phone numbers have non-digit chars)
+      if (sortBy.value === "phoneNumber") {
+        return String(valA || "").localeCompare(String(valB || "")) * sortDirection.value;
+      }
+
       return 0;
     });
   }
@@ -497,6 +543,7 @@ const toggleSort = (column) => {
     sortDirection.value *= -1;
   } else {
     sortBy.value = column;
+    // default direction: status descending (active first), others ascending
     sortDirection.value = column === "status" ? -1 : 1;
   }
 };
@@ -508,6 +555,7 @@ const toggleSelectAll = () => {
 const closeModal = () => {
   showModalAddEmployee.value = false;
   showModalEdit.value = false;
+  pendingImageFile.value = null;
   currentEmployee.value = {
     id: null,
     name: "",
@@ -518,14 +566,13 @@ const closeModal = () => {
     email: "",
     description: "",
     description_en: "",
-    status: 1,
+    status: false,
     image: "",
   };
 };
 
 onMounted(fetchEmployees);
 </script>
-
 
 
 <style scoped>
@@ -1455,6 +1502,13 @@ input:checked+.hotnews-slider:before {
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.employee-image {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .add-text-input:focus {

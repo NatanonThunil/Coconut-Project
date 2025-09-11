@@ -171,7 +171,7 @@ export default {
   font-size: 1rem;
   line-height: 1.6;
     overflow-wrap: anywhere;     /* modern way */
-  white-space: normal;  
+  white-space: normal;
 }
 
 .title {

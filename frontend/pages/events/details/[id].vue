@@ -1,5 +1,5 @@
 <template>
-    <Navbar selecto="events" />
+
 
     <!-- Event Image -->
     <div class="image-container" v-if="event">

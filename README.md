@@ -1,3 +1,80 @@
+# อัพเดต 11 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- แก้ ``TiptapEditor`` Highlight heading ``H1, H2, H3`` ✅
+- แก้ ``News`` etc news ✅
+- แก้ ``Search ``เอา ``news`` เข้า ✅
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
+# อัพเดต 10 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- แก้ ``member`` GET, GET(id), POST, PUT, DELETE  ✅
+- ย้าย ``Navbar`` ไปอยู่ใน Layout
+- เพิ่ม ``Searchbar`` หน้าบ้าน เหลือ แปลภาษา และทดสอบ✅
+
+
+
+โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
+
+
+# อัพเดต 9 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- เพิ่ม ``search`` API
+- แก้ ``event`` GET, GET(id), POST, PUT, DELETE  ✅
+- แก้ ``employees`` GET, GET(id), POST, PUT, DELETE  ✅
+- แก้ ``achivements`` ยังไม่เสร็จ
+
+โดย [Sujeff] and [Poom](https://github.com/WasitpolKuekkong)
+
+
+# อัพเดต 8 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- เพิ่ม ``Expert Tags`` GET, GET(id), POST, PUT, DELETE  รอเช็ค
+- เพิ่ม ``Nodemon`` ใน package ของ backend ทำให้แก้โดยไม่ต้องรีรัน backend
+วิธีใช้
+- แก้ ``new`` GET, GET(id), POST, PUT, DELETE  ✅
+``` bash
+npm run dev
+```
+หรือ กด RUN แบบเดิมก็ได้
+โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+# อัพเดต 7 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- เพิ่ม ``News`` ยังไม่เสร็จ  
+- เพิ่ม ``Expert`` GET, GET(id), POST, PUT, DELETE  รอเช็ค
+
+
+โดย [Sujeff] 
+
+
+
+
 # อัพเดต 5 Sep.
 ### TO-DO
 

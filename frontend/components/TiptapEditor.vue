@@ -27,8 +27,8 @@ onMounted(async () => {
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Heading.configure({ levels: [1, 2, 3] }),
       Link.configure({ openOnClick: true }),
-      TextStyle, // 👉 Required for color
-      Color.configure({ types: ["textStyle"] }), // Use with TextStyle
+      TextStyle, 
+      Color.configure({ types: ["textStyle"] }), 
     ],
     content: props.modelValue || "",
     onUpdate: ({ editor }) => {
@@ -36,7 +36,7 @@ onMounted(async () => {
     },
   });
 
-  await nextTick(); // Ensures UI updates properly before accessing editor
+  await nextTick(); 
 });
 
 watch(
@@ -114,14 +114,14 @@ const changeHeading = (level) => {
         title="Underline">
         <span class="icon">U</span>
       </button>
-      <button @click="changeHeading(1)" title="H1">H1</button>
-      <button @click="changeHeading(2)" title="H2">H2</button>
-      <button @click="changeHeading(3)" title="H3">H3</button>
+      <button @click="changeHeading(1)" title="H1"  :class="{ active: editor?.isActive('heading', { level: 1 }) }">H1</button>
+      <button @click="changeHeading(2)" title="H2" :class="{ active: editor?.isActive('heading', { level: 2 }) }">H2</button>
+      <button @click="changeHeading(3)" title="H3" :class="{ active: editor?.isActive('heading', { level: 3 }) }">H3</button>
 
       <button @click="addLink" title="Link">🔗</button>
       <label class="upload-btn" title="Upload Image">
         <input type="file" @change="uploadImage" accept="image/*" hidden />
-        <span class="icon">🖼 Upload</span>
+        <span class="icon">Upload</span>
       </label>
       <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }"
         title="Align Left">

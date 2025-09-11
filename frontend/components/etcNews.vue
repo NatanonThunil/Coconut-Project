@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .HotCard {
-    outline: solid #A6AB82 8px ;
+    outline: solid #A6AB82 5px;
 }
 
 a {
@@ -45,6 +45,7 @@ a {
 }
 
 .date-n-readmore {
+    font-size: clamp(0.5rem, 2.5vw, 0.7rem);
     display: flex;
     justify-content: space-between;
     margin-top: 0.5rem;
@@ -52,18 +53,20 @@ a {
 }
 
 .Big-card {
-    display: flex;
-    flex: 1 1;
-    flex-direction: column;
-    height: 23rem;
-    width: 100%;
-    min-width: 17rem;
-    max-width:  23rem;
-    background-color: white;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
-    transition: 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 360px;
+  min-height: 12rem;
+  background-color: #fff;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  transition: transform .2s ease, box-shadow .2s ease;
+  text-decoration: none; /* ให้เป็นการ์ดลิงก์ที่ไม่ขีดเส้นใต้ */
+  color: inherit;
+  aspect-ratio: 4 / 5;
 }
 
 .Big-card:hover {
@@ -87,6 +90,7 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
+      aspect-ratio: 16 / 9;
     width: 100%;
     height: 70%;
     overflow: hidden;
@@ -97,7 +101,7 @@ a {
 }
 
 .big-hot-news-details-container h2 {
-    font-size: medium;
+    font-size: clamp(1rem, 2.5vw, 0.5rem);
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;

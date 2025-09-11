@@ -1,5 +1,5 @@
 <template>
-  <Navbar selecto="aboutus" />
+
   <div style="height: 8rem"></div>
   <div class="all-container">
     <div class="faqs-path">

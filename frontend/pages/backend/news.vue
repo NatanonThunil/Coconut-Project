@@ -93,7 +93,7 @@
                         {{ news.hot_new ? "✓" : "✕" }}
                     </td>
                     <td>{{ formatDate(news.upload_date) }}</td>
-                    
+
                     <td>
                         <label class="status-toggle">
                             <input type="checkbox" :checked="news.status" @change="toggleStatus(news)" />
@@ -125,12 +125,12 @@
         </div>
     </div>
 
-    <div v-if="showModalAddnews || showModalEdit" class="modal-overlay">
+    <div v-if="showModalAddNews || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
             <div class="lang-toggle">
                 <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang? 'English' : 'Thai' }}
+                    Switch to {{ activeLang ? 'English' : 'Thai' }}
                 </button>
             </div>
             <div class="divider"></div>
@@ -175,7 +175,8 @@
                     <TiptapEditor v-show="activeLang" v-model="currentNews.description" />
                     <TiptapEditor v-show="!activeLang" v-model="currentNews.description_en" />
                     <label v-show="activeLang">สรุป</label>
-                    <textarea v-show="activeLang" v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <textarea v-show="activeLang" v-model="currentNews.summerize"
+                        placeholder="Enter summary"></textarea>
                     <label v-show="!activeLang">สรุป Eng</label>
                     <textarea v-show="!activeLang" v-model="currentNews.summerize_en"
                         placeholder="Enter summary"></textarea>
@@ -207,119 +208,98 @@
 definePageMeta({
     layout: "admin",
 });
-import { ref, onMounted, computed, nextTick } from 'vue';
-import eye from '/icon/eye-alt-svgrepo-com.svg';
-import eyeBlink from '/icon/eye-slash-alt-svgrepo-com.svg';
-import TiptapEditor from '@/components/TiptapEditor.vue';
-import Cropper from 'cropperjs';
-import 'cropperjs/dist/cropper.css';
 
+import { ref, onMounted, computed, nextTick } from "vue";
+import eye from "/icon/eye-alt-svgrepo-com.svg";
+import eyeBlink from "/icon/eye-slash-alt-svgrepo-com.svg";
+import TiptapEditor from "@/components/TiptapEditor.vue";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
 
-const apiEndpoint = 'news';
-const searchQuery = ref('');
+import { useNews } from "~/composables/useNews";
+import { useUpload } from "~/composables/useUpload";
+
+const { getNews, createNews, updateNews, deleteNews } = useNews();
+const { uploadImage } = useUpload();
+
+const apiEndpoint = "news";
+const searchQuery = ref("");
 const News = ref([]);
 const NewsNum = ref(0);
 const selectAll = ref(false);
+
 const deleteId = ref(null);
 const deleteName = ref(null);
 const showModal = ref(false);
-const showModalAddnews = ref(false);
+const showModalAddNews = ref(false);
 const showModalEdit = ref(false);
+
 const isDragging = ref(false);
 const fileInput = ref(null);
-const sortBy = ref('id');
+const sortBy = ref("id");
 const sortDirection = ref(-1);
+
 const currentNews = ref({
     id: null,
-    title: '',
-    title_en: '',
-    image: '',
-    author: '',
-    description: '',
-    description_en: '',
-    summerize: '',
-    summerize_en: '',
+    title: "",
+    title_en: "",
+    image: "",
+    author: "",
+    description: "",
+    description_en: "",
+    summerize: "",
+    summerize_en: "",
     hot_new: false,
-    upload_date: new Date().toISOString().split('T')[0],
+    upload_date: new Date().toISOString().split("T")[0],
     status: false,
 });
-const { getNews } = useNews();
+
 const cropperInstance = ref(null);
 const croppingImage = ref(null);
 const showCropper = ref(false);
 const cropperImage = ref(null);
+const pendingImageFile = ref(null);
+
 const activeLang = ref(true);
 const toggleLang = () => {
-    activeLang.value = activeLang.value === true ? false : true;
+    activeLang.value = !activeLang.value;
 };
 
-const toggleStatus = async (news) => {
-    try {
-        const newStatus = !news.status;
-
-        // Send only the fields required for updating the status
-        const payload = { status: newStatus ? 1 : 0 };
-
-        const response = await fetch(`/api/${apiEndpoint}/${news.id}`, {
-            method: 'PUT',
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error('Failed to update news status:', {
-                status: response.status,
-                statusText: response.statusText,
-                body: errorBody,
-            });
-            throw new Error('Failed to update news status.');
-        }
-
-        // Update status only after successful response
-        news.status = newStatus;
-    } catch (error) {
-        alert('Error updating news status.');
-        console.error('Error in toggleStatus:', error);
-    }
-};
-
-const triggerFileInput = () => {
-    fileInput.value.click();
-};
+// ✅ Fetch all news
 const fetchNews = async () => {
     try {
         const response = await getNews();
-        News.value = response.map(news => ({ ...news, selected: false }));
+        News.value = response.map((news) => ({ ...news, selected: false }));
         NewsNum.value = News.value.length;
     } catch (error) {
-        alert('Error fetching news.');
+        alert("Error fetching news.");
+        console.error(error);
     }
 };
 
-const editItem = (news) => {
-    currentNews.value = {
-        ...news,
-        hot_new: !!news.hot_new,
-        status: !!news.status,
-        description: news.description || "", // Ensure description is set
-    };
-
-    showModalEdit.value = true; // Open modal first
-
-    // Wait for modal to fully open, then update Tiptap content
-    nextTick(() => {
-        console.log("Setting Tiptap Content:", currentNews.value.description);
-    });
+// ✅ Toggle publish/unpublish
+const toggleStatus = async (news) => {
+    try {
+        const newStatus = !news.status;
+        await updateNews(news.id, { ...news, status: newStatus ? 1 : 0 });
+        news.status = newStatus;
+    } catch (error) {
+        alert("Error updating news status.");
+        console.error(error);
+    }
+};
+const triggerFileInput = () => {
+    fileInput.value.click();
 };
 
-
+// ✅ Sorting & Searching
 const filteredSortedNews = computed(() => {
-    let filtered = News.value.filter(news =>
-        news.id.toString().includes(searchQuery.value) ||
-        news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        news.upload_date.includes(searchQuery.value)
+    let filtered = News.value.filter(
+        (news) =>
+            news.id.toString().includes(searchQuery.value) ||
+            news.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            news.author.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            news.upload_date.includes(searchQuery.value)
     );
 
     if (sortBy.value) {
@@ -327,10 +307,13 @@ const filteredSortedNews = computed(() => {
             let valA = a[sortBy.value];
             let valB = b[sortBy.value];
 
-            if (sortBy.value === 'id') return (valA - valB) * sortDirection.value;
-            if (sortBy.value === 'title' || sortBy.value === 'author') return valA.localeCompare(valB, 'th') * sortDirection.value;
-            if (sortBy.value === 'hot_new' || sortBy.value === 'status') return (valB - valA) * sortDirection.value;
-            if (sortBy.value === 'upload_date') return (new Date(valB) - new Date(valA)) * sortDirection.value;
+            if (sortBy.value === "id") return (valA - valB) * sortDirection.value;
+            if (["title", "author"].includes(sortBy.value))
+                return valA.localeCompare(valB, "th") * sortDirection.value;
+            if (["hot_new", "status"].includes(sortBy.value))
+                return (valB - valA) * sortDirection.value;
+            if (sortBy.value === "upload_date")
+                return (new Date(valB) - new Date(valA)) * sortDirection.value;
             return 0;
         });
     }
@@ -342,66 +325,54 @@ const toggleSort = (column) => {
         sortDirection.value *= -1;
     } else {
         sortBy.value = column;
-        sortDirection.value = column === 'hot_new' || column === 'status' ? -1 : 1;
+        sortDirection.value =
+            column === "hot_new" || column === "status" ? -1 : 1;
     }
 };
 
-
+// ✅ Add/Edit News
 const openAddNewsModal = () => {
     currentNews.value = {
         id: null,
-        title: '',
-        title_en: '',
-        image: '',
-        author: '',
-        description: '',
-        description_en: '',
-        summerize: '',
-        summerize_en: '',
+        title: "",
+        title_en: "",
+        image: "",
+        author: "",
+        description: "",
+        description_en: "",
+        summerize: "",
+        summerize_en: "",
         hot_new: false,
-        upload_date: new Date().toISOString().split('T')[0],
+        upload_date: new Date().toISOString().split("T")[0],
         status: false,
     };
-    showModalAddnews.value = true;
+    pendingImageFile.value = null;
+    showModalAddNews.value = true;
+    console.log(showModalAddNews.value);
 };
 
-const bulkUpdateStatus = async (publish) => {
-    try {
-        const selectedNews = News.value.filter(news => news.selected);
-        if (selectedNews.length === 0) {
-            alert('No news items selected.');
-            return;
-        }
-
-        const updatePromises = selectedNews.map(news =>
-            fetch(`/api/news/${news.id}`, {
-                method: 'PUT',
-                headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: publish ? 1 : 0 }) // Only send the status field
-            })
-        );
-
-        await Promise.all(updatePromises);
-
-        selectedNews.forEach(news => {
-            news.status = publish ? 1 : 0;
-        });
-
-        alert(`Successfully ${publish ? 'published' : 'unpublished'} selected news items.`);
-    } catch (error) {
-        alert('Failed to update news status.');
-        console.error('Error in bulkUpdateStatus:', error);
-    }
+const editItem = (news) => {
+    currentNews.value = {
+        ...news,
+        hot_new: !!news.hot_new,
+        status: !!news.status,
+        description: news.description || "",
+    };
+    showModalEdit.value = true;
+    nextTick(() => {
+        console.log("Setting Tiptap Content:", currentNews.value.description);
+    });
 };
 
+// ✅ Submit (Create / Update)
 const submitNews = async (publish) => {
     if (!currentNews.value.title.trim() || !currentNews.value.author.trim()) {
-        alert('Please fill in all required fields: Title and Author.');
+        alert("Please fill in all required fields: Title and Author.");
         return;
     }
 
     try {
-
+        // ✅ Fix timezone to Bangkok
         const userTime = new Date();
         const bangkokOffset = 7 * 60 * 60 * 1000;
         const bangkokTime = new Date(userTime.getTime() + bangkokOffset);
@@ -409,81 +380,89 @@ const submitNews = async (publish) => {
         currentNews.value.upload_date = bangkokTime
             .toISOString()
             .slice(0, 19)
-            .replace('T', ' ');
+            .replace("T", " ");
 
-        const isUpdate = !!currentNews.value.id;
-        const method = isUpdate ? 'PUT' : 'POST';
-        const url = isUpdate ? `/api/news/${currentNews.value.id}` : '/api/news';
+        // ✅ Upload image if pending
+        let imagePath = currentNews.value.image;
+        if (pendingImageFile.value) {
+            const fileName = `news_${Date.now()}.webp`;
+            const resp = await uploadImage(pendingImageFile.value, fileName);
+            if (resp?.error) throw new Error(resp.error);
+            imagePath = resp.path || `/images/${fileName}`;
+        }
 
-    
         const payload = {
-            id: currentNews.value.id || null,
-            title: currentNews.value.title || '',
-            title_en: currentNews.value.title_en || '',
-            description: currentNews.value.description || '',
-            description_en: currentNews.value.description_en || '',
-            author: currentNews.value.author || '',
-            upload_date: currentNews.value.upload_date || '',
+            ...currentNews.value,
+            image: imagePath,
             status: publish ? 1 : 0,
-            hot_new: currentNews.value.hot_new || false,
-            summerize: currentNews.value.summerize || '',
-            summerize_en: currentNews.value.summerize_en || '',
-            image: currentNews.value.image?.startsWith('data:image') ? currentNews.value.image : null, // Validate image
         };
 
-      
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'CKH': '541986Cocon', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        const responseBody = await response.json();
-       
-
-        if (!response.ok) {
-            throw new Error(responseBody.error || 'Error saving the news.');
-        }
-
-        if (!isUpdate) {
-            currentNews.value.id = responseBody.id;
-            alert('News added successfully.');
+        if (currentNews.value.id) {
+            await updateNews(currentNews.value.id, payload);
+            alert("News updated successfully.");
         } else {
-            alert('News updated successfully.');
+            const newNews = await createNews(
+                payload.image,
+                payload.title,
+                payload.title_en,
+                payload.description,
+                payload.description_en,
+                payload.summerize,
+                payload.summerize_en,
+                payload.author,
+                payload.upload_date,
+                payload.status,
+                payload.hot_new
+            );
+            currentNews.value.id = newNews.id;
+            alert("News added successfully.");
         }
 
-        showModalAddnews.value = false;
+        showModalAddNews.value = false;
         showModalEdit.value = false;
+        pendingImageFile.value = null;
         fetchNews();
-
     } catch (error) {
-        alert('Error while submitting news.');
-        console.error('Error in submitNews:', error); // Enhanced error logging
+        alert("Error while submitting news.");
+        console.error("Submit News Error:", error);
     }
 };
 
+// ✅ Delete
+const askDelete = (id, title) => {
+    deleteId.value = id;
+    deleteName.value = title;
+    showModal.value = true;
+};
 
+const confirmDelete = async () => {
+    try {
+        await deleteNews(deleteId.value);
+        News.value = News.value.filter((news) => news.id !== deleteId.value);
+        NewsNum.value = News.value.length;
+        showModal.value = false;
+        alert("News deleted successfully.");
+    } catch (error) {
+        alert(`Error deleting news: ${error.message}`);
+        console.error(error);
+    } finally {
+        deleteId.value = null;
+    }
+};
+
+const cancelDelete = () => {
+    showModal.value = false;
+};
 
 const closeModal = () => {
-    showModalAddnews.value = false;
+    showModalAddNews.value = false;
     showModalEdit.value = false;
 };
 
-const removeImage = () => {
-    currentNews.value.image = '';
-};
-
-const handleDragDrop = (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileUpload({ target: { files } });
-    }
-};
-
+// ✅ Cropper
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onload = () => {
             croppingImage.value = reader.result;
@@ -496,8 +475,6 @@ const handleFileUpload = (event) => {
                     background: false,
                     zoomable: false,
                     movable: false,
-                    rotatable: false,
-                    scalable: false,
                 });
             });
         };
@@ -508,7 +485,8 @@ const handleFileUpload = (event) => {
 const cropImage = () => {
     if (cropperInstance.value) {
         const canvas = cropperInstance.value.getCroppedCanvas();
-        currentNews.value.image = canvas.toDataURL('image/jpeg');
+        pendingImageFile.value = canvas.toDataURL("image/jpeg");
+        currentNews.value.image = canvas.toDataURL("image/jpeg");
         showCropper.value = false;
         cropperInstance.value.destroy();
     }
@@ -519,86 +497,42 @@ const cancelCrop = () => {
     cropperInstance.value.destroy();
 };
 
-const askDelete = (id, title) => {
-    deleteId.value = id;
-    deleteName.value = title;
-    showModal.value = true;
-};
-const confirmDelete = async () => {
-    try {
-        const response = await fetch(`/api/${apiEndpoint}/${deleteId.value}`, {
-            method: 'DELETE',
-            headers: {
-                'CKH': '541986Cocon',
-                'Content-Type': 'application/json'
-            }
-            // No body needed for DELETE request, just pass the `id` in the URL
-        });
-
-        const result = await response.json();
-        console.log("Delete API Response:", result);
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete news.');
-        }
-
-        // Update frontend list after successful deletion
-        News.value = News.value.filter(news => news.id !== deleteId.value);
-        NewsNum.value = News.value.length;
-
-        showModal.value = false;
-        alert('News deleted successfully.');
-    } catch (error) {
-        alert(`Error deleting news: ${error.message}`);
-        console.error(error);
-    } finally {
-        deleteId.value = null;
-    }
-};
-
-
-
-
-
-const cancelDelete = () => {
-    showModal.value = false;
+// ✅ Select all
+const toggleSelectAll = () => {
+    News.value.forEach((news) => (news.selected = selectAll.value));
 };
 
 onMounted(() => {
     fetchNews();
 });
-
-const toggleSelectAll = () => {
-    News.value.forEach(news => news.selected = selectAll.value);
-};
 </script>
 
-<style scoped>
 
+<style scoped>
 .lang-toggle {
-  margin-bottom: 1rem;
-  text-align: center;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 .lang-toggle button {
-  background-color: #4E6D16;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #4E6D16;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .lang-toggle button:hover {
-  background-color: #3c5213;
-  transform: scale(1.05);
+    background-color: #3c5213;
+    transform: scale(1.05);
 }
 
 .lang-toggle button:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
 .status-toggle {
@@ -811,7 +745,7 @@ const toggleSelectAll = () => {
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
     width: 10%;
-    
+
 }
 
 .item-list-table th:nth-child(5),
@@ -830,13 +764,14 @@ const toggleSelectAll = () => {
 .item-list-table td:nth-child(7) {
     width: 8%;
     text-align: center;
-    
+
 }
+
 .item-list-table th:nth-child(8),
 .item-list-table td:nth-child(8) {
     width: 8%;
     text-align: center;
-    
+
 }
 
 .action-btn-container {
@@ -1350,26 +1285,29 @@ input:checked+.hotnews-slider:before {
 
 @media screen and (max-width: 1440px) {
 
-.item-list-table th:nth-child(3),
-.item-list-table td:nth-child(3) {
-    width: 18%;
-}
+    .item-list-table th:nth-child(3),
+    .item-list-table td:nth-child(3) {
+        width: 18%;
+    }
 
 }
+
 @media screen and (max-width: 1306px) {
 
-.item-list-table th:nth-child(5),
-.item-list-table td:nth-child(5) {
-    display: none;
+    .item-list-table th:nth-child(5),
+    .item-list-table td:nth-child(5) {
+        display: none;
+    }
 }
-}
+
 @media screen and (max-width: 1130px) {
 
-.item-list-table th:nth-child(6),
-.item-list-table td:nth-child(6) {
-    display: none;
+    .item-list-table th:nth-child(6),
+    .item-list-table td:nth-child(6) {
+        display: none;
+    }
 }
-}
+
 @media screen and (max-width: 1052px) {
     .add-btn-container {
         flex-direction: column;
@@ -1387,10 +1325,11 @@ input:checked+.hotnews-slider:before {
     .modal-add .modal-content section:nth-child(2) {
         width: 100%;
     }
+
     .item-list-table th:nth-child(3),
-.item-list-table td:nth-child(3) {
-    width: 10%;
-}
+    .item-list-table td:nth-child(3) {
+        width: 10%;
+    }
 }
 
 @media screen and (max-width: 865px) {
