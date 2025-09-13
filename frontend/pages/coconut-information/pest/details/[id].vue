@@ -47,14 +47,13 @@
                 <strong>ลักษณะและวงจรชีวิต:</strong>
                 {{ pest?.lifecycle || "N/A" }}
               </p>
+              <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
             </div>
           </div>
         </div>
-        <div style="height: 8rem"></div>
-        <!-- Added more space -->
-        <div class="back-btn-container">
-          <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
-        </div>
+       
+ 
+       
       </div>
     </div>
   </div>

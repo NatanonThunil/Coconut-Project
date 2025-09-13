@@ -42,16 +42,7 @@
 
           </div>
 
-          <div class="tags">
-            <p><strong>แท็ก:</strong></p>
-            <div v-if="employees?.tags && employees.tags.length">
-              <span v-for="(tag, index) in employees.tags" :key="index" class="tag" @click="filterByTag(tag)">
-                {{ tag }}
-              </span>
-            </div>
-            <p v-else>ไม่มีแท็ก</p>
-          </div>
-
+         
           <p class="description">
             <strong>คำอธิบาย:</strong>
             {{ employees?.description || "ไม่มีคำอธิบาย" }}
