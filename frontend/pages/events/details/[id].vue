@@ -11,6 +11,7 @@
     <div v-else class="no-data">
         <p>No event data available. Please try again later.</p>
     </div>
+    <div style="height: 1rem;"></div>
   <div class="faqs-path">
             <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
             <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>/
