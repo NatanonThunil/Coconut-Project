@@ -1,64 +1,47 @@
 <template>
-  <Navbar selecto="chainvalues" />
+
   <div style="height: 8rem"></div>
 
   <!-- Breadcrumb -->
   <div class="faqs-path">
+    <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale> /
     <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale> /
-    <NuxtLinkLocale :to="'/coconut-information/value-chain/' + $route.params.id">
+    <NuxtLinkLocale :to="'/coconut-information/value-chain/details/' + $route.params.id">
       {{ chain_values?.title || 'No Title' }}
     </NuxtLinkLocale>
   </div>
 
   <!-- Loading -->
-  <div v-if="loading" class="loading-container">
-    <CardShimmer v-for="index in 1" :key="index" />
-    <div class="back-button shimmer"></div>
-  </div>
 
-  <!-- Details -->
-  <div v-else class="details-wrapper">
-    <div class="details-card">
-      <!-- รูปฝั่งซ้าย -->
-      <div class="image-container">
-        <img
-          :src="chain_values.image || defaultImage"
-          alt="Chain Value Image"
-          class="chain-value-image"
-          draggable="false"
-        />
-      </div>
+  <div class="chainvalue-container">
+    <div v-if="loading" class="loading-container">
+      <CardShimmer v-for="index in 1" :key="index" />
+      <div class="back-button shimmer"></div>
+    </div>
+    <img class="news-image-banner" :src="chain_values.image || 'https://placehold.co/800x400'" alt="News Image"
+      v-else="chain_values.image" />
 
-      <!-- ข้อมูลฝั่งขวา -->
-      <div class="details-content">
-        <h1 class="title">{{ chain_values.title }}</h1>
-        <p class="meta">
-          <span class="badge">{{ getCategoryLabel(chain_values.category) }}</span>
-          <span class="badge badge-outline">{{ getTypeLabel(chain_values.type) }}</span>
-        </p>
-
-        <div class="summary-container">
-          <h2>{{ $t('Description') }}</h2>
-          <p>{{ chain_values.description || $t('No description available') }}</p>
-        </div>
-
-        <button @click="goBack" class="back-button">
-          ← {{ $t('Back to Value Chain') }}
-        </button>
-      </div>
+    <h1>{{ (currentLocale == 'th') ? (chain_values?.title || 'No Title') : (chain_values?.title_en || 'No Title') }}
+    </h1>
+    <div class="chain_value-content">
+      {{ (currentLocale == 'th') ? (chain_values?.description || 'No Title') : (chain_values?.description_en || 'No Title') }}
     </div>
   </div>
+
+
 </template>
 
 <script>
 import { useHead } from '@vueuse/head';
 import CardShimmer from '@/components/CardShimmer.vue';
 import { useChainvalues } from '@/composables/useChainvalues';
+import { useI18n } from 'vue-i18n';
 
 const { getChainvalueById } = useChainvalues();
 
 export default {
+
   components: { CardShimmer },
   data() {
     return {
@@ -78,6 +61,7 @@ export default {
     }
   },
   setup() {
+   
     useHead({
       title: '🥥Coconut - Value Chain Details',
       meta: [
@@ -107,11 +91,39 @@ export default {
       };
       return types[value] || value;
     },
-  },
+  },computed:{
+    currentLocale() {
+      return this.$i18n.locale;
+    }
+  }
 };
 </script>
 
 <style scoped>
+.chain_value-content {
+      font-size: 1.5rem;
+    max-width:100dvw;
+    overflow: visible;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+.chainvalue-container {
+  max-width: 1000px;
+  margin:  auto;
+  padding: 20px;
+  
+}
+.news-image-banner {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
 .details-wrapper {
   display: flex;
   justify-content: center;
@@ -121,7 +133,7 @@ export default {
 .details-card {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   max-width: 1100px;
   width: 100%;
@@ -170,7 +182,8 @@ export default {
 .summary-container p {
   font-size: 1rem;
   line-height: 1.6;
-    overflow-wrap: anywhere;     /* modern way */
+  overflow-wrap: anywhere;
+  /* modern way */
   white-space: normal;
 }
 
@@ -240,9 +253,10 @@ export default {
     width: 100%;
   }
 
-    .chain-value-image {
+  .chain-value-image {
     width: 100%;
-    max-height: none; /* allow taller image */
+    max-height: none;
+    /* allow taller image */
   }
 }
 </style>

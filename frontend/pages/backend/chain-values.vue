@@ -135,8 +135,8 @@
 
                     <label>Category</label>
                     <select v-model="currentChainValue.category" class="category-select" required>
-                        <option value="0">Category 0</option>
-                        <option value="1">Category 1</option>
+                        <option value="0">มะพร้าวอ่อน</option>
+                        <option value="1">มะพร้าวแก่</option>
                     </select>
                 </section>
             </div>

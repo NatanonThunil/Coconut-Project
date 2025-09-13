@@ -4,7 +4,7 @@
 
     <div style="height: 8rem"></div>
     <div class="faqs-path">
-        
+        <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>
     </div>
   <h1 class="context-header">{{ $t('AboutUs') }}</h1>

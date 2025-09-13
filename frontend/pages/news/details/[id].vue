@@ -2,7 +2,7 @@
 
     <div style="height: 8rem"></div>
     <div class="faqs-path">
- 
+ <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
         <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ (currentLocale == 'th')? (news?.title || 'ไม่มีหัวข้อ'): (news?.title_en || 'No Title')}}</NuxtLinkLocale>
     </div>
@@ -115,7 +115,7 @@ export default {
 .news-404-center-content {
     display: flex;
     flex-direction: column;
-    
+
     animation: fadeinblur ease-in-out 0.4s;
 }
 
@@ -176,7 +176,7 @@ export default {
 
 .news-content {
     font-size: 1.5rem;
-    max-width: 100dvw;
+    max-width:100dvw;
     overflow: visible;
     display: -webkit-box;
     -webkit-box-orient: vertical;

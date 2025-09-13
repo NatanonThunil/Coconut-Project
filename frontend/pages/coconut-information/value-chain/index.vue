@@ -2,6 +2,7 @@
  
   <div style="height: 8rem"></div>
   <div class="faqs-path">
+    <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/value-chain">{{ $t('Value Chain') }}</NuxtLinkLocale>
   </div>
@@ -60,7 +61,7 @@
       :img="chainvalue.image || defaultImage"
       :url="`/coconut-information/value-chain/details/${chainvalue.id}`"
       :name="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en"
-      :sci_front="''"
+      :sci_front="chainvalue.description || ''"
       :sci_middle="''"
       :sci_back="''"
       @click="goToDetails(chainvalue.id)"
