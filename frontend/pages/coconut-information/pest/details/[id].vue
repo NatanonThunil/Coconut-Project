@@ -4,16 +4,9 @@
       <div style="height: 8rem"></div>
       <!-- Breadcrumb -->
       <div class="pest-path">
-<<<<<<< HEAD
-        <NuxtLinkLocale to="/coconut-information/">{{
-          $t("CoconutInfo")
-        }}</NuxtLinkLocale
-        >/ <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
-=======
         <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
         <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
->>>>>>> c5307fbb64ac1cc40a7d44a99ac7d6fb8a009edf
         <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
           {{
             currentLocale === "th"
@@ -53,19 +46,6 @@
                 <strong>ลักษณะและวงจรชีวิต:</strong>
                 {{ pest?.lifecycle || "N/A" }}
               </p>
-<<<<<<< HEAD
-              <div class="back-btn-container">
-                <SeeAllButton
-                  text="ดูศัตรูพืชอื่น ๆ"
-                  link="/coconut-information/pest"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="height: 8rem"></div>
-        <!-- Added more space -->
-=======
               <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
             </div>
           </div>
@@ -73,7 +53,6 @@
        
  
        
->>>>>>> c5307fbb64ac1cc40a7d44a99ac7d6fb8a009edf
       </div>
     </div>
   </div>

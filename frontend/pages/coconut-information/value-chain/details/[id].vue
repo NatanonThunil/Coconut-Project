@@ -183,12 +183,7 @@ export default {
 .summary-container p {
   font-size: 1rem;
   line-height: 1.6;
-<<<<<<< HEAD
     overflow-wrap: anywhere;  
-=======
-  overflow-wrap: anywhere;
-  /* modern way */
->>>>>>> c5307fbb64ac1cc40a7d44a99ac7d6fb8a009edf
   white-space: normal;
 }
 
