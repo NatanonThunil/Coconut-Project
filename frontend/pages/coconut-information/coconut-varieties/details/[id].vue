@@ -163,12 +163,14 @@ onMounted(async () => {
   background-color: black;
   border-radius: 10px;
   overflow: hidden;
+    min-width: 15rem;
 }
 
 .coconut-detail-img img {
   height: 100%;
   width: 100%;
   max-width: 25rem;
+
   object-fit: cover;
 }
 
@@ -181,6 +183,7 @@ onMounted(async () => {
 .coconut-detail-info h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: #4e6d16;
 }
 
 .coconut-detail-info p {

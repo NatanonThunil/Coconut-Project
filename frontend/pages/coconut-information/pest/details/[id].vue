@@ -1,12 +1,13 @@
 <template>
   <div>
-
     <div class="all-container">
       <div style="height: 8rem"></div>
       <!-- Breadcrumb -->
       <div class="pest-path">
-        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
+        <NuxtLinkLocale to="/coconut-information/">{{
+          $t("CoconutInfo")
+        }}</NuxtLinkLocale
+        >/ <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
         <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
           {{
             currentLocale === "th"
@@ -46,14 +47,17 @@
                 <strong>ลักษณะและวงจรชีวิต:</strong>
                 {{ pest?.lifecycle || "N/A" }}
               </p>
+              <div class="back-btn-container">
+                <SeeAllButton
+                  text="ดูศัตรูพืชอื่น ๆ"
+                  link="/coconut-information/pest"
+                />
+              </div>
             </div>
           </div>
         </div>
         <div style="height: 8rem"></div>
         <!-- Added more space -->
-        <div class="back-btn-container">
-          <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
-        </div>
       </div>
     </div>
   </div>
@@ -82,17 +86,17 @@ export default {
     };
   },
   async mounted() {
-    const cid = this.$route.params.id; 
+    const cid = this.$route.params.id;
     try {
-        const data = await getPestById(cid); 
-        this.pest = data && data.status === 1 ? data : null; 
-        if (this.pest) {
-            this.updateHead();
-        } else {
-            this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
-        }
+      const data = await getPestById(cid);
+      this.pest = data && data.status === 1 ? data : null;
+      if (this.pest) {
+        this.updateHead();
+      } else {
+        this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
+      }
     } catch (error) {
-        this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
+      this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
     }
   },
   methods: {
@@ -191,12 +195,13 @@ export default {
 
 /* Info styling */
 .info p {
+  font-size: 1.5rem; /* Increased font size for better readability */
   margin: 1rem 0; /* Increased margin between lines */
 }
 
 /* Back button container */
 .back-btn-container {
-  width: 30%;
+  width: 100%;
   text-align: center;
   margin-top: 3rem; /* Added more spacing */
 }

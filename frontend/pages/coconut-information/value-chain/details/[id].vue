@@ -126,13 +126,13 @@ export default {
   max-width: 1100px;
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2rem;
   padding: 2rem;
 }
 
 .image-container {
-  flex: 1;
+  width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -170,7 +170,7 @@ export default {
 .summary-container p {
   font-size: 1rem;
   line-height: 1.6;
-    overflow-wrap: anywhere;     /* modern way */
+    overflow-wrap: anywhere;  
   white-space: normal;
 }
 
@@ -205,6 +205,7 @@ export default {
 .back-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.3rem;
   padding: 0.8rem 2rem;
   border: 2px solid #4e6d16;
