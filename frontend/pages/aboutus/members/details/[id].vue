@@ -4,6 +4,7 @@
 
   <div class="all-container">
     <div class="faqs-path">
+      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
       <NuxtLinkLocale to="/aboutus/">{{ $t('AboutUs') }}</NuxtLinkLocale>/
       <NuxtLinkLocale to="/aboutus/members">{{ $t('All Member') }}</NuxtLinkLocale>/
       <NuxtLinkLocale v-if="member" :to="'/aboutus/members/details/' + this.$route.params.id">
@@ -41,15 +42,7 @@
             <p>Facebook | Twitter</p>
           </div>
 
-          <div class="tags">
-            <p><strong>แท็ก:</strong></p>
-            <div v-if="member?.member_tags_id && member.member_tags_id.length">
-              <span v-for="(tag, index) in member.member_tags_id" :key="index" class="tag">
-                {{ tag }}
-              </span>
-            </div>
-            <p v-else>ไม่มีแท็ก</p>
-          </div>
+         
 
           <p class="description">
             <strong>คำอธิบาย:</strong>

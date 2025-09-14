@@ -4,6 +4,7 @@
     <div style="height: 8rem"></div>
 
     <div class="faqs-path">
+      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
       <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
       <NuxtLinkLocale to="/aboutus/benefitandservice">{{ $t('Benefit and service') }}</NuxtLinkLocale>/
       <!-- ✅ safe crumb: no 'this' in template + guard when benefit not loaded -->

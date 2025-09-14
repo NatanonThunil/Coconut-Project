@@ -32,7 +32,7 @@
             :url="`/aboutus/${lurl}/details/${person.id}`"
             :image="getEmployeeImage(person.image)"
             :name="getTitle(person)"
-            :description="person.description"
+            :description="getDescription(person)"
           />
         </SwiperSlide>
       </Swiper>
@@ -84,6 +84,11 @@ export default {
   methods: {
     getTitle(item) {
       return this.title && item[this.title] ? item[this.title] : item.name;
+    },
+    getDescription(item) {
+      return this.description && item[this.description]
+        ? item[this.description]
+        : item.description || "No Position";
     },
     getEmployeeImage(image) {
       return image || noimageHandle;

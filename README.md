@@ -1,3 +1,35 @@
+# อัพเดต 14 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- เพิ่ม Login logout register
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
+
+
+# อัพเดต 13 Sep.
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- แก้ ``Achievements`` ให้กดเข้าไปดูรูปเต็มได้ ✅
+- แก้ หน้าด้านใน ``Chain Values``ให้คล้าย ``Events`` ✅
+- แก้ path ด้านบนทุกหน้า และเพิ่มในหน้า``Events`` ✅
+- แก้ Card ใน Members ให้แสดง ``Details`` ✅
+- แก้ Card ใน ``Chain Values`` ให้แสดง Descriptions ✅
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
+
+
 # อัพเดต 11 Sep.
 ### TO-DO
 

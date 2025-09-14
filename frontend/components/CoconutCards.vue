@@ -1,5 +1,5 @@
 <template>
-    <div  class="coconut-v-card" loading="lazy">
+    <div class="coconut-v-card" loading="lazy">
         <div class="coconut-v-img-frame">
             <img :src="img" alt="" class="coconut-v-image" draggable="false">
         </div>
@@ -15,7 +15,6 @@
 </template>
 
 <style scoped>
-
 .coconut-v-card {
     cursor: pointer;
     height: 18rem;
@@ -34,7 +33,7 @@
 }
 
 .coconut-v-card:hover .coconut-v-img-frame img {
-    
+
     transform: scale(1.05);
 }
 
@@ -71,13 +70,22 @@
     padding-top: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
     text-overflow: ellipsis;
     max-width: 85%;
 }
 
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container {
     display: flex;
-    gap: 0.3rem;
+    gap: 5px;
+    max-width: 85%;
+     display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-front,
@@ -88,19 +96,22 @@
 
 @media (max-width: 590px) {
     .coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container {
-    display: none;
-    
-  
-}
-.coconut-v-card-text-container{
-    height: 5rem
-}
-.coconut-v-card-text-container .coconut-v-name{
-    padding-bottom: 0.8rem;
-}
-.coconut-v-card{
-    width: 14.5rem;
-}
+        display: none;
+
+
+    }
+
+    .coconut-v-card-text-container {
+        height: 5rem
+    }
+
+    .coconut-v-card-text-container .coconut-v-name {
+        padding-bottom: 0.8rem;
+    }
+
+    .coconut-v-card {
+        width: 14.5rem;
+    }
 }
 </style>
 
@@ -126,7 +137,7 @@ export default {
             type: String,
             required: true,
         },
-       
+
     },
 };
 </script>

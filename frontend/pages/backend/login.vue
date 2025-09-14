@@ -1,84 +1,86 @@
-<script setup>
+<script setup lang="ts">
 useHead({
   title: 'Backend - Login',
-  meta: [
-    {
-      name: 'description',
-      content: 'Home page for Coconut Knowledge Hub',
-    },
-  ],
-});
-definePageMeta({
-  layout: 'adminLogin'
-});
+  meta: [{ name: 'description', content: 'Home page for Coconut Knowledge Hub' }],
+})
+definePageMeta({ layout: 'admin-login' })
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('');
-const isLoading = ref(false);
+interface LoginResponse {
+  user: { id: number; email: string; name: string | null; created_at?: string }
+}
 
-const login = async () => {
-  errorMessage.value = '';
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const isLoading = ref(false)
 
-  if (!validateInputs()) return;
-
-  isLoading.value = true;
-  console.log('Attempting login...');  
-
-  try {
-    const response = await $fetch('/api/loginAdmin', {
-      method: 'POST',
-      
-      body: { email: email.value.trim(), password: password.value }
-    });
-
-    console.log('Response received:', response);  
-
-    if (response.error) {
-      errorMessage.value = response.error;
-      return;
-    }
-    localStorage.setItem('adminToken', response.token);
-
-
-    router.push('/backend/dashboard');
-  } catch (error) {
-    errorMessage.value = 'รหัสผ่านไม่ถูกต้อง';
-    console.error('Login error:', error); 
-  } finally {
-    isLoading.value = false;
-  }
-};
+const base = useRuntimeConfig().public.beUrl // e.g. http://localhost:5100
 
 const validateInputs = () => {
   if (!email.value || !password.value) {
-    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่านที่ถูกต้อง';
-    return false;
+    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่านที่ถูกต้อง'
+    return false
   }
   if (!/\S+@\S+\.\S+/.test(email.value)) {
-    errorMessage.value = 'กรุณากรอกอีเมลให้ถูกต้อง';
-    return false;
+    errorMessage.value = 'กรุณากรอกอีเมลให้ถูกต้อง'
+    return false
   }
-  return true;
-};
+  return true
+}
+
+const login = async () => {
+  errorMessage.value = ''
+  if (!validateInputs()) return
+
+  isLoading.value = true
+  try {
+    // Call your backend auth route (sets HTTP-only cookies)
+    const res = await $fetch < LoginResponse > ('/auth/login', {
+      baseURL: base,
+      method: 'POST',
+      credentials: 'include', // <-- IMPORTANT for cookies
+      body: { email: email.value.trim(), password: password.value },
+    })
+
+    // (Optional) keep a global user state if you want
+    const user = useState < LoginResponse['user'] | null > ('auth_user', () => null)
+    user.value = res.user
+
+    // Go to your protected backend dashboard
+    router.push('/backend/dashboard')
+  } catch (e: any) {
+    // Map typical backend errors
+    const msg =
+      e?.data?.message ||
+      (e?.status === 401 ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : null) ||
+      'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
+    errorMessage.value = msg
+    console.error('Login error:', e)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
   <div class="be-bg-cl">
     <div class="login-form-container">
-      <img src="/logo/CKH-round.ico" draggable="false" alt="Logo">
+      <img src="/logo/CKH-round.ico" draggable="false" alt="Logo" />
       <h2 class="login-title">เข้าสู่ระบบหลังบ้าน</h2>
       <p class="login-subtitle">Please enter your credentials to continue</p>
-      <div> <input v-model="email" type="email" placeholder="Email" />
-        <input v-model="password" type="password" placeholder="Password" />
+
+      <div>
+        <input v-model="email" type="email" placeholder="Email" />
+        <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" />
         <button @click="login" :disabled="isLoading">
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </button>
       </div>
+
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </div>
   </div>
@@ -94,7 +96,6 @@ const validateInputs = () => {
   align-items: center;
   font-family: 'Poppins', sans-serif;
 }
-
 
 .login-form-container {
   display: flex;
@@ -117,7 +118,7 @@ const validateInputs = () => {
 .login-title {
   font-size: 1.8rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: .5rem;
   color: #3A506B;
 }
 
@@ -126,7 +127,6 @@ const validateInputs = () => {
   color: #7D8597;
   margin-bottom: 1.5rem;
 }
-
 
 .login-form-container div {
   width: 100%;
@@ -137,20 +137,19 @@ const validateInputs = () => {
 
 .login-form-container div input {
   height: 2.8rem;
-  padding: 0.8rem;
+  padding: .8rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all .3s ease;
 }
 
 .login-form-container div input:focus {
   outline: none;
   border-color: #6E85B7;
-  box-shadow: 0 0 5px rgba(110, 133, 183, 0.5);
+  box-shadow: 0 0 5px rgba(110, 133, 183, .5);
 }
 
-/* Button Styles */
 .login-form-container div button {
   height: 3rem;
   background: linear-gradient(135deg, #6E85B7, #B6E3DB);
@@ -160,7 +159,7 @@ const validateInputs = () => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
+  transition: transform .3s ease, background .3s ease;
 }
 
 .login-form-container div button:hover {
@@ -170,46 +169,43 @@ const validateInputs = () => {
 
 .login-form-container div button:active {
   background: linear-gradient(135deg, #4B607D, #93B8A8);
-  transform: scale(0.95);
+  transform: scale(.95);
 }
 
-/* Error Message */
 .error-message {
   color: red;
-  font-size: 0.9rem;
+  font-size: .9rem;
   margin-top: 1rem;
   text-align: center;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(.9)
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1)
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .login-form-container {
-    width: 95%;
+    width: 95%
   }
 
   .login-form-container img {
-    height: 6rem;
+    height: 6rem
   }
 
   .login-title {
-    font-size: 1.5rem;
+    font-size: 1.5rem
   }
 
   .login-subtitle {
-    font-size: 0.9rem;
+    font-size: .9rem
   }
 }
 </style>

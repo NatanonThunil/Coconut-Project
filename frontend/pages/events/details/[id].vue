@@ -2,14 +2,23 @@
 
 
     <!-- Event Image -->
+
     <div class="image-container" v-if="event">
+
         <div class="blur-background"></div>
         <img :src="event?.image || tlImage" class="img" alt="Coconut Image" draggable="false">
     </div>
     <div v-else class="no-data">
         <p>No event data available. Please try again later.</p>
     </div>
-
+    <div style="height: 1rem;"></div>
+  <div class="faqs-path">
+            <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
+            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>/
+             <NuxtLinkLocale :to="'/events/details/'+ this.$route.params.id">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') :
+        (event?.title_en
+            || 'No English title name') }}</NuxtLinkLocale>
+        </div>
     <!-- Event Date & Location -->
     <div class="date-and-local" v-if="event">
         <div class="dnl">
@@ -36,7 +45,7 @@
         <div class="toline">
             <div class="event-head">{{ $t('Organizer') }}</div>: <div class="event-main-detail">{{ (currentLocale ===
                 'th') ?
-                (event?.organizer || 'N/A') : (event?.organizer_en || 'N/A')}}
+                (event?.organizer || 'N/A') : (event?.organizer_en || 'N/A') }}
             </div>
         </div>
         <div class="toline">
@@ -154,6 +163,7 @@ export default {
 
 .image-container {
     padding-top: 6rem;
+    flex-direction: column;
     position: relative;
     width: 100%;
     height: 32rem;
@@ -192,7 +202,7 @@ export default {
     display: flex;
     justify-content: center;
     text-align: center;
-    margin: 1rem;
+    margin-bottom: 2rem;
     font-size: 1.2rem;
     color: #333;
     gap: 2rem;

@@ -3,6 +3,7 @@
   <div style="height: 100dvh;">
     <div style="height: 8rem"></div>
     <div class="faqs-path">
+      
       <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
 
     </div>
