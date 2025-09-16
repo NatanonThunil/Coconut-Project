@@ -167,4 +167,13 @@ watchEffect(updateTextHW);
     background-position: center top;
   }
 }
+
+@media (max-width: 425px) {
+  .hero-bar {
+    height: 40dvh;
+  }
+  .background{
+    height: 40dvh;
+  }
+}
 </style>

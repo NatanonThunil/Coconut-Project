@@ -291,6 +291,7 @@ watch(() => route.params.id, fetchAchievement);
 
 .achievement-content-container {
   display: flex;
+
   flex-direction: row;
   gap: 1rem;
   background-color: rgb(241, 241, 241);
@@ -303,6 +304,8 @@ watch(() => route.params.id, fetchAchievement);
 }
 .achievements-pdf-container,
 .achievements-text-container {
+
+      
   flex: 1 1 50%;
   max-width: 50%;
 }
@@ -328,6 +331,10 @@ watch(() => route.params.id, fetchAchievement);
     .achievement-content-container {
         flex-direction: column;
 
+    }
+    .achievements-pdf-container{
+        display: flex;
+        justify-self: center;
     }
 }
 </style>

@@ -1,175 +1,282 @@
 <template>
- 
-  <div class="all-container">
-    <div style="height: 8rem"></div>
+  <div style="height: 8rem"></div>
 
-    <div class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/aboutus/benefitandservice">{{ $t('Benefit and service') }}</NuxtLinkLocale>/
-      <!-- ✅ safe crumb: no 'this' in template + guard when benefit not loaded -->
-      <NuxtLinkLocale :to="`/aboutus/benefitandservice/${$route.params.id}`">
-        {{ crumbTitle }}
-      </NuxtLinkLocale>
-    </div>
+  <!-- Breadcrumb -->
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/aboutus/benefitandservice">{{ $t('Benefit and service') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale :to="`/aboutus/benefitandservice/${$route.params.id}`">
+      {{ crumbTitle || '...' }}
+    </NuxtLinkLocale>
+  </div>
 
-    <div style="height: 1rem"></div>
-
-    <!-- Loader -->
-    <div v-if="loading && !error" class="loading">
-      <p>กำลังโหลดข้อมูลของสิทธิประโยชน์และการบริการทั้งหมด...</p>
+  <div class="benefit-container">
+    <!-- Loading -->
+    <div v-if="loading" class="loading-container">
+      <CardShimmer v-for="i in 1" :key="i" />
+      <div class="back-button shimmer"></div>
     </div>
 
     <!-- Error -->
-    <div v-if="!loading && error" class="error">
+    <div v-else-if="error" class="error">
       <p>{{ error }}</p>
     </div>
 
-    <!-- Benefit Profile Section -->
-    <div class="benefit-container" v-if="!loading && benefit">
-      <div class="benefit-content">
-        <img :src="benefit.image || tlImage" class="benefit-image" alt="Benefit Image" draggable="false" />
-
-        <div class="benefit-details">
-          <h1 class="benefit-name">{{ displayTitle }}</h1>
-
-          <!-- Optional info block: add fields later if needed -->
-
-          <!-- Optional tags -->
-          <div class="tags" v-if="Array.isArray(benefit_tags) && benefit_tags.length">
-            <p><strong>แท็ก:</strong></p>
-            <div>
-              <span v-for="(tag, index) in benefit_tags" :key="index" class="tag">
-                {{ tag }}
-              </span>
-            </div>
-          </div>
-
-          <p class="description" v-if="displayDescription">
-            <strong>คำอธิบาย:</strong>
-           <p v-html=" displayDescription "></p>
-          </p>
+    <!-- Content -->
+    <div v-else class="details-card">
+      <div class="chainvalue-container">
+        <div v-if="loading" class="loading-container">
+          <CardShimmer v-for="index in 1" :key="index" />
+          <div class="back-button shimmer"></div>
         </div>
+        <img class="news-image-banner" :src="benefit.image || 'https://placehold.co/800x400'" alt="News Image"
+          v-else="benefit.image" />
+
+        <h1>{{ (currentLocale == 'th') ? (benefit?.title || 'No Title') : (benefit?.title_en || 'No Title') }}
+        </h1>
+        <div class="chain_value-content" v-html=" (currentLocale == 'th') ? (benefit?.description || 'No Title') : (benefit?.description_en || 'No Title') ">
+         
+        </div>
+        <SeeAllButton :text="$t('Benefit and service')" link="/aboutus/benefitandservice" />
       </div>
 
-      <div style="height: 5rem"></div>
-
-      <div class="back-btn-container">
-        <SeeAllButton text="ดูสิทธิประโยชน์และการบริการอื่นๆ" link="/aboutus/benefitandservice" />
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useServices } from '~/composables/useServices';
-import { useHead } from '@vueuse/head';
-import tlImage from '/img/tl.png';
-import { useI18n } from 'vue-i18n';
+import { useHead } from '@vueuse/head'
+import CardShimmer from '@/components/CardShimmer.vue'
+import { useServices } from '~/composables/useServices'
+import { useI18n } from 'vue-i18n'
 
-const { getServiceById } = useServices();
+const { getServiceById } = useServices()
 
 export default {
+  components: { CardShimmer },
+
   data() {
     return {
       benefit: null,
-      benefit_tags: [],
       error: null,
       loading: true,
-      tlImage,
-    };
+      defaultImage: 'https://placehold.co/800x600',
+    }
   },
 
-  // ✅ use i18n inside setup and expose to template/computed via 'this.currentLocale'
   setup() {
-    const { locale } = useI18n();
-    const currentLocale = computed(() => locale.value);
-    return { currentLocale };
+    const { locale } = useI18n()
+    return { currentLocale: locale }
   },
 
   computed: {
-    // ✅ breadcrumb-safe title (guards while loading)
     crumbTitle() {
-      if (!this.benefit) return '';
-      const th = this.benefit.title || this.benefit.title_en || '';
-      const en = this.benefit.title_en || this.benefit.title || '';
-      return this.currentLocale === 'th' ? th : en;
-    },
-
-    // Prefer Thai first; fallback to English
-    displayTitle() {
-      return this.benefit?.title || this.benefit?.title_en || 'Benefit';
-    },
-
-    // Prefer Thai first; fallback to English
-    displayDescription() {
-      return this.benefit?.description || this.benefit?.description_en || '';
+      if (!this.benefit) return ''
+      const th = this.benefit.title || this.benefit.title_en || ''
+      const en = this.benefit.title_en || this.benefit.title || ''
+      return this.currentLocale === 'th' ? th : en
     },
   },
 
   async mounted() {
-    window.scrollTo(0, 0);
-    const cid = Number(this.$route.params.id);
+    const cid = Number(this.$route.params.id)
     if (!cid) {
-      this.error = 'รหัสไม่ถูกต้อง';
-      this.loading = false;
-      return;
+      this.error = 'รหัสไม่ถูกต้อง'
+      this.loading = false
+      return
     }
 
     try {
-      const row = await getServiceById(cid); // returns one service
+      const row = await getServiceById(cid)
       if (!row || Number(row.status) !== 1) {
-        this.error = 'ไม่พบข้อมูลสิทธิประโยชน์หรือยังไม่เปิดเผย';
-        this.loading = false;
-        return;
+        this.error = 'ไม่พบข้อมูลสิทธิประโยชน์หรือยังไม่เปิดเผย'
+        this.loading = false
+        return
       }
 
-      // Optional JSON tags
-      if (typeof row.benefit_tags_id === 'string') {
-        try {
-          this.benefit_tags = JSON.parse(row.benefit_tags_id);
-        } catch (e) {
-          console.warn('Cannot parse benefit_tags_id:', e);
-          this.benefit_tags = [];
-        }
-      }
+      this.benefit = row
 
-      this.benefit = row;
-      this.updateHead();
-    } catch (e) {
-      console.error(e);
-      this.error = 'ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง';
-    } finally {
-      this.loading = false;
-    }
-  },
-
-  methods: {
-    updateHead() {
       useHead({
-        title: `🥥 Benefit - ${this.displayTitle}`,
+        title: `🥥 Benefit - ${this.crumbTitle}`,
         meta: [
           {
             name: 'description',
-            content: this.displayDescription
-              ? this.displayDescription.slice(0, 160)
-              : `ข้อมูลเกี่ยวกับ ${this.displayTitle}`,
+            content:
+              this.benefit.description?.slice(0, 160) ||
+              this.benefit.description_en?.slice(0, 160) ||
+              `ข้อมูลเกี่ยวกับ ${this.crumbTitle}`,
           },
         ],
-      });
-    },
+      })
+    } catch (e) {
+      console.error(e)
+      this.error = 'ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง'
+    } finally {
+      this.loading = false
+    }
   },
-};
+}
 </script>
 
 <style scoped>
-.back-btn-container { width: 30%; }
-.benefit-container { display: flex; flex-direction: column; align-items: center; padding: 2rem; }
-.benefit-content { display: flex; gap: 2rem; align-items: center; max-width: 900px; }
-.benefit-image { width: 300px; border-radius: 10px; border: 2px solid #4e6d16; aspect-ratio: 2.5/3; object-fit: cover; }
-.benefit-details { font-size: 1.2rem; color: #333; }
-.benefit-name { font-size: 2rem; font-weight: bold; color: #4e6d16; }
-.tags .tag { display: inline-block; background: #eef6e3; color: #4e6d16; padding: .2rem .5rem; border-radius: .4rem; margin-right: .4rem; margin-bottom: .4rem; }
-.loading, .error { text-align: center; }
+/* ✅ Reuse EXACT CSS from Value Chain page */
+.benefit-content {
+  font-size: 1.5rem;
+  max-width: 100dvw;
+  overflow: visible;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.benefit-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.news-image-banner {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.details-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.details-card {
+  background: #fff;
+  border-radius: 20px;
+  
+  overflow: hidden;
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.image-container {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 300px;
+}
+
+.chain-value-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.details-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.summary-container {
+  background-color: #f4f8ef;
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.summary-container h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #2d3a22;
+}
+
+.summary-container p {
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #2d3a22;
+}
+
+.meta {
+  margin-bottom: 1.5rem;
+}
+
+.badge {
+  display: inline-block;
+  background: #4e6d16;
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+.badge-outline {
+  background: transparent;
+  border: 1px solid #4e6d16;
+  color: #4e6d16;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #4e6d16;
+  background: #fff;
+  color: #4e6d16;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
+}
+
+.back-button:hover {
+  background: #4e6d16;
+  color: #fff;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .details-card {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .image-container {
+    width: 100%;
+  }
+
+  .chain-value-image {
+    width: 100%;
+    max-height: none;
+    /* allow taller image */
+  }
+}
 </style>

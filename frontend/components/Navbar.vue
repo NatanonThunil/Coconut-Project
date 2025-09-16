@@ -370,7 +370,9 @@ nuxt-link:hover {
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+  max-height: 80px;
   height: 80px;
+  min-height: 20px;
   position: absolute;
   top: 0;
   z-index: 1000;
@@ -387,11 +389,16 @@ nuxt-link:hover {
 }
 
 .logo {
+  max-width: max-content;
+  min-width: 100px;
   margin-right: 2rem;
 }
 
 .logo img {
+  object-fit: contain;
+  max-height: 40px;
   height: 40px;
+  min-height: 10px;
   vertical-align: middle;
   cursor: pointer;
   animation: ease-in-out fadeIn backwards 1s;
@@ -562,6 +569,22 @@ nuxt-link:hover {
 .mobile-main-menu .mobileSelected {
   background-color: #4E6D16;
   color: white;
+}
+@media (max-width: 425px) {
+ 
+  .logo img{
+    width: 110px;
+  }
+
+  .navbar{
+    height: 60px;
+  }
+
+  .hamburger-container{
+    width: 25px;
+  }
+
+ 
 }
 
 @media (max-width: 1258px) {
