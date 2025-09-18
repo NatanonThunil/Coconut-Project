@@ -7,7 +7,10 @@
 - ตกแต่ง หน้า past และ coconut ของหลังบ้าน
 - Rework หน้า ``Expert`` ใหม่
 - แก้ ``Expert Tags`` ให้สามรถแสดงได้
+- แก้ ภาพ coconut ของหลังบ้าน
+
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
+
 
 
 
