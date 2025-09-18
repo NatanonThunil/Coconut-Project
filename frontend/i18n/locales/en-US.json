@@ -74,6 +74,14 @@
   "By": "By",
   "Next": "Next",
   "Previous": "Previous",
-  "SeeAllAchievements": "See All Achievements"
- 
+  "SeeAllAchievements": "See All Achievements",
+   "contact-info": "Contact Information",
+    "tags": "Tags",
+  "seeanotherexperts" : "See another experts",
+    "seeanotheremployees" : "See another employees",
+    "seeanothermembers" : "See another members",
+    "employee" : "Employees",
+    "allbenefitandservice" : "All benefit and service",
+ "member" : "Member"
+
 }

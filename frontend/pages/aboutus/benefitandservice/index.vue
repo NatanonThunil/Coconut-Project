@@ -58,6 +58,7 @@
     </div>
     <div class="pagination-line"></div>
   </div>
+  <div style="height: 3rem;"></div>
 </template>
 
 <script>

@@ -38,7 +38,7 @@ export default defineNuxtConfig({
         {
           hid: 'description',
           name: 'description',
-          content: 'Default meta description.',
+          content: ' Coconut Knowledge Hub เว็ปที่รวบรวม ข้อมูลเกี่ยวกับพันธุ์มะพร้าวทั่วทั้งประเทศ รวมไปถึงขั้นตอนการแปลรูป และส่งออก',
         },
       ],
       link: [

@@ -6,9 +6,10 @@
     <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/aboutus/employees">{{ $t('All Employees') }}</NuxtLinkLocale>
   </div>
-  <div style="height: 1rem"></div>
-  <page-header head="All Employees" />
-  <frontesearch v-model:search="searchQuery" placeh="ค้นหาด้วยชื่อ..." />
+  
+  <h1 class="context-header">{{ $t("All Employees") }}</h1>
+  <div style="height: 5rem;"></div>
+  <frontesearch v-model:search="searchQuery" :placeholder="(currentLocale === 'th')? 'ค้นหาด้วยชื่อ...': 'Search by employee name'" />
   <!-- Loading State -->
   <div v-if="loading" class="employee-v-cards-container">
     <CardShimmer v-for="index in 30" :key="index" />
@@ -16,28 +17,29 @@
 
   <!-- Loaded Content -->
   <div v-else class="employee-v-cards-container">
-    <AboutusCard v-for="employee in paginatedEmployees" :name="employee.name || 'ชื่อไทย'"
-      :description="employee.description" :key="employee.id" :image="employee.image || 'https://placehold.co/600x400'"
-      :url='`aboutus/employees/details/${employee.id}`' @click="goToDetails(employee.id)" />
+    <AboutusCard v-for="employee in paginatedEmployees" :name="(currentLocale === 'th')? employee.name || employee.name_en : employee.name_en || employee.name"
+    :description="(currentLocale === 'th')? employee.description || employee.description_en : employee.description_en || employee.description" :key="employee.id" :image="employee.image || 'https://placehold.co/600x400'"
+      pp="employees"  :phone-number="employee.phoneNumber" :email="employee.email" :id="employee.id"/>
   </div>
 
   <div class="pagination">
     <div class="pagination-line"></div>
     <div class="pagination-controller">
       <button @click="changePage('prev')" :disabled="currentPage === 1">
-        กลับ
+       {{ (currentLocale === 'th')?  'กลับ' : 'Back'}}
       </button>
       <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
         class="page-input" />
       <span style="display: flex; align-self: center">
-        จาก {{ totalPages }}
+         {{ (currentLocale === 'th')?  'จาก' : 'of'}} {{ totalPages }}
       </span>
       <button @click="changePage('next')" :disabled="currentPage === totalPages">
-        ถัดไป
+         {{ (currentLocale === 'th')?  'ถัดไป' : 'Next'}} 
       </button>
     </div>
     <div class="pagination-line"></div>
   </div>
+  <div style="height: 3rem;"></div>
 </template>
 
 <script setup>

@@ -243,15 +243,24 @@ const triggerPestFileInput = () => {
 const handlePestFileUpload = (event) => {
   const file = event.target.files[0];
   if (file && file.size <= 50 * 1024 * 1024) {
-    currentPest.value.image = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      currentPest.value.image = reader.result; // Base64 string
+    };
+    reader.readAsDataURL(file);
   } else {
     alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
   }
 };
+
 const handlePestDragDrop = (event) => {
   const file = event.dataTransfer.files[0];
   if (file && file.size <= 50 * 1024 * 1024) {
-    currentPest.value.image = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      currentPest.value.image = reader.result; // Base64 string
+    };
+    reader.readAsDataURL(file);
   } else {
     alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
   }

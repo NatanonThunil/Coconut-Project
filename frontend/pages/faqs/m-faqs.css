@@ -20,3 +20,9 @@ h1.context-header {
     min-height: 50dvh;
     gap: 1rem;
 }
+
+@media (max-width:690px ) {
+    .faqs-path{
+        margin-left: 1rem;
+    }
+}

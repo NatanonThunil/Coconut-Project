@@ -22,8 +22,8 @@
         1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 }
       }">
         <SwiperSlide v-for="(service, index) in filteredServices" :key="index">
-          <AboutusCard :url="`/aboutus/${lurl}/details/${service.id}`" :image="getServiceImage(service.image)"
-            :name="getTitle(service)" :description="service.description" />
+          <AboutusCard pp="benefitandservice" :image="getServiceImage(service.image)" :id="service.id"
+            :name="(currentLocale ==='th')? service.title : service.title_en"/>
         </SwiperSlide>
       </Swiper>
     </div>
@@ -46,7 +46,7 @@ import "swiper/css/pagination";
 import AboutusCard from "./aboutusCard.vue";
 import CardShimmer from "./CardShimmer.vue";
 import { useServices } from "~/composables/useServices";
-
+import { useI18n } from 'vue-i18n';
 const { getServices } = useServices(); // ✅ fixed function name
 
 export default {
@@ -67,6 +67,10 @@ export default {
       isLoading: true,
       swiperInstance: null,
     };
+  },setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+    return { currentLocale };
   },
   mounted() {
     this.fetchData();

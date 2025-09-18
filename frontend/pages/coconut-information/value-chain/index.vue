@@ -1,5 +1,5 @@
 <template>
- 
+
   <div style="height: 8rem"></div>
   <div class="faqs-path">
     <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
@@ -12,32 +12,15 @@
   <!-- Search Input -->
   <label class="coconut-v-input">
     <img src="/icon/search.svg" alt="search icon" />
-    <input
-      type="text"
-      placeholder="ค้นหาด้วยชื่อ..."
-      v-model="searchQuery"
-      @input="filterChainvalues"
-    />
+    <input type="text" placeholder="ค้นหาด้วยชื่อ..." v-model="searchQuery" @input="filterChainvalues" />
   </label>
 
   <!-- Filters -->
   <div class="all-filter-container">
-    <label
-      class="filter-dropdown"
-      v-for="(filter, key) in filters"
-      :key="key"
-    >
-      <select
-        v-model="filter.model"
-        class="filter-select"
-        @change="filterChainvalues"
-      >
+    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
+      <select v-model="filter.model" class="filter-select" @change="filterChainvalues">
         <option value="">{{ filter.label }}</option>
-        <option
-          v-for="option in filter.options"
-          :key="option.value"
-          :value="option.value"
-        >
+        <option v-for="option in filter.options" :key="option.value" :value="option.value">
           {{ option.text }}
         </option>
       </select>
@@ -55,32 +38,23 @@
   </div>
 
   <div v-else class="coconut-v-cards-container">
-    <CoconutCards
-      v-for="chainvalue in paginatedChainvalues"
-      :key="chainvalue.id"
-      :img="chainvalue.image || defaultImage"
-      :url="`/coconut-information/value-chain/details/${chainvalue.id}`"
-      :name="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en"
-      :sci_front="chainvalue.description || ''"
-      :sci_middle="''"
-      :sci_back="''"
-      @click="goToDetails(chainvalue.id)"
-    />
+    <CoconutCards v-for="chainvalue in paginatedChainvalues" :key="chainvalue.id"
+      :img="chainvalue.image || defaultImage" :url="`/coconut-information/value-chain/details/${chainvalue.id}`"
+      :name="currentLocale === 'th' ? chainvalue.title : chainvalue.title_en" :sci_front="chainvalue.description || ''"
+      :sci_middle="''" :sci_back="''" @click="goToDetails(chainvalue.id)" />
   </div>
 
   <!-- Pagination -->
   <div v-if="!loading" class="pagination">
+    <div class="pagination-line"></div>
     <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
-    <input
-      type="number"
-      v-model.number="pageInput"
-      @change="goToPage"
-      :min="1"
-      :max="totalPages"
-    />
+    <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages" />
     <span>{{ currentPage }} / {{ totalPages }}</span>
     <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+     <div class="pagination-line"></div>
   </div>
+ 
+  <div style="height: 3rem;"></div>
 </template>
 
 <script>
@@ -268,6 +242,7 @@ label.coconut-v-input input {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -349,6 +324,7 @@ label.coconut-v-input input {
     opacity: 0;
     width: 20%;
   }
+
   100% {
     opacity: 1;
     width: 60%;

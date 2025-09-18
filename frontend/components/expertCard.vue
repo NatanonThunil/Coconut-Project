@@ -7,11 +7,11 @@
 
         <div class="expert-card-text">
 
-            <NuxtLinkLocale class="expert-title" :to="`/aboutus/${props.pp}/details/${props.id}`">
+            <NuxtLinkLocale class="expert-title" :to="`/experts/details/${id}`">
                 <h2>{{ name }}</h2>
             </NuxtLinkLocale>
 
-            <p class="expert-details">{{ description || '' }}</p>
+            <p class="expert-details">{{ description || '—' }}</p>
 
             <div v-if="email" class="expert-contact">
                 <img src="/icon/email.png" alt="">
@@ -23,7 +23,21 @@
             </div>
         </div>
 
-    
+        <!-- Tags -->
+        <div v-if="!pending && tags?.length" class="experttags">
+            <!-- ปุ่มแท็ก: กัน bubble + กัน default ของลิงก์การ์ด -->
+            <button v-for="t in tags" :key="t" type="button" class="tag-chip" @mousedown.stop
+                @click.stop.prevent="$emit('tag-click', t)" @keydown.enter.stop.prevent="$emit('tag-click', t)"
+                :aria-label="`filter by tag ${t}`">
+                {{ t }}
+            </button>
+        </div>
+
+        <div v-else-if="pending" class="experttags" aria-busy="true">
+            <span class="tag-skel" />
+            <span class="tag-skel" />
+            <span class="tag-skel" />
+        </div>
     </div>
 </template>
 
@@ -37,16 +51,22 @@ type Props = {
     description?: string | null
     email?: string | null
     phoneNumber?: string | null
-    pp?: string | null
 }
 
 const props = defineProps<Props>()
 
 defineEmits<{ (e: 'tag-click', tag: string): void }>()
 
+const { getTagsByExpert } = useExperts()
+
+const { data: tags, pending, error } = await useAsyncData(
+    `expert-tags-${props.id}`,
+    () => getTagsByExpert(props.id),
+    { server: false }
+)
 
 const goDetails = () => {
-    navigateTo(`/aboutus/${props.pp}/details/${props.id}`)
+    navigateTo(`/experts/details/${props.id}`)
 }
 </script>
 
@@ -94,10 +114,6 @@ const goDetails = () => {
 
 .expert-card-text h2 {
     text-align: center;
-    text-wrap: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-   
 }
 
 .expert-details {

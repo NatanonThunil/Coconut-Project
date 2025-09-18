@@ -29,10 +29,13 @@
       >
         <SwiperSlide v-for="(person, index) in filteredMembers" :key="index">
           <AboutusCard
-            :url="`/aboutus/${lurl}/details/${person.id}`"
+            pp="members"
+            :id="person.id"
             :image="getEmployeeImage(person.image)"
-            :name="getTitle(person)"
-            :description="getDescription(person)"
+            :name="(currentLocale === 'th')? person.name : person.name_en"
+            :description="(currentLocale === 'th')? person.description : person.description_en"
+            :phone-number="person.phoneNumber"
+            :email="person.email"
           />
         </SwiperSlide>
       </Swiper>
@@ -55,6 +58,7 @@ import "swiper/css/pagination";
 import AboutusCard from "./aboutusCard.vue";
 import CardShimmer from "./CardShimmer.vue";
 import { useMembers } from "~/composables/useMembers";
+import { useI18n } from 'vue-i18n';
 
 const { getMembers } = useMembers();
 
@@ -77,6 +81,10 @@ export default {
       isLoading: true,
       swiperInstance: null,
     };
+  },setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+    return { currentLocale };
   },
   mounted() {
     this.fetchData();
