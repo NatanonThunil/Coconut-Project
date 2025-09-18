@@ -251,7 +251,7 @@ const handleFileChange = (event) => {
     showCropper.value = true;
     nextTick(() => {
       cropperInstance.value = new Cropper(cropperImage.value, {
-        aspectRatio: 1, // square crop
+        aspectRatio: 16/9, // square crop
         viewMode: 2,
         autoCropArea: 1,
       });
