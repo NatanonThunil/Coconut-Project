@@ -32,8 +32,8 @@
             pp="employees"
             :id="person.id"
             :image="getEmployeeImage(person.image)"
-            :name="getTitle(person)"
-            :description="person.description"
+            :name="(currentLocale === 'th')? person.name : person.name_en"
+            :description="(currentLocale === 'th')? person.description : person.description_en"
             :phone-number="person.phoneNumber"
             :email="person.email"
           />
@@ -59,7 +59,7 @@ import "swiper/css/pagination";
 import AboutusCard from "./aboutusCard.vue";
 import CardShimmer from "./CardShimmer.vue";
 import { useEmployees } from "~/composables/useEmployees";
-
+import { useI18n } from 'vue-i18n';
 
 const { getEmployees } = useEmployees();
 
@@ -83,6 +83,10 @@ export default {
       isLoading: true,
       swiperInstance: null,
     };
+  },setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+    return { currentLocale };
   },
   mounted() {
     this.fetchData();

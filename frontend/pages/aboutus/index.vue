@@ -16,21 +16,21 @@
     <section>
       <AboutusslidePdf apiEndPoint="/coconut-api/achievements" title="title" lurl="achievements"/>
 
-      <SeeAllButton text="ผลงานทั้งหมด" link="/aboutus/achievements" />
+      <SeeAllButton :text="$t('SeeAllAchievements')" link="/aboutus/achievements" />
     </section>
   </div>
 
-  <ContentHeader contexto="คณะทำงาน" />
+  <ContentHeader :contexto="$t('employee')" />
 
 
   <Aboutusslide apiEndPoint="/coconut-api/employees" lurl="employees"/>
-  <SeeAllButton text="คณะทำงานทั้งหมด" link="/aboutus/employees" />
-  <ContentHeader contexto="สิทธิประโยชน์และการบริการ" />
+  <SeeAllButton :text="$t('seeanotheremployees')" link="/aboutus/employees" />
+  <ContentHeader :contexto="$t('Benefit and service')" />
   <AboutusslideServices apiEndPoint="/coconut-api/employees" lurl="benefitandservice"/>
-  <SeeAllButton text="สิทธิประโยชน์และการบริการทั้งหมด" link="/aboutus/benefitandservice" />
-  <ContentHeader contexto="สมาชิก" />
+  <SeeAllButton :text="$t('allbenefitandservice')" link="/aboutus/benefitandservice" />
+  <ContentHeader :contexto="$t('member')" />
   <AboutusslideMember apiEndPoint="/coconut-api/members" lurl="members"/>
-  <SeeAllButton text="สมาชิกทั้งหมด" link="/aboutus/members" />
+  <SeeAllButton :text="$t('seeanothermembers')" link="/aboutus/members" />
   <div style="height: 3rem;"></div>
 </template>
 

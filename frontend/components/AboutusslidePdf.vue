@@ -23,8 +23,8 @@
           }">
             <SwiperSlide v-for="(employee, index) in filteredEmployees" :key="index">
               <aboutusCardPdf :url="`/aboutus/${lurl}/details/${employee.id}`"
-                :image="employee.pdfImage || noimageHandle" :name="getTitle(employee)"
-                :description="employee.description" :ispdf="!!employee.pdf" />
+                :image="employee.pdfImage || noimageHandle" :name="(currentLocale === 'th')? employee.title : employee.title_en"
+                :description="(currentLocale === 'th')? employee.description : employee.description_en" :ispdf="!!employee.pdf" />
             </SwiperSlide>
           </Swiper>
         </div>
@@ -79,6 +79,10 @@ export default {
       isLoading: true,
       noimageHandle,
     };
+  },setup() {
+    const { locale } = useI18n();
+    const currentLocale = computed(() => locale.value);
+    return { currentLocale };
   },
   mounted() {
     this.fetchEmployees();

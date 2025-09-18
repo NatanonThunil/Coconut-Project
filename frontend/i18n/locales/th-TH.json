@@ -80,5 +80,7 @@
   "seeanotherexperts" : "ดูผู้เชี่ยวชาญคนอื่น",
   "seeanotheremployees" : "ดูผู้คณะทำงานคนอื่น",
   "seeanothermembers" : "ดูสมาชิกคนอื่น",
-    "employee" : "คณะทำงาน"
+    "employee" : "คณะทำงาน",
+    "allbenefitandservice" : "สิทธิประโยชน์และการบริการ",
+    "member" : "สมาชิก"
 }

@@ -11,7 +11,7 @@
                 <h2>{{ name }}</h2>
             </NuxtLinkLocale>
 
-            <p class="expert-details">{{ description || '—' }}</p>
+            <p class="expert-details">{{ description || '' }}</p>
 
             <div v-if="email" class="expert-contact">
                 <img src="/icon/email.png" alt="">
@@ -94,6 +94,10 @@ const goDetails = () => {
 
 .expert-card-text h2 {
     text-align: center;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+   
 }
 
 .expert-details {
