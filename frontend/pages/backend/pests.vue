@@ -87,31 +87,46 @@
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
+                    <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 50 MB)</label>
                     <div class="image-upload-container">
-                        <div v-if="currentPest.image" class="image-preview">
-                            <img :src="currentPest.image" alt="Pest Image" />
+                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+                            @drop.prevent="handlePestDragDrop">
+
+                            <!-- Placeholder when no image -->
+                            <img v-if="!currentPest.image" src="/icon/upload.svg" draggable="false" />
+                            <h2 v-if="!currentPest.image">ลากไฟล์ลงที่นี่หรือคลิกเพื่อเลือก</h2>
+
+                            <!-- Preview if image exists -->
+                            <div v-if="currentPest.image" class="image-preview">
+                                <img :src="currentPest.image" alt="Uploaded Pest Image" class="preview-image" />
+                                <button class="remove-btn" @click="removePestImage">X</button>
+                            </div>
+
+                            <!-- Hidden file input -->
+                            <input type="file" accept="image/jpeg, image/png" class="file-uploader" ref="pestFileInput"
+                                @change="handlePestFileUpload" />
+
+                            <!-- Browse button -->
+                            <button type="button" class="browse-btn" @click="triggerPestFileInput">
+                                Browse File
+                            </button>
                         </div>
-                        <input type="file" ref="fileInput" @change="handleFileChange" accept="image/png, image/jpeg"
-                            style="display: none;" />
-                        <button type="button" class="upload-btn" @click="fileInput.click()">
-                            {{ currentPest.image ? 'Change Image' : 'Upload Image' }}
-                        </button>
                     </div>
                     <label>English Name</label>
                     <input class="add-text-input" v-model="currentPest.name_en" placeholder="Enter English name"
                         required />
                     <label>Thai Name</label>
-                    <input class="add-text-input" v-model="currentPest.name" placeholder="Enter Thai name"
-                        required />
+                    <input class="add-text-input" v-model="currentPest.name" placeholder="Enter Thai name" required />
                     <label>Scientific Name</label>
                     <input class="add-text-input" v-model="currentPest.sci_name" placeholder="Enter scientific name"
                         required />
                     <label>Lifecycle</label>
-                    <textarea class="add-text-input" v-model="currentPest.lifecycle"
-                        placeholder="Enter lifecycle" required></textarea>
+                    <textarea class="add-text-input" v-model="currentPest.lifecycle" placeholder="Enter lifecycle"
+                        required></textarea>
                     <label>Prevent</label>
-                    <textarea class="add-text-input" v-model="currentPest.prevent"
-                        placeholder="Enter prevent" required></textarea>
+                    <textarea class="add-text-input" v-model="currentPest.prevent" placeholder="Enter prevent"
+                        required></textarea>
                     <label>Lifecycle (English)</label>
                     <textarea class="add-text-input" v-model="currentPest.lifecycle_en"
                         placeholder="Enter lifecycle (English)" required></textarea>
@@ -217,6 +232,36 @@ const showCropper = ref(false);
 const croppingImage = ref(null);
 const cropperInstance = ref(null);
 const cropperImage = ref(null);
+const isDragging = ref(false);
+const pestFileInput = ref(null);
+
+
+const triggerPestFileInput = () => {
+  pestFileInput.value?.click();
+};
+
+const handlePestFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file && file.size <= 50 * 1024 * 1024) {
+    currentPest.value.image = URL.createObjectURL(file);
+  } else {
+    alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
+  }
+};
+const handlePestDragDrop = (event) => {
+  const file = event.dataTransfer.files[0];
+  if (file && file.size <= 50 * 1024 * 1024) {
+    currentPest.value.image = URL.createObjectURL(file);
+  } else {
+    alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
+  }
+  isDragging.value = false;
+};
+
+const removePestImage = () => {
+  currentPest.value.image = null;
+  pestFileInput.value.value = ""; // reset input
+};
 
 
 const handleFileChange = (event) => {
@@ -347,12 +392,12 @@ const bulkUpdateStatus = async (statusValue) => {
             if (p.selected) p.status = statusValue ? 1 : 0;
         });
 
-        
+
     } catch (error) {
         alert(`Error updating pests: ${error.message}`);
         console.error(error);
     }
-     loadingstatetext.value = statusValue ? 'Publishing selected pests' : 'Unpublishing selected pests';
+    loadingstatetext.value = statusValue ? 'Publishing selected pests' : 'Unpublishing selected pests';
     loadingstate.value = false;
 };
 
@@ -380,7 +425,7 @@ const submitPest = async (publish) => {
 
         if (currentPest.value.id) {
             await updatePest(currentPest.value.id, payload);
-            
+
         } else {
             const newPest = await createPest(
                 payload.image, payload.name, payload.name_en, payload.sci_name,
@@ -398,7 +443,7 @@ const submitPest = async (publish) => {
     } catch (error) {
         alert(`Error: ${error.message}`);
         console.error(error);
-        
+
     }
     loadingstate.value = false;
 };
@@ -448,7 +493,7 @@ onMounted(fetchApi);
 .cropper-container {
     background: #fff;
     padding: 1.5rem;
-    
+
     width: 400px;
     max-width: 90%;
     text-align: center;
@@ -465,7 +510,7 @@ onMounted(fetchApi);
     width: 100%;
     height: 300px;
     overflow: hidden;
-   
+
     margin-bottom: 1rem;
 }
 
@@ -626,14 +671,15 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
-    text-align: center;   /* horizontal center */
+    text-align: center;
+    /* horizontal center */
     vertical-align: middle;
     width: 5%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
-      text-align: center;
+    text-align: center;
     width: 8%;
 }
 
@@ -645,7 +691,7 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
-     text-align: center;
+    text-align: center;
     width: 5%;
 }
 
@@ -656,7 +702,7 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
-  text-align: center;
+    text-align: center;
     width: 10%;
 }
 

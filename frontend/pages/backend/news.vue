@@ -145,7 +145,7 @@
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
                         required />
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG</label>
+                    <label>รองรับรูปภาพ PNG, JPG และ JPEG(ขนาดไฟล์ไม่เกิน 50 MB)</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
