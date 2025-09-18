@@ -13,7 +13,7 @@
     <!-- Search bar -->
     <label class="coconut-v-input">
       <img src="/icon/search.svg" alt="Search Icon" />
-      <input type="text" placeholder="ค้นหาด้วยชื่อหรือแท็ก..." v-model="searchQuery" aria-label="Search experts" />
+      <input type="text" :placeholder="locale === 'th' ? 'ค้นหาด้วยชื่อหรือแท็ก...' : 'Search by Expert name or Tag'" v-model="searchQuery" aria-label="Search experts" />
     </label>
 
     <div style="height: 1rem"></div>
@@ -43,18 +43,37 @@
 
     <!-- Results -->
     <div class="event-card-section" v-else-if="filteredExperts.length">
-      <ExpertCard v-for="expert in filteredExperts" :key="expert.id" :id="expert.id" :image="expert.image"
+      <ExpertCard v-for="expert in paginatedExperts" :key="expert.id" :id="expert.id" :image="expert.image"
         :name="locale === 'th' ? expert.name : expert.name_en"
         :description="locale === 'th' ? expert.description : expert.description_en" :phone-number="expert.phoneNumber"
         :email="expert.email" @tag-click="onTagClick" />
-
-
     </div>
 
     <!-- Empty -->
     <div class="no-events" v-else>
       <p>No experts found for the selected criteria.</p>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" v-if="filteredExperts.length">
+    <div class="pagination-line"></div>
+    <div class="pagination-controller">
+      <button @click="changePage('prev')" :disabled="currentPage === 1">
+        {{ locale === 'th' ? 'กลับ' : 'Back' }}
+      </button>
+
+      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+        class="page-input" />
+      <span style="display: flex; align-self: center;">
+        {{ locale === 'th' ? 'จาก' : 'of' }} {{ totalPages }}
+      </span>
+
+      <button @click="changePage('next')" :disabled="currentPage === totalPages">
+        {{ locale === 'th' ? 'ถัดไป' : 'Next' }}
+      </button>
+    </div>
+    <div class="pagination-line"></div>
   </div>
 </template>
 
@@ -80,22 +99,25 @@ type ExpertInPage = {
   tags: string[]
   category: 'farmer' | 'private' | 'academic' | 'unknown'
 }
-const { locale } = useI18n()
 
+const { locale } = useI18n()
 const route = useRoute()
 const { getExperts } = useExperts()
 const { getExpertsByTag } = useExpertTags()
 
+/* ---------- state ---------- */
 const isLoading = ref(true)
 const experts = ref<ExpertInPage[]>([])
 const searchQuery = ref('')
-
 const selectedFilter = ref<'all' | 'farmer' | 'private' | 'academic'>('all')
+
+/* ---------- tag click -> fill search ---------- */
 const onTagClick = (tag: string) => {
   searchQuery.value = tag
   selectedFilter.value = 'all'
 }
 
+/* ---------- route tag (server filtered) ---------- */
 const selectedTagRaw = computed<string | null>(() => {
   const q = route.query.tag
   return typeof q === 'string' ? q : Array.isArray(q) ? q[0] : null
@@ -103,11 +125,9 @@ const selectedTagRaw = computed<string | null>(() => {
 const selectedTag = computed<string | null>(() =>
   selectedTagRaw.value ? selectedTagRaw.value.trim().toLowerCase() : null
 )
-
-
 const serverFilteredByTag = computed(() => !!selectedTagRaw.value)
 
-
+/* ---------- helpers ---------- */
 const mapCategory = (type?: number | null) => {
   const m: Record<number, 'farmer' | 'private' | 'academic'> = { 1: 'farmer', 2: 'private', 3: 'academic' }
   return type && m[type] ? m[type] : 'unknown'
@@ -118,41 +138,41 @@ const normalizeTags = (raw: unknown): string[] => {
   return []
 }
 
+/* ---------- prefill from ?q= or localStorage ---------- */
 const prefillFromQuery = computed(() => {
-  const q = route.query.q;
-  return typeof q === 'string' ? q : (Array.isArray(q) ? q[0] : '');
-});
-
+  const q = route.query.q
+  return typeof q === 'string' ? q : (Array.isArray(q) ? q[0] : '')
+})
 watch(prefillFromQuery, (val) => {
-  const v = (val || '').trim();
+  const v = (val || '').trim()
   if (v) {
-    searchQuery.value = v;
-    selectedFilter.value = 'all';
+    searchQuery.value = v
+    selectedFilter.value = 'all'
   }
-}, { immediate: true });
+}, { immediate: true })
 onMounted(() => {
   if (!searchQuery.value && process.client) {
     try {
-      const saved = localStorage.getItem('experts:prefill');
+      const saved = localStorage.getItem('experts:prefill')
       if (saved && saved.trim()) {
-        searchQuery.value = saved.trim();
-        selectedFilter.value = 'all';
+        searchQuery.value = saved.trim()
+        selectedFilter.value = 'all'
       }
-      localStorage.removeItem('experts:prefill');
-    } catch { }
+      localStorage.removeItem('experts:prefill')
+    } catch {}
   }
-});
+})
+
+/* ---------- fetch ---------- */
 const fetchExperts = async () => {
   try {
     isLoading.value = true
-
     const data = serverFilteredByTag.value
       ? await getExpertsByTag(selectedTagRaw.value as string)
       : await getExperts()
 
     experts.value = (data || []).map((e: any) => {
       const tags = normalizeTags(e.tags)
-
       if (serverFilteredByTag.value && selectedTag.value && !tags.includes(selectedTag.value)) {
         tags.push(selectedTag.value)
       }
@@ -161,14 +181,13 @@ const fetchExperts = async () => {
         id: Number(e.id),
         image: e.image ?? null,
 
-        // ✅ เติมคู่ภาษาให้ครบ พร้อม fallback
+        // bilingual with fallback
         name: e.name ?? '',
         name_en: e.name_en ?? e.name ?? '',
 
         description: e.description ?? null,
         description_en: e.description_en ?? e.description ?? null,
 
-        // (ถ้ามี address/en ใน BE ก็เติมได้)
         address: e.address ?? null,
         address_en: e.address_en ?? e.address ?? null,
 
@@ -189,11 +208,9 @@ const fetchExperts = async () => {
     isLoading.value = false
   }
 }
-
-
 watch(selectedTagRaw, fetchExperts, { immediate: true })
 
-
+/* ---------- filter (MUST be before pagination) ---------- */
 const filteredExperts = computed(() => {
   const q = (searchQuery.value || '').toLowerCase().trim()
   const tag = selectedTag.value
@@ -202,30 +219,126 @@ const filteredExperts = computed(() => {
   return experts.value.filter((e) => {
     if (!e.status) return false
 
-    // ✅ รวมข้อความชื่อสองภาษาเพื่อค้นหา
     const nameText = `${e.name ?? ''} ${e.name_en ?? ''}`.toLowerCase()
-
-    const matchesQuery =
-      !q ||
-      nameText.includes(q) ||
-      e.tags.some(t => t.includes(q))
-
-    const matchesTag =
-      serverFilteredByTag.value ? true : (!tag || e.tags.includes(tag))
-
-    const matchesCategory =
-      cat === 'all' || tag ? true : e.category === cat
+    const matchesQuery = !q || nameText.includes(q) || e.tags.some(t => t.includes(q))
+    const matchesTag = serverFilteredByTag.value ? true : (!tag || e.tags.includes(tag))
+    const matchesCategory = (cat === 'all' || tag) ? true : e.category === cat
 
     return matchesQuery && matchesTag && matchesCategory
   })
 })
 
+/* ---------- pagination (AFTER filteredExperts) ---------- */
+const currentPage = ref(1)
+const itemsPerPage = ref(32)
+const pageInput = ref(1)
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredExperts.value.length / itemsPerPage.value))
+)
+
+const paginatedExperts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  return filteredExperts.value.slice(start, start + itemsPerPage.value)
+})
+
+// reset page when results or page size change
+watch([filteredExperts, itemsPerPage], () => {
+  currentPage.value = 1
+  pageInput.value = 1
+})
+
+// clamp when total pages shrink
+watch(totalPages, (tp) => {
+  if (currentPage.value > tp) {
+    currentPage.value = tp
+    pageInput.value = tp
+  }
+})
+
+// keep input synced
+watch(currentPage, (p) => { pageInput.value = p })
+
+function changePage(direction: 'prev' | 'next') {
+  if (direction === 'next' && currentPage.value < totalPages.value) {
+    currentPage.value++
+  } else if (direction === 'prev' && currentPage.value > 1) {
+    currentPage.value--
+  }
+  scrollToListTop()
+}
+
+function goToPage() {
+  if (pageInput.value >= 1 && pageInput.value <= totalPages.value) {
+    currentPage.value = pageInput.value
+    scrollToListTop()
+  } else {
+    pageInput.value = currentPage.value
+  }
+}
+
+function scrollToListTop() {
+  if (process.client) {
+    const el = document.querySelector('.event-card-section')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+/* ---------- expose to template (auto in <script setup>) ---------- */
+// locale, paginatedExperts, totalPages, currentPage, pageInput, changePage, goToPage, onTagClick, etc.
 </script>
 
 
 
 
+
 <style scoped>
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: #4e6d16;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination .page-input {
+  width: 3.25rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.3rem 0.4rem;
+  height: 2.25rem;
+}
+
+.pagination .pagination-line {
+  width: fit-content;
+  min-width: 20%;
+  height: 4px;
+  background-color: #4e6d16;
+  border-radius: 9999px;
+}
+
+.pagination-controller {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 22rem;
+}
+
 .expert-page-container {
   min-height: 100dvh;
 }
@@ -310,7 +423,7 @@ ul.homeeventfiltercontainer li.filtli {
   cursor: pointer;
   height: 100%;
   transition: all .2s;
-  font-size: 20px;
+  font-size: clamp(14px, 2vw, 20px);
 }
 
 ul.homeeventfiltercontainer li.filtli.selecto {
@@ -355,16 +468,12 @@ ul.homeeventfiltercontainer li.filtli.selecto {
   margin: 4rem;
 }
 
-@media (max-width: 1024px) {
-  ul.homeeventfiltercontainer li.filtli {
-    font-size: 18px;
-  }
-}
+
 
 @media (max-width: 640px) {
   .event-card-section {
     grid-template-columns: 1fr;
-    /* หนึ่งคอลัมน์บนจอเล็ก */
+
   }
 }
 
