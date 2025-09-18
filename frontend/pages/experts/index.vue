@@ -1,493 +1,331 @@
 <template>
- 
-
+  <div class="expert-page-container">
   <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/experts">{{ $t('Expert') }}</NuxtLinkLocale>
-    </div>
-  
-  <h3 class="header-content">{{ $t('Expert') }}</h3>
-  <div class="header-container">
-    <h1>{{ $t('Experts') }}</h1>
+
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
   </div>
 
-  <!-- Merged navbarexpert content -->
-   <div style="height: 1rem"></div>
-    <!-- Search bar -->
-    <label class="coconut-v-input">
-      <img src="/icon/search.svg" alt="Search Icon" />
-      <input
-        type="text"
-        placeholder="ค้นหาด้วยชื่อ..."
-        v-model="searchQuery"
-        @input="filterByName"
-      />
-    </label>
-    <div style="height: 1rem"></div>
-    <div>
-    <!-- Filter options -->
-    <ul class="homeeventfiltercontainer">
-      <li
-        class="filtli train"
-        :class="{ selecto: selectedFilter === 'farmer' }"
-        @click="selectedFilter = 'farmer'"
-      >
-        {{$t('Farmer')}}
-      </li>
-      <li
-        class="filtli private"
-        :class="{ selecto: selectedFilter === 'private' }"
-        @click="selectedFilter = 'private'"
-      >
-        {{$t('Private')}}
-      </li>
-      <li
-        class="filtli academic"
-        :class="{ selecto: selectedFilter === 'academic' }"
-        @click="selectedFilter = 'academic'"
-      >
-        {{$t('Academic')}}
-      </li>
-    </ul>
+   <h1 class="context-header">{{ $t('Experts') }}</h1>
+  <div style="height: 5rem;"></div>
 
+  <!-- Search bar -->
+  <label class="coconut-v-input">
+    <img src="/icon/search.svg" alt="Search Icon" />
+    <input type="text" placeholder="ค้นหาด้วยชื่อหรือแท็ก..." v-model="searchQuery" aria-label="Search experts" />
+  </label>
 
-    <!-- Loading state -->
-    <div class="event-card-section" v-if="isLoading" loading="lazy">
-      <div style="display: flex; gap: 2rem; flex-direction: row">
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-        <CardShimmer />
-      </div>
+  <div style="height: 1rem"></div>
+
+  <!-- Filter options -->
+  <ul class="homeeventfiltercontainer">
+    <li class="filtli" :class="{ selecto: selectedFilter === 'all' }" @click="selectedFilter = 'all'">
+      {{ $t('All') }}
+    </li>
+    <li class="filtli" :class="{ selecto: selectedFilter === 'farmer' }" @click="selectedFilter = 'farmer'">
+      {{ $t('Farmer') }}
+    </li>
+    <li class="filtli" :class="{ selecto: selectedFilter === 'private' }" @click="selectedFilter = 'private'">
+      {{ $t('Private') }}
+    </li>
+    <li class="filtli" :class="{ selecto: selectedFilter === 'academic' }" @click="selectedFilter = 'academic'">
+      {{ $t('Academic') }}
+    </li>
+  </ul>
+
+  <!-- Loading -->
+  <div class="event-card-section" v-if="isLoading">
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+      <div v-for="n in 8" :key="n" class="skeleton-card" />
     </div>
+  </div>
 
-    <!-- Render expert data -->
-    <div class="event-card-section" v-if="!isLoading && filteredExperts.length > 0">
-      <NuxtLinkLocale
-        v-for="(expert, index) in filteredExperts"
-        :key="index"
-        class="event-card"
-        :to="`/experts/details/${expert.id}`"
-      >
-        <div class="event-card-image">
-          <img :src="expert.image || 'https://placehold.co/600x400'" alt="Expert Image" draggable="false" />
-        </div>
-        <div class="event-card-text">
-          <p class="event-title">{{ expert.name }}</p>
-          <div class="event-card-date">
-            <img src="/icon/calenda.svg" alt="Calendar Icon" draggable="false" />
-            <p class="event-date">{{ expert.description }}</p>
-          </div>
-        </div>
-      </NuxtLinkLocale>
-    </div>
+  <!-- Results -->
+  <div class="event-card-section" v-else-if="filteredExperts.length">
+    <ExpertCard v-for="expert in filteredExperts" :key="expert.id" :id="expert.id" :image="expert.image"
+      :name="expert.name" :description="expert.description" :phone-number="expert.phoneNumber" :email="expert.email" @tag-click="onTagClick"/>
+  </div>
 
-    <!-- No data found -->
-    <div class="no-events" v-if="!isLoading && filteredExperts.length === 0">
-      <p>No experts found for the selected criteria.</p>
-    </div>
+  <!-- Empty -->
+  <div class="no-events" v-else>
+    <p>No experts found for the selected criteria.</p>
+  </div>
   </div>
 </template>
-<script>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router'
 import { useExperts } from '~/composables/useExperts'
-const { getExperts } = useExperts()
+import { useExpertTags } from '~/composables/useExpertTags'
 
-export default {
-  data() {
-    return {
-      selectedFilter: 'farmer',
-      experts: [],
-      isLoading: true,
-      searchQuery: '',
-      selectedTag: null, // set from route in mounted()
-    }
-  },
-
-  computed: {
-    filteredExperts() {
-      const q = (this.searchQuery || '').toLowerCase()
-
-      return (this.experts || []).filter((expert) => {
-        // normalize fields
-        const name = (expert?.name || '').toLowerCase()
-        const tags = Array.isArray(expert?.tags)
-          ? expert.tags
-          : typeof expert?.tags === 'string'
-          ? expert.tags.split(',').map(t => t.trim())
-          : []
-
-        const matchesQuery =
-          !q ||
-          name.includes(q) ||
-          tags.some(t => (t || '').toLowerCase().includes(q))
-
-        const matchesCategory =
-          expert?.category === this.selectedFilter && Boolean(expert?.status)
-
-        const matchesTag =
-          !this.selectedTag || tags.includes(this.selectedTag)
-
-        return matchesQuery && matchesCategory && matchesTag
-      })
-    },
-  },
-
-  watch: {
-    '$route.query.tag'(newTag) {
-      this.selectedTag = newTag || null
-    },
-  },
-
-  methods: {
-    async fetchExperts() {
-      try {
-        this.isLoading = true
-        const data = await getExperts()
-
-        this.experts = (data || []).map((expert) => {
-          // normalize tags once here
-          const tags = Array.isArray(expert?.tags)
-            ? expert.tags
-            : typeof expert?.tags === 'string'
-            ? expert.tags.split(',').map(t => t.trim())
-            : []
-
-          return {
-            ...expert,
-            tags,
-            category: this.mapCategory(expert?.type),
-            // status: expert.status === 1, // if your API returns 0/1
-          }
-        })
-      } catch (error) {
-        console.error('Error fetching experts:', error)
-        this.experts = []
-      } finally {
-        this.isLoading = false
-      }
-    },
-
-    mapCategory(type) {
-      const categories = { 1: 'farmer', 2: 'private', 3: 'academic' }
-      return categories?.[type] || 'unknown'
-    },
-  },
-
-  mounted() {
-    this.selectedTag = this.$route?.query?.tag || null
-    this.fetchExperts()
-  },
+type ExpertInPage = {
+  id: number
+  image?: string | null
+  name: string
+  description?: string | null
+  phoneNumber?: string | null
+  email?: string | null
+  type?: number | null
+  status?: 0 | 1 | boolean
+  tags: string[] 
+  category: 'farmer' | 'private' | 'academic' | 'unknown'
 }
+
+const route = useRoute()
+const { getExperts } = useExperts()
+const { getExpertsByTag } = useExpertTags()
+
+const isLoading = ref(true)
+const experts = ref<ExpertInPage[]>([])
+const searchQuery = ref('')
+
+const selectedFilter = ref<'all' | 'farmer' | 'private' | 'academic'>('all')
+const onTagClick = (tag: string) => {
+  searchQuery.value = tag        
+  selectedFilter.value = 'all'   
+}
+
+const selectedTagRaw = computed<string | null>(() => {
+  const q = route.query.tag
+  return typeof q === 'string' ? q : Array.isArray(q) ? q[0] : null
+})
+const selectedTag = computed<string | null>(() =>
+  selectedTagRaw.value ? selectedTagRaw.value.trim().toLowerCase() : null
+)
+
+
+const serverFilteredByTag = computed(() => !!selectedTagRaw.value)
+
+
+const mapCategory = (type?: number | null) => {
+  const m: Record<number, 'farmer' | 'private' | 'academic'> = { 1: 'farmer', 2: 'private', 3: 'academic' }
+  return type && m[type] ? m[type] : 'unknown'
+}
+const normalizeTags = (raw: unknown): string[] => {
+  if (Array.isArray(raw)) return raw.map(t => String(t).trim().toLowerCase()).filter(Boolean)
+  if (typeof raw === 'string') return raw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+  return []
+}
+
+
+const fetchExperts = async () => {
+  try {
+    isLoading.value = true
+
+    const data = serverFilteredByTag.value
+      ? await getExpertsByTag(selectedTagRaw.value as string)
+      : await getExperts()
+
+    experts.value = (data || []).map((e: any) => {
+      const tags = normalizeTags(e.tags)
+
+    
+      if (serverFilteredByTag.value && selectedTag.value && !tags.includes(selectedTag.value)) {
+        tags.push(selectedTag.value)
+      }
+
+      return {
+        id: e.id,
+        image: e.image ?? null,
+        name: e.name,
+        description: e.description ?? null,
+        phoneNumber: e.phoneNumber ?? null,
+        email: e.email ?? null,
+        type: e.type ?? null,
+        status: e.status,
+        tags,
+        category: mapCategory(e.type ?? null),
+      } as ExpertInPage
+    })
+
+
+    if (selectedTag.value) selectedFilter.value = 'all'
+  } catch (err) {
+    console.error('Error fetching experts:', err)
+    experts.value = []
+  } finally {
+    isLoading.value = false
+  }
+}
+
+
+watch(selectedTagRaw, fetchExperts, { immediate: true })
+
+
+const filteredExperts = computed(() => {
+  const q = (searchQuery.value || '').toLowerCase().trim()
+  const tag = selectedTag.value
+  const cat = selectedFilter.value
+
+  return experts.value.filter((e) => {
+    if (!e.status) return false
+
+    const matchesQuery =
+      !q ||
+      e.name.toLowerCase().includes(q) ||
+      e.tags.some(t => t.includes(q))  
+
+   
+    const matchesTag =
+      serverFilteredByTag.value ? true : (!tag || e.tags.includes(tag))
+
+    const matchesCategory =
+      cat === 'all' || tag ? true : e.category === cat
+
+    return matchesQuery && matchesTag && matchesCategory
+  })
+})
 </script>
 
+
+
+
 <style scoped>
-.navcontainer {
-  width: 100%;
-  height: 100px;
-  border: rgb(255, 255, 255) solid 2px;
+.expert-page-container{
+  min-height: 100dvh;
 }
+
+.skeleton-card {
+  height: 26rem;
+  width: 100%;                 /* เดิม fix 22rem → ให้เต็มช่อง grid */
+  border-radius: 12px;
+  background: linear-gradient(90deg, #eee, #f6f6f6, #eee);
+  background-size: 200% 100%;
+  animation: shine 1.2s infinite linear;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% 0
+  }
+
+  100% {
+    background-position: -200% 0
+  }
+}
+
 .header-container {
-  border: rgb(255, 255, 255) solid 3px;
   text-align: center;
   margin-top: 0;
   padding-top: 20px;
- 
 }
+
 .header-content {
   color: #ffffff;
   margin-left: 2%;
   font-weight: 300;
 }
 
-/* Merged styles from navbarexpert.vue */
 label.coconut-v-input {
   transition: ease-in-out 0.5s;
   display: flex;
-  justify-self: center;
   width: 60%;
   height: 3rem;
   outline: 3px solid #4e6d16;
   border-radius: 10px;
   overflow: hidden;
   cursor: text;
-  animation: btnexpand 0.5s ease-in-out forwards;
-}
-
-label.coconut-v-input:hover {
-  outline: 4px solid #4e6d16;
+  margin: 0 auto;
 }
 
 label.coconut-v-input img {
-  display: flex;
   align-self: center;
-  padding-left: 0.5rem;
-  width: 10%;
+  padding-left: .5rem;
+  width: 2rem;
   height: 2rem;
 }
 
 label.coconut-v-input input {
   all: unset;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  overflow: hidden;
-  width: 90%;
-}
-.no-events {
-  display: flex;
-  justify-content: center;
-  margin: 10rem;
+  padding: 0 1rem;
+  width: 100%;
 }
 
 ul.homeeventfiltercontainer {
-  margin: 2rem;
+  margin: 2rem auto;
   list-style: none;
   display: flex;
-  justify-self: center;
-  justify-content: space-evenly;
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
-  outline: solid rgba(0, 0, 0, 0.2) 4px;
-  background-color: transparent;
+  justify-content: center;
+  gap: .25rem;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, .2);
+  outline: solid rgba(0, 0, 0, .2) 4px;
+  background: transparent;
   height: 3.5rem;
-  width: 50%;
+  width: min(900px, 90%);
   overflow: hidden;
   border-radius: 20px;
 }
 
 ul.homeeventfiltercontainer li.filtli {
+  flex: 1 1 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
   cursor: pointer;
   height: 100%;
-  width: 33.33%;
-  transition: all 0.3s ease;
-  font-size: 25px;
+  transition: all .2s;
+  font-size: 20px;
 }
 
 ul.homeeventfiltercontainer li.filtli.selecto {
-  font-weight: bolder;
-  font-size: 28px;
-  background-color: #c5d944;
-  transform: scale(1.1);
+  font-weight: 700;
+  background: #c5d944;
+  transform: scale(1.03);
 }
 
 .event-card-section {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0% 10%;
+  
+   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); /* การ์ดยืดปรับตามพื้นที่ */
   gap: 1rem;
-  justify-content: left;
-  width: 80%;
+  width: min(1300px, 90%);
+  margin: 0 auto;
   padding: 1rem;
   animation: fadeinbelow 1s;
+  align-items: stretch; /* ให้ทุกคอลัมน์สูงเท่ากัน */
 }
 
-.event-card-status {
-  color: black;
-  margin-top: 1rem;
-  text-align: center;
-  border-radius: 10px;
-  outline: 2px solid black;
-  width: 45%;
-  align-self: flex-end;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.event-card-status.ongoing {
-  color: white;
-  background-color: #4e6d16;
-  margin-top: 1rem;
-  text-align: center;
-  border-radius: 10px;
-  outline: 2px solid #4e6d16;
-  width: 45%;
-  align-self: flex-end;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.event-card-status.upcoming {
-  color: #6f5d55;
-  margin-top: 1rem;
-  text-align: center;
-  border-radius: 10px;
-  outline: 2px solid #6f5d55;
-  width: 45%;
-  align-self: flex-end;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.event-card-status.finished {
-  color: black;
-  background-color: #cccccc;
-  margin-top: 1rem;
-  text-align: center;
-  border-radius: 10px;
-  outline: 2px solid black;
-  width: 45%;
-  align-self: flex-end;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.event-card-status.error {
-  color: red;
-
-  margin-top: 1rem;
-  text-align: center;
-  border-radius: 10px;
-  outline: 2px solid red;
-  width: 45%;
-  align-self: flex-end;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.event-card {
-  all: unset;
-  cursor: pointer;
-  overflow: hidden;
-  min-width: 16rem;
-  flex: 1 1 calc(25% - 1rem);
-  max-width: 22rem;
-  height: 22rem;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
-  background-color: white;
-  transition: ease-in-out 0.4s;
+:deep(.expert-card) {
   display: flex;
   flex-direction: column;
-}
-
-.event-card:hover {
-  outline: #4e6d16 solid 3px;
-  transform: scale(1.05);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.event-card .event-card-image img {
-  width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: ease-in-out 0.2s;
 }
 
-.event-card:hover .event-card-image {
-  transform: scale(1.1);
-}
-
-.event-card-image {
+/* รูปภาพบนการ์ดไม่ดัน layout แปลก */
+:deep(.expert-card .expert-card-image img) {
   width: 100%;
-  height: 60%;
+  height: 12rem;
+  object-fit: cover;
+  display: block;
+  border-radius: 0.5rem;
+}
+
+.no-events {
   display: flex;
   justify-content: center;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.5);
+  margin: 4rem;
 }
 
-.event-card-text {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  height: 40%;
-}
-
-.event-title {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  text-overflow: ellipsis;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-.event-card-date {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.event-card-date img {
-  width: 1.2rem;
-  height: 1.2rem;
-  object-fit: cover;
-}
-
-.event-date {
-  font-size: 0.875rem;
-  color: #777;
-}
-
-@media screen and (max-width: 1024px) {
-  .event-card {
-    flex: 1 1 calc(50% - 1rem);
-  }
-
-  .event-card-text {
-    height: 50%;
-  }
-
+@media (max-width: 1024px) {
   ul.homeeventfiltercontainer li.filtli {
-    font-size: 20px;
-  }
-
-  ul.homeeventfiltercontainer li.filtli.selecto {
-    font-size: 25px;
-  }
-}
-
-@media screen and (max-width: 1123px) {
-  .event-card-section {
-    justify-self: center;
-    width: 75%;
-  }
-
-  ul.homeeventfiltercontainer li.filtli {
-    font-size: 15px;
-  }
-
-  ul.homeeventfiltercontainer li.filtli.selecto {
     font-size: 18px;
   }
 }
-
-@media screen and (max-width: 768px) {
-  .event-card {
-    flex: 1 1 calc(50% - 1rem);
-  }
-
-  .event-card-text {
-    height: 50%;
+@media (max-width: 640px) {
+  .event-card-section {
+    grid-template-columns: 1fr; /* หนึ่งคอลัมน์บนจอเล็ก */
   }
 }
-
-@media screen and (max-width: 480px) {
-  .event-card {
-    flex: 1 1 100%;
-  }
-
-  .event-card-text {
-    height: 10%;
-  }
-}
-
 @keyframes fadeinbelow {
   0% {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(50px)
   }
 
   100% {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0)
   }
 }
 </style>

@@ -347,7 +347,7 @@ const handleFileUpload = (event) => {
         showCropper.value = true;
         nextTick(() => {
             cropperInstance.value = new Cropper(cropperImage.value, {
-                aspectRatio: 2 / 3,
+                aspectRatio: 1,
                 viewMode: 2,
                 autoCropArea: 1,
             });
