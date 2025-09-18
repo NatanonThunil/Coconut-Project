@@ -103,7 +103,7 @@ export default {
         return null;
       }
     },
-
+    
     async getPdfImage(employee) {
       if (employee.pdf) {
         return await this.renderPdfToImage(employee.pdf);

@@ -12,7 +12,7 @@
 
   <p class="kumnum">นี่คือคำอธิบายเกี่ยวกับ Coconut Knowledge Hub เว็ปที่รวบรวม ข้อมูลเกี่ยวกับพันธุ์มะพร้าวทั่วทั้งประเทศ รวมไปถึงขั้นตอนการแปลรูป และส่งออก</p>
   <div class="a">
-    <ContentHeader contexto="ผลงานของเรา" />
+    <ContentHeader :contexto="$t('Achievements')" />
     <section>
       <AboutusslidePdf apiEndPoint="/coconut-api/achievements" title="title" lurl="achievements"/>
 

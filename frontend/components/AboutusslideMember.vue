@@ -29,10 +29,13 @@
       >
         <SwiperSlide v-for="(person, index) in filteredMembers" :key="index">
           <AboutusCard
-            :url="`/aboutus/${lurl}/details/${person.id}`"
+            pp="members"
+            :id="person.id"
             :image="getEmployeeImage(person.image)"
             :name="getTitle(person)"
-            :description="getDescription(person)"
+            :description="person.description"
+            :phone-number="person.phoneNumber"
+            :email="person.email"
           />
         </SwiperSlide>
       </Swiper>

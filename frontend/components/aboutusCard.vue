@@ -1,116 +1,190 @@
 <template>
-    <NuxtLinkLocale :to="url" class="card-content-container">
-        <div :class="ispdf? 'pdf-image-container':'people-image-container'"><img :src="image" alt=""></div>
-        <div class="people-details-container">
-            <h3 class="coconut-green-text">{{ name }}</h3>
-            <p>{{ description }}</p>
+    <!-- เปลี่ยนจาก NuxtLinkLocale ที่ห่อทั้งการ์ด -> div ธรรมดา -->
+    <div class="expert-card" role="link" tabindex="0" @click="goDetails" @keydown.enter.prevent="goDetails">
+        <div class="expert-card-image">
+            <img :src="image || '/images/expert-placeholder.webp'" alt="Expert Image" draggable="false" />
         </div>
-    </NuxtLinkLocale>
+
+        <div class="expert-card-text">
+
+            <NuxtLinkLocale class="expert-title" :to="`/aboutus/${props.pp}/details/${props.id}`">
+                <h2>{{ name }}</h2>
+            </NuxtLinkLocale>
+
+            <p class="expert-details">{{ description || '—' }}</p>
+
+            <div v-if="email" class="expert-contact">
+                <img src="/icon/email.png" alt="">
+                <p>{{ email }}</p>
+            </div>
+            <div v-if="phoneNumber" class="expert-contact">
+                <img src="/icon/phonecall.png" alt="">
+                <p>{{ phoneNumber }}</p>
+            </div>
+        </div>
+
+    
+    </div>
 </template>
 
-<script>
-export default {
-    props: {
-        image: {
-            type: String,
-            required: true,
+<script setup lang="ts">
 
-        }, name: {
-            type: String,
-            required: true,
 
-        }, description: {
-            type: String,
-            required: true,
+type Props = {
+    id: number
+    image?: string | null
+    name: string
+    description?: string | null
+    email?: string | null
+    phoneNumber?: string | null
+    pp?: string | null
+}
 
-        }, url: {
-            type: String,
-            required: true,
+const props = defineProps<Props>()
 
-        }, ispdf: {
-            type: Boolean,
-            required: false,
-        }
+defineEmits<{ (e: 'tag-click', tag: string): void }>()
 
-    }
+
+const goDetails = () => {
+    navigateTo(`/aboutus/${props.pp}/details/${props.id}`)
 }
 </script>
 
 <style scoped>
-.people-details-container {
+.expert-card:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, .5);
+    transform: scale(1.01);
+    outline: #4E6D16 2px solid;
+}
+
+.expert-card:active {
+    background-color: #ccc;
+}
+
+.expert-card {
+    cursor: pointer;
+    display: block;
     width: 100%;
-    height: 25%;
-    overflow: hidden;
-    padding: 1rem;
-}
-
-.people-details-container h3,
-.people-details-container p {
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    /* Adjust as needed */
-}
-
-.card-content-container {
-    cursor: pointer;
-    background-color: white;
-    height: 23rem;
-    width: 22rem;
+    max-width: 22rem;
+    min-width: 16rem;
+    height: auto;
+    padding: clamp(0.75rem, 2vw, 1rem);
+    outline: 1px solid #ccc;
     border-radius: 10px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4);
+    background: #fff;
     overflow: hidden;
-
+    transition: 0.3s all;
 }
 
-.card-pdf-content-container {
-    cursor: pointer;
-    background-color: white;
-    height: 23rem;
-    width: 22rem;
-    border-radius: 10px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4);
+.expert-card-image {
+    aspect-ratio: 1 / 1;
+    margin: 1rem auto;
+    height: 10rem;
+    width: clamp(7rem, 35vw, 10rem);
     overflow: hidden;
-
+    border-radius: 100%;
 }
-.card-content-container .pdf-image-container {
+
+.expert-card-image img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.expert-card-text h2 {
+    text-align: center;
+}
+
+.expert-details {
+    text-align: center;
+    color: #4E6D16;
+    margin-bottom: 1rem;
+}
+
+.expert-contact {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .5rem;
     justify-content: center;
+    opacity: .7;
+}
+
+.expert-contact img {
+    height: 1rem;
+    width: 1rem;
+}
+
+.experttags {
+    --fade: linear-gradient(to right, rgba(255, 255, 255, 0), #fff 30%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
     width: 100%;
-    height: 75%;
-    background-color: rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-
+    margin-top: .5rem;
+    overflow-x: auto;
+    /* เลื่อนแนวนอน */
+    overflow-y: hidden;
+    white-space: nowrap;
+    /* บรรทัดเดียว */
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+    mask-image: none;
 }
 
-.card-content-container:hover .pdf-image-container img {
-    transform: scale(1.05);
+.experttags::-webkit-scrollbar {
+    height: 6px;
 }
 
-.card-content-container .pdf-image-container img {
-    aspect-ratio: 1/1.414;
- 
-    height: 100%;
-    transition: ease-in-out 0.3s;
-    object-fit: cover;
-}
-.card-content-container .people-image-container {
-    width: 100%;
-    height: 75%;
-    overflow: hidden;
-
+.experttags::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 9999px;
 }
 
-.card-content-container:hover .people-image-container img {
-    transform: scale(1.05);
+.experttags::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.card-content-container .people-image-container img {
-    width: 100%;
-    height: 100%;
-    transition: ease-in-out 0.3s;
-    object-fit: cover;
+.experttags .tag-chip {
+    flex-shrink: 0;
+    /* ✅ ปุ่มไม่ถูกบีบจนหาย */
+}
+
+.experttags button {
+    background-color: unset;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: #4E6D16;
+    border: #4E6D16 1px solid;
+    border-radius: 10px;
+    padding: .5rem;
+    transition: .3s all;
+}
+
+.experttags button:hover {
+    color: #fff;
+    background: #4E6D16;
+    outline: #4E6D16 1px solid;
+}
+
+.tag-skel {
+    display: inline-block;
+    height: 2rem;
+    width: 4.5rem;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+    animation: sh 1.2s infinite;
+}
+
+@keyframes sh {
+    0% {
+        background-position: -100px
+    }
+
+    100% {
+        background-position: 200px
+    }
 }
 </style>

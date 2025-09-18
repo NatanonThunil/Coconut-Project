@@ -1,58 +1,75 @@
 <template>
+  <div class="employee-details-container">
+    <div style="height: 8rem"></div>
 
-  <div style="height: 8rem"></div>
-  <div class="all-container">
     <div class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/aboutus/">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/aboutus/employees">{{ $t('All Employees') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale v-if="employees" :to="'/aboutus/employees/details/' + this.$route.params.id">
-        <div>
-          {{ currentLocale === 'th' ? (employees?.name || '-') : (employees?.name_en || '-') }}
-        </div>
+      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
+      <!-- คงลิงก์ /employees ไว้เพื่อไม่ให้ route พัง แต่ UI/คลาสเปลี่ยนเป็น employee แล้ว -->
+      <NuxtLinkLocale to="/employees">{{ $t('employee') }}</NuxtLinkLocale> /
+      <NuxtLinkLocale :to="'/employees/details/' + $route.params.id">
+        {{ (currentLocale == 'th') ? (employee?.name || employee?.name_en) : (employee?.name_en || employee?.name) }}
       </NuxtLinkLocale>
-
-
-    </div>
-    <div style="height: 1rem"></div>
-
-
-
-    <!-- Loader -->
-    <div v-if="!employees && !error" class="loading">
-      <p>กำลังโหลดข้อมูลของคณะทำงานทั้งหมด...</p>
     </div>
 
-    <!-- Error -->
-    <div v-if="!employees" class="error">
-      <p>{{ error }}</p>
-    </div>
+    <div class="all-container">
+      <div style="height: 1rem"></div>
 
-    <!-- Employee Profile Section -->
-    <div class="employees-container" v-if="employees">
-      <div class="employees-content">
-        <img :src="employees?.image || tlImage" class="employees-image" alt="Employee Image" draggable="false" />
-
-        <div class="employees-details">
-          <h1 class="employees-name">{{ employees?.name }}</h1>
-
-          <div class="info">
-            <p><strong>ที่อยู่:</strong> {{ employees?.address || "N/A" }}</p>
-            <p><strong>ติดต่อ:</strong> {{ employees?.phoneNumber || "N/A" }}</p>
-
-          </div>
-
-         
-          <p class="description">
-            <strong>คำอธิบาย:</strong>
-            {{ employees?.description || "ไม่มีคำอธิบาย" }}
-          </p>
-        </div>
+      <!-- Loader -->
+      <div v-if="!employee && !error" class="loading">
+        <p>กำลังโหลดข้อมูลพนักงาน...</p>
       </div>
-      <div style="height: 5rem"></div>
 
-      <div class="back-btn-container">
-        <SeeAllButton text="ดูคณะทำงานคนอื่น" link="/aboutus/employees" />
+      <!-- Error -->
+      <div v-if="error" class="error">
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Employee Profile Section -->
+      <div class="employee-container" v-if="employee">
+        <div class="employee-content">
+          <img :src="employee?.image || tlImage" class="employee-image" alt="Employee Image" draggable="false" />
+
+          <div class="employee-details">
+            <h1 class="employee-name">
+              {{ (currentLocale == 'th') ? (employee?.name || employee?.name_en) : (employee?.name_en || employee?.name) }}
+            </h1>
+
+            <p class="employee-description">
+              {{ (currentLocale == 'th') ? (employee?.description || employee?.description_en) : (employee?.description_en || employee?.description) }}
+            </p>
+
+            <div style="height: 5px; width: 100%; background-color: #4e6d16; border-radius: 10px; margin: 1rem 0;"></div>
+
+            <div class="info">
+              <span class="info-header">
+                <img src="/icon/email.png" alt="">
+                <p>{{ $t("contact-info") }}</p>
+              </span>
+
+              <div class="info-prop-detail">
+                <img src="/icon/email.png" alt="">
+                <p>{{ employee?.email }}</p>
+              </div>
+
+              <div class="info-prop-detail">
+                <img src="/icon/phonecall.png" alt="">
+                <p>{{ employee?.phoneNumber }}</p>
+              </div>
+
+              <div class="info-prop-detail">
+                <img src="/icon/location-pin.png" alt="">
+                <p>{{ (currentLocale == 'th') ? (employee?.address || employee?.address_en) : (employee?.address_en || employee?.address) }}</p>
+              </div>
+            </div>
+
+            <!-- 🔥 ลบส่วนแท็กทิ้งทั้งหมดตามคำขอ -->
+          </div>
+        </div>
+
+        <div class="back-btn-container">
+          <!-- คงลิงก์ /employees เพื่อไม่ให้ route พัง (ถ้ามีเพจ /employees แล้ว ค่อยเปลี่ยนเป็น /employees ได้) -->
+          <SeeAllButton :text="$t('seeanotheremployees')" link="/aboutus/employees" />
+        </div>
       </div>
     </div>
   </div>
@@ -61,125 +78,146 @@
 <script>
 import { useHead } from "@vueuse/head";
 import tlImage from "/img/tl.png";
-import { useEmployees } from '~/composables/useEmployees'
+import { useEmployees } from '~/composables/useEmployees'; // ใช้แหล่งข้อมูลเดิม แต่ตัวแปรในหน้าเปลี่ยนเป็น employee
 import { useI18n } from 'vue-i18n';
 
 const { getEmployeeById } = useEmployees();
 
 export default {
-    setup() {
+  setup() {
     const { locale } = useI18n();
     const currentLocale = computed(() => locale.value);
-    // const route = useRoute();
     return { currentLocale };
   },
   data() {
     return {
-      employees: null,
+      employee: null,   // เดิม employee -> employee
       error: null,
       tlImage,
     };
   },
   async mounted() {
-    const cid = this.$route.params.id;
-    try {
-      const response = await getEmployeeById(cid);
-      this.employees = response.status ? response : null;
-      this.loading = true;
-      if (!response.ok)
-        throw new Error(
-          `Failed to fetch employee details: ${response.statusText}`
-        );
+    const rawId = this.$route.params.id;
+    const id = Number(rawId);
+    if (!Number.isFinite(id)) {
+      this.error = "รหัสพนักงานไม่ถูกต้อง";
+      return;
+    }
 
-      if (this.employees) {
-        this.updateHead();
-      } else {
+    try {
+      const data = await getEmployeeById(id);
+      if (!data) {
         this.error = "ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบหมายเลขอีกครั้ง";
+        return;
       }
-    } catch (error) {
+
+      if (data.status === 0 || data.status === false) {
+        this.error = "หน้านี้ยังไม่พร้อมแสดง (ยังไม่เผยแพร่)";
+        return;
+      }
+
+      // 🔥 ลบทุกอย่างที่เกี่ยวกับ tags ออก (ไม่ดึง ไม่ normalize ไม่ render)
+      this.employee = { ...data };
+      this.updateHead();
+    } catch (e) {
+      console.error(e);
       this.error = "ไม่สามารถโหลดข้อมูลพนักงานได้ กรุณาลองใหม่อีกครั้ง";
     }
-    this.loading = false;
   },
   methods: {
     updateHead() {
-      if (this.employees) {
-        useHead({
-          title: `🥥 Employee - ${this.employees.name}`,
-          meta: [
-            {
-              name: "description",
-              content: `ข้อมูลเกี่ยวกับ ${this.employees.name || "พนักงาน"}.`,
-            },
-          ],
-        });
-      }
-    },
-    filterByTag(tag) {
-      this.$router.push({ path: '/aboutus/employees', query: { tag } });
+      if (!this.employee) return;
+      useHead({
+        title: `👤 Employee - ${this.employee.name || this.employee.name_en || ''}`,
+        meta: [{ name: "description", content: `ข้อมูลเกี่ยวกับ ${this.employee.name || "พนักงาน"}.` }],
+      });
     },
   },
 };
 </script>
 
 <style scoped>
-.back-btn-container {
-  width: 30%;
+.info-prop-detail {
+  padding-left: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin: 0.5rem 0rem;
+  opacity: 0.6;
+  align-items: center;
 }
 
-.employees-container {
+.info-prop-detail img {
+  height: 1.2rem;
+  width: 1.2rem;
+}
+
+.info-header p { font-weight: bolder; align-items: center; }
+
+.info-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0rem;
+}
+
+.info-header img { height: 2rem; width: 2rem; }
+
+.employee-details-container { min-height: 100dvh; }
+
+.back-btn-container {
+  max-width: 1000px;
+  min-width: 350px;
+  width: 100%;
+}
+
+.employee-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
 }
 
-.employees-content {
+.employee-content {
   display: flex;
+  flex-direction: column;
   gap: 2rem;
   align-items: center;
-  max-width: 900px;
+  width: 40%;
+  max-width: 600px;
+  min-width: 350px;
 }
 
-.employees-image {
+.employee-image {
   width: 300px;
   border-radius: 10px;
   border: 2px solid #4e6d16;
-  aspect-ratio: 2.5/3;
+  aspect-ratio: 1;
   object-fit: cover;
 }
 
-.employees-details {
+.employee-details {
+  width: 100%;
   font-size: 1.2rem;
   color: #333;
 }
 
-.employees-name {
+.employee-details .employee-description {
+  display: flex;
+  justify-content: center;
+  color: #4e6d16;
+  font-weight: bold;
+}
+
+.employee-name {
+  display: flex;
+  justify-content: center;
   font-size: 2rem;
   font-weight: bold;
-  color: #4e6d16;
 }
 
-.tags {
-  margin-top: 1rem;
-}
-
-.tag {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  margin: 0.3rem;
-  border: 1px solid #4e6d16;
-  border-radius: 20px;
-  font-weight: bold;
-  background-color: #e9f5dc;
-  color: #4e6d16;
-  cursor: pointer;
-}
-
-.description {
-  margin-top: 1.5rem;
-  font-size: 1.1rem;
-}
+.description { margin-top: 1.5rem; font-size: 1.1rem; }
 
 .back-button {
   margin-top: 2rem;
@@ -193,8 +231,5 @@ export default {
   transition: 0.3s ease;
 }
 
-.back-button:hover {
-  background: #4e6d16;
-  color: white;
-}
+.back-button:hover { background: #4e6d16; color: white; }
 </style>

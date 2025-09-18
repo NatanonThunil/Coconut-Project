@@ -24,7 +24,7 @@
       <HomeFootBanner :title="$t('Experts')" :text="$t('ep_desc')" picture="/img/Expert.png"
         url="/experts" /> -->
         <IconFooter/>
-      <div style="height: 2rem;"></div>
+      <div style="height: 5rem;"></div>
     </div>
     
   </div>

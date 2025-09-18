@@ -1,14 +1,15 @@
 <template>
- 
+
   <div style="height: 8rem"></div>
   <div class="faqs-path">
     <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/aboutus/member">{{ $t('All Member') }}</NuxtLinkLocale>
   </div>
-  <div style="height: 1rem"></div>
-  <page-header head="All Member" />
-  <frontesearch :placeholder="'ค้นหาด้วยชื่องาน...'" v-model:search="searchQuery" />
+  <h1 class="context-header">{{ $t("All Member") }}</h1>
+  <div style="height: 5rem;"></div>
+  <frontesearch :placeholder="(currentLocale === 'th') ? 'ค้นหาด้วยชื่อสมาชิก...' : 'Search by member name...'"
+    v-model:search="searchQuery" />
 
   <!-- Loading State -->
   <div v-if="loading" class="coconut-v-cards-container">
@@ -17,48 +18,40 @@
 
   <!-- Loaded Content -->
   <div v-else class="coconut-v-cards-container">
-    <!-- <CoconutCards
-        v-for="coconut in paginatedCoconuts"
-        :key="coconut.id"
-        :img="coconut.image || 'https://via.placeholder.com/1280x720'"
-        :url="`/coconut-varieties/details/${coconut.id}`"
-        :name="coconut.name_th || 'ชื่อไทย'"
-        :sci_front="coconut.sci_name_f || 'วิทย์ 1'"
-        :sci_middle="coconut.sci_name_m || 'วิทย์ 2'"
-        :sci_back="coconut.sci_name_l || 'วิทย์ 3'"
-        @click="goToDetails(coconut.id)"
-      /> -->
 
-    <AboutusCard v-for="coconut in paginatedCoconuts" :name="coconut.name || 'ชื่อไทย'"
-      :description="coconut.description" :key="coconut.id"
-      :image="coconut.image || 'https://via.placeholder.com/1280x720'" :url="`aboutus/members/details/${coconut.id}`"
-      @click="goToDetails(coconut.id)" />
+
+    <AboutusCard v-for="coconut in paginatedCoconuts"
+      :name="(currentLocale === 'th') ? coconut.name || coconut.name_en : coconut.name_en || coconut.name"
+      pp="members" :id="coconut.id"
+      :description="(currentLocale === 'th') ? coconut.description : coconut.description_en" :key="coconut.id"
+      :image="coconut.image || 'https://via.placeholder.com/1280x720'" :phone-number="coconut.phoneNumber" :email="coconut.email"/> 
   </div>
 
   <div class="pagination">
     <div class="pagination-line"></div>
     <div class="pagination-controller">
       <button @click="changePage('prev')" :disabled="currentPage === 1">
-        กลับ
+       {{ (currentLocale === 'th')?  'กลับ' : 'Back'}}
       </button>
       <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
         class="page-input" />
       <span style="display: flex; align-self: center">
-        จาก {{ totalPages }}
+         {{ (currentLocale === 'th')?  'จาก' : 'of'}} {{ totalPages }}
       </span>
       <button @click="changePage('next')" :disabled="currentPage === totalPages">
-        ถัดไป
+         {{ (currentLocale === 'th')?  'ถัดไป' : 'Next'}} 
       </button>
     </div>
     <div class="pagination-line"></div>
   </div>
+  <div style="height: 3rem;"></div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useHead } from "@vueuse/head";
 import { useMembers } from "~/composables/useMembers";
-
+import { useI18n } from 'vue-i18n'
 const { getMembers } = useMembers();
 
 const coconuts = ref([]);
@@ -66,7 +59,8 @@ const currentPage = ref(1);
 const itemsPerPage = ref(30);
 const pageInput = ref(1);
 const loading = ref(true);
-
+const { locale } = useI18n()
+const currentLocale = computed(() => locale.value)
 const fetchMembers = async () => {
   try {
     loading.value = true;

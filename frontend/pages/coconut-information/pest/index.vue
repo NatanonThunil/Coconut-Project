@@ -82,9 +82,11 @@
 
   <!-- Pagination -->
   <div v-if="!loading" class="pagination">
+     <div class="pagination-line"></div>
     <button @click="changePage('prev')" :disabled="currentPage === 1">
       {{ currentLocale === 'th' ? 'กลับ' : 'Prev' }}
     </button>
+    
     <input
       type="number"
       v-model.number="pageInput"
@@ -99,7 +101,9 @@
     <button @click="changePage('next')" :disabled="currentPage === totalPages">
       {{ currentLocale === 'th' ? 'ถัดไป' : 'Next' }}
     </button>
+     <div class="pagination-line"></div>
   </div>
+  <div style="height: 3rem;"></div>
 </template>
 
 <script>
@@ -209,6 +213,12 @@ export default {
 </script>
 
 <style scoped>
+.pagination .pagination-line {
+  width: fit-content;
+  min-width: 20%;
+  height: 4px;
+  background-color: #4e6d16;
+}
 /* ===== Filters ===== */
 .all-filter-container {
   margin-top: 1rem;

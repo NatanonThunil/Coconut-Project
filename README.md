@@ -5,7 +5,8 @@
 
 ### Update List
 - ตกแต่ง หน้า past และ coconut ของหลังบ้าน
-- Rework หน้า ``Expert`` ใหม่
+- Rework หน้า ``Expert``, ``Member``, ``Employee`` ใหม่
+- แปลภาษา หน้า ``Expert``, ``Member``, ``Employee``
 - แก้ ``Expert Tags`` ให้สามรถแสดงได้
 - แก้ ภาพ coconut ของหลังบ้าน
 
