@@ -282,10 +282,16 @@ const removeCoconutImage = () => {
 const triggerFileInput = () => {
     coconutFileInput.value?.click();
 };
+
 const handleCoconutDragDrop = (event) => {
   const file = event.dataTransfer.files[0];
   if (file && file.size <= 50 * 1024 * 1024) {
-    currentCoconut.value.image = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      // Base64 string (data:image/png;base64,xxxx...)
+      currentCoconut.value.image = reader.result;
+    };
+    reader.readAsDataURL(file);
   } else {
     alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
   }
@@ -296,7 +302,11 @@ const handleCoconutDragDrop = (event) => {
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file && file.size <= 50 * 1024 * 1024) {
-    currentCoconut.value.image = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      currentCoconut.value.image = reader.result; // Base64 string
+    };
+    reader.readAsDataURL(file);
   } else {
     alert("ไฟล์ต้องไม่เกิน 50MB และต้องเป็น PNG/JPG/JPEG เท่านั้น");
   }

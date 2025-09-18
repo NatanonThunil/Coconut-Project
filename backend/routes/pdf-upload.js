@@ -9,7 +9,7 @@ import multer from 'multer';
 const router = Router();
 
 // JSON parser only for the legacy JSON/base64 fallback (kept generous)
-router.use(express.json({ limit: '200mb' }));
+router.use(express.json({ limit: '50mb' }));
 
 // --- Multipart handler (preferred path) ---
 const MAX_BYTES = 50 * 1024 * 1024; // 50 MB hard cap
