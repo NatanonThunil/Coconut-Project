@@ -1,9 +1,9 @@
 <template>
-
   <div style="height: 8rem"></div>
 
   <div class="faqs-path">
-    <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale
+    >/
     <NuxtLinkLocale to="/coconut-information/">{{
       $t("CoconutInfo")
     }}</NuxtLinkLocale
@@ -164,7 +164,7 @@ onMounted(async () => {
   background-color: black;
   border-radius: 10px;
   overflow: hidden;
-    min-width: 15rem;
+  min-width: 15rem;
 }
 
 .coconut-detail-img img {
@@ -194,11 +194,26 @@ onMounted(async () => {
 
 p.origin-desc {
   width: 100%;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   max-height: 10rem;
   margin-bottom: 0.5rem;
   text-overflow: ellipsis;
   overflow: hidden;
+  
+  /* overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 5rem; */
+}
+span.origin-desc {
+  width: 100%;
+  font-size: 1.5rem;
+  max-height: 10rem;
+  margin-bottom: 0.5rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 5rem;
 }
 
 .loading-container {
