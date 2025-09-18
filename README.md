@@ -5,9 +5,9 @@
 
 ### Update List
 - ตกแต่ง หน้า past และ coconut ของหลังบ้าน
-
-
-โดย [Sujeff]
+- Rework หน้า ``Expert`` ใหม่
+- แก้ ``Expert Tags`` ให้สามรถแสดงได้
+โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 
 
 

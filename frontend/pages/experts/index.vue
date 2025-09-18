@@ -1,60 +1,65 @@
 <template>
   <div class="expert-page-container">
-  <div style="height: 8rem"></div>
+    <div style="height: 8rem"></div>
 
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
-    <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
-  </div>
-
-   <h1 class="context-header">{{ $t('Experts') }}</h1>
-  <div style="height: 5rem;"></div>
-
-  <!-- Search bar -->
-  <label class="coconut-v-input">
-    <img src="/icon/search.svg" alt="Search Icon" />
-    <input type="text" placeholder="ค้นหาด้วยชื่อหรือแท็ก..." v-model="searchQuery" aria-label="Search experts" />
-  </label>
-
-  <div style="height: 1rem"></div>
-
-  <!-- Filter options -->
-  <ul class="homeeventfiltercontainer">
-    <li class="filtli" :class="{ selecto: selectedFilter === 'all' }" @click="selectedFilter = 'all'">
-      {{ $t('All') }}
-    </li>
-    <li class="filtli" :class="{ selecto: selectedFilter === 'farmer' }" @click="selectedFilter = 'farmer'">
-      {{ $t('Farmer') }}
-    </li>
-    <li class="filtli" :class="{ selecto: selectedFilter === 'private' }" @click="selectedFilter = 'private'">
-      {{ $t('Private') }}
-    </li>
-    <li class="filtli" :class="{ selecto: selectedFilter === 'academic' }" @click="selectedFilter = 'academic'">
-      {{ $t('Academic') }}
-    </li>
-  </ul>
-
-  <!-- Loading -->
-  <div class="event-card-section" v-if="isLoading">
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-      <div v-for="n in 8" :key="n" class="skeleton-card" />
+    <div class="faqs-path">
+      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
+      <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
     </div>
-  </div>
 
-  <!-- Results -->
-  <div class="event-card-section" v-else-if="filteredExperts.length">
-    <ExpertCard v-for="expert in filteredExperts" :key="expert.id" :id="expert.id" :image="expert.image"
-      :name="expert.name" :description="expert.description" :phone-number="expert.phoneNumber" :email="expert.email" @tag-click="onTagClick"/>
-  </div>
+    <h1 class="context-header">{{ $t('Experts') }}</h1>
+    <div style="height: 5rem;"></div>
 
-  <!-- Empty -->
-  <div class="no-events" v-else>
-    <p>No experts found for the selected criteria.</p>
-  </div>
+    <!-- Search bar -->
+    <label class="coconut-v-input">
+      <img src="/icon/search.svg" alt="Search Icon" />
+      <input type="text" placeholder="ค้นหาด้วยชื่อหรือแท็ก..." v-model="searchQuery" aria-label="Search experts" />
+    </label>
+
+    <div style="height: 1rem"></div>
+
+    <!-- Filter options -->
+    <ul class="homeeventfiltercontainer">
+      <li class="filtli" :class="{ selecto: selectedFilter === 'all' }" @click="selectedFilter = 'all'">
+        {{ $t('All') }}
+      </li>
+      <li class="filtli" :class="{ selecto: selectedFilter === 'farmer' }" @click="selectedFilter = 'farmer'">
+        {{ $t('Farmer') }}
+      </li>
+      <li class="filtli" :class="{ selecto: selectedFilter === 'private' }" @click="selectedFilter = 'private'">
+        {{ $t('Private') }}
+      </li>
+      <li class="filtli" :class="{ selecto: selectedFilter === 'academic' }" @click="selectedFilter = 'academic'">
+        {{ $t('Academic') }}
+      </li>
+    </ul>
+
+    <!-- Loading -->
+    <div class="event-card-section" v-if="isLoading">
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+        <div v-for="n in 8" :key="n" class="skeleton-card" />
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="event-card-section" v-else-if="filteredExperts.length">
+      <ExpertCard v-for="expert in filteredExperts" :key="expert.id" :id="expert.id" :image="expert.image"
+        :name="locale === 'th' ? expert.name : expert.name_en"
+        :description="locale === 'th' ? expert.description : expert.description_en" :phone-number="expert.phoneNumber"
+        :email="expert.email" @tag-click="onTagClick" />
+
+
+    </div>
+
+    <!-- Empty -->
+    <div class="no-events" v-else>
+      <p>No experts found for the selected criteria.</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useExperts } from '~/composables/useExperts'
 import { useExpertTags } from '~/composables/useExpertTags'
@@ -63,14 +68,19 @@ type ExpertInPage = {
   id: number
   image?: string | null
   name: string
+  name_en: string
   description?: string | null
+  description_en?: string | null
   phoneNumber?: string | null
+  address?: string | null
+  address_en?: string | null
   email?: string | null
   type?: number | null
   status?: 0 | 1 | boolean
-  tags: string[] 
+  tags: string[]
   category: 'farmer' | 'private' | 'academic' | 'unknown'
 }
+const { locale } = useI18n()
 
 const route = useRoute()
 const { getExperts } = useExperts()
@@ -82,8 +92,8 @@ const searchQuery = ref('')
 
 const selectedFilter = ref<'all' | 'farmer' | 'private' | 'academic'>('all')
 const onTagClick = (tag: string) => {
-  searchQuery.value = tag        
-  selectedFilter.value = 'all'   
+  searchQuery.value = tag
+  selectedFilter.value = 'all'
 }
 
 const selectedTagRaw = computed<string | null>(() => {
@@ -108,7 +118,30 @@ const normalizeTags = (raw: unknown): string[] => {
   return []
 }
 
+const prefillFromQuery = computed(() => {
+  const q = route.query.q;
+  return typeof q === 'string' ? q : (Array.isArray(q) ? q[0] : '');
+});
 
+watch(prefillFromQuery, (val) => {
+  const v = (val || '').trim();
+  if (v) {
+    searchQuery.value = v;
+    selectedFilter.value = 'all';
+  }
+}, { immediate: true });
+onMounted(() => {
+  if (!searchQuery.value && process.client) {
+    try {
+      const saved = localStorage.getItem('experts:prefill');
+      if (saved && saved.trim()) {
+        searchQuery.value = saved.trim();
+        selectedFilter.value = 'all';
+      }
+      localStorage.removeItem('experts:prefill');
+    } catch { }
+  }
+});
 const fetchExperts = async () => {
   try {
     isLoading.value = true
@@ -120,25 +153,33 @@ const fetchExperts = async () => {
     experts.value = (data || []).map((e: any) => {
       const tags = normalizeTags(e.tags)
 
-    
       if (serverFilteredByTag.value && selectedTag.value && !tags.includes(selectedTag.value)) {
         tags.push(selectedTag.value)
       }
 
       return {
-        id: e.id,
+        id: Number(e.id),
         image: e.image ?? null,
-        name: e.name,
+
+        // ✅ เติมคู่ภาษาให้ครบ พร้อม fallback
+        name: e.name ?? '',
+        name_en: e.name_en ?? e.name ?? '',
+
         description: e.description ?? null,
+        description_en: e.description_en ?? e.description ?? null,
+
+        // (ถ้ามี address/en ใน BE ก็เติมได้)
+        address: e.address ?? null,
+        address_en: e.address_en ?? e.address ?? null,
+
         phoneNumber: e.phoneNumber ?? null,
         email: e.email ?? null,
         type: e.type ?? null,
-        status: e.status,
+        status: e.status ?? 1,
         tags,
         category: mapCategory(e.type ?? null),
       } as ExpertInPage
     })
-
 
     if (selectedTag.value) selectedFilter.value = 'all'
   } catch (err) {
@@ -161,12 +202,14 @@ const filteredExperts = computed(() => {
   return experts.value.filter((e) => {
     if (!e.status) return false
 
+    // ✅ รวมข้อความชื่อสองภาษาเพื่อค้นหา
+    const nameText = `${e.name ?? ''} ${e.name_en ?? ''}`.toLowerCase()
+
     const matchesQuery =
       !q ||
-      e.name.toLowerCase().includes(q) ||
-      e.tags.some(t => t.includes(q))  
+      nameText.includes(q) ||
+      e.tags.some(t => t.includes(q))
 
-   
     const matchesTag =
       serverFilteredByTag.value ? true : (!tag || e.tags.includes(tag))
 
@@ -176,19 +219,21 @@ const filteredExperts = computed(() => {
     return matchesQuery && matchesTag && matchesCategory
   })
 })
+
 </script>
 
 
 
 
 <style scoped>
-.expert-page-container{
+.expert-page-container {
   min-height: 100dvh;
 }
 
 .skeleton-card {
   height: 26rem;
-  width: 100%;                 /* เดิม fix 22rem → ให้เต็มช่อง grid */
+  width: 100%;
+  /* เดิม fix 22rem → ให้เต็มช่อง grid */
   border-radius: 12px;
   background: linear-gradient(90deg, #eee, #f6f6f6, #eee);
   background-size: 200% 100%;
@@ -275,19 +320,22 @@ ul.homeeventfiltercontainer li.filtli.selecto {
 }
 
 .event-card-section {
-  
-   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); /* การ์ดยืดปรับตามพื้นที่ */
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  /* การ์ดยืดปรับตามพื้นที่ */
   gap: 1rem;
   width: min(1300px, 90%);
   margin: 0 auto;
   padding: 1rem;
   animation: fadeinbelow 1s;
-  align-items: stretch; /* ให้ทุกคอลัมน์สูงเท่ากัน */
+  align-items: stretch;
+  /* ให้ทุกคอลัมน์สูงเท่ากัน */
 }
 
 :deep(.expert-card) {
   display: flex;
+  margin: 0 auto;
   flex-direction: column;
   height: 100%;
 }
@@ -312,11 +360,14 @@ ul.homeeventfiltercontainer li.filtli.selecto {
     font-size: 18px;
   }
 }
+
 @media (max-width: 640px) {
   .event-card-section {
-    grid-template-columns: 1fr; /* หนึ่งคอลัมน์บนจอเล็ก */
+    grid-template-columns: 1fr;
+    /* หนึ่งคอลัมน์บนจอเล็ก */
   }
 }
+
 @keyframes fadeinbelow {
   0% {
     opacity: 0;

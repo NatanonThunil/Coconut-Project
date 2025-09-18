@@ -42,6 +42,8 @@
 </template>
 
 <script setup lang="ts">
+
+
 type Props = {
     id: number
     image?: string | null
@@ -50,6 +52,7 @@ type Props = {
     email?: string | null
     phoneNumber?: string | null
 }
+
 const props = defineProps<Props>()
 
 defineEmits<{ (e: 'tag-click', tag: string): void }>()
