@@ -115,7 +115,7 @@
 
                             <!-- Hidden file input -->
                             <input type="file" accept="image/jpeg, image/png" class="file-uploader"
-                                ref="coconutFileInput" @change="handleFileUpload" />
+                                ref="coconutFileInput" @change="handleFileChange" />
 
                             <!-- Button to trigger file input -->
                             <button type="button" class="browse-btn" @click="triggerFileInput">

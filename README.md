@@ -8,7 +8,7 @@
 - Rework หน้า ``Expert``, ``Member``, ``Employee`` ใหม่
 - แปลภาษา หน้า ``Expert``, ``Member``, ``Employee`` ``About us``
 - แก้ ``Expert Tags`` ให้สามรถแสดงได้
-- แก้ ภาพ coconut ของหลังบ้าน
+- แก้ อัปภาพ coconut ของหลังบ้าน
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
 
