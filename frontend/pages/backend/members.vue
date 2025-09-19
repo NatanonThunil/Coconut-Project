@@ -127,24 +127,7 @@
       <div class="divider"></div>
       <div class="modal-content">
         <section>
-          <label>ชื่อ</label>
-          <input class="add-text-input" v-model="currentMember.name" required />
-          <label>ชื่อ (อังกฤษ)</label>
-          <input class="add-text-input" v-model="currentMember.name_en" required />
-          <label>ที่อยู่</label>
-          <input class="add-text-input" v-model="currentMember.address" required />
-          <label>ที่อยู่ (อังกฤษ)</label>
-          <input class="add-text-input" v-model="currentMember.address_en" required />
-          <label>เบอร์โทร</label>
-          <input class="add-text-input" v-model="currentMember.phoneNumber" required />
-          <label>Email</label>
-          <input class="add-text-input" v-model="currentMember.email" required />
-          <label>คำอธิบาย</label>
-          <textarea class="add-text-input" v-model="currentMember.description"></textarea>
-          <label>คำอธิบาย (อังกฤษ)</label>
-          <textarea class="add-text-input" v-model="currentMember.description_en"></textarea>
-
-          <label>Image</label>
+          <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 25 MB)</label>
           <div class="image-upload-container">
             <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
               @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleFileUpload">
@@ -159,6 +142,27 @@
               <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
             </div>
           </div>
+          <label>ชื่อ</label>
+          <input class="add-text-input" v-model="currentMember.name" required />
+          <label>ชื่อ (อังกฤษ)</label>
+          <input class="add-text-input" v-model="currentMember.name_en" required />
+          <label>ที่อยู่</label>
+          <input class="add-text-input" v-model="currentMember.address" required />
+          <label>ที่อยู่ (อังกฤษ)</label>
+          <input class="add-text-input" v-model="currentMember.address_en" required />
+        </section>
+
+        <section>
+          <label>เบอร์โทร</label>
+          <input class="add-text-input" v-model="currentMember.phoneNumber" required />
+          <label>Email</label>
+          <input class="add-text-input" v-model="currentMember.email" required />
+          <label>คำอธิบาย</label>
+          <textarea class="add-text-input" v-model="currentMember.description"></textarea>
+          <label>คำอธิบาย (อังกฤษ)</label>
+          <textarea class="add-text-input" v-model="currentMember.description_en"></textarea>
+
+
         </section>
 
       </div>

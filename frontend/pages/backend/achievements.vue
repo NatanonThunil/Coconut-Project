@@ -126,7 +126,7 @@
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentAchievement.author" placeholder="Enter author name"
                         required />
-                    <label>รองรับไฟล์ PDF(ขนาดไฟล์ไม่เกิน 50 MB)</label>
+                    <label>รองรับไฟล์ PDF(ขนาดไฟล์ไม่เกิน 25 MB)</label>
                     <div class="pdf-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"

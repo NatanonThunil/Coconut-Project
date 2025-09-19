@@ -107,7 +107,7 @@
                     <label v-show="!activeLang">ชื่อ Value Chain (English)</label>
                     <input v-show="!activeLang" class="add-text-input" v-model="currentChainValue.title_en" placeholder="Enter title (English)" required />
 
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG(ขนาดไฟล์ไม่เกิน 50 MB)</label>
+                    <label>รองรับรูปภาพ PNG, JPG และ JPEG(ขนาดไฟล์ไม่เกิน 25 MB)</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }" @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleDragDrop">
                             <img v-if="!currentChainValue.image" src="/icon/upload.svg" draggable="false" />

@@ -87,7 +87,7 @@
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 50 MB)</label>
+                    <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 25 MB)</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
@@ -121,6 +121,8 @@
                     <label>Scientific Name</label>
                     <input class="add-text-input" v-model="currentPest.sci_name" placeholder="Enter scientific name"
                         required />
+                </section>
+                <section>
                     <label>Lifecycle</label>
                     <textarea class="add-text-input" v-model="currentPest.lifecycle" placeholder="Enter lifecycle"
                         required></textarea>

@@ -166,12 +166,33 @@
       <div class="divider"></div>
       <div class="modal-content">
         <section>
+          <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 25 MB)</label>
+          <div class="image-upload-container">
+            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+              @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleFileUpload">
+              <img v-if="!currentEmployee.image" src="/icon/upload.svg" draggable="false" />
+              <h2 v-if="!currentEmployee.image">
+                Drag & Drop or Click to Upload
+              </h2>
+              <div v-if="currentEmployee.image" class="image-preview">
+                <img :src="currentEmployee.image" alt="Uploaded Image" class="preview-image" />
+                <button class="remove-btn" @click="removeImage">X</button>
+              </div>
+              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader"
+                ref="fileInput" />
+              <button type="button" class="browse-btn" @click="triggerFileInput">
+                Browse File
+              </button>
+            </div>
+          </div>
           <label>ชื่อ</label>
           <input class="add-text-input" v-model="currentEmployee.name" @input="handleInputChange"
             @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
           <label>ชื่อ (อังกฤษ)</label>
           <input class="add-text-input" v-model="currentEmployee.name_en" @input="handleInputChange"
             @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name in English" required />
+        </section>
+      <section>
           <label>ที่อยู่</label>
           <input class="add-text-input" v-model="currentEmployee.address" @input="handleInputChange"
             @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address" required />
@@ -191,25 +212,7 @@
           <textarea class="add-text-input" v-model="currentEmployee.description_en" @input="handleInputChange"
             @keydown.enter.prevent="preventFormSubmit" placeholder="Enter description in English"></textarea>
 
-          <label>Image</label>
-          <div class="image-upload-container">
-            <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
-              @dragover.prevent="isDragging = true" @dragleave="isDragging = false" @drop.prevent="handleFileUpload">
-              <img v-if="!currentEmployee.image" src="/icon/upload.svg" draggable="false" />
-              <h2 v-if="!currentEmployee.image">
-                Drag & Drop or Click to Upload
-              </h2>
-              <div v-if="currentEmployee.image" class="image-preview">
-                <img :src="currentEmployee.image" alt="Uploaded Image" class="preview-image" />
-                <button class="remove-btn" @click="removeImage">X</button>
-              </div>
-              <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload" class="file-uploader"
-                ref="fileInput" />
-              <button type="button" class="browse-btn" @click="triggerFileInput">
-                Browse File
-              </button>
-            </div>
-          </div>
+
         </section>
       </div>
       <div class="modal-actions">

@@ -97,7 +97,7 @@
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 50 MB)</label>
+                    <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 25 MB)</label>
                     <div class="image-upload-container">
                         <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
                             @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
@@ -130,11 +130,17 @@
                     <label>Thai Name</label>
                     <input class="add-text-input" v-model="currentCoconut.name_th" placeholder="Enter Thai name"
                         required />
+                
+                
                     <label>Description</label>
                     <textarea class="add-text-input" v-model="currentCoconut.description"
                         placeholder="Enter description" required></textarea>
+                </section>
+                <section>
                     <label>Origin</label>
                     <input class="add-text-input" v-model="currentCoconut.origin" placeholder="Enter origin" required />
+                
+                
                     <label>Scientific Name (F)</label>
                     <input class="add-text-input" v-model="currentCoconut.sci_name_f"
                         placeholder="Enter scientific name (F)" required />

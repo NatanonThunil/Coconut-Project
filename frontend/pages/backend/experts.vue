@@ -157,6 +157,24 @@
 
             <div class="modal-content">
                 <section>
+                                        <label>รองรับรูปภาพ PNG, JPG และ JPEG (ขนาดไฟล์ไม่เกิน 25 MB)</label>
+                    <div class="image-upload-container">
+                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
+                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
+                            @drop.prevent="handleDragDrop">
+                            <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
+                            <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
+
+                            <div v-if="currentExpert.image" class="image-preview">
+                                <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
+                                <button class="remove-btn" @click="removeImage">X</button>
+                            </div>
+
+                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
+                                class="file-uploader" ref="fileInput" />
+                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
+                        </div>
+                    </div>
                     <label>ชื่อ</label>
                     <input class="add-text-input" v-model="currentExpert.name" @input="handleInputChange"
                         @keydown.enter.prevent="preventFormSubmit" placeholder="Enter name" required />
@@ -169,6 +187,8 @@
                     <label>ที่อยู่ (อังกฤษ)</label>
                     <input class="add-text-input" v-model="currentExpert.address_en" @input="handleInputChange"
                         @keydown.enter.prevent="preventFormSubmit" placeholder="Enter address in English" required />
+                </section>
+                <section>
                     <label>เบอร์โทร</label>
                     <input class="add-text-input" v-model="currentExpert.phoneNumber" @input="handleInputChange"
                         @keydown.enter.prevent="preventFormSubmit" placeholder="Enter phone number" required />
@@ -206,24 +226,7 @@
                         <option value="3">Type 3</option>
                     </select>
 
-                    <label>Image</label>
-                    <div class="image-upload-container">
-                        <div class="image-input-drag-n-drop-container" :class="{ dragover: isDragging }"
-                            @dragover.prevent="isDragging = true" @dragleave="isDragging = false"
-                            @drop.prevent="handleDragDrop">
-                            <img v-if="!currentExpert.image" src="/icon/upload.svg" draggable="false" />
-                            <h2 v-if="!currentExpert.image">Drag & Drop or Click to Upload</h2>
 
-                            <div v-if="currentExpert.image" class="image-preview">
-                                <img :src="currentExpert.image" alt="Uploaded Image" class="preview-image" />
-                                <button class="remove-btn" @click="removeImage">X</button>
-                            </div>
-
-                            <input type="file" accept="image/jpeg, image/png" @change="handleFileUpload"
-                                class="file-uploader" ref="fileInput" />
-                            <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
-                        </div>
-                    </div>
                 </section>
             </div>
 
