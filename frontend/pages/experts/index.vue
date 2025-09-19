@@ -435,7 +435,7 @@ ul.homeeventfiltercontainer li.filtli.selecto {
 .event-card-section {
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, max-content));
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
    justify-content: center;  
   gap: 1rem;
   width: min(1300px, 90%);
