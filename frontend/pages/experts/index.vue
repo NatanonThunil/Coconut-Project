@@ -435,8 +435,8 @@ ul.homeeventfiltercontainer li.filtli.selecto {
 .event-card-section {
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  /* การ์ดยืดปรับตามพื้นที่ */
+  grid-template-columns: repeat(auto-fit, minmax(18rem, max-content));
+   justify-content: center;  
   gap: 1rem;
   width: min(1300px, 90%);
   margin: 0 auto;
@@ -471,9 +471,9 @@ ul.homeeventfiltercontainer li.filtli.selecto {
 
 
 @media (max-width: 640px) {
+
   .event-card-section {
     grid-template-columns: 1fr;
-
   }
 }
 
