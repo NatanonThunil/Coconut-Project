@@ -112,12 +112,26 @@ watch(
       results.value = res.data
       total.value = res.total
     } catch (e: any) {
-      searchError.value = e?.message || 'Search failed'
+      if (e?.name === 'AbortError' || e?.message?.includes('aborted')) {
+        console.warn('Search aborted, retrying…')
+        // 🔁 retry once (optional: add a small delay to avoid hammering)
+        try {
+          const { promise } = live.run(term, { limit: 20, statusOnly: true })
+          const res = await promise
+          results.value = res.data
+          total.value = res.total
+        } catch (err2: any) {
+          searchError.value = err2?.message || 'Search failed after retry'
+        }
+      } else {
+        searchError.value = e?.message || 'Search failed'
+      }
     } finally {
       searchLoading.value = false
     }
   }
 )
+
 
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && isSearching.value) clearSearch()
