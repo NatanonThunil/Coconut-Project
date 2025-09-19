@@ -29,6 +29,7 @@
       >
         <SwiperSlide v-for="(person, index) in filteredEmployees" :key="index">
           <AboutusCard
+           class="aboutus-card"   
             pp="employees"
             :id="person.id"
             :image="getEmployeeImage(person.image)"
@@ -144,6 +145,24 @@ export default {
 </script>
 
 <style scoped>
+
+.aboutus-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;                      /* fill slide height */
+  min-height: 22rem;                 /* optional: set a baseline height */
+}
+
+/* Optional: clamp description so texts don’t push heights unevenly */
+:deep(.aboutus-card .description),
+:deep(.aboutus-card .desc),
+:deep(.description) {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;             /* adjust lines as you like */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .swiper {
   width: 100%;
 }
