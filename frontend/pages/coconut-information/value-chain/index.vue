@@ -33,8 +33,13 @@
   </div>
 
   <div v-else-if="filteredChainvalues.length === 0" class="no-results">
-    <img src="/icon/notfound.png" draggable="false" alt="No chain values found" />
-    {{ $t('No chain values found') }}
+    <img
+      class="no-result-image"
+      src="/img/News404.png"
+      draggable="false"
+      alt="No pests found"
+    />
+    <h1>{{ $t("No pests found") }}</h1>
   </div>
 
   <div v-else class="coconut-v-cards-container">
@@ -169,6 +174,21 @@ export default {
 </script>
 
 <style scoped>
+.no-results h1{
+  font-size: 3rem;
+  font-weight: normal;
+}
+.no-results img{
+  width: 20rem;
+  height: 20rem;
+}
+.no-results{
+  margin-top: 3rem;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 .all-filter-container {
   margin-top: 1rem;
   gap: 1rem;
