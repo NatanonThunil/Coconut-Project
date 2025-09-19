@@ -1,17 +1,18 @@
 <template>
 
   <div style="height: 8rem"></div>
-    <div class="faqs-path">
-       <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
-    </div>
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
+    <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+  </div>
   <h1 class="context-header">{{ $t('Events') }}</h1>
   <div style="height: 5rem;"></div>
 
 
   <label class="event-v-input">
     <img src="/icon/search.svg" alt="search icon">
-    <input type="text" :placeholder="(currentLocale === 'th') ?'ค้นหาด้วยชื่อกิจกรรม...':'Search by Event`s name...' " v-model="searchQuery" @input="filterEvents" />
+    <input type="text" :placeholder="(currentLocale === 'th') ? 'ค้นหาด้วยชื่อกิจกรรม...' : 'Search by Event`s name...'"
+      v-model="searchQuery" @input="filterEvents" />
   </label>
 
 
@@ -37,25 +38,28 @@
     </div>
     <div v-else class="all-event-card-container">
       <EventCards v-for="event in paginatedEvents" :key="event.id" :url="`/events/details/${event.id}`"
-        :image="event.image || 'https://placehold.co/600x400'" :title="(currentLocale === 'th') ? (event.title || 'No title provided')
-          : (event.title_en || 'No English title provided')" :datestart="formatDate(event.date_start) || 'No date provided'"
-        :location="(currentLocale === 'th')? (event.location_name || 'Unknown') : (event.location_name_en || 'No English location provided')" :description="(currentLocale === 'th') ? (event.description || 'No description available'):(event.description_en || 'No description available')" />
+        :image="event.image || 'https://placehold.co/600x400'"
+        :title="(currentLocale === 'th') ? (event.title || 'No title provided') : (event.title_en || 'No English title provided')"
+        :datestart="formatDate(event.date_start) || 'No date provided'"
+        :location="(currentLocale === 'th') ? (event.location_name || 'Unknown') : (event.location_name_en || 'No English location provided')"
+        :description="cleanDesc(event)" />
+
     </div>
   </div>
 
   <div class="pagination">
-        <div class="pagination-line"></div>
-        <div class="pagination-controller">
-            <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
-            <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
-                class="page-input" />
-            <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
-            <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
-        </div>
-        <div class="pagination-line"></div>
+    <div class="pagination-line"></div>
+    <div class="pagination-controller">
+      <button @click="changePage('prev')" :disabled="currentPage === 1">กลับ</button>
+      <input type="number" v-model.number="pageInput" @change="goToPage" :min="1" :max="totalPages"
+        class="page-input" />
+      <span style="display: flex; align-self: center;">จาก {{ totalPages }}</span>
+      <button @click="changePage('next')" :disabled="currentPage === totalPages">ถัดไป</button>
     </div>
+    <div class="pagination-line"></div>
+  </div>
 
-  
+
 </template>
 
 
@@ -196,6 +200,28 @@ export default {
         });
 
       this.currentPage = 1;
+    }, toPlainText(html) {
+      if (!html) return '';
+      // Replace <br> with spaces first so we don't smash words together
+      const normalized = String(html).replace(/<br\s*\/?>/gi, ' ');
+      // Client-side: decode entities and strip tags via a temp element
+      if (process.client) {
+        const div = document.createElement('div');
+        div.innerHTML = normalized;
+        return (div.textContent || '').trim();
+      }
+      // SSR fallback: strip tags (entities may remain server-side)
+      return normalized.replace(/<[^>]*>/g, '').trim();
+    },
+
+    // Choose locale-specific description and clean it
+    cleanDesc(ev) {
+      const raw =
+        (this.currentLocale === 'th')
+          ? (ev?.description || 'No description available')
+          : (ev?.description_en || ev?.description || 'No description available');
+
+      return this.toPlainText(raw);
     },
 
     changePage(direction) {
@@ -219,8 +245,6 @@ export default {
 
 
 <style scoped>
-
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -370,6 +394,4 @@ label.event-v-input input {
     grid-template-columns: repeat(1, 20rem);
   }
 }
-
-
 </style>
