@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-
+let searchToken = 0
 
 import { ref, computed, watch, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { useRuntimeConfig } from '#app'
@@ -106,32 +106,41 @@ watch(
     }
 
     searchLoading.value = true
+    const token = ++searchToken
+
     try {
       const { promise } = live.run(term, { limit: 20, statusOnly: true })
       const res = await promise
+      if (token !== searchToken) return // stale result, ignore
       results.value = res.data
       total.value = res.total
     } catch (e: any) {
-      if (e?.name === 'AbortError' || e?.message?.includes('aborted')) {
-        console.warn('Search aborted, retrying…')
-        // 🔁 retry once (optional: add a small delay to avoid hammering)
+      if (token !== searchToken) return // stale error, ignore
+
+      if (isAbortError(e)) {
+        // retry once after a short delay
+        await new Promise(r => setTimeout(r, 120))
         try {
           const { promise } = live.run(term, { limit: 20, statusOnly: true })
           const res = await promise
+          if (token !== searchToken) return
           results.value = res.data
           total.value = res.total
         } catch (err2: any) {
-          searchError.value = err2?.message || 'Search failed after retry'
+          if (!isAbortError(err2)) {
+            searchError.value = err2?.message || 'Search failed after retry'
+          }
         }
       } else {
         searchError.value = e?.message || 'Search failed'
       }
     } finally {
-      searchLoading.value = false
+      if (token === searchToken) {
+        searchLoading.value = false
+      }
     }
   }
 )
-
 
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && isSearching.value) clearSearch()
@@ -184,6 +193,11 @@ function highlight(text: string) {
   return safe.replace(rx, '<mark>$1</mark>')
 }
 
+function isAbortError(e: any) {
+  return e?.name === 'AbortError'
+      || e?.message?.toLowerCase?.().includes('aborted')
+      || e?.code === 20; // old DOMException
+}
 
 function typeLabel(t: SearchType) {
   switch (t) {
