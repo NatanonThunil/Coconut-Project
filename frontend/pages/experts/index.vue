@@ -437,13 +437,14 @@ ul.homeeventfiltercontainer li.filtli.selecto {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
    justify-content: center;  
-  gap: 1rem;
+  gap: 1.5rem;
   width: min(1300px, 90%);
   margin: 0 auto;
   padding: 1rem;
   animation: fadeinbelow 1s;
   align-items: stretch;
-  /* ให้ทุกคอลัมน์สูงเท่ากัน */
+  grid-auto-columns: 1fr;      
+ 
 }
 
 :deep(.expert-card) {
@@ -474,6 +475,14 @@ ul.homeeventfiltercontainer li.filtli.selecto {
 
   .event-card-section {
     grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 1030px) {
+
+  .event-card-section {
+    grid-template-columns: 0.8fr;
   }
 }
 
