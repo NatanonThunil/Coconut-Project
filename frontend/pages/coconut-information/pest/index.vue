@@ -4,7 +4,7 @@
   <div class="faqs-path">
     <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/pests">{{ $t('Pest') }}</NuxtLinkLocale>
+    <NuxtLinkLocale to="/coconut-information/pests">{{ $t('Pest') }}</NuxtLinkLocale>
   </div>
   <h1 class="context-header">{{ $t("Pest") }}</h1>
   <div style="height: 5rem"></div>
@@ -58,11 +58,11 @@
   <div v-else-if="filteredPests.length === 0" class="no-results">
     <img
       class="no-result-image"
-      src="/icon/notfound.png"
+      src="/img/News404.png"
       draggable="false"
       alt="No pests found"
     />
-    {{ $t("No pests found") }}
+    <h1>{{ $t("No pests found") }}</h1>
   </div>
 
   <!-- Pest Cards -->
@@ -112,7 +112,7 @@ import { useI18n } from "vue-i18n";
 import { computed } from "vue";
 import { usePests } from "@/composables/usePests";
 import CoconutCards from "@/components/CoconutCards.vue";
-import noimageHandle from "/img/no-image-handle.png";
+import noimageHandle from "/img/News404.png";
 
 const { getPests } = usePests();
 
@@ -213,6 +213,21 @@ export default {
 </script>
 
 <style scoped>
+.no-results h1{
+  font-size: 3rem;
+  font-weight: normal;
+}
+.no-results img{
+  width: 20rem;
+  height: 20rem;
+}
+.no-results{
+  margin-top: 3rem;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 .pagination .pagination-line {
   width: fit-content;
   min-width: 20%;
