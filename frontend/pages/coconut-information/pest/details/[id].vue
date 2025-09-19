@@ -1,203 +1,167 @@
 <template>
-  <div>
-    <div class="all-container">
-      <div style="height: 8rem"></div>
-      <!-- Breadcrumb -->
-      <div class="pest-path">
-        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
-        <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
-          {{
-            currentLocale === "th"
-              ? pest?.name || "No Name"
-              : pest?.name_en || "No Name"
-          }}
-        </NuxtLinkLocale>
+  <div style="height: 8rem"></div>
+
+  <!-- Breadcrumb -->
+  <div class="faqs-path">
+    <NuxtLinkLocale to="/">Home</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/coconut-information/">{{ $t("CoconutInfo") }}</NuxtLinkLocale> /
+    <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
+    <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
+      {{ currentLocale === "th" ? pest?.name || "No Name" : pest?.name_en || "No Name" }}
+    </NuxtLinkLocale>
+  </div>
+
+  <!-- Container -->
+  <div class="pest-container">
+    <!-- Loading -->
+    <div v-if="loading" class="loading-container">
+      <CardShimmer v-for="index in 1" :key="index" />
+      <div class="back-button shimmer"></div>
+    </div>
+
+    <!-- Pest Detail -->
+    <div v-else>
+      <img
+        class="pest-image-banner"
+        :src="pest?.image || defaultImage"
+        alt="Pest Image"
+      />
+
+      <h1>
+        {{ currentLocale === "th" ? pest?.name || "No Name" : pest?.name_en || "No Name" }}
+      </h1>
+
+      <div class="pest-content">
+        <p><strong>ชื่ออังกฤษ:</strong> {{ pest?.name_en || "N/A" }}</p>
+        <p><strong>ชื่อวิทยาศาสตร์:</strong> {{ pest?.sci_name || "N/A" }}</p>
+        <p>
+          <strong>ลักษณะและวงจรชีวิต</strong>
+          {{ pest?.lifecycle || "N/A" }}
+        </p>
       </div>
 
-      <!-- Loader -->
-      <div v-if="!pest && !error" class="loading">
-        <p>กำลังโหลดข้อมูลศัตรูพืช...</p>
-      </div>
-
-      <!-- Error -->
-      <div v-if="error" class="error">
-        <p>{{ error }}</p>
-      </div>
-
-      <!-- Pest Profile Card -->
-      <div class="pest-container" v-if="pest">
-        <div class="pest-card">
-          <img
-            :src="pest?.image || tlImage"
-            class="pest-image"
-            alt="Pest Image"
-            draggable="false"
-          />
-          <div class="pest-details">
-            <h1 class="pest-name">{{ pest?.name }}</h1>
-            <div class="info">
-              <p><strong>ชื่ออังกฤษ:</strong> {{ pest?.name_en || "N/A" }}</p>
-              <p>
-                <strong>ชื่อวิทยาศาสตร์:</strong> {{ pest?.sci_name || "N/A" }}
-              </p>
-              <p>
-                <strong>ลักษณะและวงจรชีวิต:</strong>
-                {{ pest?.lifecycle || "N/A" }}
-              </p>
-              <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
-            </div>
-          </div>
-        </div>
-       
- 
-       
-      </div>
+      <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
     </div>
   </div>
 </template>
 
 <script>
 import { useHead } from "@vueuse/head";
-import tlImage from "/img/tl.png";
 import { useI18n } from "vue-i18n";
-import { computed } from "vue";
+import CardShimmer from "@/components/CardShimmer.vue";
 import { usePests } from "@/composables/usePests";
+
 const { getPestById } = usePests();
+
 export default {
-  setup() {
-    const { locale } = useI18n();
-    const currentLocale = computed(() => locale.value);
-    return {
-      currentLocale,
-    };
-  },
+  components: { CardShimmer },
   data() {
     return {
       pest: null,
-      error: null,
-      tlImage,
+      loading: true,
+      defaultImage: "https://placehold.co/800x600",
     };
   },
   async mounted() {
-    const cid = this.$route.params.id;
+    const { id } = this.$route.params;
     try {
-      const data = await getPestById(cid);
+      const data = await getPestById(id);
       this.pest = data && data.status === 1 ? data : null;
-      if (this.pest) {
-        this.updateHead();
-      } else {
-        this.error = "ไม่พบข้อมูลศัตรูพืช กรุณาตรวจสอบหมายเลขอีกครั้ง";
-      }
+      this.loading = false;
     } catch (error) {
-      this.error = "ไม่สามารถโหลดข้อมูลศัตรูพืชได้ กรุณาลองใหม่อีกครั้ง";
+      console.error("Error fetching pest details:", error);
+      this.loading = false;
     }
   },
-  methods: {
-    updateHead() {
-      if (this.pest) {
-        useHead({
-          title: `🥥 Pest - ${this.pest.name}`,
-          meta: [
-            {
-              name: "description",
-              content: `ข้อมูลเกี่ยวกับ ${this.pest.name || "ศัตรูพืช"}.`,
-            },
-          ],
-        });
-      }
-    },
+  setup() {
+    const { locale } = useI18n();
+
+    useHead({
+      title: "🥥 Coconut - Pest Details",
+      meta: [
+        {
+          name: "description",
+          content: "Details page for Pests in Coconut Knowledge Hub",
+        },
+      ],
+    });
+
+    return {
+      currentLocale: locale,
+    };
   },
 };
 </script>
 
 <style scoped>
-.all-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Breadcrumb styling */
-.pest-path {
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-  margin: 1rem 0;
-  gap: 0.5rem;
-  font-size: 1.2rem;
-  color: #424141;
-}
-.pest-path a {
-  color: #424141;
-  text-decoration: none;
-  margin-left: 0.5rem;
-}
-
-/* Loader and Error styling */
-.loading,
-.error {
-  text-align: center;
-  font-size: 1.2rem;
-  color: gray;
-  padding: 1rem;
-}
-
-/* Pest card container */
 .pest-container {
+max-width: 1000px;
+  margin:  auto;
+  padding: 20px;
+  gap: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 5rem;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+   color: #4e6d16;
+}
+
+.pest-image-banner {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.pest-content {
+  font-size: 1.5rem;
+  max-width: 100dvw;
+  overflow: visible;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+  margin-bottom: 1.5rem;
+}
+
+.loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
-  margin: 0 auto;
+  padding: 5rem 0;
 }
 
-/* Pest card layout */
-.pest-card {
-  display: flex;
-  gap: 2rem; /* Space between image and text */
-  max-width: 100%;
-  padding: 1.5rem; /* Increased padding for more space */
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Image styling */
-.pest-image {
-  width: 350px; /* Increased image size */
-  height: auto;
-  object-fit: cover;
-  border-radius: 10px;
-  aspect-ratio: 1/1.14;
-}
-
-/* Pest details layout */
-.pest-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Align text to top */
-  width: calc(100% - 350px); /* Adjust width to fit next to image */
-}
-
-/* Pest name styling */
-.pest-name {
-  font-size: 2.2rem; /* Increased font size for the name */
-  font-weight: bold;
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #4e6d16;
+  background: #fff;
   color: #4e6d16;
-  margin-bottom: 1.5rem; /* Increased margin */
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
 }
 
-/* Info styling */
-.info p {
-  font-size: 1.5rem; /* Increased font size for better readability */
-  margin: 1rem 0; /* Increased margin between lines */
+.back-button:hover {
+  background: #4e6d16;
+  color: #fff;
 }
 
-/* Back button container */
-.back-btn-container {
-  width: 100%;
-  text-align: center;
-  margin-top: 3rem; /* Added more spacing */
+/* Responsive */
+@media (max-width: 768px) {
+  .pest-content {
+    font-size: 1.2rem;
+  }
 }
 </style>

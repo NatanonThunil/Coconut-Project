@@ -60,13 +60,17 @@
 
         <div class="deta-below">
           <p>
-            <strong>ลักษณะเฉพาะ :</strong
+            <strong>ลักษณะเฉพาะ </strong
             ><span class="origin-desc">{{
               coconut?.characteristics || "-"
             }}</span>
           </p>
         </div>
       </div>
+      <SeeAllButton
+      text="ดูพันธุ์อื่นๆ"
+      link="/coconut-information/coconut-varieties"
+    />
     </div>
 
     <!-- <div
@@ -77,10 +81,7 @@
         margin: 1rem auto;
       "
     ></div> -->
-    <SeeAllButton
-      text="ดูพันธุ์อื่นๆ"
-      link="/coconut-information/coconut-varieties"
-    />
+    
   </div>
 
   <div v-else class="loading-container">
@@ -137,13 +138,14 @@ onMounted(async () => {
 
 .row-top {
   display: flex;
-  flex-direction: row; /* left-right layout */
+  flex-direction: column;/* left-right layout */
   /* flex-wrap: wrap;
   justify-content: center; */
   gap: 2rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   border-radius: 10px;
+  margin-bottom: 5rem;
 }
 
 .deta-below p {
@@ -161,18 +163,18 @@ onMounted(async () => {
 }
 
 .coconut-detail-img {
-  background-color: black;
-  border-radius: 10px;
+  width: 100%;
+  max-height: 400px;
+  border-radius: 12px;
   overflow: hidden;
-  min-width: 15rem;
 }
 
 .coconut-detail-img img {
-  height: 100%;
   width: 100%;
-  max-width: 25rem;
-
+  height: auto;
+  max-height: 400px;
   object-fit: cover;
+  display: block;
 }
 
 .coconut-detail-info {
@@ -199,10 +201,7 @@ p.origin-desc {
   margin-bottom: 0.5rem;
   text-overflow: ellipsis;
   overflow: hidden;
-  
-  /* overflow-wrap: anywhere;
-  word-break: break-word;
-  max-width: 5rem; */
+ 
 }
 span.origin-desc {
   width: 100%;

@@ -24,9 +24,12 @@
 
     <h1>{{ (currentLocale == 'th') ? (chain_values?.title || 'No Title') : (chain_values?.title_en || 'No Title') }}
     </h1>
+    
     <div class="chain_value-content">
-      {{ (currentLocale == 'th') ? (chain_values?.description || 'No Title') : (chain_values?.description_en || 'No Title') }}
-    </div>
+  <strong>{{ $t("Description") }}:</strong>
+  {{ (currentLocale == 'th') ? (chain_values?.description || 'No Title') : (chain_values?.description_en || 'No Title') }}
+</div>
+
     <SeeAllButton text="ดูห่วงโซ่คุณค่าอื่นๆ" link="/coconut-information/value-chain" />
   </div>
 
@@ -110,12 +113,17 @@ export default {
     text-overflow: ellipsis;
     word-wrap: break-word;
     word-break: break-word;
+    
 }
 .chainvalue-container {
   max-width: 1000px;
   margin:  auto;
   padding: 20px;
-  
+  gap: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 5rem;
 }
 .news-image-banner {
   width: 100%;
@@ -124,7 +132,11 @@ export default {
   object-fit: cover;
   margin-bottom: 10px;
 }
-
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+   color: #4e6d16;
+}
 .details-wrapper {
   display: flex;
   justify-content: center;
@@ -183,7 +195,7 @@ export default {
 .summary-container p {
   font-size: 1rem;
   line-height: 1.6;
-    overflow-wrap: anywhere;  
+    overflow-wrap: anywhere;
   white-space: normal;
 }
 
