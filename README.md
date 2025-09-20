@@ -7,8 +7,10 @@
 - ตกแต่ง layout ของหลังบ้าน
 - แก้ Event Description ในหน้าหลัก
 - เพิ่ม TiptapEditor ให้สามารถปิดฟังค์ชั่นที่ไม่จำเป็นได้
+
 ![TiptapEditor Newfunction](image-1.png)
 - ลด coconut sci-name ให้เหลือแค่ f และเก็บทั้ง 3 ตัว
+
 ![Sciname](image-3.png)
 
 โดย [Sujeff] และ [Poom](https://github.com/WasitpolKuekkong)
