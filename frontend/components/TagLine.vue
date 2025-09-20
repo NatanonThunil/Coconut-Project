@@ -2,8 +2,8 @@
   <div class="hero-bar">
     <div class="background" :style="{
       backgroundImage: `url(${heado.image})`,
-      backgroundAttachment: isFixed ? 'fixed' : 'scroll',
-      
+
+
     }"></div>
     <div class="overlay"></div>
 
@@ -98,14 +98,15 @@ watchEffect(updateTextHW);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .background {
   position: absolute;
   width: 100%;
-  height: 100%; 
-  background-size: contain; 
+  height: 60rem;
+  background-attachment: fixed;
+  background-size: contain;
   background-position: top center;
   background-repeat: no-repeat;
   z-index: -2;
@@ -119,6 +120,7 @@ watchEffect(updateTextHW);
   background: rgba(0, 0, 0, 0.4);
   z-index: -1;
 }
+
 .tagline-text {
   position: absolute;
   color: white;
@@ -157,12 +159,31 @@ watchEffect(updateTextHW);
   }
 }
 
+@media (max-width: 1024px) {
+  .hero-bar {
+    height: 30rem;
+
+  }
+
+  .background {
+    
+    height: 30rem;
+    background-size: 80rem;
+
+
+  }
+}
+
+
+
+
 @media (max-width: 768px) {
   .hero-bar {
     height: 60dvh;
   }
+
   .background {
-    background-size: cover; 
+    background-size: cover;
     height: 100%;
     background-position: center top;
   }
@@ -172,7 +193,8 @@ watchEffect(updateTextHW);
   .hero-bar {
     height: 40dvh;
   }
-  .background{
+
+  .background {
     height: 40dvh;
   }
 }
