@@ -5,7 +5,7 @@
 
 ### Update List
 - ตกแต่ง layout ของหลังบ้าน
-
+- แก้ Event Description ในหน้าหลัก
 
 
 โดย [Sujeff] 

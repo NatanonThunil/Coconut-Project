@@ -71,7 +71,7 @@
 
     <div class="divider"></div>
     <h2 style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;">{{ $t('Description') }}</h2>
-    <p style="width: 60%; display: flex; justify-self: center; margin-bottom: 1rem;" v-html="(currentLocale === 'th') ? (event?.description ||
+    <p class="event-description" v-html="(currentLocale === 'th') ? (event?.description ||
         'ไม่มีคำอธิบาย') : (event?.description_en ||
             'No English description')"></p>
     <SeeAllButton :text="$t('Back to All Events')" link="/events" />
@@ -143,6 +143,10 @@ export default {
 </script>
 
 <style scoped>
+.event-description{
+    width: 60%;
+    margin: 0 auto;
+}
 .brief-details {
     display: flex;
     flex-direction: column;
