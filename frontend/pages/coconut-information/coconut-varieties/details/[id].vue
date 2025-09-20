@@ -49,9 +49,8 @@
               : "-"
           }}
         </p>
-        <p>
-          <strong>ชื่อวิทยาศาสตร์ :</strong> {{ coconut?.sci_name_f || "-" }}
-          {{ coconut?.sci_name_m || "-" }} {{ coconut?.sci_name_l || "-" }}
+        <p style="display: flex; gap: 0.5rem;">
+          <strong>ชื่อวิทยาศาสตร์ : </strong> <p v-html="coconut?.sci_name_f "></p>
         </p>
         <p>
           <strong>ถิ่นกำเนิด :</strong>

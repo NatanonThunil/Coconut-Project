@@ -6,9 +6,8 @@
         <div class="coconut-v-card-text-container">
             <h4 class="coconut-v-name">{{ name }}</h4>
             <div class="coconut-v-card-sciname-container">
-                <i class="coconut-v-sci-name-front">{{ sci_front }}</i>
-                <i class="coconut-v-sci-name-middle">{{ sci_middle }}</i>
-                <i class="coconut-v-sci-name-back">{{ sci_back }}</i>
+                <i class="coconut-v-sci-name-front" v-html="sci_front"></i>
+               
             </div>
         </div>
     </div>
@@ -23,6 +22,10 @@
     border-radius: 20px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
     transition: ease-in-out 0.2s;
+}
+
+.coconut-v-sci-name-front{
+    opacity: 0.7;
 }
 
 .coconut-v-card:hover {
@@ -86,12 +89,6 @@
     -webkit-line-clamp: 1;
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-.coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-front,
-.coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-middle,
-.coconut-v-card .coconut-v-card-text-container .coconut-v-card-sciname-container .coconut-v-sci-name-back {
-    font-weight: 200;
 }
 
 @media (max-width: 590px) {

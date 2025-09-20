@@ -12,23 +12,42 @@ import Link from "@tiptap/extension-link";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
 
-const props = defineProps(["modelValue"]);
+const props = defineProps({
+  modelValue: { type: String, default: "" },
+  /**
+   * รายชื่อฟีเจอร์ที่ "ไม่ต้องการ"
+   * ตัวเลือกที่รองรับ: 'bold','italic','underline','image','align','heading','link','color'
+   */
+  disable: { type: Array, default: () => [] },
+});
+
 const emit = defineEmits(["update:modelValue"]);
 const editor = ref(null);
 
+// helper: ใช้เช็คว่าเปิดใช้ฟีเจอร์ไหม (ไม่ได้อยู่ใน disable)
+const has = (feature) => !props.disable.includes(feature);
+
 onMounted(async () => {
+  const alignTypes = ["paragraph"].concat(has("heading") ? ["heading"] : []);
+
   editor.value = new Editor({
     extensions: [
+      // ปิด heading ของ StarterKit เสมอ แล้วคุมด้วย Heading เอง
       StarterKit.configure({ heading: false }),
-      Bold,
-      Italic,
-      Underline,
-      Image.configure({ allowBase64: true }),
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Heading.configure({ levels: [1, 2, 3] }),
-      Link.configure({ openOnClick: true }),
-      TextStyle, 
-      Color.configure({ types: ["textStyle"] }), 
+
+      ...(has("bold") ? [Bold] : []),
+      ...(has("italic") ? [Italic] : []),
+      ...(has("underline") ? [Underline] : []),
+
+      ...(has("image") ? [Image.configure({ allowBase64: true })] : []),
+
+      ...(has("align") ? [TextAlign.configure({ types: alignTypes })] : []),
+
+      ...(has("heading") ? [Heading.configure({ levels: [1, 2, 3] })] : []),
+
+      ...(has("link") ? [Link.configure({ openOnClick: true })] : []),
+
+      ...(has("color") ? [TextStyle, Color.configure({ types: ["textStyle"] })] : []),
     ],
     content: props.modelValue || "",
     onUpdate: ({ editor }) => {
@@ -36,7 +55,7 @@ onMounted(async () => {
     },
   });
 
-  await nextTick(); 
+  await nextTick();
 });
 
 watch(
@@ -53,92 +72,117 @@ onBeforeUnmount(() => {
 });
 
 const uploadImage = async (event) => {
-  const file = event.target.files[0];
+  if (!has("image")) return; // ป้องกันถูกเรียกตอนปิดฟีเจอร์
+  const file = event.target.files?.[0];
   if (!file) return;
 
   const reader = new FileReader();
   reader.readAsDataURL(file);
-
   reader.onload = () => {
-    if (editor.value) {
-      editor.value.chain().focus().setImage({ src: reader.result }).run();
-      emit("update:modelValue", editor.value.getHTML());
-    }
+    editor.value?.chain().focus().setImage({ src: reader.result }).run();
+    emit("update:modelValue", editor.value.getHTML());
   };
 };
 
 const setTextAlign = (alignment) => {
+  if (!has("align")) return;
   editor.value?.chain().focus().setTextAlign(alignment).run();
 };
 
 const addLink = () => {
+  if (!has("link")) return;
   const url = prompt("Enter URL");
   if (url) {
-    editor.value.chain().focus().extendMarkRange('link').setLink({ href: url }).setUnderline().setItalic().run();
+    editor.value
+      ?.chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: url })
+      .setUnderline()
+      .setItalic()
+      .run();
   }
 };
 
 const changeColor = (color) => {
+  if (!has("color")) return;
   const isActive = editor.value?.isActive("textStyle", { color });
-
-  editor.value?.chain().focus()
-    .setColor(isActive ? null : color)
-    .run();
+  editor.value?.chain().focus().setColor(isActive ? null : color).run();
 };
 
 const changeHeading = (level) => {
-  if (!editor.value) return;
-  
+  if (!has("heading") || !editor.value) return;
   const isActive = editor.value.isActive("heading", { level });
-  if (isActive) {
-    editor.value.chain().focus().setParagraph().run(); 
-  } else {
-    editor.value.chain().focus().setNode("heading", { level }).run();
-  }
+  if (isActive) editor.value.chain().focus().setParagraph().run();
+  else editor.value.chain().focus().setNode("heading", { level }).run();
 };
-
 </script>
 
 <template>
   <div class="tiptap-container">
     <div class="toolbar" v-if="editor">
-      <button @click="editor.chain().focus().toggleBold().run()" :class="{ active: editor?.isActive('bold') }"
+      <!-- inline styles -->
+      <button
+        v-if="!disable.includes('bold')"
+        @click="editor.chain().focus().toggleBold().run()"
+        :class="{ active: editor?.isActive('bold') }"
         title="Bold">
         <span class="icon">B</span>
       </button>
-      <button @click="editor.chain().focus().toggleItalic().run()" :class="{ active: editor?.isActive('italic') }"
+
+      <button
+        v-if="!disable.includes('italic')"
+        @click="editor.chain().focus().toggleItalic().run()"
+        :class="{ active: editor?.isActive('italic') }"
         title="Italic">
         <span class="icon">I</span>
       </button>
-      <button @click="editor.chain().focus().toggleUnderline().run()" :class="{ active: editor?.isActive('underline') }"
+
+      <button
+        v-if="!disable.includes('underline')"
+        @click="editor.chain().focus().toggleUnderline().run()"
+        :class="{ active: editor?.isActive('underline') }"
         title="Underline">
         <span class="icon">U</span>
       </button>
-      <button @click="changeHeading(1)" title="H1"  :class="{ active: editor?.isActive('heading', { level: 1 }) }">H1</button>
-      <button @click="changeHeading(2)" title="H2" :class="{ active: editor?.isActive('heading', { level: 2 }) }">H2</button>
-      <button @click="changeHeading(3)" title="H3" :class="{ active: editor?.isActive('heading', { level: 3 }) }">H3</button>
 
-      <button @click="addLink" title="Link">🔗</button>
-      <label class="upload-btn" title="Upload Image">
+      <!-- Heading -->
+      <template v-if="!disable.includes('heading')">
+        <button @click="changeHeading(1)" title="H1" :class="{ active: editor?.isActive('heading', { level: 1 }) }">H1</button>
+        <button @click="changeHeading(2)" title="H2" :class="{ active: editor?.isActive('heading', { level: 2 }) }">H2</button>
+        <button @click="changeHeading(3)" title="H3" :class="{ active: editor?.isActive('heading', { level: 3 }) }">H3</button>
+      </template>
+
+      <!-- Link -->
+      <button v-if="!disable.includes('link')" @click="addLink" title="Link">🔗</button>
+
+      <!-- Image -->
+      <label v-if="!disable.includes('image')" class="upload-btn" title="Upload Image">
         <input type="file" @change="uploadImage" accept="image/*" hidden />
         <span class="icon">Upload</span>
       </label>
-      <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }"
-        title="Align Left">
-        <span class="icon">⬅</span>
-      </button>
-      <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center' }) }"
-        title="Align Center">
-        <span class="icon">⬆</span>
-      </button>
-      <button @click="setTextAlign('right')" :class="{ active: editor?.isActive({ textAlign: 'right' }) }"
-        title="Align Right">
-        <span class="icon">➡</span>
-      </button>
-      <input type="color" @input="e => changeColor(e.target.value)" title="Text Color" />
 
+      <!-- Align -->
+      <template v-if="!disable.includes('align')">
+        <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }" title="Align Left">
+          <span class="icon">⬅</span>
+        </button>
+        <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center' }) }" title="Align Center">
+          <span class="icon">⬆</span>
+        </button>
+        <button @click="setTextAlign('right')" :class="{ active: editor?.isActive({ textAlign: 'right' }) }" title="Align Right">
+          <span class="icon">➡</span>
+        </button>
+      </template>
 
+      <!-- Color -->
+      <input
+        v-if="!disable.includes('color')"
+        type="color"
+        @input="e => changeColor(e.target.value)"
+        title="Text Color" />
     </div>
+
     <EditorContent v-if="editor" :editor="editor" class="editor-content" />
   </div>
 </template>

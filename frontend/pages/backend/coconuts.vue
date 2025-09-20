@@ -140,8 +140,9 @@
                     <label>Origin</label>
                     <input class="add-text-input" v-model="currentCoconut.origin" placeholder="Enter origin" required />
                 
-                
-                    <label>Scientific Name (F)</label>
+                <TiptapEditor v-model="currentCoconut.sci_name_f" :disable="[,'heading','link','image','align','color']"/>
+
+                    <!-- <label>Scientific Name (F)</label>
                     <input class="add-text-input" v-model="currentCoconut.sci_name_f"
                         placeholder="Enter scientific name (F)" required />
                     <label>Scientific Name (M)</label>
@@ -149,7 +150,7 @@
                         placeholder="Enter scientific name (M)" required />
                     <label>Scientific Name (L)</label>
                     <input class="add-text-input" v-model="currentCoconut.sci_name_l"
-                        placeholder="Enter scientific name (L)" required />
+                        placeholder="Enter scientific name (L)" required /> -->
                     <label>Characteristics</label>
                     <textarea class="add-text-input" v-model="currentCoconut.characteristics"
                         placeholder="Enter characteristics" required></textarea>
