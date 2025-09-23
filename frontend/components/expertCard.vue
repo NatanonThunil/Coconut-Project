@@ -1,28 +1,29 @@
 <template>
     <!-- เปลี่ยนจาก NuxtLinkLocale ที่ห่อทั้งการ์ด -> div ธรรมดา -->
     <div class="expert-card" role="link" tabindex="0" @click="goDetails" @keydown.enter.prevent="goDetails">
-        <div class="expert-card-image">
-            <img :src="image || '/images/expert-placeholder.webp'" alt="Expert Image" draggable="false" />
-        </div>
-
-        <div class="expert-card-text">
-
-            <NuxtLinkLocale class="expert-title" :to="`/experts/details/${id}`">
-                <h2>{{ name }}</h2>
-            </NuxtLinkLocale>
-
-            <p class="expert-details">{{ description || '—' }}</p>
-
-            <div v-if="email" class="expert-contact">
-                <img src="/icon/email.png" alt="">
-                <p>{{ email }}</p>
+        <div class="not-tag-container">
+            <div class="expert-card-image">
+                <img :src="image || '/images/expert-placeholder.webp'" alt="Expert Image" draggable="false" />
             </div>
-            <div v-if="phoneNumber" class="expert-contact">
-                <img src="/icon/phonecall.png" alt="">
-                <p>{{ phoneNumber }}</p>
+
+            <div class="expert-card-text">
+
+                <NuxtLinkLocale class="expert-title" :to="`/experts/details/${id}`">
+                    <h2>{{ name }}</h2>
+                </NuxtLinkLocale>
+
+                <p class="expert-details">{{ description || '—' }}</p>
+
+                <div v-if="email" class="expert-contact">
+                    <img src="/icon/email.png" alt="">
+                    <p>{{ email }}</p>
+                </div>
+                <div v-if="phoneNumber" class="expert-contact">
+                    <img src="/icon/phonecall.png" alt="">
+                    <p>{{ phoneNumber }}</p>
+                </div>
             </div>
         </div>
-
         <!-- Tags -->
         <div v-if="!pending && tags?.length" class="experttags">
             <!-- ปุ่มแท็ก: กัน bubble + กัน default ของลิงก์การ์ด -->
@@ -94,6 +95,7 @@ const goDetails = () => {
     background: #fff;
     overflow: hidden;
     transition: 0.3s all;
+    justify-content: space-between;
 }
 
 .expert-card-image {
