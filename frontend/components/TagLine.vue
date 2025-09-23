@@ -111,6 +111,7 @@ watchEffect(updateTextHW);
   background-repeat: no-repeat;
   z-index: -2;
   animation: fadeInImage 1s ease-out;
+
 }
 
 .overlay {
@@ -183,7 +184,7 @@ watchEffect(updateTextHW);
   }
 
   .background {
-    background-size: cover;
+    background-size: 90rem;
     height: 100%;
     background-position: center top;
   }
@@ -191,11 +192,13 @@ watchEffect(updateTextHW);
 
 @media (max-width: 425px) {
   .hero-bar {
+    
     height: 40dvh;
   }
 
   .background {
     height: 40dvh;
+    background-size: 60rem;
   }
 }
 </style>

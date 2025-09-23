@@ -86,6 +86,10 @@
           <li :class="{ mobileSelected: selecto === 'aboutus' }">
             <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>
           </li>
+            <li :class="{ mobileSelected: selecto === 'announcements' }">
+            <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>
+          </li>
+           
           <li :class="{ mobileSelected: selecto === 'coconutdata' }">
             <NuxtLinkLocale to="/coconut-information">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
           </li>
@@ -146,7 +150,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 // Auto-detect active section (selecto) from route
 const route = useRoute()
-const selecto = computed<'home' | 'aboutus' | 'news' | 'events' | 'coconutdata' | 'pests' | 'expert' | 'faqs'>(() => {
+const selecto = computed<'home' | 'aboutus' | 'news' | 'events' | 'coconutdata' | 'pests' | 'expert' | 'faqs' | 'announcements'>(() => {
   const p = route.path
 
   if (p === '/' || p.startsWith('/home')) return 'home'
@@ -155,6 +159,7 @@ const selecto = computed<'home' | 'aboutus' | 'news' | 'events' | 'coconutdata' 
   if (p.startsWith('/events')) return 'events'
   if (p.startsWith('/experts')) return 'expert'
   if (p.startsWith('/faqs')) return 'faqs'
+   if (p.startsWith('/announcements')) return 'announcements'
   if (p.startsWith('/coconut-information/pest')) return 'pests'
   if (p.startsWith('/coconut-information')) return 'coconutdata'
 
