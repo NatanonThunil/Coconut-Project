@@ -19,13 +19,10 @@
           v-model="password"
           type="password"
           required
-          minlength="8"
           class="input"
           placeholder="Min 8 chars, A-Z, a-z, 0-9"
         />
-        <p class="text-xs opacity-70 mt-1">
-          Must include uppercase, lowercase, and a number.
-        </p>
+        <p class="text-xs opacity-70 mt-1">Must include uppercase, lowercase, and a number.</p>
       </div>
 
       <p v-if="err" class="text-sm text-red-600">{{ err }}</p>
@@ -44,19 +41,23 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useState, useRuntimeConfig, navigateTo } from '#imports'
+
+interface User {
+  id: number
+  email: string
+  name: string | null
+  created_at?: string
+}
+
 interface RegisterResponse {
-  user: {
-    id: number
-    email: string
-    name: string | null
-    created_at?: string
-  }
+  user: User
 }
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
-
 const err = ref<string | null>(null)
 const loading = ref(false)
 
@@ -69,32 +70,38 @@ function validatePassword(pw: string) {
 
 const onSubmit = async () => {
   err.value = null
+
   if (!validatePassword(password.value)) {
-    err.value = 'Password must be at least 8 chars and include A-Z, a-z, and 0-9.'
+    err.value = 'Password must be at least 8 chars and include uppercase, lowercase, and a number.'
     return
   }
+
   loading.value = true
   try {
     const res = await $fetch<RegisterResponse>('/auth/register', {
       baseURL: base,
       method: 'POST',
-      body: { name: name.value || null, email: email.value, password: password.value },
       credentials: 'include', // receive auth cookies
+      body: {
+        name: name.value || null,
+        email: email.value,
+        password: password.value
+      }
     })
 
-    // Optionally set a global user state
-    const user = useState('auth_user', () => null as RegisterResponse['user'] | null)
+    // Save user globally
+    const user = useState<User | null>('auth_user', () => null)
     user.value = res.user
 
     await navigateTo('/dashboard')
   } catch (e: any) {
-    // surface backend messages (e.g., 409 email already registered)
     err.value = e?.data?.message || e?.message || 'Registration failed'
   } finally {
     loading.value = false
   }
 }
 </script>
+
 
 <style scoped>
 .input {

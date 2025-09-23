@@ -4,7 +4,6 @@ import db from '../db.js';
 import argon2 from 'argon2';
 import Joi from 'joi';
 import { signAT, signRT, setAuthCookies } from '../utils/jwt.js';
-
 import jwt from 'jsonwebtoken';
 
 const router = Router();
@@ -14,63 +13,89 @@ const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
   name: Joi.string().allow(null, ''),
+  role: Joi.string().valid('admin', 'superadmin').optional(),
 });
 
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
 });
+
+// --- Role-based middleware ---
+export const requireRole = (roles) => (req, res, next) => {
+  try {
+    const token = req.cookies.access_token;
+    if (!token) return res.status(401).json({ message: 'No token' });
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    if (!roles.includes(decoded.role)) return res.status(403).json({ message: 'Forbidden' });
+    req.user = decoded;
+    next();
+  } catch (e) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+// --- Logout ---
 router.post('/logout', (req, res) => {
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');
-  return res.json({ message: 'Logged out' });
+  res.json({ message: 'Logged out' });
 });
 
-router.get('/me', (req, res) => {
-  const token = req.cookies?.access_token;
-  if (!token) return res.status(401).json({ message: 'No token' });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    return res.json({ user: { id: decoded.sub, email: decoded.email } });
-  } catch {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-});
 // --- Register ---
 router.post('/register', async (req, res) => {
   try {
     const { value, error } = registerSchema.validate(req.body);
     if (error) return res.status(400).json({ message: error.message });
 
-    const { email, password, name } = value;
+    const { email, password, name, role } = value;
 
-    const [exists] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
-    if (exists.length) return res.status(409).json({ message: 'Email already registered' });
+    // Prevent creating superadmin via API
+    if (role === 'superadmin') return res.status(403).json({ message: 'Cannot create superadmin' });
 
-    const hash = await argon2.hash(password, { type: argon2.argon2id });
-    const toStore = hash; // if your DB column is VARCHAR, keep this
-
-    await db.query(
-      'INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)',
-      [email, toStore, name || null]
-    );
-
-    const [rows] = await db.query('SELECT id, created_at FROM users WHERE email = ?', [email]);
-    const user = { id: rows[0].id, email, name: name || null, created_at: rows[0].created_at };
-
-    if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
-      console.error('[AUTH] Missing JWT secrets');
-      return res.status(500).json({ message: 'Server auth misconfigured' });
+    // Only superadmin can create admin
+    if (role === 'admin') {
+      const token = req.cookies.access_token;
+      if (!token) return res.status(401).json({ message: 'Unauthorized' });
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const [rows] = await db.query('SELECT role FROM users WHERE id=?', [decoded.sub]);
+      if (!rows.length || rows[0].role !== 'superadmin') {
+        return res.status(403).json({ message: 'Only superadmin can add admin' });
+      }
     }
 
-    const at = signAT({ sub: user.id, email: user.email });
-    const rt = signRT({ sub: user.id });
-    setAuthCookies(res, at, rt);
+    // Check if email exists
+    const [exists] = await db.query('SELECT id FROM users WHERE email=?', [email]);
+    if (exists.length) return res.status(409).json({ message: 'Email already registered' });
 
-    return res.status(201).json({ user });
+    // Hash password
+    const hash = await argon2.hash(password, { type: argon2.argon2id });
+
+    // Insert user
+    await db.query('INSERT INTO users (email,password_hash,name,role) VALUES (?,?,?,?)',
+      [email, hash, name || null, role || 'admin']
+    );
+
+    const [rows] = await db.query('SELECT id,created_at,role FROM users WHERE email=?', [email]);
+    const user = {
+      id: rows[0].id,
+      email,
+      name: name || null,
+      role: rows[0].role,
+      created_at: rows[0].created_at
+    };
+
+    // Set JWT cookies
+    setAuthCookies(
+      res,
+      signAT({ sub: user.id, email: user.email, role: user.role }),
+      signRT({ sub: user.id })
+    );
+
+    res.status(201).json({ user });
   } catch (e) {
     console.error('[AUTH][REGISTER]', e);
-    return res.status(500).json({ message: e.message || 'Server error' });
+    res.status(500).json({ message: e.message || 'Server error' });
   }
 });
 
@@ -81,47 +106,47 @@ router.post('/login', async (req, res) => {
     if (error) return res.status(400).json({ message: error.message });
 
     const { email, password } = value;
-    const [rows] = await db.query(
-      'SELECT id, email, password_hash, name, created_at FROM users WHERE email = ?',
-      [email]
-    );
+    const [rows] = await db.query('SELECT * FROM users WHERE email=?', [email]);
     if (!rows.length) return res.status(401).json({ message: 'Invalid credentials' });
 
     const u = rows[0];
+    const storedHash = Buffer.isBuffer(u.password_hash) ? u.password_hash.toString() : String(u.password_hash || '');
+    const valid = await argon2.verify(storedHash, password);
+    if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
 
-    const storedHash = Buffer.isBuffer(u.password_hash)
-      ? u.password_hash.toString()
-      : String(u.password_hash || '');
+    const user = {
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      role: u.role,
+      created_at: u.created_at
+    };
 
-    const ok = await argon2.verify(storedHash, password);
-    if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
+    setAuthCookies(
+      res,
+      signAT({ sub: user.id, email: user.email, role: user.role }),
+      signRT({ sub: user.id })
+    );
 
-    if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
-      console.error('[AUTH] Missing JWT secrets');
-      return res.status(500).json({ message: 'Server auth misconfigured' });
-    }
-
-    const user = { id: u.id, email: u.email, name: u.name, created_at: u.created_at };
-    const at = signAT({ sub: user.id, email: user.email });
-    const rt = signRT({ sub: user.id });
-    setAuthCookies(res, at, rt);
-
-    return res.json({ user });
+    res.json({ user });
   } catch (e) {
     console.error('[AUTH][LOGIN]', e);
-    return res.status(500).json({ message: e.message || 'Server error' });
+    res.status(500).json({ message: e.message || 'Server error' });
   }
 });
+
+// --- Me ---
 router.get('/me', (req, res) => {
   try {
     const token = req.cookies.access_token;
     if (!token) return res.status(401).json({ message: 'No token' });
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    res.json({ user: { id: decoded.sub, email: decoded.email } });
+    res.json({ user: { id: decoded.sub, email: decoded.email, role: decoded.role } });
   } catch (e) {
     console.error('[AUTH][ME]', e);
-    return res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: 'Invalid token' });
   }
 });
+
 export default router;

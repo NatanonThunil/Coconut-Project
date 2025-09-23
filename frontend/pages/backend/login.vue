@@ -1,3 +1,23 @@
+<template>
+  <div class="be-bg-cl">
+    <div class="login-form-container">
+      <img src="/logo/CKH-round.ico" draggable="false" alt="Logo" />
+      <h2 class="login-title">เข้าสู่ระบบหลังบ้าน</h2>
+      <p class="login-subtitle">Please enter your credentials to continue</p>
+
+      <div class="space-y-3">
+        <input v-model="email" type="email" placeholder="Email" class="input" />
+        <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" class="input" />
+        <button @click="login" :disabled="isLoading" class="btn w-full">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+      </div>
+
+      <p v-if="errorMessage" class="text-red-600 mt-2">{{ errorMessage }}</p>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 useHead({
   title: 'Backend - Login',
@@ -6,10 +26,17 @@ useHead({
 definePageMeta({ layout: 'admin-login' })
 
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useState, useRuntimeConfig } from '#imports'
+
+interface User {
+  id: number
+  email: string
+  name: string | null
+  created_at?: string
+}
 
 interface LoginResponse {
-  user: { id: number; email: string; name: string | null; created_at?: string }
+  user: User
 }
 
 const router = useRouter()
@@ -18,11 +45,11 @@ const password = ref('')
 const errorMessage = ref('')
 const isLoading = ref(false)
 
-const base = useRuntimeConfig().public.beUrl // e.g. http://localhost:5100
+const base = useRuntimeConfig().public.beUrl // e.g., http://localhost:5100
 
-const validateInputs = () => {
+const validateInputs = (): boolean => {
   if (!email.value || !password.value) {
-    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่านที่ถูกต้อง'
+    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่าน'
     return false
   }
   if (!/\S+@\S+\.\S+/.test(email.value)) {
@@ -38,53 +65,28 @@ const login = async () => {
 
   isLoading.value = true
   try {
-    // Call your backend auth route (sets HTTP-only cookies)
-    const res = await $fetch < LoginResponse > ('/auth/login', {
+    const res = await $fetch<LoginResponse>('/auth/login', {
       baseURL: base,
       method: 'POST',
-      credentials: 'include', // <-- IMPORTANT for cookies
+      credentials: 'include', // <-- important for cookies
       body: { email: email.value.trim(), password: password.value },
     })
 
-    // (Optional) keep a global user state if you want
-    const user = useState < LoginResponse['user'] | null > ('auth_user', () => null)
+    // Save user globally
+    const user = useState<User | null>('auth_user', () => null)
     user.value = res.user
 
-    // Go to your protected backend dashboard
-    router.push('/backend/dashboard')
+    await router.push('/backend/dashboard')
   } catch (e: any) {
-    // Map typical backend errors
-    const msg =
+    errorMessage.value =
       e?.data?.message ||
-      (e?.status === 401 ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : null) ||
-      'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
-    errorMessage.value = msg
+      (e?.status === 401 ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง')
     console.error('Login error:', e)
   } finally {
     isLoading.value = false
   }
 }
 </script>
-
-<template>
-  <div class="be-bg-cl">
-    <div class="login-form-container">
-      <img src="/logo/CKH-round.ico" draggable="false" alt="Logo" />
-      <h2 class="login-title">เข้าสู่ระบบหลังบ้าน</h2>
-      <p class="login-subtitle">Please enter your credentials to continue</p>
-
-      <div>
-        <input v-model="email" type="email" placeholder="Email" />
-        <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" />
-        <button @click="login" :disabled="isLoading">
-          {{ isLoading ? 'Logging in...' : 'Login' }}
-        </button>
-      </div>
-
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .be-bg-cl {

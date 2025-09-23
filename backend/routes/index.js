@@ -32,6 +32,6 @@ export default [
     { path: '/chain-values', handler: chainValuesRoutes },
     { path: '/services', handler: servicesRoutes },
     { path: '/search', handler: searchRoutes },
-   
+
     // { path: '/news', handler: newsRoutes },
 ];
