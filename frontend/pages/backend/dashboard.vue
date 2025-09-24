@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ auth: true, layout: 'admin-login' })
+definePageMeta({ auth: true, layout: 'admin' })
 
 interface MeResponse {
   user: { id: number; email: string; name: string | null; created_at: string }

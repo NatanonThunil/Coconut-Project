@@ -29,7 +29,7 @@
     <div class="aresearching" v-if="isSearching">
       <section class="news-etc-container">
         <section class="news-etc">
-          <etcNews v-for="news in filteredNews" :key="news.id" :url="`/news/details/${news.id}`"
+          <etcNews v-for="news in filteredNews" :key="news.id" :url="`/announcements/news/details/${news.id}`"
             :image="news.image || notfound"
             :title="(locale === 'th') ? (news.title || news.title_en) : (news.title_en || news.title)"
             :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />
@@ -41,7 +41,7 @@
     <div class="notsearching" v-else>
       <div class="hot-news-section">
         <section class="beeg-news">
-          <HotBigAllNews v-if="hotNews" :url="`/news/details/${hotNews.id}`" :image="hotNews.image || notfound"
+          <HotBigAllNews v-if="hotNews" :url="`/announcements/news/details/${hotNews.id}`" :image="hotNews.image || notfound"
             :title="hotNews.title || ''" :date="formatDate(hotNews.upload_date) || ''" />
           <div v-else style="height:100%">
             <HotBigAllNewsShimmer />
@@ -53,7 +53,7 @@
           <HotSmallAllNewsShimmer />
         </section>
         <section class="smol-news" v-else>
-          <HotSmallAllNews v-for="news in smallHotNews" :key="news.id" :url="`/news/details/${news.id}`"
+          <HotSmallAllNews v-for="news in smallHotNews" :key="news.id" :url="`/announcements/news/details/${news.id}`"
             :image="news.image || notfound"
             :title="(locale === 'th') ? (news.title || news.title_en) : (news.title_en || news.title)"
             :date="formatDate(news.upload_date) || ''" />
@@ -64,7 +64,7 @@
 
       <section class="news-etc-container">
         <section class="news-etc">
-          <etcNews v-for="news in regularNewsSorted" :key="news.id" :url="`/news/details/${news.id}`"
+          <etcNews v-for="news in regularNewsSorted" :key="news.id" :url="`/announcements/news/details/${news.id}`"
             :image="news.image || notfound"
             :title="(locale === 'th') ? (news.title || news.title_en) : (news.title_en || news.title)"
             :date="formatDate(news.upload_date) || ''" :isHotnews="news.hot_new" />

@@ -25,10 +25,10 @@
             </p>
             <ul class="dropdown">
               <li>
-                <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
+                <NuxtLinkLocale to="/announcements/news">{{ $t('News') }}</NuxtLinkLocale>
               </li>
               <li>
-                <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
+                <NuxtLinkLocale to="/announcements/events">{{ $t('Events') }}</NuxtLinkLocale>
               </li>
             </ul>
           </li>
