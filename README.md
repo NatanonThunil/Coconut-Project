@@ -8,6 +8,7 @@
 ### Update List
 - ``expertCard`` tag เพิ่มระยะห่าง
 - แก้ ``Layout`` login protected page ให้ครอบทุกหน้า
+- ปรับตำแหน่งใน ``title backend``
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 

@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 5 rem;"></div>
+    <div style="height: 5rem;"></div>
     <div class="table-head-text-container">
         <h1>จัดการผู้เชี่ยวชาญ</h1>
         <p>มีผู้เชี่ยวชาญทั้งหมด {{ expertsNum }}</p>
@@ -1259,7 +1259,7 @@ const toggleSelectAll = () => {
     display: flex;
     flex-direction: column;
     justify-self: center;
-    width: 90%;
+    width: 85%;
 }
 
 .item-list-table thead,
