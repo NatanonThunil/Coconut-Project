@@ -5,7 +5,7 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
 import { config } from 'dotenv'
-
+import statsRouter from './routes/dashboards.js';
 import routes from './routes/index.js'
 import imgUploadRoutes from './routes/img-upload.js'
 import pdfUploadRoutes from './routes/pdf-upload.js'
@@ -46,7 +46,7 @@ app.use(express.static('public'))
 app.use('/img-upload', imgUploadRoutes)
 app.use('/pdf-upload', pdfUploadRoutes)
 app.use('/auth', authRouter) // login/register/logout/me เป็น public
-
+app.use('/stats', statsRouter);
 // --- API-key middleware for protected routes ---
 app.use((req, res, next) => {
   // skip OPTIONS (preflight)
