@@ -37,7 +37,7 @@
       {{ $t('No events found') }}
     </div>
     <div v-else class="all-event-card-container">
-      <EventCards v-for="event in paginatedEvents" :key="event.id" :url="`/events/details/${event.id}`"
+      <EventCards v-for="event in paginatedEvents" :key="event.id" :url="`/announcements/events/details/${event.id}`"
         :image="event.image || 'https://placehold.co/600x400'"
         :title="(currentLocale === 'th') ? (event.title || 'No title provided') : (event.title_en || 'No English title provided')"
         :datestart="formatDate(event.date_start) || 'No date provided'"

@@ -29,6 +29,7 @@ const router = useRouter();
 const activeItem = ref(router.currentRoute.value.path);
 
 const menuItems = [
+  { label: "แดชบอร์ด", path: "/backend/dashboard" },
   { label: "จัดการ เฮดไลน์", path: "/backend/tagline-edit" },
   { label: "จัดการข่าว", path: "/backend/news" },
   { label: "จัดการกิจกรรม", path: "/backend/events" },

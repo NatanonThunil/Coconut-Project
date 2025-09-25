@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   devServer: {
     port: 5000,
   },
-  
+
   runtimeConfig: {
     apiSecret: process.env.API_SECRET,
     public: {
@@ -20,7 +20,7 @@ export default defineNuxtConfig({
       apiBase: process.env.API_BASE || '',
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
       apiKey: process.env.API_SECRET || 'Cocon541986',
-      
+
     },
   },
   devtools: { enabled: false },
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
   ],
 
   modules: [
-    // 'nuxt-primevue',
+    'nuxt-charts',
     '@nuxtjs/i18n',
   ],
 

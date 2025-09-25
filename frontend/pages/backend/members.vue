@@ -888,7 +888,7 @@ onMounted(fetchMembers);
   display: flex;
   flex-direction: column;
   justify-self: center;
-  width: 90%;
+  width: 85%;
 }
 
 .item-list-table thead,

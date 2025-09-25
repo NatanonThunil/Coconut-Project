@@ -105,7 +105,7 @@ router.post("/register", async (req, res) => {
     // Set JWT cookies
     setAuthCookies(
       res,
-      signAT({ sub: user.id, email: user.email, role: user.role }),
+      signAT({ sub: user.id, email: user.email, role: user.role ,name: user.name}),
       signRT({ sub: user.id })
     );
 
