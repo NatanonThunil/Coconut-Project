@@ -1,8 +1,8 @@
 <template>
   <div class="container" style="max-width: 420px; margin: 4rem auto;">
-    <h1 class="text-2xl font-bold mb-6">Create your account</h1>
+    <h1 class="text-2xl font-bold mb-6">Create a new account (Admin only)</h1>
 
-    <form @submit.prevent="onSubmit" class="space-y-4">
+    <form @submit.prevent="onSubmit" class="space-y-4" v-if="isSuperAdmin">
       <div>
         <label class="block text-sm mb-1">Name</label>
         <input v-model.trim="name" class="input" placeholder="Optional" />
@@ -33,21 +33,22 @@
       </button>
     </form>
 
-    <p class="mt-4 text-sm">
-      Already have an account?
-      <NuxtLink to="/login" class="underline">Log in</NuxtLink>
+    <p v-else class="text-center text-red-600 mt-6">
+      You are not authorized to access this page.
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useState, useRuntimeConfig, navigateTo } from '#imports'
+import { jwtDecode } from 'jwt-decode'
 
 interface User {
   id: number
   email: string
   name: string | null
+  role: string
   created_at?: string
 }
 
@@ -60,6 +61,7 @@ const email = ref('')
 const password = ref('')
 const err = ref<string | null>(null)
 const loading = ref(false)
+const isSuperAdmin = ref(false)
 
 const config = useRuntimeConfig()
 const base = config.public.beUrl // e.g., http://localhost:5100
@@ -67,6 +69,23 @@ const base = config.public.beUrl // e.g., http://localhost:5100
 function validatePassword(pw: string) {
   return /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw) && pw.length >= 8
 }
+
+// --- check superadmin on mount ---
+onMounted(() => {
+  const token = localStorage.getItem('adminToken')
+  if (!token) return navigateTo('/backend/login')
+
+  try {
+    const decoded: { role: string; exp: number } = jwtDecode(token)
+    if (decoded.role !== 'superadmin' || (decoded.exp && decoded.exp * 1000 < Date.now())) {
+      navigateTo('/backend/dashboard')
+      return
+    }
+    isSuperAdmin.value = true
+  } catch {
+    navigateTo('/backend/login')
+  }
+})
 
 const onSubmit = async () => {
   err.value = null
@@ -85,7 +104,8 @@ const onSubmit = async () => {
       body: {
         name: name.value || null,
         email: email.value,
-        password: password.value
+        password: password.value,
+        role: 'admin' // superadmin can create admin
       }
     })
 
@@ -93,7 +113,7 @@ const onSubmit = async () => {
     const user = useState<User | null>('auth_user', () => null)
     user.value = res.user
 
-    await navigateTo('/dashboard')
+    await navigateTo('/backend/dashboard')
   } catch (e: any) {
     err.value = e?.data?.message || e?.message || 'Registration failed'
   } finally {
@@ -101,7 +121,6 @@ const onSubmit = async () => {
   }
 }
 </script>
-
 
 <style scoped>
 .input {

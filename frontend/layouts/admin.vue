@@ -19,16 +19,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode' // แก้ import ให้ถูกต้อง
 
 const router = useRouter()
 const isAuthorized = ref(false)
 
 onMounted(() => {
-  // scroll to top
   window.scrollTo(0, 0)
 
-  // check token from localStorage
   const token = localStorage.getItem('adminToken')
   if (!token) {
     router.push('/backend/login')
@@ -36,23 +34,28 @@ onMounted(() => {
   }
 
   try {
-    const decoded: { exp: number; role: string } = jwtDecode(token)
-    
-    // ตรวจสอบหมดอายุ
-    if (decoded.exp * 1000 < Date.now()) {
+    // decode token
+    const decoded: { exp?: number; role?: string } = jwtDecode(token)
+
+    // ตรวจสอบ expired
+    if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
       localStorage.removeItem('adminToken')
       router.push('/backend/login')
       return
     }
 
     // ตรวจสอบ role
-    if (!['admin', 'superadmin'].includes(decoded.role)) {
+    if (!decoded.role || !['admin', 'superadmin'].includes(decoded.role)) {
+      localStorage.removeItem('adminToken')
       router.push('/backend/login')
       return
     }
 
+    // token ถูกต้อง
     isAuthorized.value = true
-  } catch (error) {
+  } catch (err) {
+    // decode error, token ไม่ถูกต้อง
+    console.error('[AUTH][TOKEN]', err)
     localStorage.removeItem('adminToken')
     router.push('/backend/login')
   }

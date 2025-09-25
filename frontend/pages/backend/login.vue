@@ -7,7 +7,13 @@
 
       <div class="space-y-3">
         <input v-model="email" type="email" placeholder="Email" class="input" />
-        <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" class="input" />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          @keyup.enter="login"
+          class="input"
+        />
         <button @click="login" :disabled="isLoading" class="btn w-full">
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </button>
@@ -32,11 +38,13 @@ interface User {
   id: number
   email: string
   name: string | null
+  role: string
   created_at?: string
 }
 
 interface LoginResponse {
   user: User
+  accessToken?: string
 }
 
 const router = useRouter()
@@ -68,20 +76,34 @@ const login = async () => {
     const res = await $fetch<LoginResponse>('/auth/login', {
       baseURL: base,
       method: 'POST',
-      credentials: 'include', // <-- important for cookies
-      body: { email: email.value.trim(), password: password.value },
+      credentials: 'include', // สำคัญ ต้องส่ง cookie
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        email: email.value.trim(),
+        password: password.value,
+      },
     })
 
     // Save user globally
-    const user = useState<User | null>('auth_user', () => null)
-    user.value = res.user
+    const userState = useState<User | null>('auth_user', () => null)
+    userState.value = res.user
+
+    // Save JWT locally (optional)
+    if (res.accessToken) {
+      localStorage.setItem('adminToken', res.accessToken)
+    }
 
     await router.push('/backend/dashboard')
   } catch (e: any) {
-    errorMessage.value =
-      e?.data?.message ||
-      (e?.status === 401 ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง')
     console.error('Login error:', e)
+    if (e?.status === 401 || e?.data?.message === 'Invalid email or password') {
+      errorMessage.value = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
+    } else {
+      errorMessage.value =
+        e?.data?.message || 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
+    }
   } finally {
     isLoading.value = false
   }
