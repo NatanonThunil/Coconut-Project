@@ -25,7 +25,7 @@ const route = useRoute()
 const allowedRoles = ['admin', 'superadmin'] as const
 
 // Fetch user using httpOnly cookies (works on SSR & client)
-const { data, error } = await useFetch<MeResponse>('/auth/me', {
+const { data, error } = await useFetch<MeResponse>('coconut-api/auth/me', {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,

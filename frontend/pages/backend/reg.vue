@@ -97,7 +97,7 @@ const onSubmit = async () => {
 
   loading.value = true
   try {
-    const res = await $fetch<RegisterResponse>('/auth/register', {
+    const res = await $fetch<RegisterResponse>('coconut-api/auth/register', {
       baseURL: base,
       method: 'POST',
       credentials: 'include', // receive auth cookies

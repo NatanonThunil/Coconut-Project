@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: process.env.API_SECRET,
     public: {
-      beUrl: process.env.BE_BASE_URL || 'http://localhost:5100',
+      beUrl: process.env.BE_BASE_URL || 'https://coconut-kukps.com',
       urlBase: process.env.FE_BASE_URL,
       apiBase: process.env.API_BASE || '',
       LoadingTimeMock: process.env.LOADING_TIME_MOCK,
