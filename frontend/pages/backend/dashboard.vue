@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+const apibases= useRuntimeConfig().public.apiBase
 import DashDonutChart from '~/components/dashDonutChart.vue';
 import { useState, useRuntimeConfig, navigateTo } from '#imports'
 
@@ -58,24 +59,24 @@ const base = useRuntimeConfig().public.beUrl
 // กำหนดการ์ด
 const cardsConfig = [
   { key: 'news', title: 'ข่าวสารทั้งหมด', link: '/backend/news', icon: '/icon/newsnevents.svg' },
-  { key: 'events', title: 'กิจกรรมทั้งหมด', link: '/backend/events', icon: '/icon/calendar.svg' },
-  { key: 'coconuts', title: 'มะพร้าวทั้งหมด', link: '/backend/coconuts', icon: '/icon/coconut.svg' },
+  { key: 'events', title: 'กิจกรรมทั้งหมด', link: '/backend/events', icon: '/icon/event.png' },
+  { key: 'coconuts', title: 'มะพร้าวทั้งหมด', link: '/backend/coconuts', icon: '/icon/coconuti.png' },
   { key: 'experts', title: 'ผู้เชี่ยวชาญ', link: '/backend/experts', icon: '/icon/expert.svg' },
-  { key: 'pests', title: 'ศัตรูพืช', link: '/backend/pests', icon: '/icon/bug.svg' },
-  { key: 'services', title: 'บริการ', link: '/backend/services', icon: '/icon/service.svg' },
-  { key: 'achievements', title: 'ผลงาน/ความสำเร็จ', link: '/backend/achievements', icon: '/icon/trophy.svg' },
-  { key: 'tags', title: 'แท็กทั้งหมด', link: '/backend/tags', icon: '/icon/tag.svg' },
-  { key: 'members', title: 'สมาชิก', link: '/backend/members', icon: '/icon/users.svg' },
-  { key: 'employees', title: 'พนักงาน', link: '/backend/employees', icon: '/icon/users.svg' },
-  { key: 'faqs', title: 'คำถามที่พบบ่อย', link: '/backend/faqs', icon: '/icon/help.svg' },
-  { key: 'chain_values', title: 'ห่วงโซ่มูลค่า', link: '/backend/chain-values', icon: '/icon/chain.svg' },
+  { key: 'pests', title: 'ศัตรูพืช', link: '/backend/pests', icon: '/icon/bugs.png' },
+  { key: 'services', title: 'บริการ', link: '/backend/services', icon: '/icon/customer-support.png' },
+  { key: 'achievements', title: 'ผลงาน/ความสำเร็จ', link: '/backend/achievements', icon: '/icon/medal-.png' },
+  { key: 'tags', title: 'แท็กทั้งหมด', link: '/backend/tags', icon: '/icon/price-tag.png' },
+  { key: 'members', title: 'สมาชิก', link: '/backend/members', icon: '/icon/employee.png' },
+  { key: 'employees', title: 'พนักงาน', link: '/backend/employees', icon: '/icon/team.png' },
+  { key: 'faqs', title: 'คำถามที่พบบ่อย', link: '/backend/faqs', icon: '/icon/help.png' },
+  { key: 'chain_values', title: 'ห่วงโซ่มูลค่า', link: '/backend/chain-values', icon: '/icon/value-chain.png' },
 ]
 
 // สร้าง onlyKeys เพื่อลด payload
 const onlyKeys = cardsConfig.map(c => c.key).join(',')
 
 // Fetch stats overview
-const { data: statsData } = await useFetch<StatsOverview>('/stats/overview', {
+const { data: statsData } = await useFetch<StatsOverview>(`${apibases}/stats/overview`, {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,
@@ -87,7 +88,7 @@ const cards = computed(() =>
 )
 
 // ---------- Fetch logged-in user ----------
-const { data, error } = await useFetch<MeResponse>('coconut-api/auth/me', {
+const { data, error } = await useFetch<MeResponse>(`${apibases}/auth/me`, {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,
@@ -105,7 +106,7 @@ const userName = computed(() => userData.value.name || userData.value.email || '
 // ---------- Logout ----------
 const logout = async () => {
   try {
-    await $fetch('coconut-api/auth/logout', { baseURL: base, method: 'POST', credentials: 'include' })
+    await $fetch(`${apibases}/auth/logout`, { baseURL: base, method: 'POST', credentials: 'include' })
     const user = useState<MeResponse['user'] | null>('auth_user', () => null)
     user.value = null
     await navigateTo('/backend/login')

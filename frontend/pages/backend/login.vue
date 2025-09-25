@@ -46,7 +46,7 @@ const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const isLoading = ref(false)
-
+const baseapi = useRuntimeConfig().public.apiBase 
 const base = useRuntimeConfig().public.beUrl // e.g., http://localhost:5100
 
 const validateInputs = (): boolean => {
@@ -68,7 +68,7 @@ const login = async () => {
   isLoading.value = true
   try {
     
-    const res = await $fetch<LoginResponse>('coconut-api/auth/login', {
+    const res = await $fetch<LoginResponse>(`${baseapi}/auth/login`, {
       baseURL: base,
       method: 'POST',
       credentials: 'include',

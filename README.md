@@ -1,13 +1,13 @@
-# อัพเดต 25 Sep.
+# อัพเดต 26 Sep.
 ### TO-DO
 
 [สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
 
 ### Update List
-- หน้า login บน Web เข้าได้ปกติ โดยการเพิ่ม "coconut-api" หากอยาก Run dev ต้องไปลบออกก่อน
-- ปัญหาใหม่ หน้า DashBoard มันไม่ขึ้นจำนวณทั้งหมด(ไม่ทราบเหมือนกันเกิดจากอะไร)
 
-โดย [Sujeff]
+- แก้ api path สามารถอิงทั้งหมด จาก env ผ่าน nuxt config 
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
 
 # อัพเดต 25 Sep.
 ### TO-DO
@@ -17,13 +17,15 @@
 ### Update List
 - ``login`` เสร็จแล้ว
 - ``reg`` เสร็จแล้ว 
+- หน้า login บน Web เข้าได้ปกติ โดยการเพิ่ม "coconut-api" หากอยาก Run dev ต้องไปลบออกก่อน
+- ปัญหาใหม่ หน้า DashBoard มันไม่ขึ้นจำนวณทั้งหมด(ไม่ทราบเหมือนกันเกิดจากอะไร)
 เพิ่ม module chart สำหรับหน้าบ้าน
 ```bash
 npm install nuxt-charts
 
 ```
 
-โดย [Poom](https://github.com/WasitpolKuekkong)
+โดย [Sujeff] และ โดย [Poom](https://github.com/WasitpolKuekkong)
 
 
 

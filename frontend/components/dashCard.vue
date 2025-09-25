@@ -48,5 +48,24 @@ defineProps({
     padding: 1.5rem;
     margin-top: 1rem;
     justify-content: space-between;
+    transition: all .2s ease-in-out;
+}
+
+
+.dash-card:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+}
+
+.dash-card-content h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #4e6d16;
+    transition: all .2s ease-in-out;
+}
+
+.dash-card:hover .dash-card-content h2 {
+
+    transform: scale(1.05);
 }
 </style>

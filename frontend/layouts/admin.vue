@@ -20,12 +20,12 @@ interface MeResponse {
 const config = useRuntimeConfig()
 const base = config.public.beUrl
 const route = useRoute()
-
+const baseapi = config.public.apiBase
 // Optional: restrict roles here (or remove if not needed)
 const allowedRoles = ['admin', 'superadmin'] as const
 
 // Fetch user using httpOnly cookies (works on SSR & client)
-const { data, error } = await useFetch<MeResponse>('coconut-api/auth/me', {
+const { data, error } = await useFetch<MeResponse>(`${baseapi}/auth/me`, {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,
