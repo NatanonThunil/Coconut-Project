@@ -76,14 +76,9 @@ const login = async () => {
     const res = await $fetch<LoginResponse>('/auth/login', {
       baseURL: base,
       method: 'POST',
-      credentials: 'include', // สำคัญ ต้องส่ง cookie
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        email: email.value.trim(),
-        password: password.value,
-      },
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: { email: email.value.trim(), password: password.value },
     })
 
     // Save user globally
@@ -95,7 +90,13 @@ const login = async () => {
       localStorage.setItem('adminToken', res.accessToken)
     }
 
-    await router.push('/backend/dashboard')
+    // ✅ Redirect depending on role
+    if (res.user.role === 'superadmin') {
+      await router.push('/backend/reg') // superadmin → register
+    } else {
+      await router.push('/backend/dashboard') // others → dashboard
+    }
+
   } catch (e: any) {
     console.error('Login error:', e)
     if (e?.status === 401 || e?.data?.message === 'Invalid email or password') {
@@ -108,6 +109,7 @@ const login = async () => {
     isLoading.value = false
   }
 }
+
 </script>
 
 <style scoped>

@@ -8,7 +8,7 @@
 
 ### Update List
 - ``login`` เสร็จแล้ว
-- ``reg`` เสร็จแล้ว เพิ่ม user ได้ปกติ
+- ``reg`` เสร็จแล้ว 
 เพิ่ม module chart สำหรับหน้าบ้าน
 ```bash
 npm install nuxt-charts
