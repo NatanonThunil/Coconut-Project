@@ -14,6 +14,7 @@ import chainValuesRoutes from './chian_values.js';
 import servicesRoutes from './services.js';
 import searchRoutes from './search.js';
 
+
 // import newsRoutes from './news.js';
 export default [
     { path: '/news', handler: newsRoutes },
@@ -32,6 +33,7 @@ export default [
     { path: '/chain-values', handler: chainValuesRoutes },
     { path: '/services', handler: servicesRoutes },
     { path: '/search', handler: searchRoutes },
+
 
     // { path: '/news', handler: newsRoutes },
 ];

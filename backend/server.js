@@ -9,8 +9,8 @@ import { config } from 'dotenv';
 import routes from './routes/index.js';
 import imgUploadRoutes from './routes/img-upload.js';
 import pdfUploadRoutes from './routes/pdf-upload.js';
-import authRouter from './routes/auth.js'; // <- NEW
-
+import authRouter from './routes/auth.js';
+import statsRouter from './routes/dashboards.js';
 config();
 const app = express();
 
@@ -52,9 +52,9 @@ app.use(express.static('public'));
 app.use('/img-upload', imgUploadRoutes);
 app.use('/pdf-upload', pdfUploadRoutes);
 
-// NEW: public auth routes (register/login/refresh/logout/me) BEFORE API-key wall
-app.use('/auth', authRouter);
 
+app.use('/auth', authRouter);
+app.use('/stats', statsRouter);
 // API-key wall for everything else
 app.use((req, res, next) => {
   const key = req.headers['cocon-key'];

@@ -88,7 +88,7 @@ router.post('/register', async (req, res) => {
     // Set JWT cookies
     setAuthCookies(
       res,
-      signAT({ sub: user.id, email: user.email, role: user.role }),
+      signAT({ sub: user.id, email: user.email, role: user.role ,name: user.name}),
       signRT({ sub: user.id })
     );
 
@@ -124,7 +124,7 @@ router.post('/login', async (req, res) => {
 
     setAuthCookies(
       res,
-      signAT({ sub: user.id, email: user.email, role: user.role }),
+      signAT({ sub: user.id, email: user.email, role: user.role ,name: user.name}),
       signRT({ sub: user.id })
     );
 
@@ -142,7 +142,7 @@ router.get('/me', (req, res) => {
     if (!token) return res.status(401).json({ message: 'No token' });
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    res.json({ user: { id: decoded.sub, email: decoded.email, role: decoded.role } });
+    res.json({ user: { id: decoded.sub, email: decoded.email, name: decoded.name, role: decoded.role } });
   } catch (e) {
     console.error('[AUTH][ME]', e);
     res.status(401).json({ message: 'Invalid token' });
