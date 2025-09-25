@@ -1,71 +1,112 @@
 <template>
-  <div v-if="isAuthorized">
-    <header><!-- Header content --></header>
-    <main>
-      <div class="admin-content">
-        <section class="admin-content-l"><Adminsidebar /></section>
-        <section class="admin-content-r"><slot /></section>
+  <div class="be-bg-cl">
+    <div class="login-form-container">
+      <img src="/logo/CKH-round.ico" draggable="false" alt="Logo" />
+      <h2 class="login-title">เข้าสู่ระบบหลังบ้าน</h2>
+      <p class="login-subtitle">Please enter your credentials to continue</p>
+
+      <div class="space-y-3">
+        <input v-model="email" type="email" placeholder="Email" class="input" />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          @keyup.enter="login"
+          class="input"
+        />
+        <button @click="login" :disabled="isLoading" class="btn w-full">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
       </div>
-    </main>
+
+      <p v-if="errorMessage" class="text-red-600 mt-2">{{ errorMessage }}</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode' // แก้ import ให้ถูกต้อง
+useHead({
+  title: 'Backend - Login',
+  meta: [{ name: 'description', content: 'Home page for Coconut Knowledge Hub' }],
+})
+definePageMeta({ layout: 'admin-login' })
 
-interface MeResponse {
-  user: { id: number; email: string; name: string | null; role: string; created_at: string }
+import { ref } from 'vue'
+import { useRouter, useState, useRuntimeConfig } from '#imports'
+
+interface User {
+  id: number
+  email: string
+  name: string | null
+  role: string
+  created_at?: string
 }
 
-onMounted(() => {
-  window.scrollTo(0, 0)
+interface LoginResponse {
+  user: User
+  accessToken?: string
+}
 
-  const token = localStorage.getItem('adminToken')
-  if (!token) {
-    router.push('/backend/login')
-    return
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const isLoading = ref(false)
+
+const base = useRuntimeConfig().public.beUrl // e.g., http://localhost:5100
+
+const validateInputs = (): boolean => {
+  if (!email.value || !password.value) {
+    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่าน'
+    return false
   }
+  if (!/\S+@\S+\.\S+/.test(email.value)) {
+    errorMessage.value = 'กรุณากรอกอีเมลให้ถูกต้อง'
+    return false
+  }
+  return true
+}
 
+const login = async () => {
+  errorMessage.value = ''
+  if (!validateInputs()) return
+
+  isLoading.value = true
   try {
-    // decode token
-    const decoded: { exp?: number; role?: string } = jwtDecode(token)
+    const res = await $fetch<LoginResponse>('/auth/login', {
+      baseURL: base,
+      method: 'POST',
+      credentials: 'include', // สำคัญ ต้องส่ง cookie
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        email: email.value.trim(),
+        password: password.value,
+      },
+    })
 
-    // ตรวจสอบ expired
-    if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
-      localStorage.removeItem('adminToken')
-      router.push('/backend/login')
-      return
+    // Save user globally
+    const userState = useState<User | null>('auth_user', () => null)
+    userState.value = res.user
+
+    // Save JWT locally (optional)
+    if (res.accessToken) {
+      localStorage.setItem('adminToken', res.accessToken)
     }
 
-    // ตรวจสอบ role
-    if (!decoded.role || !['admin', 'superadmin'].includes(decoded.role)) {
-      localStorage.removeItem('adminToken')
-      router.push('/backend/login')
-      return
+    await router.push('/backend/dashboard')
+  } catch (e: any) {
+    console.error('Login error:', e)
+    if (e?.status === 401 || e?.data?.message === 'Invalid email or password') {
+      errorMessage.value = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'
+    } else {
+      errorMessage.value =
+        e?.data?.message || 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
     }
-
-    // token ถูกต้อง
-    isAuthorized.value = true
-  } catch (err) {
-    // decode error, token ไม่ถูกต้อง
-    console.error('[AUTH][TOKEN]', err)
-    localStorage.removeItem('adminToken')
-    router.push('/backend/login')
+  } finally {
+    isLoading.value = false
   }
-})
-
-// Derive auth state
-const user = computed(() => data.value?.user ?? null)
-const isAuthorized = computed(() => {
-  if (!user.value) return false
-  return allowedRoles.includes(user.value.role as (typeof allowedRoles)[number])
-})
-
-// Redirect if not authorized
-if (error.value || !isAuthorized.value) {
-  await navigateTo('/backend/login?next=' + encodeURIComponent(route.fullPath))
 }
 </script>
 
