@@ -6,7 +6,10 @@
 ### Update List
 
 - แก้ api path สามารถอิงทั้งหมด จาก ``.env`` ผ่าน nuxt config 
+- เพิ่ม ``Tags`` ใน ``adminsidebar``
+- ลบปุ่ม ``Toggle en`` ใน ``News``
 - เพิ่ม ``QuickAccess``
+
 ```bash
 
 DROP TABLE IF EXISTS user_quick_access;

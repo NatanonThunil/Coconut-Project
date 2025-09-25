@@ -8,8 +8,7 @@
       </div>
 
       <div>
-        <button @click="logout"
-          style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <button @click="logout" class="btn-logout">
           ออกจากระบบ
         </button>
       </div>
@@ -23,7 +22,7 @@
 
     <!-- ✅ QUICK ACCESS -->
     <div class="dash-quickaccess">
-      <h2 class="dash-section">Quick access</h2>
+      <h2 class="dash-section">ใช้บ่อย</h2>
 
       <div v-if="quickCards.length" class="dash-card-container quick-access">
         <dash-card v-for="q in quickCards" :key="q.key" :link="q.link" :title="q.title" :count="q.count" :icon="q.icon"
@@ -184,13 +183,31 @@ const logout = async () => {
 </script>
 
 <style scoped>
+.btn-logout {
+  background-color: #ffffff;
+  color: rgb(255, 0, 0);
+  font-weight: medium;
+  font-size: larger;
+  outline: red 2px solid;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
 
+.btn-logout:hover {
+  background-color: #ff0000;
+  color: white;
+  transform: scale(1.05);
+}
 .quick-access {
   margin: 0;
   background-color: #4e6d16;
   padding: 1rem;
   border-radius: 8px;
 }
+
 .dash-section {
   margin: 1rem 0;
 }

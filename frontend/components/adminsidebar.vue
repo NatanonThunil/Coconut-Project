@@ -37,6 +37,7 @@ const menuItems = [
   { label: "จัดการคณะทำงาน", path: "/backend/employees" },
   { label: "จัดการสมาชิก", path: "/backend/members" },
   { label: "จัดการผู้เชี่ยวชาญ", path: "/backend/experts" },
+    { label: "จัดการแท็กผู้เชี่ยวชาญ", path: "/backend/tags" },
   { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
   { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
    { label: "จัดการข้อมูลศัตรูพืช", path: "/backend/pests" },

@@ -29,6 +29,14 @@
                             </button>
                         </div>
                     </th>
+                    
+                    <th>
+                        <div class="checkbox-id-container">
+                            <div>Image
+
+                            </div>
+                        </div>
+                    </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>
@@ -36,13 +44,6 @@
                                 <button @click="toggleSort('name')">
                                     <div :class="{ 'rotate': sortBy === 'name' && sortDirection === -1 }">▲</div>
                                 </button>
-                            </div>
-                        </div>
-                    </th>
-                    <th>
-                        <div class="checkbox-id-container">
-                            <div>Image
-
                             </div>
                         </div>
                     </th>
@@ -1097,7 +1098,7 @@ const toggleSelectAll = () => {
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
-    width: 20%;
+    width: 10%;
 }
 
 .item-list-table th:nth-child(7),

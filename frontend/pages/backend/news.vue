@@ -128,20 +128,14 @@
     <div v-if="showModalAddNews || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขข่าว' : 'เพิ่มข่าว' }}</h2>
-            <div class="lang-toggle">
-                <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang ? 'English' : 'Thai' }}
-                </button>
-            </div>
+
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label v-show="activeLang">พาดหัวข่าว</label>
-                    <input v-show="activeLang" class="add-text-input" v-model="currentNews.title"
-                        placeholder="Enter title" required />
-                    <label v-show="!activeLang">พาดหัวข่าว Eng</label>
-                    <input v-show="!activeLang" class="add-text-input" v-model="currentNews.title_en"
-                        placeholder="Enter title" required />
+                    <label>พาดหัวข่าว</label>
+                    <input class="add-text-input" v-model="currentNews.title" placeholder="Enter title" required />
+                    <label>พาดหัวข่าว Eng</label>
+                    <input class="add-text-input" v-model="currentNews.title_en" placeholder="Enter title" required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentNews.author" placeholder="Enter author name"
                         required />
@@ -162,24 +156,25 @@
                                 File</button>
                         </div>
                     </div>
+                    <div class="hotnews-toggle-container">
+
+                        <button class="toggle-btn" :class="{ active: currentNews.hot_new }"
+                            @click="currentNews.hot_new = !currentNews.hot_new">
+                            {{ currentNews.hot_new ? 'Hot News' : 'News' }}
+                        </button>
+
+                    </div>
                 </section>
                 <section>
-                    <div class="hotnews-toggle-container">
-                        <label class="hotnews-toggle-label">เป็นข่าวใหญ่</label>
-                        <label class="hotnews-switch">
-                            <input v-model="currentNews.hot_new" type="checkbox">
-                            <span class="hotnews-slider"></span>
-                        </label>
-                    </div>
+
                     <label>Description</label>
-                    <TiptapEditor v-show="activeLang" v-model="currentNews.description" />
-                    <TiptapEditor v-show="!activeLang" v-model="currentNews.description_en" />
-                    <label v-show="activeLang">สรุป</label>
-                    <textarea v-show="activeLang" v-model="currentNews.summerize"
-                        placeholder="Enter summary"></textarea>
-                    <label v-show="!activeLang">สรุป Eng</label>
-                    <textarea v-show="!activeLang" v-model="currentNews.summerize_en"
-                        placeholder="Enter summary"></textarea>
+                    <TiptapEditor v-model="currentNews.description" />
+                    <label>Description Eng</label>
+                    <TiptapEditor v-model="currentNews.description_en" />
+                    <label>สรุป</label>
+                    <textarea v-model="currentNews.summerize" placeholder="Enter summary"></textarea>
+                    <label>สรุป Eng</label>
+                    <textarea v-model="currentNews.summerize_en" placeholder="Enter summary"></textarea>
                 </section>
             </div>
             <div class="modal-actions">
@@ -1205,6 +1200,7 @@ onMounted(() => {
 }
 
 .hotnews-toggle-container {
+    justify-content: center;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1219,10 +1215,49 @@ onMounted(() => {
 
 /* Switch Container */
 .hotnews-switch {
+    padding: 0.1em 0.25em;
+    width: 13em;
+    height: 4.2em;
+    background-color: #212121;
+    border: 0.08em solid #fff;
+    border-radius: 0.3em;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.hotnews-switch span {
     position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 22px;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.toggle-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 2px solid #ccc;
+  background: #f5f5f5;
+  color: #555;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.toggle-btn:hover {
+  background: #eee;
+}
+
+.toggle-btn.active {
+  background: #4E6D16;   /* สีเขียวตอน active */
+  border-color: #4E6D16;
+  color: #fff;
+}
+
+.hotnews-switch span:hover {
+    transition: all 0.5s;
+    transform: translate(0, 0.4em);
+    box-shadow: 0 0 0 0 #fff;
 }
 
 /* Hide default checkbox */
@@ -1232,40 +1267,7 @@ onMounted(() => {
     height: 0;
 }
 
-/* Toggle Background */
-.hotnews-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-}
 
-/* Circle inside Toggle */
-.hotnews-slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 4px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-/* Checked State */
-input:checked+.hotnews-slider {
-    background-color: #4E6D16;
-}
-
-input:checked+.hotnews-slider:before {
-    transform: translateX(18px);
-}
 
 @media screen and (max-width: 1750px) {
 
