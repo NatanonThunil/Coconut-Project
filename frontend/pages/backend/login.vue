@@ -7,13 +7,7 @@
 
       <div class="space-y-3">
         <input v-model="email" type="email" placeholder="Email" class="input" />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Password"
-          @keyup.enter="login"
-          class="input"
-        />
+        <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" class="input" />
         <button @click="login" :disabled="isLoading" class="btn w-full">
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </button>
@@ -73,7 +67,8 @@ const login = async () => {
 
   isLoading.value = true
   try {
-    const res = await $fetch<LoginResponse>('/auth/login', {
+    
+    const res = await $fetch<LoginResponse>('coconut-api/auth/login', {
       baseURL: base,
       method: 'POST',
       credentials: 'include',
@@ -81,20 +76,20 @@ const login = async () => {
       body: { email: email.value.trim(), password: password.value },
     })
 
+    console.log("Login response:", res); 
+
     // Save user globally
     const userState = useState<User | null>('auth_user', () => null)
     userState.value = res.user
 
-    // Save JWT locally (optional)
-    if (res.accessToken) {
-      localStorage.setItem('adminToken', res.accessToken)
-    }
 
-    // ✅ Redirect depending on role
+    // Save JWT locally (optional)
+    if (res.accessToken) localStorage.setItem('adminToken', res.accessToken)
+
     if (res.user.role === 'superadmin') {
-      await router.push('/backend/reg') // superadmin → register
+      await router.push('/backend/reg')
     } else {
-      await router.push('/backend/dashboard') // others → dashboard
+      await router.push('/backend/dashboard')
     }
 
   } catch (e: any) {

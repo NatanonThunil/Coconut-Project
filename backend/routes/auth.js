@@ -105,7 +105,7 @@ router.post("/register", async (req, res) => {
     // Set JWT cookies
     setAuthCookies(
       res,
-      signAT({ sub: user.id, email: user.email, role: user.role ,name: user.name}),
+      signAT({ sub: user.id, email: user.email, role: user.role, name: user.name }),
       signRT({ sub: user.id })
     );
 
@@ -118,31 +118,19 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// --- Login ---
 router.post("/login", async (req, res) => {
   try {
-    const { value, error } = loginSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: error.message });
-
-    const { email, password } = value;
+    const { email, password } = req.body;
 
     const [rows] = await db.query("SELECT * FROM users WHERE email=?", [email]);
-    if (!rows.length) {
-      console.warn("[AUTH][LOGIN] No user found for", email);
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+    if (!rows.length) return res.status(401).json({ message: "Invalid email or password" });
 
-    const u = rows[0];
-
-    // <-- ตรงนี้ -->
+    let u = rows[0];
     let storedHash = u.password_hash;
     if (Buffer.isBuffer(storedHash)) storedHash = storedHash.toString("utf8");
 
     const valid = await argon2.verify(storedHash, password);
-    if (!valid) {
-      console.warn("[AUTH][LOGIN] Invalid password for", email);
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+    if (!valid) return res.status(401).json({ message: "Invalid email or password" });
 
     const user = {
       id: u.id,
@@ -152,21 +140,19 @@ router.post("/login", async (req, res) => {
       created_at: u.created_at,
     };
 
-    const accessToken = signAT({
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    });
+    // สร้าง token
+    const accessToken = signAT({ sub: user.id, email: user.email, role: user.role });
     const refreshToken = signRT({ sub: user.id });
 
+    // ตั้ง cookie
     setAuthCookies(res, accessToken, refreshToken);
 
-    console.log("[AUTH][LOGIN] User logged in:", email);
+    // ส่ง response user และ accessToken
+    return res.json({ user, accessToken });
 
-    res.json({ user, accessToken });
   } catch (e) {
     console.error("[AUTH][LOGIN]", e);
-    res.status(500).json({ message: e.message || "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

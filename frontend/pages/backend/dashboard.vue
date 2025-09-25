@@ -43,6 +43,8 @@
 
 <script setup lang="ts">
 import DashDonutChart from '~/components/dashDonutChart.vue';
+import { useState, useRuntimeConfig, navigateTo } from '#imports'
+
 
 definePageMeta({ auth: true, layout: 'admin' })
 
@@ -53,12 +55,11 @@ type StatsOverview = Record<string, number> & { generated_at?: string }
 
 const base = useRuntimeConfig().public.beUrl
 
-// ✅ กำหนดการ์ดที่อยากโชว์ + map ไปยังคีย์ของ /stats/overview
+// กำหนดการ์ด
 const cardsConfig = [
   { key: 'news', title: 'ข่าวสารทั้งหมด', link: '/backend/news', icon: '/icon/newsnevents.svg' },
   { key: 'events', title: 'กิจกรรมทั้งหมด', link: '/backend/events', icon: '/icon/calendar.svg' },
   { key: 'coconuts', title: 'มะพร้าวทั้งหมด', link: '/backend/coconuts', icon: '/icon/coconut.svg' },
-
   { key: 'experts', title: 'ผู้เชี่ยวชาญ', link: '/backend/experts', icon: '/icon/expert.svg' },
   { key: 'pests', title: 'ศัตรูพืช', link: '/backend/pests', icon: '/icon/bug.svg' },
   { key: 'services', title: 'บริการ', link: '/backend/services', icon: '/icon/service.svg' },
@@ -68,42 +69,43 @@ const cardsConfig = [
   { key: 'employees', title: 'พนักงาน', link: '/backend/employees', icon: '/icon/users.svg' },
   { key: 'faqs', title: 'คำถามที่พบบ่อย', link: '/backend/faqs', icon: '/icon/help.svg' },
   { key: 'chain_values', title: 'ห่วงโซ่มูลค่า', link: '/backend/chain-values', icon: '/icon/chain.svg' },
-
 ]
 
-// ส่ง only=... เพื่อลดข้อมูลที่ backend ต้องรวม
+// สร้าง onlyKeys เพื่อลด payload
 const onlyKeys = cardsConfig.map(c => c.key).join(',')
 
-const { data: statsData, error: statsError } = await useFetch<StatsOverview>('/stats/overview', {
+// Fetch stats overview
+const { data: statsData } = await useFetch<StatsOverview>('/stats/overview', {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,
   query: { only: onlyKeys },
 })
 
-// รวม count ใส่การ์ด (ถ้า key ไหนไม่มี ให้เป็น 0)
 const cards = computed(() =>
-  cardsConfig.map(c => ({
-    ...c,
-    count: Number((statsData.value?.[c.key] as number) ?? 0),
-  }))
+  cardsConfig.map(c => ({ ...c, count: Number(statsData.value?.[c.key] ?? 0) }))
 )
 
-// ---------- Me (show name/email) ----------
-const { data, error } = await useFetch<MeResponse>('/auth/me', {
+// ---------- Fetch logged-in user ----------
+const { data, error } = await useFetch<MeResponse>('coconut-api/auth/me', {
   baseURL: base,
   credentials: 'include',
   headers: process.server ? useRequestHeaders(['cookie']) : undefined,
 })
-if (error.value) {
-  await navigateTo('/backend/login?next=' + encodeURIComponent('/backend/dashboard'))
+
+// ถ้า fetch user ล้มเหลว ให้ redirect ตรง ๆ ไป login
+if (error.value || !data.value?.user) {
+  await navigateTo('/backend/login')
 }
-const userName = computed(() => data.value?.user?.name || 'User')
+
+// fallback ป้องกัน undefined
+const userData = computed(() => data.value?.user ?? { name: '', email: '', id: 0, created_at: '' })
+const userName = computed(() => userData.value.name || userData.value.email || 'User')
 
 // ---------- Logout ----------
 const logout = async () => {
   try {
-    await $fetch('/auth/logout', { baseURL: base, method: 'POST', credentials: 'include' })
+    await $fetch('coconut-api/auth/logout', { baseURL: base, method: 'POST', credentials: 'include' })
     const user = useState<MeResponse['user'] | null>('auth_user', () => null)
     user.value = null
     await navigateTo('/backend/login')
@@ -112,7 +114,6 @@ const logout = async () => {
   }
 }
 </script>
-
 
 
 
