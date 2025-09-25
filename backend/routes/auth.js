@@ -169,20 +169,28 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: e.message || "Server error" });
   }
 });
-// --- Me ---
-router.get("/me", (req, res) => {
+
+router.get("/me", async (req, res) => {
   try {
     const token = req.cookies.access_token;
     if (!token) return res.status(401).json({ message: "No token" });
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    res.json({
-      user: { id: decoded.sub, email: decoded.email, role: decoded.role },
-    });
+
+
+    const [rows] = await db.query(
+      "SELECT id, email, name, role FROM users WHERE id=?",
+      [decoded.sub]
+    );
+    if (!rows.length) return res.status(404).json({ message: "User not found" });
+
+    const u = rows[0];
+    res.json({ user: { id: u.id, name: u.name, email: u.email, role: u.role } });
   } catch (e) {
     console.error("[AUTH][ME]", e);
     res.status(401).json({ message: "Invalid token" });
   }
 });
+
 
 export default router;

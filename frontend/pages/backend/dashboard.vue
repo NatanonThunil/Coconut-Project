@@ -5,7 +5,7 @@
     <div class="dash-title-container">
       <div class="dash-title">
         <h1>ยินดีต้อนรับ </h1>
-        <h1>!</h1>
+      
         <h1 class="green">{{ userName }}</h1>
 
       </div>
@@ -73,11 +73,6 @@ const cardsConfig = [
 
 // ส่ง only=... เพื่อลดข้อมูลที่ backend ต้องรวม
 const onlyKeys = cardsConfig.map(c => c.key).join(',')
-const donutCounts = computed(() => ({
-  news: Number(statsData.value?.news ?? 0),
-  events: Number(statsData.value?.events ?? 0),
-  coconuts: Number(statsData.value?.coconuts ?? 0),
-}))
 
 const { data: statsData, error: statsError } = await useFetch<StatsOverview>('/stats/overview', {
   baseURL: base,
@@ -103,7 +98,7 @@ const { data, error } = await useFetch<MeResponse>('/auth/me', {
 if (error.value) {
   await navigateTo('/backend/login?next=' + encodeURIComponent('/backend/dashboard'))
 }
-const userName = computed(() => data.value?.user?.name || data.value?.user?.email || 'User')
+const userName = computed(() => data.value?.user?.name || 'User')
 
 // ---------- Logout ----------
 const logout = async () => {
