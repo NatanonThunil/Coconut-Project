@@ -21,9 +21,13 @@
         </div>
       </div>
       <div class="editor-text-container">
-        <div class="editor-switch">
-          <button type="button" @click="toggleEditor" class="switch-button">Switch to {{ isThai ? 'English' : 'Thai'
-          }}</button>
+        <div class="hero-lang-switch">
+          <div class="editor-switch">
+            <!-- <button type="button" @click="toggleEditor" class="switch-button">Switch to {{ isThai ? 'English' : 'Thai'
+              }}</button> -->
+            <button @click="() => { isThai = true }" :class="{ active: isThai }">ไทย</button>
+            <button @click="() => { isThai = false }" :class="{ active: !isThai }">English</button>
+          </div>
         </div>
         <div class="editor-container">
           <label v-if="isThai">Text (Thai)</label>
@@ -220,7 +224,7 @@ const updateHeadline = async () => {
       imagePath
     );
 
-    
+
     loadingstatetext.value = 'Headline updated successfully';
     await fetchHeadline();
   } catch (error) {
@@ -240,6 +244,47 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.editor-switch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  outline: 2px solid #b6e3db;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.editor-switch button {
+  width: 50%;
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 15px;
+
+  cursor: pointer;
+  transition: background 0.3s;
+
+}
+
+
+.editor-switch button:hover {
+
+  background: #f0f0f0;
+
+
+}
+.editor-switch button.active {
+background: linear-gradient(90deg, #5edce0, #b6e3db);
+}
+
+.slider-input {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: auto 0;
+  gap: 1rem;
+  padding: 1rem;
+}
+
 .labslider {
   width: 100%;
 }
@@ -327,7 +372,7 @@ onMounted(() => {
   color: white;
   text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.7);
   transform: translate(-50%, -50%);
-
+ font-size: clamp(0.5rem, 1.1vw, 2rem);
 }
 
 .form-container {
@@ -343,17 +388,19 @@ onMounted(() => {
 }
 
 .save-button {
-  background: #007bff;
+  background: linear-gradient(90deg, #5e97e0, #b6e3db);
   color: #ffffff;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .save-button:hover {
-  background: #0056b3;
+  background: #b6e3db;
+  color: black;
+  transform: scale(1.02);
 }
 
 @media (max-width: 1550px) {

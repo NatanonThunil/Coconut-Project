@@ -41,7 +41,7 @@ const emit = defineEmits<{ (e: 'clicked'): void }>()
 
 
 .dash-card:hover {
-    background-color: rgb(223, 223, 223);
+    background-color: rgb(247, 247, 247);
     box-shadow: 0 0px 12px rgba(255, 255, 255, 1);
     transform: scale(1.05);
 }

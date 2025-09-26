@@ -94,18 +94,14 @@
     <div v-if="showModalAddChainValue || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไข Value Chain' : 'เพิ่ม Value Chain' }}</h2>
-            <div class="lang-toggle">
-                <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang ? 'English' : 'Thai' }}
-                </button>
-            </div>
+            
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
-                    <label v-show="activeLang">ชื่อ Value Chain</label>
-                    <input v-show="activeLang" class="add-text-input" v-model="currentChainValue.title" placeholder="Enter title" required />
-                    <label v-show="!activeLang">ชื่อ Value Chain (English)</label>
-                    <input v-show="!activeLang" class="add-text-input" v-model="currentChainValue.title_en" placeholder="Enter title (English)" required />
+                    <label >ชื่อ Value Chain</label>
+                    <input  class="add-text-input" v-model="currentChainValue.title" placeholder="Enter title" required />
+                    <label >ชื่อ Value Chain (English)</label>
+                    <input class="add-text-input" v-model="currentChainValue.title_en" placeholder="Enter title (English)" required />
 
                     <label>รองรับรูปภาพ PNG, JPG และ JPEG(ขนาดไฟล์ไม่เกิน 25 MB)</label>
                     <div class="image-upload-container">
@@ -123,8 +119,9 @@
                 </section>
                 <section>
                     <label>Description</label>
-                    <textarea v-show="activeLang" class="add-text-input" v-model="currentChainValue.description" placeholder="Enter description" required></textarea>
-                    <textarea v-show="!activeLang" class="add-text-input" v-model="currentChainValue.description_en" placeholder="Enter description (English)" required></textarea>
+                    <textarea  class="add-text-input" v-model="currentChainValue.description" placeholder="Enter description" required></textarea>
+                    <label>Description (English)</label>
+                    <textarea class="add-text-input" v-model="currentChainValue.description_en" placeholder="Enter description (English)" required></textarea>
 
                     <label>Type</label>
                     <select v-model="currentChainValue.type" class="category-select" required>

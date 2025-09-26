@@ -203,7 +203,8 @@ const logout = async () => {
 }
 .quick-access {
   margin: 0;
-  background-color: #4e6d16;
+ 
+  background: linear-gradient(90deg,#77fde0,#b6e3db);
   padding: 1rem;
   border-radius: 8px;
 }

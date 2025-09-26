@@ -167,7 +167,7 @@ const navigateTo = (path) => {
   transform: scale(1.05);
 }
 .menu li.active {
-  background-color: #7eb9af;
+ background: linear-gradient(90deg,#5c968b,#91e6d6);
   color: white;
   transform: scale(1.05);
 }

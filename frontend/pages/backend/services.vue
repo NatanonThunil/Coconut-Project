@@ -7,7 +7,7 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ หรือ รายละเอียด" />
         <div class="news-check-publish">
-             <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
+            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
             <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
             <button class="add-news-btn" @click="openAddServiceModal">เพิ่มบริการ</button>
         </div>
@@ -66,7 +66,7 @@
                 <tr v-for="service in filteredSortedServices" :key="service.id">
                     <td>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="service.selected"  class="checkbox-decorate" />
+                            <input type="checkbox" v-model="service.selected" class="checkbox-decorate" />
                             <p>{{ service.id }}</p>
                         </div>
                     </td>
@@ -74,7 +74,7 @@
                         <img v-if="service.image" :src="service.image" alt="Service Image" class="service-image" />
                     </td>
                     <td>{{ service.title }}</td>
-                    <td>{{ service.description }}</td>
+                    <td>{{ toPlainText(service.description) }}</td>
                     <td>
                         <label class="status-toggle">
                             <input type="checkbox" :checked="service.status" @change="toggleStatus(service)" />
@@ -112,11 +112,7 @@
     <div v-if="showModalAddService || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขบริการ' : 'เพิ่มบริการ' }}</h2>
-            <div class="lang-toggle">
-                <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang ? 'English' : 'Thai' }}
-                </button>
-            </div>
+
             <div class="divider"></div>
             <div class="modal-content">
                 <section>
@@ -136,14 +132,15 @@
                             <button type="button" class="browse-btn" @click="triggerFileInput">Browse File</button>
                         </div>
                     </div>
-                    <label>{{ activeLang ? 'ชื่อบริการ' : 'ชื่อบริการ (English)' }}</label>
-                    <input v-show="activeLang" class="add-text-input" v-model="currentService.title"
-                        placeholder="Enter title" required />
-                    <input v-show="!activeLang" class="add-text-input" v-model="currentService.title_en"
-                        placeholder="Enter title" required />
-                    <label>{{ activeLang ? 'รายละเอียด' : 'รายละเอียด (English)' }}</label>
-                    <TiptapEditor v-show="activeLang" v-model="currentService.description" />
-                    <TiptapEditor v-show="!activeLang" v-model="currentService.description_en" />
+                    <label> ชื่อบริการ</label>
+                    <input class="add-text-input" v-model="currentService.title" placeholder="Enter title" required />
+                    <label > ชื่อบริการ (English)</label>
+                    <input class="add-text-input" v-model="currentService.title_en" placeholder="Enter title"
+                        required />
+                    <label>รายละเอียด</label>
+                    <TiptapEditor  v-model="currentService.description" />
+                    <label >รายละเอียด (English)</label>
+                    <TiptapEditor  v-model="currentService.description_en" />
 
                 </section>
             </div>
@@ -206,13 +203,13 @@ const sortBy = ref(null);
 const sortDirection = ref(1);
 
 const currentService = ref({
-  id: null,
-  title: '',
-  title_en: '',
-  image: '',
-  description: '',
-  description_en: '',
-  status: 0,
+    id: null,
+    title: '',
+    title_en: '',
+    image: '',
+    description: '',
+    description_en: '',
+    status: 0,
 });
 
 const cropperInstance = ref(null);
@@ -224,87 +221,99 @@ const activeLang = ref(true);
 const toggleLang = () => { activeLang.value = !activeLang.value; };
 
 const toggleSort = (column) => {
-  if (sortBy.value === column) sortDirection.value *= -1;
-  else { sortBy.value = column; sortDirection.value = 1; }
+    if (sortBy.value === column) sortDirection.value *= -1;
+    else { sortBy.value = column; sortDirection.value = 1; }
 };
+function toPlainText(html) {
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+
+
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+// Example:
+const html = `<p>r<em><u>r</u>rrrrrrr<u>r</u></em></p>`;
+console.log(toPlainText(html)); // Output: rrrrrrrrr
 
 const filteredSortedServices = computed(() => {
-  const q = (searchQuery.value || '').toLowerCase().trim();
-  let filtered = Services.value.filter(s => {
-    const idStr = String(s.id || '');
-    const t  = String(s.title || '').toLowerCase();
-    const te = String(s.title_en || '').toLowerCase();
-    const d  = String(s.description || '').toLowerCase();
-    const de = String(s.description_en || '').toLowerCase();
-    return (
-      idStr.includes(q) ||
-      t.includes(q) || te.includes(q) ||
-      d.includes(q) || de.includes(q)
-    );
-  });
-
-  if (sortBy.value) {
-    filtered.sort((a, b) => {
-      const A = a[sortBy.value];
-      const B = b[sortBy.value];
-      if (sortBy.value === 'id') {
-        return ((Number(A) || 0) - (Number(B) || 0)) * sortDirection.value;
-      }
-      return String(A ?? '').localeCompare(String(B ?? ''), 'th') * sortDirection.value;
+    const q = (searchQuery.value || '').toLowerCase().trim();
+    let filtered = Services.value.filter(s => {
+        const idStr = String(s.id || '');
+        const t = String(s.title || '').toLowerCase();
+        const te = String(s.title_en || '').toLowerCase();
+        const d = String(s.description || '').toLowerCase();
+        const de = String(s.description_en || '').toLowerCase();
+        return (
+            idStr.includes(q) ||
+            t.includes(q) || te.includes(q) ||
+            d.includes(q) || de.includes(q)
+        );
     });
-  }
-  return filtered;
+
+    if (sortBy.value) {
+        filtered.sort((a, b) => {
+            const A = a[sortBy.value];
+            const B = b[sortBy.value];
+            if (sortBy.value === 'id') {
+                return ((Number(A) || 0) - (Number(B) || 0)) * sortDirection.value;
+            }
+            return String(A ?? '').localeCompare(String(B ?? ''), 'th') * sortDirection.value;
+        });
+    }
+    return filtered;
 });
 
 const toggleSelectAll = () => {
-  Services.value.forEach(s => (s.selected = selectAll.value));
+    Services.value.forEach(s => (s.selected = selectAll.value));
 };
 
 const openAddServiceModal = () => {
-  currentService.value = {
-    id: null,
-    title: '',
-    title_en: '',
-    image: '',
-    description: '',
-    description_en: '',
-    status: 0,
-  };
-  showModalAddService.value = true;
+    currentService.value = {
+        id: null,
+        title: '',
+        title_en: '',
+        image: '',
+        description: '',
+        description_en: '',
+        status: 0,
+    };
+    showModalAddService.value = true;
 };
 
 const editItem = (service) => {
-  currentService.value = { ...service };
-  showModalEdit.value = true;
-  nextTick(() => console.log('Editing service:', currentService.value));
+    currentService.value = { ...service };
+    showModalEdit.value = true;
+    nextTick(() => console.log('Editing service:', currentService.value));
 };
 
 const askDelete = (id, title) => {
-  deleteId.value = id;
-  deleteName.value = title;
-  showModal.value = true;
+    deleteId.value = id;
+    deleteName.value = title;
+    showModal.value = true;
 };
 
 const confirmDelete = async () => {
-  try {
-    await deleteService(deleteId.value);
-    Services.value = Services.value.filter(s => s.id !== deleteId.value);
-    ServicesNum.value = Services.value.length;
-    showModal.value = false;
-    alert('Service deleted successfully.');
-  } catch (err) {
-    alert(`Error deleting service: ${err?.message || err}`);
-    console.error(err);
-  } finally {
-    deleteId.value = null;
-  }
+    try {
+        await deleteService(deleteId.value);
+        Services.value = Services.value.filter(s => s.id !== deleteId.value);
+        ServicesNum.value = Services.value.length;
+        showModal.value = false;
+        alert('Service deleted successfully.');
+    } catch (err) {
+        alert(`Error deleting service: ${err?.message || err}`);
+        console.error(err);
+    } finally {
+        deleteId.value = null;
+    }
 };
 
 const cancelDelete = () => { showModal.value = false; };
 
 const closeModal = () => {
-  showModalAddService.value = false;
-  showModalEdit.value = false;
+    showModalAddService.value = false;
+    showModalEdit.value = false;
 };
 
 /* ----------------- Image: pick → crop → preview ----------------- */
@@ -313,119 +322,119 @@ const triggerFileInput = () => fileInput.value?.click();
 const removeImage = () => { currentService.value.image = ''; };
 
 const handleDragDrop = (e) => {
-  const files = e.dataTransfer.files;
-  if (files?.length) handleFileUpload({ target: { files } });
+    const files = e.dataTransfer.files;
+    if (files?.length) handleFileUpload({ target: { files } });
 };
 
 const handleFileUpload = (event) => {
-  const file = event.target.files?.[0];
-  if (!file || !file.type.startsWith('image/')) return;
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    croppingImage.value = reader.result;
-    showCropper.value = true;
-    nextTick(() => {
-      cropperInstance.value = new Cropper(cropperImage.value, {
-        aspectRatio: 16 / 9,
-        viewMode: 1,
-        autoCropArea: 1,
-        background: false,
-        zoomable: false,
-        movable: false,
-        rotatable: false,
-        scalable: false,
-      });
-    });
-  };
-  reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+        croppingImage.value = reader.result;
+        showCropper.value = true;
+        nextTick(() => {
+            cropperInstance.value = new Cropper(cropperImage.value, {
+                aspectRatio: 16 / 9,
+                viewMode: 1,
+                autoCropArea: 1,
+                background: false,
+                zoomable: false,
+                movable: false,
+                rotatable: false,
+                scalable: false,
+            });
+        });
+    };
+    reader.readAsDataURL(file);
 };
 
 const handleImageUpload = (event) => handleFileUpload(event);
 
 const cropImage = () => {
-  if (!cropperInstance.value) return;
-  const canvas = cropperInstance.value.getCroppedCanvas();
-  if (!canvas) return;
-  // preview as DataURL; upload on submit
-  currentService.value.image = canvas.toDataURL('image/png');
-  showCropper.value = false;
-  cropperInstance.value.destroy();
-  cropperInstance.value = null;
+    if (!cropperInstance.value) return;
+    const canvas = cropperInstance.value.getCroppedCanvas();
+    if (!canvas) return;
+    // preview as DataURL; upload on submit
+    currentService.value.image = canvas.toDataURL('image/png');
+    showCropper.value = false;
+    cropperInstance.value.destroy();
+    cropperInstance.value = null;
 };
 
 const cancelCrop = () => {
-  showCropper.value = false;
-  cropperInstance.value?.destroy();
-  cropperInstance.value = null;
+    showCropper.value = false;
+    cropperInstance.value?.destroy();
+    cropperInstance.value = null;
 };
 
 const fetchServices = async () => {
-  try {
-    const data = await getServices();
-    Services.value = (data || []).map(s => ({ ...s, selected: false }));
-    ServicesNum.value = Services.value.length;
-  } catch (err) {
-    alert('Error fetching services.');
-    console.error(err);
-  }
+    try {
+        const data = await getServices();
+        Services.value = (data || []).map(s => ({ ...s, selected: false }));
+        ServicesNum.value = Services.value.length;
+    } catch (err) {
+        alert('Error fetching services.');
+        console.error(err);
+    }
 };
 
 const toggleStatus = async (service) => {
-  try {
-    const newStatus = Number(!service.status ? 1 : 0);
-    await updateService(service.id, { status: newStatus });
-    service.status = newStatus;
-  } catch (err) {
-    alert('Error updating service status.');
-    console.error(err);
-  }
+    try {
+        const newStatus = Number(!service.status ? 1 : 0);
+        await updateService(service.id, { status: newStatus });
+        service.status = newStatus;
+    } catch (err) {
+        alert('Error updating service status.');
+        console.error(err);
+    }
 };
 
 const submitService = async (publish) => {
-  if (!currentService.value.title.trim() || !currentService.value.title_en.trim()) {
-    alert('Please fill in Title (TH/EN).');
-    return;
-  }
-
-  try {
-    let imagePath = currentService.value.image || '';
-
-    // If DataURL, upload and get path via /img-upload
-    if (imagePath && imagePath.startsWith('data:image')) {
-      const fileName = `service_${Date.now()}.webp`;
-      const resp = await uploadImage(imagePath, fileName); // useUpload accepts dataURL or File
-      if (resp?.error) throw new Error(resp.error);
-      imagePath = resp.path || `/images/${fileName}`;
+    if (!currentService.value.title.trim() || !currentService.value.title_en.trim()) {
+        alert('Please fill in Title (TH/EN).');
+        return;
     }
 
-    const payload = {
-      title: currentService.value.title,
-      title_en: currentService.value.title_en,
-      description: currentService.value.description || '',
-      description_en: currentService.value.description_en || '',
-      image: imagePath,
-      status: publish ? 1 : 0,
-    };
+    try {
+        let imagePath = currentService.value.image || '';
 
-    if (currentService.value.id) {
-      // UPDATE
-      await updateService(currentService.value.id, payload);
-      alert('Service updated successfully.');
-    } else {
-      // CREATE
-      const created = await createService(payload);
-      currentService.value.id = created.id;
-      alert('Service added successfully.');
+        // If DataURL, upload and get path via /img-upload
+        if (imagePath && imagePath.startsWith('data:image')) {
+            const fileName = `service_${Date.now()}.webp`;
+            const resp = await uploadImage(imagePath, fileName); // useUpload accepts dataURL or File
+            if (resp?.error) throw new Error(resp.error);
+            imagePath = resp.path || `/images/${fileName}`;
+        }
+
+        const payload = {
+            title: currentService.value.title,
+            title_en: currentService.value.title_en,
+            description: currentService.value.description || '',
+            description_en: currentService.value.description_en || '',
+            image: imagePath,
+            status: publish ? 1 : 0,
+        };
+
+        if (currentService.value.id) {
+            // UPDATE
+            await updateService(currentService.value.id, payload);
+            alert('Service updated successfully.');
+        } else {
+            // CREATE
+            const created = await createService(payload);
+            currentService.value.id = created.id;
+            alert('Service added successfully.');
+        }
+
+        showModalAddService.value = false;
+        showModalEdit.value = false;
+        await fetchServices();
+    } catch (err) {
+        alert('Error while submitting service.');
+        console.error(err);
     }
-
-    showModalAddService.value = false;
-    showModalEdit.value = false;
-    await fetchServices();
-  } catch (err) {
-    alert('Error while submitting service.');
-    console.error(err);
-  }
 };
 
 onMounted(fetchServices);
@@ -437,6 +446,7 @@ onMounted(fetchServices);
     max-height: 5rem;
     object-fit: cover;
 }
+
 .lang-toggle {
     margin-bottom: 1rem;
     text-align: center;

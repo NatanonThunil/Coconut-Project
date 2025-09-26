@@ -109,19 +109,16 @@
     <div v-if="showModalAddAchievement || showModalEdit" class="modal-overlay">
         <form class="modal-add" @submit.prevent>
             <h2>{{ showModalEdit ? 'แก้ไขความสำเร็จ' : 'เพิ่มความสำเร็จ' }}</h2>
-            <div class="lang-toggle">
-                <button type="button" @click="toggleLang">
-                    Switch to {{ activeLang ? 'English' : 'Thai' }}
-                </button>
-            </div>
+        
             <div class="divider"></div>
 
             <div class="modal-content">
                 <section>
-                    <label>{{ activeLang ? 'หัวข้อ' : 'Title' }}</label>
-                    <input v-show="activeLang" class="add-text-input" v-model="currentAchievement.title"
+                    <label>หัวข้อ</label>
+                    <input  class="add-text-input" v-model="currentAchievement.title"
                         placeholder="หัวข้อผลงาน..." required />
-                    <input v-show="!activeLang" class="add-text-input" v-model="currentAchievement.title_en"
+                    <label>หัวข้อ (English)</label>
+                    <input class="add-text-input" v-model="currentAchievement.title_en"
                         placeholder="Enter title..." required />
                     <label>ชื่อผู้เขียน</label>
                     <input class="add-text-input" v-model="currentAchievement.author" placeholder="Enter author name"
@@ -145,10 +142,11 @@
                     </div>
                 </section>
                 <section>
-                    <label>{{ activeLang ? 'คำอธิบาย' : 'Descriptions' }}</label>
-                    <textarea v-show="activeLang" v-model="currentAchievement.description"
+                    <label>คำอธิบาย</label>
+                    <textarea  v-model="currentAchievement.description"
                         placeholder="คำอธิบาย..."></textarea>
-                    <textarea v-show="!activeLang" v-model="currentAchievement.description_en"
+                    <label>คำอธิบาย (English)</label>
+                    <textarea  v-model="currentAchievement.description_en"
                         placeholder="Descriptions here..."></textarea>
 
                 </section>
