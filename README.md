@@ -7,9 +7,9 @@
 
 - แก้ api path สามารถอิงทั้งหมด จาก ``.env`` ผ่าน nuxt config 
 - เพิ่ม ``Tags`` ใน ``adminsidebar``
-- ลบปุ่ม ``Toggle en`` ใน ``News``
+- ลบปุ่ม ``Toggle en`` ใน ``News Backend``
 - เพิ่ม ``QuickAccess``
-- เพิ่ม ``Tags Edit`` ยังไม่เสร็จ
+- เพิ่ม ``Tags Edit ``  ใน backend
 
 ```bash
 
