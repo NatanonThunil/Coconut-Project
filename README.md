@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS user_quick_access;
 
 CREATE TABLE user_quick_access (
   id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-  user_id         INT NOT NULL,   -- ให้ตรงกับ users.id
+  user_id         INT NOT NULL,   
   resource_key    VARCHAR(64) NOT NULL,
   title           VARCHAR(255),
   link            VARCHAR(255),
