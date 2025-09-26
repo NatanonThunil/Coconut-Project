@@ -97,7 +97,7 @@
                             </div>
                         </div>
                     </th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -222,9 +222,9 @@
 
                     <label>ประเภท</label>
                     <select class="add-text-input" v-model="currentExpert.type" @input="handleInputChange" required>
-                        <option value="1">Type 1</option>
-                        <option value="2">Type 2</option>
-                        <option value="3">Type 3</option>
+                        <option value="1">เกษตรกร</option>
+                        <option value="2">เอกชน</option>
+                        <option value="3">นักวิชาการ</option>
                     </select>
 
 
@@ -1083,6 +1083,7 @@ const toggleSelectAll = () => {
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
     width: 15%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(4),
@@ -1094,21 +1095,40 @@ const toggleSelectAll = () => {
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
     width: 15%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
     width: 10%;
+    text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
     display: table-cell;
     width: 8%;
+    text-align: center;
+}
+
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+    display: table-cell;
+    width: 8%;
+    text-align: center;
+}
+
+.item-list-table th:nth-child(9),
+.item-list-table td:nth-child(9) {
+    justify-self: center;
+    display: table-cell;
+    width: 10%;
+    text-align: center;
 }
 
 .action-btn-container {
     display: flex;
+    justify-content: center;
 }
 
 .mod-sl,

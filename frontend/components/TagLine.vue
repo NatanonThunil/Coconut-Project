@@ -104,7 +104,7 @@ watchEffect(updateTextHW);
 .background {
   position: absolute;
   width: 100%;
-  height: 60rem;
+  height: 100%;
   background-attachment: fixed;
   background-size: contain;
   background-position: top center;

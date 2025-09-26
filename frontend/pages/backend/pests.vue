@@ -708,11 +708,13 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
+        text-align: center;
     width: 8%;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
+    
     text-align: center;
     width: 10%;
 }

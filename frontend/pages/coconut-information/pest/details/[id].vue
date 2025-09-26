@@ -21,26 +21,26 @@
 
     <!-- Pest Detail -->
     <div v-else>
-      <img
-        class="pest-image-banner"
-        :src="pest?.image || defaultImage"
-        alt="Pest Image"
-      />
+      <img class="pest-image-banner" :src="pest?.image || defaultImage" alt="Pest Image" />
 
       <h1>
         {{ currentLocale === "th" ? pest?.name || "No Name" : pest?.name_en || "No Name" }}
       </h1>
 
       <div class="pest-content">
-        <p><strong>ชื่ออังกฤษ:</strong> {{ pest?.name_en || "N/A" }}</p>
-        <p><strong>ชื่อวิทยาศาสตร์:</strong> {{ pest?.sci_name || "N/A" }}</p>
+        <p><strong>{{ $t('engname') }}:</strong> {{ pest?.name_en || "N/A" }}</p>
+        <p class="sci_name "><strong>{{ $t('scientificname') }} :</strong> <p v-html="pest?.sci_name"></p></p>
         <p>
-          <strong>ลักษณะและวงจรชีวิต</strong>
-          {{ pest?.lifecycle || "N/A" }}
+          <strong>{{ $t('lifecycle') }}</strong>
+          {{ currentLocale === "th" ? pest?.lifecycle || "N/A" : pest?.lifecycle_en || "N/A" }}
+        </p>
+        <p>
+          <strong>{{ $t('prevent') }}</strong>
+          {{currentLocale === "th" ? pest?.prevent || "N/A" : pest?.prevent_en || "N/A"}}
         </p>
       </div>
 
-      <SeeAllButton text="ดูศัตรูพืชอื่น ๆ" link="/coconut-information/pest" />
+      <SeeAllButton :text="$t('seeanotherpests')" link="/coconut-information/pest" />
     </div>
   </div>
 </template>
@@ -94,9 +94,14 @@ export default {
 </script>
 
 <style scoped>
+.sci_name {
+  
+  display: flex;
+  gap: 0.5rem;
+}
 .pest-container {
-max-width: 1000px;
-  margin:  auto;
+  max-width: 1000px;
+  margin: auto;
   padding: 20px;
   gap: 2rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -104,10 +109,11 @@ max-width: 1000px;
   border-radius: 10px;
   margin-bottom: 5rem;
 }
+
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
-   color: #4e6d16;
+  color: #4e6d16;
 }
 
 .pest-image-banner {

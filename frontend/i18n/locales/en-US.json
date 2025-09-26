@@ -85,6 +85,10 @@
   "member": "Member",
   "readmore": "Read more"
   ,"othernews" : "More news",
-  "No pests found" : "No pests found"
-
+  "No pests found" : "No pests found",
+  "engname" : "English Name",
+  "scientificname" : "Scientific Name",
+  "lifecycle" : "Lifecycle",
+  "prevent" : "Prevention",
+  "seeanotherpests": "See another pests"
 }

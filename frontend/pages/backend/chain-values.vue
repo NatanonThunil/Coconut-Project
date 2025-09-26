@@ -119,9 +119,10 @@
                 </section>
                 <section>
                     <label>Description</label>
-                    <textarea  class="add-text-input" v-model="currentChainValue.description" placeholder="Enter description" required></textarea>
+                      <TiptapEditor v-model="currentChainValue.description" :disable="[,'link','image','align']"/>
+                    
                     <label>Description (English)</label>
-                    <textarea class="add-text-input" v-model="currentChainValue.description_en" placeholder="Enter description (English)" required></textarea>
+                   <TiptapEditor v-model="currentChainValue.description_en" :disable="['link','image','align']"/>
 
                     <label>Type</label>
                     <select v-model="currentChainValue.type" class="category-select" required>

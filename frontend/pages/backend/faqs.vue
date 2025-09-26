@@ -18,39 +18,40 @@
                 <tr>
                     <th>
                         <div class="checkbox-id-container">
-                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="checkbox-decorate" />
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                class="checkbox-decorate" />
                             <span>ID</span>
                             <button @click="toggleSort('id')">
-                                <div :class="{'rotate': sortBy === 'id' && sortDirection === -1}">▲</div>
+                                <div :class="{ 'rotate': sortBy === 'id' && sortDirection === -1 }">▲</div>
                             </button>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Question<button @click="toggleSort('question')">
-                                <div :class="{'rotate': sortBy === 'question' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'question' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Answer<button @click="toggleSort('answer')">
-                                <div :class="{'rotate': sortBy === 'answer' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'answer' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Category<button @click="toggleSort('isadvice')">
-                                <div :class="{'rotate': sortBy === 'isadvice' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'isadvice' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>
                         <div class="checkbox-id-container">
                             <div>Status<button @click="toggleSort('status')">
-                                <div :class="{'rotate': sortBy === 'status' && sortDirection === -1}">▲</div>
-                            </button></div>
+                                    <div :class="{ 'rotate': sortBy === 'status' && sortDirection === -1 }">▲</div>
+                                </button></div>
                         </div>
                     </th>
                     <th>Actions</th>
@@ -75,7 +76,8 @@
                     </td>
                     <td class="action-buttons">
                         <button @click="editItem(item)" class="edit-btn"><img src="/icon/pen.png" alt="Edit"></button>
-                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="/icon/trash.png" alt="Delete"></button>
+                        <button @click="askDelete(item.id, item.question)" class="delete-btn"><img src="/icon/trash.png"
+                                alt="Delete"></button>
                     </td>
                 </tr>
             </tbody>
@@ -90,25 +92,22 @@
                     <label>คำถาม</label>
                     <input class="add-text-input" v-model="currentFaq.question" placeholder="Enter question" required />
                     <label>คำตอบ</label>
-                    <textarea class="add-text-input" v-model="currentFaq.answer" placeholder="Enter answer" required></textarea>
+                    <textarea class="add-text-input" v-model="currentFaq.answer" placeholder="Enter answer"
+                        required></textarea>
                     <label>Question (English)</label>
-                    <input class="add-text-input" v-model="currentFaq.question_en" placeholder="Enter question in English" />
+                    <input class="add-text-input" v-model="currentFaq.question_en"
+                        placeholder="Enter question in English" />
                     <label>Answer (English)</label>
-                    <textarea class="add-text-input" v-model="currentFaq.answer_en" placeholder="Enter answer in English"></textarea>
+                    <textarea class="add-text-input" v-model="currentFaq.answer_en"
+                        placeholder="Enter answer in English"></textarea>
                     <label>Category</label>
                     <div class="category-toggle">
-                        <button
-                            :class="{ active: currentFaq.isadvice === 0 }"
-                            @click="currentFaq.isadvice = 0"
-                            type="button"
-                        >
+                        <button :class="{ active: currentFaq.isadvice === 0 }" @click="currentFaq.isadvice = 0"
+                            type="button">
                             คำถามทั่วไป
                         </button>
-                        <button
-                            :class="{ active: currentFaq.isadvice === 1 }"
-                            @click="currentFaq.isadvice = 1"
-                            type="button"
-                        >
+                        <button :class="{ active: currentFaq.isadvice === 1 }" @click="currentFaq.isadvice = 1"
+                            type="button">
                             คำแนะนำ
                         </button>
                     </div>
@@ -216,7 +215,7 @@ const filteredSortedFaqs = computed(() => {
 
 const fetchApi = async () => {
     try {
-       const data = await getFAQs();
+        const data = await getFAQs();
         apisdatas.value = Array.isArray(data.faqs) ? data.faqs.map(faq => ({ ...faq, selected: false })) : [];
         dataCount.value = apisdatas.value.length;
     } catch (error) {
@@ -240,7 +239,7 @@ const toggleStatus = async (faq) => {
             faq.answer_en
         );
         faq.status = newStatus;
-        
+
     } catch (error) {
         alert('Error updating FAQ status.');
         console.error(error);
@@ -321,7 +320,7 @@ const submitFaq = async (publish) => {
 const bulkUpdateStatus = async (publish) => {
     try {
 
-        
+
         const selectedFaqs = apisdatas.value.filter(faq => faq.selected);
         if (selectedFaqs.length === 0) {
             alert('No FAQs selected.');
@@ -387,7 +386,6 @@ onMounted(fetchApi);
 </script>
 
 <style scoped>
-
 .published-news-btn {
     word-wrap: nowrap;
     all: unset;
@@ -477,6 +475,7 @@ onMounted(fetchApi);
     cursor: pointer;
     accent-color: #4E6D16;
 }
+
 .status-toggle {
     display: flex;
     justify-content: center;
@@ -484,9 +483,11 @@ onMounted(fetchApi);
     gap: 8px;
     cursor: pointer;
 }
+
 .rotate {
     transform: rotate(180deg);
 }
+
 .status-toggle input {
     display: none;
 }
@@ -526,7 +527,8 @@ onMounted(fetchApi);
 }
 
 .admin-content-r {
-    margin-left: 250px; /* This ensures content is pushed to the right */
+    margin-left: 250px;
+    /* This ensures content is pushed to the right */
 }
 
 .checkbox-id-container {
@@ -535,6 +537,7 @@ onMounted(fetchApi);
     align-items: center;
     width: 100%;
 }
+
 .checkbox-id-container div {
     display: flex;
     gap: 0.5rem;
@@ -557,6 +560,7 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
+    text-align: center;
     width: 15%;
 }
 
@@ -578,17 +582,21 @@ onMounted(fetchApi);
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
+    text-align: center;
     width: 8%;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
+
     display: table-cell;
     width: 10%;
 }
+
 .action-btn-container {
     display: flex;
 }
+
 .mod-sl,
 .mod-sr {
     display: flex;
@@ -604,6 +612,7 @@ onMounted(fetchApi);
     width: 40%;
     display: flex;
     gap: 0.5rem;
+
     flex-direction: column;
 }
 
@@ -669,6 +678,7 @@ onMounted(fetchApi);
     transition: background-color 0.3s ease;
     position: relative;
 }
+
 .coconut-check-publish {
     display: flex;
     gap: 1.5rem;
@@ -756,14 +766,17 @@ onMounted(fetchApi);
     overflow-y: auto;
     display: block;
 }
+
 .item-list-table tbody tr td p {
     width: 2rem;
     text-align: center;
 }
+
 .add-btn-container div {
     display: flex;
     gap: 0.5rem;
 }
+
 .add-btn-container {
     display: flex;
     justify-content: end;
@@ -772,6 +785,7 @@ onMounted(fetchApi);
     padding: 1rem;
     gap: 1rem;
 }
+
 .published-coconut-btn {
     word-wrap: nowrap;
     all: unset;
@@ -799,6 +813,7 @@ onMounted(fetchApi);
     background-color: #569187;
     box-shadow: outset 0px 0px 0px 3px white;
 }
+
 .unpublished-coconut-btn {
     word-wrap: nowrap;
     all: unset;
@@ -984,6 +999,7 @@ onMounted(fetchApi);
     border-radius: 5px;
     transition: 0.2s;
 }
+
 .confirme-btn {
     background-color: transparent;
     outline: #4E6D16 3px solid;
@@ -1119,6 +1135,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1750px) {
+
     .item-list-table th:nth-child(3),
     .item-list-table td:nth-child(3) {
         display: none;
@@ -1126,6 +1143,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 1440px) {
+
     .item-list-table th:nth-child(2),
     .item-list-table td:nth-child(2) {
         width: 10%;
@@ -1136,6 +1154,7 @@ input:checked+.hotnews-slider:before {
     .add-btn-container {
         flex-direction: column;
     }
+
     .modal-add .modal-content {
         display: flex;
         flex-direction: column;
@@ -1151,6 +1170,7 @@ input:checked+.hotnews-slider:before {
 }
 
 @media screen and (max-width: 865px) {
+
     .item-list-table th:nth-child(4),
     .item-list-table td:nth-child(4) {
         display: none;

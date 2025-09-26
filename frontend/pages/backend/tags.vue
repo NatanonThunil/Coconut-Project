@@ -60,7 +60,7 @@
                             <p>{{ t.id }}</p>
                         </div>
                     </td>
-                    <td>{{ t.text }}</td>
+                    <td  style="text-align:center">{{ t.text }}</td>
                     <td style="text-align:center">{{ t.expert_count ?? 0 }}</td>
                     <td class="action-buttons" @click.stop>
                         <button @click="openEditModal(t)" class="edit-btn">

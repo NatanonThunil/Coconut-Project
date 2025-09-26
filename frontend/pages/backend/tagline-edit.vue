@@ -1,8 +1,12 @@
 <template>
   <div class="demo-container" @click="openImageCropper">
+
     <img :src="headline?.image || 'https://placehold.co/600x400'" alt="tagline image" class="hero-bar-image">
     <div v-html="isThai ? headline.text : headline.text_en" class="hero-bar-text"
       :style="{ top: `${headline.y}%`, left: `${headline.x}%` }"></div>
+    <div class="demo-placeholder" :data-visible="!headline?.image || headline.image.includes('placehold.co')">
+      คลิกเพื่อเปลี่ยนรูป
+    </div>
   </div>
   <form class="form-container" @submit.prevent>
     <div class="form-container-input">
@@ -244,6 +248,37 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.demo-placeholder{
+  position: absolute;           /* overlay on top of the image */
+  inset: 0;                     /* full cover */
+  display: flex;                /* center the text */
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+
+  background-color: rgba(0,0,0,0.3);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .2px;
+
+  z-index: 20;
+  opacity: 0;                   /* hidden by default */
+  transition: opacity .2s ease;
+  pointer-events: none;         /* don't block clicks */
+  user-select: none;
+}
+
+/* show on hover */
+.demo-container:hover .demo-placeholder{
+  opacity: 1;
+}
+
+/* keep visible if still using a placeholder (or empty) image */
+.demo-placeholder[data-visible="true"]{
+  opacity: 1;
+}
+
+
 .editor-switch {
   display: flex;
   justify-content: center;
@@ -272,8 +307,9 @@ onMounted(() => {
 
 
 }
+
 .editor-switch button.active {
-background: linear-gradient(90deg, #5edce0, #b6e3db);
+  background: linear-gradient(90deg, #5edce0, #b6e3db);
 }
 
 .slider-input {
@@ -372,7 +408,7 @@ background: linear-gradient(90deg, #5edce0, #b6e3db);
   color: white;
   text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.7);
   transform: translate(-50%, -50%);
- font-size: clamp(0.5rem, 1.1vw, 2rem);
+  font-size: clamp(0.5rem, 1.1vw, 2rem);
 }
 
 .form-container {

@@ -106,7 +106,7 @@
               </div>
             </div>
           </th>
-          <th></th>
+          <th>Actions</th>
         </tr>
       </thead>
 
@@ -778,12 +778,14 @@ onMounted(fetchEmployees);
 
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
+   text-align: center;
   width: 15%;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
   width: 15%;
+   text-align: center;
 }
 
 .item-list-table th:nth-child(4),
@@ -795,18 +797,30 @@ onMounted(fetchEmployees);
 .item-list-table th:nth-child(5),
 .item-list-table td:nth-child(5) {
   width: 15%;
+   text-align: center;
 }
 
 .item-list-table th:nth-child(6),
 .item-list-table td:nth-child(6) {
   width: 20%;
+   text-align: center;
 }
 
 .item-list-table th:nth-child(7),
 .item-list-table td:nth-child(7) {
   display: table-cell;
   width: 8%;
+  
 }
+
+.item-list-table th:nth-child(8),
+.item-list-table td:nth-child(8) {
+  display: table-cell;
+  width: 10%;
+  text-align: center;
+  
+}
+
 
 .action-btn-container {
   display: flex;

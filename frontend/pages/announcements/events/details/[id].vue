@@ -74,7 +74,7 @@
     <p class="event-description" v-html="(currentLocale === 'th') ? (event?.description ||
         'ไม่มีคำอธิบาย') : (event?.description_en ||
             'No English description')"></p>
-    <SeeAllButton :text="$t('Back to All Events')" link="/events" />
+    <SeeAllButton :text="$t('Back to All Events')" link="/announcements/events" />
 
 </template>
 

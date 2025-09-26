@@ -27,7 +27,7 @@
     
     <div class="chain_value-content">
   <strong>{{ $t("Description") }}:</strong>
-  {{ (currentLocale == 'th') ? (chain_values?.description || 'No Title') : (chain_values?.description_en || 'No Title') }}
+  <p v-html=" (currentLocale == 'th') ? (chain_values?.description || 'No Title') : (chain_values?.description_en || 'No Title') "></p>
 </div>
 
     <SeeAllButton text="ดูห่วงโซ่คุณค่าอื่นๆ" link="/coconut-information/value-chain" />

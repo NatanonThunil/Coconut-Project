@@ -34,11 +34,11 @@
 
         <!-- Back Button -->
 
-        <SeeAllButton text="ดูข่าวอื่น" link="/news" />
+        <SeeAllButton text="ดูข่าวอื่น" link="/announcements/news" />
     </div>
     <div v-else-if="loading" class="loading-container">
         <p class="loading">กำลังโหลดข้อมูล...</p>
-        <SeeAllButton text="ดูข่าวอื่น" link="/news" />
+        <SeeAllButton text="ดูข่าวอื่น" link="/announcements/news" />
     </div>
     <!-- Error Handling -->
     <div v-else>
@@ -47,7 +47,7 @@
                 <section class="news-404-left-section"><img src="/img/News404.png" alt="" draggable="false">
                 </section>
                 <section class="news-404-right-section">ขออภัยไม่มีการเผยแพร่ข่าว
-                    <SeeAllButton text="ดูข่าวอื่นๆ" link="/news" />
+                    <SeeAllButton text="ดูข่าวอื่นๆ" link="/announcements/news" />
                 </section>
             </div>
         </div>

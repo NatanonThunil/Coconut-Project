@@ -58,7 +58,7 @@
                         </div>
                     </th>
 
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -672,16 +672,19 @@ onMounted(fetchServices);
 .item-list-table th:nth-child(2),
 .item-list-table td:nth-child(2) {
     width: 8%;
+     text-align: center;
 }
 
 .item-list-table th:nth-child(3),
 .item-list-table td:nth-child(3) {
     width: 20%;
+     text-align: center;
     max-width: max-content;
 }
 
 .item-list-table th:nth-child(4),
 .item-list-table td:nth-child(4) {
+     text-align: center;
     width: 10%;
 }
 
@@ -711,6 +714,7 @@ onMounted(fetchServices);
 
 .action-btn-container {
     display: flex;
+    justify-content: center;
 }
 
 .mod-sl,

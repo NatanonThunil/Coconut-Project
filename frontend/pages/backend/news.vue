@@ -72,7 +72,7 @@
                                 </button></div>
                         </div>
                     </th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -771,6 +771,7 @@ onMounted(() => {
 
 .action-btn-container {
     display: flex;
+    justify-content: center;
 }
 
 .mod-sl,

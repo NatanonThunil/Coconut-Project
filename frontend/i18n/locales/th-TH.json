@@ -85,5 +85,10 @@
   "member": "สมาชิก",
   "readmore": "อ่านเพิ่มเติม",
   "othernews": "ข่าวอื่นๆ",
-  "No pests found": "ไม่พบศัตรูพืช"
+  "No pests found": "ไม่พบศัตรูพืช",
+  "engname" : "ชื่ออังกฤษ"
+  ,"scientificname" : "ชื่อทางวิทยาศาสตร์",
+  "lifecycle" : "ลักษณะและวงจรชีวิต",
+  "prevent" : "วิธีป้องกันและหลีกเลี่ยง",
+  "seeanotherpests": "ดูศัตรูพืชอื่นๆ"
 }

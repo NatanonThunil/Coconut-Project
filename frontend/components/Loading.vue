@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading" class="loading-container">
     <div class="loading-spinner">
-      <img src="/CoconutIcon.ico" alt="Loading Icon" class="coconut-icon" />
+      <NuxtImg src="/CoconutIcon.ico" alt="Loading Icon" class="coconut-icon" preload/>
     </div>
     <div class="loading-text bobbing-text">
       {{ LoadingText }}

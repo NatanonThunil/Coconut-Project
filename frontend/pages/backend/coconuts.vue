@@ -139,7 +139,7 @@
                 <section>
                     <label>Origin</label>
                     <input class="add-text-input" v-model="currentCoconut.origin" placeholder="Enter origin" required />
-                
+                <label>ชื่อทาง วิทยาศาสตร์</label>
                 <TiptapEditor v-model="currentCoconut.sci_name_f" :disable="[,'heading','link','image','align','color']"/>
 
                     <!-- <label>Scientific Name (F)</label>

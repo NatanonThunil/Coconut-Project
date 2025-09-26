@@ -10,5 +10,9 @@
 </script>
 
 <style scoped>
-.admin-layout { min-height: 100vh; display: flex; flex-direction: column; }
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 </style>
