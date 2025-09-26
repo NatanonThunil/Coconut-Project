@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@lottiefiles/dotlottie-vue": "^0.5.8",
+    "@nuxt/image": "^1.11.0",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/i18n": "npm:@nuxtjs/i18n-edge",
     "@nuxtjs/proxy": "^2.1.0",

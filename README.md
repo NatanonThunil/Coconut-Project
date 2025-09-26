@@ -18,6 +18,7 @@
 - แก้ ``adminsidebar`` ให้ update active ตามการเปลี่ยนแปลงของ URL ✅
 - แก้ ``coconut-information`` 
 - แก้ ``Announcements`` 
+- แก้ ``@nuxt/image``  
 
 
 
