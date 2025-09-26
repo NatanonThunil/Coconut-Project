@@ -14,28 +14,6 @@
 - แก้ ``English translation ``หน้า ``pest`` และเอา prevention เข้า ✅
 
 
-```bash
-
-DROP TABLE IF EXISTS user_quick_access;
-
-CREATE TABLE user_quick_access (
-  id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-  user_id         INT NOT NULL,   
-  resource_key    VARCHAR(64) NOT NULL,
-  title           VARCHAR(255),
-  link            VARCHAR(255),
-  icon            VARCHAR(255),
-  click_count     INT NOT NULL DEFAULT 0,
-  last_clicked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-  UNIQUE KEY uq_user_key (user_id, resource_key),
-  KEY idx_user_count (user_id, click_count DESC, last_clicked_at DESC),
-  CONSTRAINT fk_uqa_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-```
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
