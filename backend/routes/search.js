@@ -35,7 +35,7 @@ const TABLE_CONFIGS = [
     ],
     dateCandidates: [],
     statusCol: 'status',
-    url: (id) => `/news/details/${id}`,
+    url: (id) => `/announcements/news/details/${id}`,
     boost: 1.0,
   },
 
@@ -137,7 +137,7 @@ const TABLE_CONFIGS = [
   // ใช้ date_start เป็นหลัก ถ้าไม่มีให้ลอง date_end
   dateCandidates: ['date_start', 'date_end', 'created_at', 'updated_at'],
   statusCol: 'status',
-  url: (id) => `/events/details/${id}`,
+  url: (id) => `/announcements/events/details/${id}`,
   boost: 1.10,
 },
 
