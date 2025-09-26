@@ -34,7 +34,7 @@
                 1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 },
               }">
               <SwiperSlide v-for="(event, index) in filteredEvents" :key="index">
-                <NuxtLinkLocale :to="`/events/details/${event.id}`" class="event-card">
+                <NuxtLinkLocale :to="`/announcements/events/details/${event.id}`" class="event-card">
                   <div class="event-card-image">
                     <img :src="event.image || 'https://placehold.co/600x400'" alt="Event Image" draggable="false" />
                   </div>

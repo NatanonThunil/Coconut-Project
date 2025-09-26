@@ -4,7 +4,7 @@
     <NuxtLinkLocale
       v-if="hotNews"
       class="hot-news-section"
-      :to="`/news/details/${hotNews.id}`"
+      :to="`/announcements/news/details/${hotNews.id}`"
     >
       <div class="hot-news-image">
         <img :src="hotNews.image" alt="Hot News Image" draggable="false" />
@@ -76,7 +76,7 @@ const getLocalizedText = (newsItem, key) => {
 
 
 const navigateToDetails = (id) => {
-  router.push(`/news/details/${id}`)
+  router.push(`/announcements/news/details/${id}`)
 }
 
 const fetchNews = async () => {
