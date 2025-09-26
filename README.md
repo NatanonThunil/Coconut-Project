@@ -9,6 +9,7 @@
 - เพิ่ม ``Tags`` ใน ``adminsidebar``
 - ลบปุ่ม ``Toggle en`` ใน ``News``
 - เพิ่ม ``QuickAccess``
+- เพิ่ม ``Tags Edit`` ยังไม่เสร็จ
 
 ```bash
 

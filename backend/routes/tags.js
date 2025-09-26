@@ -7,7 +7,7 @@ import db from '../db.js';
 
 const API_KEY = process.env.API_SECRET;
 
-// API key guard (same as your other routes)
+// API key guard
 router.use((req, res, next) => {
   const apiKey = req.headers['cocon-key'];
   if (apiKey !== API_KEY) {
@@ -18,7 +18,6 @@ router.use((req, res, next) => {
 
 // Ensure schema once at boot
 async function ensureSchema() {
-  // case-insensitive uniqueness on text (utf8mb4_unicode_ci)
   await db.query(`
     CREATE TABLE IF NOT EXISTS tags (
       id   INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,32 +40,29 @@ ensureSchema().catch(console.error);
 
 /**
  * GET /tags?search=foo
- * Returns similar tags for autocomplete.
- * Response: [{ id, text }, ...]
+ * Autocomplete/ค้นหา tag (คืน [{id, text}, ...])
  */
 router.get('/', async (req, res) => {
   try {
     const q = (req.query.search || '').trim();
 
-    // No search → return a small list of popular/all tags (up to 100)
     if (!q) {
       const [rows] = await db.query(
         `SELECT id, text
-         FROM tags
-         ORDER BY text
-         LIMIT 100`
+           FROM tag
+          ORDER BY text
+          LIMIT 100`
       );
       return res.json(rows);
     }
 
-    // Search: start-with first, then contains; rank by position
     const [rows] = await db.query(
       `SELECT id, text
-         FROM tags
+         FROM tag
         WHERE text LIKE CONCAT('%', ?, '%')
         ORDER BY
-          (text LIKE CONCAT(?, '%')) DESC,     -- starts with query first
-          LOCATE(?, text),                      -- earliest match
+          (text LIKE CONCAT(?, '%')) DESC,
+          LOCATE(?, text),
           text
         LIMIT 50`,
       [q, q, q]
@@ -78,13 +74,89 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * ✅ NEW: PUT /tags/:id
+ * Rename tag โดยกันชื่อซ้ำ
+ * Body: { text }
+ */
+// แก้ชื่อแท็ก
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const text = String(req.body?.text || '').trim();
+    if (!text) return res.status(400).json({ error: 'Text is required' });
+
+    const [r] = await db.query(`UPDATE tag SET text=? WHERE id=?`, [text, id]);
+    if (r.affectedRows === 0) return res.status(404).json({ error: 'Tag not found' });
+
+    const [[row]] = await db.query(`SELECT id, text FROM tag WHERE id=?`, [id]);
+    res.json(row);
+  } catch (e) {
+    if (e.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Tag name already exists' });
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+/**
+ * ✅ FIXED PATH: GET /tags/by-text/:text/experts
+ * (เดิมโค้ดใช้ /tags/:text/experts ซึ่งซ้อน prefix /tags อีกรอบ)
+ * ลิสต์ expert ตามชื่อแท็ก (text)
+ */
+router.get('/by-text/:text/experts', async (req, res) => {
+  try {
+    const text = String(req.params.text || '').trim();
+    if (!text) return res.status(400).json({ error: 'Missing tag text' });
+
+    const [[tagRow]] = await db.query(`SELECT id FROM tags WHERE text = ?`, [text]);
+    if (!tagRow) return res.json([]); // ไม่มีแท็กนี้
+
+    const [rows] = await db.query(
+      `SELECT e.*
+         FROM expert e
+         JOIN expert_tags et ON et.expert_id = e.id
+        WHERE et.tag_id = ?
+        ORDER BY e.id DESC`,
+      [tagRow.id]
+    );
+
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+/**
+ * ✅ NEW: GET /tags/:id/experts
+ * ลิสต์ expert ที่ใช้แท็กตาม id (เหมาะกับหน้า modal)
+ */
+router.get('/:id/experts', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await db.query(
+      `SELECT e.id, e.name_th, e.name_en, e.email, e.org, e.image
+         FROM expert e
+         JOIN expert_tags et ON et.expert_id = e.id
+        WHERE et.tag_id = ?
+        ORDER BY e.id DESC`,
+      [id]
+    );
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+/**
+ * (คงไว้) GET /tags/experts/:id/tags → คืน tag ของ expert รายคน
+ */
 router.get('/experts/:id/tags', async (req, res) => {
   try {
     const { id } = req.params;
     const [rows] = await db.query(
       `SELECT t.text
          FROM expert_tags et
-         JOIN tags t ON t.id = et.tag_id
+         JOIN tag t ON t.id = et.tag_id
         WHERE et.expert_id = ?
         ORDER BY t.text`,
       [id]
@@ -95,6 +167,11 @@ router.get('/experts/:id/tags', async (req, res) => {
   }
 });
 
+/**
+ * (คงไว้) PUT /tags/experts/:id/tags
+ * แทนที่ชุดแท็กของ expert คนนั้น (normalize + limit 5)
+ * Body: { tags: string[] }
+ */
 router.put('/experts/:id/tags', async (req, res) => {
   const conn = await db.getConnection();
   try {
@@ -102,7 +179,6 @@ router.put('/experts/:id/tags', async (req, res) => {
     let { tags } = req.body;
 
     if (!Array.isArray(tags)) tags = [];
-    // normalize: trim, dedupe, keep up to 5, drop empties
     const seen = new Set();
     tags = tags
       .map(t => String(t || '').trim())
@@ -111,31 +187,24 @@ router.put('/experts/:id/tags', async (req, res) => {
 
     await conn.beginTransaction();
 
-    // Ensure each tag exists in tags table
     for (const t of tags) {
-      await conn.query(`INSERT IGNORE INTO tags (text) VALUES (?)`, [t]);
+      await conn.query(`INSERT IGNORE INTO tag (text) VALUES (?)`, [t]);
     }
 
-    // Load their IDs
     let tagIds = [];
     if (tags.length) {
       const [idRows] = await conn.query(
-        `SELECT id, text FROM tags WHERE text IN (${tags.map(() => '?').join(',')})`,
+        `SELECT id FROM tag WHERE text IN (${tags.map(() => '?').join(',')})`,
         tags
       );
       tagIds = idRows.map(r => r.id);
     }
 
-    // Replace associations
     await conn.query(`DELETE FROM expert_tags WHERE expert_id = ?`, [id]);
 
     if (tagIds.length) {
       const values = tagIds.map(tagId => [Number(id), tagId]);
-      // mysql2 supports bulk VALUES ?
-      await conn.query(
-        `INSERT INTO expert_tags (expert_id, tag_id) VALUES ?`,
-        [values]
-      );
+      await conn.query(`INSERT INTO expert_tags (expert_id, tag_id) VALUES ?`, [values]);
     }
 
     await conn.commit();
@@ -149,8 +218,22 @@ router.put('/experts/:id/tags', async (req, res) => {
 });
 
 /**
- * (Optional) GET /experts/by-tag?tag=foo
- * Returns experts having a given tag (no status filter, per your note).
+ * ✅ NEW: DELETE /tags/experts/:expertId/tags/:tagId
+ * Detach แท็กออกจาก expert คนเดียว (ใช้ใน modal ปุ่มลบ)
+ */
+router.delete('/experts/:expertId/tags/:tagId', async (req, res) => {
+  try {
+    const { expertId, tagId } = req.params;
+    await db.query(`DELETE FROM expert_tags WHERE expert_id=? AND tag_id=?`, [expertId, tagId]);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+/**
+ * (ทางเลือก) GET /tags/experts/by-tag?tag=foo
+ * ลิสต์ expert จากชื่อแท็ก (query)
  */
 router.get('/experts/by-tag', async (req, res) => {
   try {
@@ -167,6 +250,44 @@ router.get('/experts/by-tag', async (req, res) => {
       [tag]
     );
 
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+// GET /tags/with-count?search=...
+// คืน [{ id, text, expert_count }]
+router.get('/with-count', async (req, res) => {
+  try {
+    const q = String(req.query.search || '').trim();
+    if (!q) {
+      const [rows] = await db.query(
+        `SELECT t.id, t.text, COUNT(et.expert_id) AS expert_count
+           FROM tag t
+           LEFT JOIN expert_tag et ON et.tag_id = t.id
+          GROUP BY t.id, t.text
+          ORDER BY t.text
+          LIMIT 200`
+      );
+      return res.json(rows);
+    }
+
+    // ถ้ามี search: จัดอันดับแบบ starts-with ก่อน ตามด้วยตำแหน่งที่พบ
+    const idParam = /^\d+$/.test(q) ? Number(q) : -1;
+    const like = `%${q}%`;
+    const [rows] = await db.query(
+      `SELECT t.id, t.text, COUNT(et.expert_id) AS expert_count
+         FROM tag t
+         LEFT JOIN expert_tag et ON et.tag_id = t.id
+        WHERE t.text LIKE ? OR t.id = ?
+        GROUP BY t.id, t.text
+        ORDER BY
+          (t.text LIKE CONCAT(?, '%')) DESC,
+          LOCATE(?, t.text),
+          t.text
+        LIMIT 200`,
+      [like, idParam, q, q]
+    );
     res.json(rows);
   } catch (e) {
     res.status(500).json({ error: e.message });
