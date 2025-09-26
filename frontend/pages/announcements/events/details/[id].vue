@@ -14,6 +14,7 @@
     <div style="height: 1rem;"></div>
   <div class="faqs-path">
             <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
+      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
             <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>/
              <NuxtLinkLocale :to="'/events/details/'+ this.$route.params.id">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') :
         (event?.title_en

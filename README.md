@@ -16,6 +16,8 @@
 - แก้ ``TiptapEditor`` ให้รองรับตัวหนังสือสีขาว✅
 - ตกแต่ง ``/backend/reg``✅
 - แก้ ``adminsidebar`` ให้ update active ตามการเปลี่ยนแปลงของ URL ✅
+- แก้ ``coconut-information`` 
+- แก้ ``Announcements`` 
 
 
 

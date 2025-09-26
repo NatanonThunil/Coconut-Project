@@ -3,6 +3,7 @@
     <div style="height: 8rem"></div>
     <div class="faqs-path">
  <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
+      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
         <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
         <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ (currentLocale == 'th')? (news?.title || 'ไม่มีหัวข้อ'): (news?.title_en || 'No Title')}}</NuxtLinkLocale>
     </div>

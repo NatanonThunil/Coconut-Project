@@ -3,6 +3,7 @@
     <div style="height: 8rem"></div>
     <div class="faqs-path">
       <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
+      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
       <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>
     </div>
     <h1 class="context-header">{{ $t("News") }}</h1>
