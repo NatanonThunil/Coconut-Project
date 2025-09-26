@@ -12,6 +12,9 @@
 - เพิ่ม ``QuickAccess`` ✅
 - เพิ่ม ``Tags Edit ``  ใน backend ✅
 - แก้ ``English translation ``หน้า ``pest`` และเอา prevention เข้า ✅
+- แก้ ``achievement`` ``coconut`` ``news`` ``pest`` ``service`` ให้มี ``post without publish``✅
+- แก้ ``TiptapEditor`` ให้รองรับตัวหนังสือสีขาว✅
+- ตกแต่ง ``/backend/reg``✅
 
 
 

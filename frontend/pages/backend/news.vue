@@ -156,14 +156,14 @@
                                 File</button>
                         </div>
                     </div>
-                    <div class="hotnews-toggle-container">
-
+                    <label class="hotnews-toggle-container">
+                        <p>คลิกเพื่อเปลี่ยนเป็น {{ currentNews.hot_new?  "ข่าวปกติ" : "ข่าวใหญ่"}}</p>
                         <button class="toggle-btn" :class="{ active: currentNews.hot_new }"
                             @click="currentNews.hot_new = !currentNews.hot_new">
                             {{ currentNews.hot_new ? 'Hot News' : 'News' }}
                         </button>
 
-                    </div>
+                    </label>
                 </section>
                 <section>
 
@@ -1201,6 +1201,12 @@ onMounted(() => {
 }
 
 .hotnews-toggle-container {
+    cursor: pointer;
+    outline: #4E6D16 2px dotted;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    flex-direction: column;
     justify-content: center;
     display: flex;
     align-items: center;

@@ -122,35 +122,29 @@ const changeHeading = (level) => {
   <div class="tiptap-container">
     <div class="toolbar" v-if="editor">
       <!-- inline styles -->
-      <button
-        v-if="!disable.includes('bold')"
-        @click="editor.chain().focus().toggleBold().run()"
-        :class="{ active: editor?.isActive('bold') }"
-        title="Bold">
+      <button v-if="!disable.includes('bold')" @click="editor.chain().focus().toggleBold().run()"
+        :class="{ active: editor?.isActive('bold') }" title="Bold">
         <span class="icon">B</span>
       </button>
 
-      <button
-        v-if="!disable.includes('italic')"
-        @click="editor.chain().focus().toggleItalic().run()"
-        :class="{ active: editor?.isActive('italic') }"
-        title="Italic">
+      <button v-if="!disable.includes('italic')" @click="editor.chain().focus().toggleItalic().run()"
+        :class="{ active: editor?.isActive('italic') }" title="Italic">
         <span class="icon">I</span>
       </button>
 
-      <button
-        v-if="!disable.includes('underline')"
-        @click="editor.chain().focus().toggleUnderline().run()"
-        :class="{ active: editor?.isActive('underline') }"
-        title="Underline">
+      <button v-if="!disable.includes('underline')" @click="editor.chain().focus().toggleUnderline().run()"
+        :class="{ active: editor?.isActive('underline') }" title="Underline">
         <span class="icon">U</span>
       </button>
 
       <!-- Heading -->
       <template v-if="!disable.includes('heading')">
-        <button @click="changeHeading(1)" title="H1" :class="{ active: editor?.isActive('heading', { level: 1 }) }">H1</button>
-        <button @click="changeHeading(2)" title="H2" :class="{ active: editor?.isActive('heading', { level: 2 }) }">H2</button>
-        <button @click="changeHeading(3)" title="H3" :class="{ active: editor?.isActive('heading', { level: 3 }) }">H3</button>
+        <button @click="changeHeading(1)" title="H1"
+          :class="{ active: editor?.isActive('heading', { level: 1 }) }">H1</button>
+        <button @click="changeHeading(2)" title="H2"
+          :class="{ active: editor?.isActive('heading', { level: 2 }) }">H2</button>
+        <button @click="changeHeading(3)" title="H3"
+          :class="{ active: editor?.isActive('heading', { level: 3 }) }">H3</button>
       </template>
 
       <!-- Link -->
@@ -164,22 +158,22 @@ const changeHeading = (level) => {
 
       <!-- Align -->
       <template v-if="!disable.includes('align')">
-        <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }" title="Align Left">
+        <button @click="setTextAlign('left')" :class="{ active: editor?.isActive({ textAlign: 'left' }) }"
+          title="Align Left">
           <span class="icon">⬅</span>
         </button>
-        <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center' }) }" title="Align Center">
+        <button @click="setTextAlign('center')" :class="{ active: editor?.isActive({ textAlign: 'center' }) }"
+          title="Align Center">
           <span class="icon">⬆</span>
         </button>
-        <button @click="setTextAlign('right')" :class="{ active: editor?.isActive({ textAlign: 'right' }) }" title="Align Right">
+        <button @click="setTextAlign('right')" :class="{ active: editor?.isActive({ textAlign: 'right' }) }"
+          title="Align Right">
           <span class="icon">➡</span>
         </button>
       </template>
 
       <!-- Color -->
-      <input
-        v-if="!disable.includes('color')"
-        type="color"
-        @input="e => changeColor(e.target.value)"
+      <input v-if="!disable.includes('color')" type="color" @input="e => changeColor(e.target.value)"
         title="Text Color" />
     </div>
 
@@ -287,5 +281,30 @@ button.active {
     width: 100%;
     text-align: left;
   }
+}
+
+/* บังคับให้ตัวอักษรที่ตั้งเป็น "สีขาว" ดูเป็น "สีดำ" ระหว่างกำลังแก้ไข */
+.editor-content:focus-within :deep([style*="color:#fff"]),
+.editor-content:focus-within :deep([style*="color: #fff"]),
+.editor-content:focus-within :deep([style*="color:#ffffff"]),
+.editor-content:focus-within :deep([style*="color: #ffffff"]),
+.editor-content:focus-within :deep([style*="color:white"]),
+.editor-content:focus-within :deep([style*="color: white"]),
+.editor-content:focus-within :deep([style*="color:rgb(255, 255, 255)"]),
+.editor-content:focus-within :deep([style*="color: rgb(255, 255, 255)"]) {
+  color: #000 !important;
+}
+
+/* ถ้าลิงก์เป็นสีขาว ก็ให้แสดงดำตอนแก้ไขเหมือนกัน */
+.editor-content:focus-within :deep(a[style*="color:#fff"]),
+.editor-content:focus-within :deep(a[style*="color: #fff"]),
+.editor-content:focus-within :deep(a[style*="color:#ffffff"]),
+.editor-content:focus-within :deep(a[style*="color: #ffffff"]),
+.editor-content:focus-within :deep(a[style*="color:white"]),
+.editor-content:focus-within :deep(a[style*="color: white"]),
+.editor-content:focus-within :deep(a[style*="color:rgb(255, 255, 255)"]),
+.editor-content:focus-within :deep(a[style*="color: rgb(255, 255, 255)"]) {
+  color: #000 !important;
+  text-decoration: underline;
 }
 </style>

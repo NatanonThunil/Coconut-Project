@@ -234,7 +234,7 @@ function toPlainText(html) {
 }
 
 // Example:
-const html = `<p>r<em><u>r</u>rrrrrrr<u>r</u></em></p>`;
+const html = ``;
 console.log(toPlainText(html)); // Output: rrrrrrrrr
 
 const filteredSortedServices = computed(() => {

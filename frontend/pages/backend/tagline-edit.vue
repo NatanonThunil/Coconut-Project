@@ -408,7 +408,7 @@ onMounted(() => {
   color: white;
   text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.7);
   transform: translate(-50%, -50%);
-  font-size: clamp(0.5rem, 1.1vw, 2rem);
+  font-size: clamp(0.5rem, 0.8vw, 2rem);
 }
 
 .form-container {

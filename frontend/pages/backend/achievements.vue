@@ -152,8 +152,14 @@
                 </section>
             </div>
             <div class="modal-actions">
-                <button type="button" class="confirm-btn" @click.prevent="submitAchievement(true)">{{ showModalEdit ?
-                    'Update & Publish' : 'Add & Publish' }}</button>
+                <button type="button" class="confirme-btn" @click.prevent="submitAchievement(false)">
+                    {{ showModalEdit ? 'Update without publish' : 'Add without publish' }}
+                </button>
+
+                <button type="button" class="confirm-btn" @click.prevent="submitAchievement(true)">
+                    {{ showModalEdit ? 'Update & Publish' : 'Add & Publish' }}
+                </button>
+
                 <button type="button" @click="closeModal" class="cancel-btn">Cancel</button>
             </div>
         </form>
