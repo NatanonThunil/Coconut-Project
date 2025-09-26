@@ -6,10 +6,11 @@
       </div>
       <nav class="menu">
         <ul>
-          <li v-for="(item, index) in menuItems" :key="index" :class="{ 'active': activeItem === item.path }"
+          <li v-for="(item, index) in menuItems" :key="index" :class="{ active: isActive(item.path) }"
             @click="navigateTo(item.path)">
             <span class="menu-title-text">{{ item.label }}</span>
           </li>
+
         </ul>
       </nav>
     </div>
@@ -20,42 +21,42 @@
 </template>
 
 <script setup>
-import icon from '/logo/CKH.png';
-import coconutslogo from 'public/CoconutIcon.ico';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import icon from '/logo/CKH.png'
+import coconutslogo from 'public/CoconutIcon.ico'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter();
-const activeItem = ref(router.currentRoute.value.path);
+const router = useRouter()
+const route  = useRoute()              // << reactive current route
+const activePath = computed(() => route.path)
 
 const menuItems = [
-  { label: "แดชบอร์ด", path: "/backend/dashboard" },
-  { label: "จัดการ เฮดไลน์", path: "/backend/tagline-edit" },
-  { label: "จัดการข่าว", path: "/backend/news" },
-  { label: "จัดการกิจกรรม", path: "/backend/events" },
-  { label: "จัดการผลงาน", path: "/backend/achievements" },
-  { label: "จัดการคณะทำงาน", path: "/backend/employees" },
-  { label: "จัดการสมาชิก", path: "/backend/members" },
-  { label: "จัดการผู้เชี่ยวชาญ", path: "/backend/experts" },
-    { label: "จัดการแท็กผู้เชี่ยวชาญ", path: "/backend/tags" },
-  { label: "จัดการสิทธิประโยชน์และการบริการ", path: "/backend/services" },
-  { label: "จัดการข้อมูลมะพร้าว", path: "/backend/coconuts" },
-   { label: "จัดการข้อมูลศัตรูพืช", path: "/backend/pests" },
-    { label: "จัดการข้อมูลห่วงโซ่คุณค่า", path: "/backend/chain-values" },
-  { label: "จัดการคำถามที่พบบ่อย", path: "/backend/faqs" },
-  { label: "จัดการฟุตเตอร์", path: "/backend/footer" },
-];
+  { label: 'แดชบอร์ด', path: '/backend/dashboard' },
+  { label: 'จัดการ เฮดไลน์', path: '/backend/tagline-edit' },
+  { label: 'จัดการข่าว', path: '/backend/news' },
+  { label: 'จัดการกิจกรรม', path: '/backend/events' },
+  { label: 'จัดการผลงาน', path: '/backend/achievements' },
+  { label: 'จัดการคณะทำงาน', path: '/backend/employees' },
+  { label: 'จัดการสมาชิก', path: '/backend/members' },
+  { label: 'จัดการผู้เชี่ยวชาญ', path: '/backend/experts' },
+  { label: 'จัดการแท็กผู้เชี่ยวชาญ', path: '/backend/tags' },
+  { label: 'จัดการสิทธิประโยชน์และการบริการ', path: '/backend/services' },
+  { label: 'จัดการข้อมูลมะพร้าว', path: '/backend/coconuts' },
+  { label: 'จัดการข้อมูลศัตรูพืช', path: '/backend/pests' },
+  { label: 'จัดการข้อมูลห่วงโซ่คุณค่า', path: '/backend/chain-values' },
+  { label: 'จัดการคำถามที่พบบ่อย', path: '/backend/faqs' },
+  { label: 'จัดการฟุตเตอร์', path: '/backend/footer' },
+]
 
-const sidebaropen = ref(false);
-const toggleSidebar = () => {
-  sidebaropen.value = !sidebaropen.value;
-};
+const sidebaropen = ref(false)
+const toggleSidebar = () => { sidebaropen.value = !sidebaropen.value }
 
-const navigateTo = (path) => {
-  activeItem.value = path;
-  router.push(path);
-};
+const navigateTo = (path) => { router.push(path) }
+
+// active เมื่อเป็นหน้าตรงหรือหน้าลูก
+const isActive = (path) => activePath.value === path || activePath.value.startsWith(path + '/')
 </script>
+
 
 <style scoped>
 .menu-title-text {
@@ -163,11 +164,12 @@ const navigateTo = (path) => {
 
 .menu li:hover {
   background-color: #4e867a;
-   color: white;
+  color: white;
   transform: scale(1.05);
 }
+
 .menu li.active {
- background: linear-gradient(90deg,#5c968b,#91e6d6);
+  background: linear-gradient(90deg, #5c968b, #91e6d6);
   color: white;
   transform: scale(1.05);
 }

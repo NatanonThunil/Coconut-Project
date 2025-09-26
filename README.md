@@ -15,6 +15,7 @@
 - แก้ ``achievement`` ``coconut`` ``news`` ``pest`` ``service`` ให้มี ``post without publish``✅
 - แก้ ``TiptapEditor`` ให้รองรับตัวหนังสือสีขาว✅
 - ตกแต่ง ``/backend/reg``✅
+- แก้ ``adminsidebar`` ให้ update active ตามการเปลี่ยนแปลงของ URL ✅
 
 
 
