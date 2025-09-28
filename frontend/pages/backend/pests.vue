@@ -135,11 +135,7 @@
                     <label>Prevent (English)</label>
                     <textarea class="add-text-input" v-model="currentPest.prevent_en"
                         placeholder="Enter prevent (English)" required></textarea>
-                    <label>Status</label>
-                    <select v-model="currentPest.status" class="category-select" required>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
+                    
                     <label>Type</label>
                     <select v-model="currentPest.type" class="category-select" required>
                         <option value="1">Pest</option>
