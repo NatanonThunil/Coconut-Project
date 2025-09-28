@@ -9,7 +9,7 @@
         <div class="news-check-publish">
             <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
             <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-news-btn" @click="openAddServiceModal">เพิ่มบริการ</button>
+            <button class="add-news-btn" @click="openAddServiceModal">ADD Service</button>
         </div>
     </div>
 
