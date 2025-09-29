@@ -8,13 +8,10 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผู้เขียน หรือ วันที่" />
 
-        <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
-                Checked
-                Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked
-                Unpublish</button>
+        <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
 
-            <button class="add-news-btn" @click="openAddAchievementModal">ADD Achievement</button>
+            <button class="add-news-btn" @click="openAddAchievementModal">เพิ่มผลงาน</button>
         </div>
     </div>
 

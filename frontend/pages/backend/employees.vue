@@ -8,13 +8,13 @@
     <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
     <div class="employee-check-publish">
       <button class="published-news-btn" @click="bulkUpdateStatus(true)">
-        All Checked Publish
+        เผยแพร่ทุกอันที่เช็ค
       </button>
       <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">
-        All Checked Unpublish
+        ไม่เผยแพร่ทุกอันที่เช็ค
       </button>
       <button class="add-news-btn" @click="openAddEmployeeModal">
-        ADD Employee
+        เพิ่มคณะทำงาน
       </button>
     </div>
   </div>

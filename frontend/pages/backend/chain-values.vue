@@ -7,9 +7,9 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผู้เขียน หรือ วันที่" />
         <div class="chainvalue-check-publish">
-            <button class="published-chainvalue-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-chainvalue-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-chainvalue-btn" @click="openAddChainValueModal">ADD Chain Value</button>
+            <button class="published-chainvalue-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-chainvalue-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="add-chainvalue-btn" @click="openAddChainValueModal">เพิ่มห่วงโซ่คุณค่า</button>
         </div>
     </div>
     <div class="table-container">

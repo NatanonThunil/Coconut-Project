@@ -7,9 +7,9 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" :placeholder="config.searchPlaceholder" />
         <div class="faq-check-publish">
-            <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-news-btn" @click="openAddFaqModal">ADD FAQ</button>
+            <button class="published-news-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="add-news-btn" @click="openAddFaqModal">เพิ่มคำถามพบบ่อย</button>
         </div>
     </div>
     <div class="table-container">

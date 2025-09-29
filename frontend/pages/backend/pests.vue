@@ -7,9 +7,9 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ หรือ วันที่" />
         <div class="pest-check-publish">
-            <button class="published-pest-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-pest-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-pest-btn" @click="openAddPestModal">ADD Pest</button>
+            <button class="published-pest-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-pest-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="add-pest-btn" @click="openAddPestModal">เพิ่มศัตรูพืช</button>
         </div>
     </div>
     <div class="table-container">

@@ -8,9 +8,9 @@
   <div class="add-btn-container">
     <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ที่อยู่ หรือ เบอร์โทร" />
     <div class="member-check-publish">
-      <button class="published-news-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-      <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-      <button class="add-news-btn" @click="openAddMemberModal">ADD Member</button>
+      <button class="published-news-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+      <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
+      <button class="add-news-btn" @click="openAddMemberModal">เพิ่มสมาชิก</button>
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 export function signAT(payload) {
-  return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' })
+  return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '60m' })
 }
 
 export function signRT(payload) {

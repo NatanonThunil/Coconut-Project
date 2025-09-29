@@ -7,9 +7,9 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผู้เขียน หรือ วันที่" />
         <div class="coconut-check-publish">
-            <button class="published-coconut-btn" @click="bulkUpdateStatus(true)">All Checked Publish</button>
-            <button class="unpublished-coconut-btn" @click="bulkUpdateStatus(false)">All Checked Unpublish</button>
-            <button class="add-coconut-btn" @click="openAddCoconutModal">ADD Coconut</button>
+            <button class="published-coconut-btn" @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-coconut-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="add-coconut-btn" @click="openAddCoconutModal">เพิ่มมะพร้าว</button>
         </div>
     </div>
     <div class="table-container">

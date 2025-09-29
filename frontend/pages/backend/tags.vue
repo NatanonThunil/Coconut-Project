@@ -15,7 +15,7 @@
                 title="ลบแท็กทั้งหมดที่เลือก">
                 Delete the selected tag ({{ selectedCount }})
             </button>
-            <button class="create-btn" @click="openCreateModal">ADD Tag</button>
+            <button class="create-btn" @click="openCreateModal">เพิ่มแท็ก</button>
 
         </div>
     </div>

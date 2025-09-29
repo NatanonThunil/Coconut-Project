@@ -8,13 +8,11 @@
     <div class="add-btn-container">
         <SearchInput v-model:search="searchQuery" placeholder="ค้นหาด้วย id, ชื่อ, ผุ้เขียน หรือ วันที่" />
 
-        <div class="news-check-publish"><button class="published-news-btn" @click="bulkUpdateStatus(true)">All
-                Checked
-                Publish</button>
-            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">All Checked
-                Unpublish</button>
+        <div class="news-check-publish"><button class="published-news-btn"
+                @click="bulkUpdateStatus(true)">เผยแพร่ทุกอันที่เช็ค</button>
+            <button class="unpublished-news-btn" @click="bulkUpdateStatus(false)">ไม่เผยแพร่ทุกอันที่เช็ค</button>
 
-            <button class="add-news-btn" @click="openAddNewsModal">ADD News</button>
+            <button class="add-news-btn" @click="openAddNewsModal">เพิ่มข่าว</button>
         </div>
     </div>
 
@@ -157,7 +155,7 @@
                         </div>
                     </div>
                     <label class="hotnews-toggle-container">
-                        <p>คลิกเพื่อเปลี่ยนเป็น {{ currentNews.hot_new?  "ข่าวปกติ" : "ข่าวใหญ่"}}</p>
+                        <p>คลิกเพื่อเปลี่ยนเป็น {{ currentNews.hot_new ? "ข่าวปกติ" : "ข่าวใหญ่" }}</p>
                         <button class="toggle-btn" :class="{ active: currentNews.hot_new }"
                             @click="currentNews.hot_new = !currentNews.hot_new">
                             {{ currentNews.hot_new ? 'Hot News' : 'News' }}
@@ -1240,25 +1238,26 @@ onMounted(() => {
 }
 
 .toggle-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  border: 2px solid #ccc;
-  background: #f5f5f5;
-  color: #555;
-  font-weight: 600;
-  width: 100%;
-  cursor: pointer;
-  transition: all 0.25s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    background: #f5f5f5;
+    color: #555;
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
 .toggle-btn:hover {
-  background: #eee;
+    background: #eee;
 }
 
 .toggle-btn.active {
-  background: #4E6D16;   /* สีเขียวตอน active */
-  border-color: #4E6D16;
-  color: #fff;
+    background: #4E6D16;
+    /* สีเขียวตอน active */
+    border-color: #4E6D16;
+    color: #fff;
 }
 
 .hotnews-switch span:hover {
