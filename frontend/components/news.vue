@@ -1,11 +1,7 @@
 <template>
   <div class="news-container">
     <!-- Hot News Section -->
-    <NuxtLinkLocale
-      v-if="hotNews"
-      class="hot-news-section"
-      :to="`/announcements/news/details/${hotNews.id}`"
-    >
+    <NuxtLinkLocale v-if="hotNews" class="hot-news-section" :to="`/announcements/news/details/${hotNews.id}`">
       <div class="hot-news-image">
         <img :src="hotNews.image" alt="Hot News Image" draggable="false" />
       </div>
@@ -20,12 +16,7 @@
 
     <!-- Regular News Section -->
     <div class="news-rows" v-if="regularNews.length">
-      <div
-        class="news-item"
-        v-for="news in regularNews"
-        :key="news.id"
-        @click="() => navigateToDetails(news.id)"
-      >
+      <div class="news-item" v-for="news in regularNews" :key="news.id" @click="() => navigateToDetails(news.id)">
         <img :src="news.image" alt="News Image" draggable="false" />
         <div class="news-text-container">
           <h2>{{ getLocalizedText(news, 'title') }}</h2>
@@ -85,9 +76,9 @@ const fetchNews = async () => {
     const response = await getNews()
 
     if (Array.isArray(response)) {
-  
+
       newsItems.value = response.sort((a, b) => b.id - a.id)
-    
+
       hotNews.value = newsItems.value.find((item) => item.hot_new && item.status) || null
       regularNews.value = newsItems.value.filter((item) => !item.hot_new && item.status).slice(0, 2)
     } else {
@@ -144,6 +135,7 @@ watch(currentLocale, fetchNews)
   transform: translateY(50px);
   animation: fadeInUp 0.8s ease-out forwards;
 }
+
 .hot-news-section:hover {
   transform: scale(1.01);
   background-color: #abb94f;
@@ -151,17 +143,20 @@ watch(currentLocale, fetchNews)
 }
 
 .hot-news-image {
-  max-height: 300px;
+  height: 24.5rem;
+
   width: 50%;
   overflow: hidden;
+  justify-content: flex-start;
   display: flex;
   align-items: center;
 }
 
 .hot-news-image img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
+  height: 100%;
+  width: 100%;
+  aspect-ratio: 16/9;
 }
 
 .hot-news-text {
@@ -171,6 +166,19 @@ watch(currentLocale, fetchNews)
   color: black;
   text-align: justify;
   max-width: 50%;
+
+}
+
+.hot-news-text h2,
+.hot-news-text p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+
 }
 
 /* Regular News Section Styles */
@@ -253,6 +261,7 @@ watch(currentLocale, fetchNews)
     opacity: 0;
     transform: translateY(50px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -268,23 +277,51 @@ watch(currentLocale, fetchNews)
 /* Responsive Styles */
 @media screen and (max-width: 1250px) {
   .hot-news-section {
+    width: 45%;
     flex-direction: column;
     align-items: center;
   }
+
+  .hot-news-text h2{
+    font-size: clamp(1rem, 0.8vw, 2rem);
+  }
+
+    .hot-news-text p{
+    font-size: clamp(0.8rem, 0.8vw, 1.5rem);
+  }
+
+
+  .news-container {
+  flex-direction: row;
+  justify-content: center;
+  }
+
   .hot-news-image {
     width: 100%;
-    height: 50rem;
+    height: 100%;
+    justify-content: center;
   }
+
+  .hot-news-image img {
+    height: auto;
+    width: 100%;
+ 
+  }
+
   .hot-news-text {
     max-width: 100%;
     text-align: center;
   }
+
   .news-rows {
+    width: 45%;
     flex-direction: column;
   }
+
   .news-item {
     margin-bottom: 1rem;
   }
+
   .news-item img {
     max-height: 120px;
   }
@@ -294,9 +331,11 @@ watch(currentLocale, fetchNews)
   .hot-news-image img {
     max-width: 90%;
   }
+
   .news-item img {
     max-height: 100px;
   }
+
   .news-item {
     flex-direction: column;
   }
