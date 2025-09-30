@@ -8,6 +8,9 @@
 
 ![components news](img/newnewsreponsive.png)    
 
+- แก้ session จาก 15นาที เป็น 1ชม
+- แก้ ``Bulkupdate`` ในหน้า Backend ของข่าว
+
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 

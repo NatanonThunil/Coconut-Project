@@ -1,6 +1,6 @@
 <template>
     <NuxtLinkLocale class="dash-card" :to="props.link" @click="emit('clicked')">
-        <img :src="props.icon" class="dash-img-icon">
+        <img :src="props.icon" class="dash-img-icon" draggable="false">
         <div class="dash-card-content">
             <h2>{{ props.count }}</h2>
             <p>{{ props.title }}</p>
@@ -20,6 +20,7 @@ const emit = defineEmits<{ (e: 'clicked'): void }>()
 
 <style scoped>
 .dash-img-icon {
+
     width: 30px;
     height: 30px;
 

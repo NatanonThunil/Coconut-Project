@@ -19,7 +19,7 @@ export function setAuthCookies(res, accessToken, refreshToken) {
 
   res.cookie('access_token', accessToken, {
     ...cookieOpts,
-    maxAge: 15 * 60 * 1000, // 15 นาที
+    maxAge: 60 * 60 * 1000, // 15 นาที
   })
 
   res.cookie('refresh_token', refreshToken, {

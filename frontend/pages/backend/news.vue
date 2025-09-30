@@ -254,8 +254,36 @@ const cropperImage = ref(null);
 const pendingImageFile = ref(null);
 
 const activeLang = ref(true);
-const toggleLang = () => {
-    activeLang.value = !activeLang.value;
+const bulkUpdateStatus = async (statusValue) => {
+
+    try {
+
+        const selectedPests = News.value.filter(p => p.selected);
+        if (!selectedPests.length) {
+            alert('Please select at least one pest.');
+            return;
+        }
+
+
+        const updatePromises = selectedPests.map(pest => {
+            const payload = { ...pest, status: statusValue ? 1 : 0 };
+            return updateNews(pest.id, payload);
+        });
+
+
+        await Promise.all(updatePromises);
+
+
+        News.value.forEach(p => {
+            if (p.selected) p.status = statusValue ? 1 : 0;
+        });
+
+
+    } catch (error) {
+        alert(`Error updating pests: ${error.message}`);
+        console.error(error);
+    }
+
 };
 
 // ✅ Fetch all news
