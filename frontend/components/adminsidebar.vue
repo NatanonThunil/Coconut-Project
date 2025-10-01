@@ -1,6 +1,7 @@
 <template>
   <aside :class="['sidebar', { 'closed': !sidebaropen }]">
     <div class="sidebar-content">
+      <div style="height: 1rem;"></div>
       <div class="logo-container">
         <img :src="icon" alt="Coconut Logo" class="logo" />
       </div>

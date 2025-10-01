@@ -13,7 +13,7 @@
         <div class="toolbar">
             <button class="delete-checked-btn" :disabled="!selectedCount" @click="deleteSelected"
                 title="ลบแท็กทั้งหมดที่เลือก">
-                Delete the selected tag ({{ selectedCount }})
+                ลบแท็กทั้งหมดที่เลือก ({{ selectedCount }})
             </button>
             <button class="create-btn" @click="openCreateModal">เพิ่มแท็ก</button>
 
