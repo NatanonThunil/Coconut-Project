@@ -5,7 +5,11 @@
 
 ### Update List
 - แก้ backend ``tag`` เปลี่ยนเ็นภาษาไทย
+
+![แก้ลบtagเป็นภาษาไทย](/img/daltaglangchange.png)
+
 - แก้ ระยะห่าง ``adminsidebar`` จากแถบด้านบน
+
 - แก้ แปลภาษาในหน้า coconut varieties และ Layout
 - แก้ ``Pest`` sciname ให้ใช้ ``TiptapEditor``
 - แก้ Table ``coconut`` เพิ่ม ``origin_en``, ``characteristics_en`` และแก้ Handle ``Coconut no image``
