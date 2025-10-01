@@ -2,6 +2,7 @@
   <div class="hero-bar">
     <div class="background" :style="{
       backgroundImage: `url(${heado.image})`,
+      backgroundAttachment: 'fixed'
 
 
     }"></div>
@@ -22,14 +23,7 @@ import { useHerobars } from '~/composables/useHerobars'
 
 const { getHerobarById } = useHerobars()
 
-defineProps({
-  isFixed: {
-    type: Boolean,
-    default: false,
-  }
-});
 
-const apibase = useRuntimeConfig().public.apiBase;
 const taglineRef = ref(null);
 const textHeight = ref(0);
 const textWidth = ref(0);
@@ -94,6 +88,7 @@ watchEffect(updateTextHW);
 .hero-bar {
   position: relative;
   width: 100%;
+  height: 100dvh;
   aspect-ratio: 8/3;
   display: flex;
   align-items: center;
@@ -104,13 +99,14 @@ watchEffect(updateTextHW);
 .background {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   background-attachment: fixed;
-  background-size: contain;
+  background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
   z-index: -2;
-  animation: fadeInImage 1s ease-out;
+  animation: fadeInBg 1s ease-out;
+
 
 }
 
@@ -148,17 +144,18 @@ watchEffect(updateTextHW);
   }
 }
 
-@keyframes fadeInImage {
-  0% {
-
-    transform: scale(1.05);
+@keyframes fadeInBg {
+  from {
+    filter: brightness(0);
+ 
   }
 
-  100% {
-
-    transform: scale(1);
+  to {
+      
+   filter: brightness(1);
   }
 }
+.background, .bg-fixed { backface-visibility: hidden; }
 
 @media (max-width: 1024px) {
   .hero-bar {
@@ -167,7 +164,7 @@ watchEffect(updateTextHW);
   }
 
   .background {
-    
+
     height: 30rem;
     background-size: 80rem;
 
@@ -192,7 +189,7 @@ watchEffect(updateTextHW);
 
 @media (max-width: 425px) {
   .hero-bar {
-    
+
     height: 40dvh;
   }
 

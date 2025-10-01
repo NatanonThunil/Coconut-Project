@@ -1,57 +1,72 @@
 <template>
   <div>
-    <!-- Initial app loading -->
-    <div v-if="isLoading" class="loading-container">
-      <DotLottieVue v-if="lottieLoaded" style="height: 300px; width: 300px" autoplay loop :src="loadingAnimation" />
-      <p v-else style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
-    </div>
+    <Suspense>
+      <!-- SINGLE ROOT for default slot -->
+      <template #default>
+        <div class="layout-shell">
+          <header>
+            <Navbar selecto="home" v-model:search="searchQuery" />
+          </header>
 
-    <!-- App body -->
-    <div v-else>
-      <header>
-        <Navbar selecto="home" v-model:search="searchQuery" />
-      </header>
-
-      <main>
-        <!-- Normal content -->
-        <div v-if="!isSearching" class="cocon-main-container">
-          <slot />
-        </div>
-
-        <!-- Search surface -->
-        <div v-else class="search-surface">
-          <div style="height: 8rem;"></div>
-
-          <div class="search-header">
-            <div class="left">
-              <h3>ผลการค้นหา</h3>
-              <p v-if="searchQuery">
-                <span v-if="!searchError && !searchLoading">{{ total }} รายการ</span>
-              </p>
+          <main>
+            <!-- Normal content -->
+            <div v-if="!isSearching" class="cocon-main-container">
+              <slot />
             </div>
-          
-          </div>
 
-          <div v-if="searchLoading" class="search-loading">กำลังค้นหา…</div>
-          <div v-else-if="searchError" class="search-error">{{ searchError }}</div>
-          <div v-else-if="results.length === 0" class="search-empty">ไม่พบผลลัพธ์ที่ตรงกัน</div>
+            <!-- Search surface -->
+            <div v-else class="search-surface">
+              <div style="height: 8rem;"></div>
 
-          <ul v-else class="result-list">
-            <li v-for="item in results" :key="`${item.type}-${item.id}`" class="result-item">
-              <NuxtLinkLocale :to="item.url" class="result-link" @click="clearSearch">
-                <span class="badge">{{ typeLabel(item.type) }}</span>
-                <div class="result-main">
-                  <div class="result-title" v-html="highlight(item.title)"></div>
-                  <div class="result-snippet" v-html="highlight(item.snippet)"></div>
+              <div class="search-header">
+                <div class="left">
+                  <h3>ผลการค้นหา</h3>
+                  <p v-if="searchQuery">
+                    <span v-if="!searchError && !searchLoading">{{ total }} รายการ</span>
+                  </p>
                 </div>
-              </NuxtLinkLocale>
-            </li>
-          </ul>
-        </div>
-      </main>
+              </div>
 
-      <NewFooter />
-    </div>
+              <div v-if="searchLoading" class="search-loading">กำลังค้นหา…</div>
+              <div v-else-if="searchError" class="search-error">{{ searchError }}</div>
+              <div v-else-if="results.length === 0" class="search-empty">ไม่พบผลลัพธ์ที่ตรงกัน</div>
+
+              <ul v-else class="result-list">
+                <li v-for="item in results" :key="`${item.type}-${item.id}`" class="result-item">
+                  <NuxtLinkLocale :to="item.url" class="result-link" @click="clearSearch">
+                    <span class="badge">{{ typeLabel(item.type) }}</span>
+                    <div class="result-main">
+                      <div class="result-title" v-html="highlight(item.title)"></div>
+                      <div class="result-snippet" v-html="highlight(item.snippet)"></div>
+                    </div>
+                  </NuxtLinkLocale>
+                </li>
+              </ul>
+            </div>
+          </main>
+
+          <NewFooter />
+        </div>
+      </template>
+
+      
+      <template #fallback>
+        <div class="loading-container">
+          <ClientOnly>
+            <DotLottieVue
+              v-if="lottieLoaded"
+              style="height: 300px; width: 300px"
+              autoplay
+              loop
+              :src="loadingAnimation"
+            />
+            <template #fallback>
+              <p style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
+            </template>
+          </ClientOnly>
+        </div>
+      </template>
+    </Suspense>
   </div>
 </template>
 
@@ -59,17 +74,14 @@
 let searchToken = 0
 
 import { ref, computed, watch, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
-import { useRuntimeConfig } from '#app'
 import { useSearchs, type SearchItem, type SearchType } from '~/composables/useSearchs'
 
 const DotLottieVue = defineAsyncComponent(() =>
   import('@lottiefiles/dotlottie-vue').then(m => m.DotLottieVue)
 )
 
-const loading_time = useRuntimeConfig().public.LoadingTimeMock
-const isLoading = ref(true)
 const lottieLoaded = ref(false)
-const loadingAnimation = ref('')
+const loadingAnimation = ref('@/assets/load/loading.lottie')
 
 async function preloadLottie() {
   try {
@@ -111,14 +123,13 @@ watch(
     try {
       const { promise } = live.run(term, { limit: 20, statusOnly: true })
       const res = await promise
-      if (token !== searchToken) return // stale result, ignore
+      if (token !== searchToken) return
       results.value = res.data
       total.value = res.total
     } catch (e: any) {
-      if (token !== searchToken) return // stale error, ignore
+      if (token !== searchToken) return
 
       if (isAbortError(e)) {
-        // retry once after a short delay
         await new Promise(r => setTimeout(r, 120))
         try {
           const { promise } = live.run(term, { limit: 20, statusOnly: true })
@@ -157,7 +168,6 @@ onMounted(async () => {
   window.addEventListener('keydown', onKeydown)
   window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   await preloadLottie()
-  setTimeout(() => { isLoading.value = false }, Number(loading_time))
 })
 
 onBeforeUnmount(() => {
@@ -196,12 +206,11 @@ function highlight(text: string) {
 function isAbortError(e: any) {
   return e?.name === 'AbortError'
       || e?.message?.toLowerCase?.().includes('aborted')
-      || e?.code === 20; // old DOMException
+      || e?.code === 20
 }
 
 function typeLabel(t: SearchType) {
   switch (t) {
-    
     case 'new': return 'ข่าวสาร'
     case 'coconut': return 'พันธุ์มะพร้าว'
     case 'pest': return 'ศัตรูพืช'
@@ -215,9 +224,8 @@ function typeLabel(t: SearchType) {
     default: return t
   }
 }
-
-
 </script>
+
 
 
 <style scoped>
@@ -281,7 +289,7 @@ function typeLabel(t: SearchType) {
 
 .result-item:hover {
   transform: scale(1.05);
-   background: rgba(1, 1, 1, 0.05);
+  background: rgba(1, 1, 1, 0.05);
 }
 
 .result-link {
@@ -291,8 +299,6 @@ function typeLabel(t: SearchType) {
   text-decoration: none;
   color: inherit;
 }
-
-
 
 .badge {
   flex: 0 0 auto;
@@ -321,7 +327,6 @@ function typeLabel(t: SearchType) {
   font-weight: 600;
   margin-bottom: .2rem;
 }
-
 
 .result-snippet {
   font-size: .9rem;
@@ -355,28 +360,14 @@ function typeLabel(t: SearchType) {
 
 /* Bouncing animation */
 @keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-15px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
 
 @keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
-
 
 main {
   scroll-behavior: smooth;

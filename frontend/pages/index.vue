@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <TagLine taglinetext="This is Coconut Knowledge Hub TagLine" :isFixed="true" />
+    <TagLine taglinetext="This is Coconut Knowledge Hub TagLine" />
 
     <ContentHeader :contexto="$t('News')" />
 

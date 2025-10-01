@@ -81,24 +81,24 @@
 
         <ul class="mobile-main-menu" v-show="isMenuOpen">
           <li :class="{ mobileSelected: selecto === 'home' }">
-            <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/" @click="toggleMenu()">{{ $t('Home') }}</NuxtLinkLocale>
           </li>
           <li :class="{ mobileSelected: selecto === 'aboutus' }">
-            <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/aboutus" @click="toggleMenu()">{{ $t('AboutUs') }}</NuxtLinkLocale>
           </li>
             <li :class="{ mobileSelected: selecto === 'announcements' }">
-            <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/announcements" @click="toggleMenu()">{{ $t('News & Events') }}</NuxtLinkLocale>
           </li>
            
           <li :class="{ mobileSelected: selecto === 'coconutdata' }">
-            <NuxtLinkLocale to="/coconut-information">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/coconut-information" @click="toggleMenu()">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
           </li>
           <li :class="{ mobileSelected: selecto === 'expert' }">
             <!-- NOTE: fixed your old '/expert' -> '/experts' -->
-            <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/experts" @click="toggleMenu()">{{ $t('Experts') }}</NuxtLinkLocale>
           </li>
           <li :class="{ mobileSelected: selecto === 'faqs' }">
-            <NuxtLinkLocale to="/faqs">{{ $t('FAQs') }}</NuxtLinkLocale>
+            <NuxtLinkLocale to="/faqs" @click="toggleMenu()">{{ $t('FAQs') }}</NuxtLinkLocale>
           </li>
           <li>
             <Langswitch class="Ls-repon" :Ismobile="true" />
@@ -168,6 +168,9 @@ const selecto = computed<'home' | 'aboutus' | 'news' | 'events' | 'coconutdata' 
 </script>
 
 <style scoped>
+
+
+
 .nav-search-input img {
   position: absolute;
   left: 20px;
@@ -623,6 +626,18 @@ nuxt-link:hover {
 @media (min-width: 1039px) {
   .mobile-main-menu {
     display: none;
+  }
+}
+
+@keyframes insertnav {
+  0% {
+    
+    transform: translateY(-20%);
+  }
+
+  100% {
+    
+    transform: translateY(20%);
   }
 }
 
