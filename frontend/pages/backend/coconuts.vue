@@ -139,6 +139,8 @@
                 <section>
                     <label>Origin</label>
                     <input class="add-text-input" v-model="currentCoconut.origin" placeholder="Enter origin" required />
+                    <label>Origin (EN)</label>
+                    <input class="add-text-input" v-model="currentCoconut.origin_en" placeholder="Enter origin (EN)" />
                     <label>ชื่อทาง วิทยาศาสตร์</label>
                     <TiptapEditor v-model="currentCoconut.sci_name_f"
                         :disable="[, 'heading', 'link', 'image', 'align', 'color']" />
@@ -155,6 +157,9 @@
                     <label>Characteristics</label>
                     <textarea class="add-text-input" v-model="currentCoconut.characteristics"
                         placeholder="Enter characteristics" required></textarea>
+                    <label>Characteristics (EN)</label>
+                    <textarea class="add-text-input" v-model="currentCoconut.characteristics_en"
+                        placeholder="Enter characteristics (EN)"></textarea>
                     <label>Young/Old</label>
                     <select v-model="currentCoconut.youngold" class="category-select" required>
                         <option value="Young">Young</option>
@@ -238,10 +243,12 @@ const currentCoconut = ref({
     name_th: '',
     description: '',
     origin: '',
+    origin_en: '', // เพิ่ม
     sci_name_f: '',
     sci_name_m: '',
     sci_name_l: '',
     characteristics: '',
+    characteristics_en: '', // เพิ่ม
     youngold: 'Young',
     image: null,      // always string (DataURL or server path)
     status: false,
@@ -434,10 +441,12 @@ const openAddCoconutModal = () => {
         name_th: '',
         description: '',
         origin: '',
+        origin_en: '', // เพิ่ม
         sci_name_f: '',
         sci_name_m: '',
         sci_name_l: '',
         characteristics: '',
+        characteristics_en: '', // เพิ่ม
         youngold: 'Young',
         image: null,
         status: false,
@@ -448,6 +457,9 @@ const openAddCoconutModal = () => {
 
 const editItem = (coconut) => {
     currentCoconut.value = { ...coconut };
+    // เผื่อ coconut ไม่มี origin_en/characteristics_en
+    if (!currentCoconut.value.origin_en) currentCoconut.value.origin_en = '';
+    if (!currentCoconut.value.characteristics_en) currentCoconut.value.characteristics_en = '';
     pendingImageFile.value = null;
     showModalEdit.value = true;
 };
@@ -509,6 +521,7 @@ const submitCoconut = async (publish) => {
             const newCoconut = await createCoconut(
                 payload.description,
                 payload.origin,
+                payload.origin_en, // เพิ่ม
                 payload.status,
                 payload.name_eng,
                 payload.name_th,
@@ -516,6 +529,7 @@ const submitCoconut = async (publish) => {
                 payload.sci_name_m,
                 payload.sci_name_l,
                 payload.characteristics,
+                payload.characteristics_en, // เพิ่ม
                 payload.youngold,
                 payload.image
             );

@@ -2,20 +2,14 @@
   <div style="height: 8rem"></div>
 
   <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale
-    >/
+    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/">{{
       $t("CoconutInfo")
-    }}</NuxtLinkLocale
-    >/
+    }}</NuxtLinkLocale>/
     <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{
       $t("Coconut-varieties")
-    }}</NuxtLinkLocale
-    >/
-    <NuxtLinkLocale
-      v-if="coconut"
-      :to="'/coconut-information/coconut-varieties/details/' + route.params.id"
-    >
+    }}</NuxtLinkLocale>/
+    <NuxtLinkLocale v-if="coconut" :to="'/coconut-information/coconut-varieties/details/' + route.params.id">
       <div>
         {{
           currentLocale === "th"
@@ -31,45 +25,46 @@
   <div v-if="coconut" class="coconut-detail-container">
     <div class="row-top">
       <div class="coconut-detail-img">
-        <img
-          :src="coconut?.image || 'https://via.placeholder.com/1280x720'"
-          alt="Coconut Image"
-        />
+        <img :src="coconut?.image || 'https://via.placeholder.com/1280x720'" alt="Coconut Image" />
       </div>
       <div class="coconut-detail-info">
-        <h2>{{ coconut?.name_th || "-" }}</h2>
-        <p><strong>ชื่ออังกฤษ :</strong> {{ coconut?.name_eng || "-" }}</p>
+        <h2>{{ currentLocale === "th"
+          ? coconut?.name_th || "-"
+          : coconut?.name_eng || "-" }}</h2>
+        <p><strong>{{ currentLocale === "th"
+          ? "ชื่อภาษาอังกฤษ :"
+          : "Thai name" }}</strong> {{ currentLocale === "th"
+              ? coconut?.name_eng || "-"
+              : coconut?.name_th || "-" }}</p>
         <p>
-          <strong>ประเภท :</strong>
+          <strong>{{ currentLocale === "th" ? "ประเภท :" : "Type :" }}</strong>
           {{
             coconut?.youngold === "Old"
-              ? "มะพร้าวแก่"
+              ? ((currentLocale === "th") ? "มะพร้าวพันธุ์สูง" : "Tall Coconut")
               : coconut?.youngold === "Young"
-              ? "มะพร้าวอ่อน"
-              : "-"
+                ? ((currentLocale === "th") ? "มะพร้าวพันธุ์แคระ" : "Dwarf Coconut")
+                : "-"
           }}
         </p>
         <p style="display: flex; gap: 0.5rem;">
-          <strong>ชื่อวิทยาศาสตร์ : </strong> <p v-html="coconut?.sci_name_f "></p>
+          <strong>{{ $t('scientificname') }} :</strong>
+        <p v-html="coconut?.sci_name_f"></p>
         </p>
         <p>
-          <strong>ถิ่นกำเนิด :</strong>
-          <span class="origin-desc">{{ coconut?.origin || "-" }}</span>
+          <strong>{{ $t('origin') }} : </strong>
+          <span class="origin-desc">{{ currentLocale === "th" ? coconut?.origin || "-" : coconut?.origin_en || "-"
+          }}</span>
         </p>
 
         <div class="deta-below">
           <p>
-            <strong>ลักษณะเฉพาะ </strong
-            ><span class="origin-desc">{{
-              coconut?.characteristics || "-"
+            <strong>{{ $t('characteristics') }} : </strong><span class="origin-desc">{{
+             currentLocale === "th" ? coconut?.characteristics || "-" : coconut?.characteristics_en || "-"
             }}</span>
           </p>
         </div>
       </div>
-      <SeeAllButton
-      text="ดูพันธุ์อื่นๆ"
-      link="/coconut-information/coconut-varieties"
-    />
+      <SeeAllButton :text="$t('seemorecoconut')" link="/coconut-information/coconut-varieties" />
     </div>
 
     <!-- <div
@@ -80,7 +75,7 @@
         margin: 1rem auto;
       "
     ></div> -->
-    
+
   </div>
 
   <div v-else class="loading-container">
@@ -137,7 +132,8 @@ onMounted(async () => {
 
 .row-top {
   display: flex;
-  flex-direction: column;/* left-right layout */
+  flex-direction: column;
+  /* left-right layout */
   /* flex-wrap: wrap;
   justify-content: center; */
   gap: 2rem;
@@ -162,22 +158,31 @@ onMounted(async () => {
 }
 
 .coconut-detail-img {
+  display: flex;
+  justify-content: center;
   width: 100%;
-  max-height: 400px;
-  border-radius: 12px;
-  overflow: hidden;
+
 }
 
 .coconut-detail-img img {
-  width: 100%;
-  height: auto;
+   aspect-ratio: 1/1;
+   border-radius: 12px;  
+  overflow: hidden;
+ 
+  width: 400px;
   max-height: 400px;
   object-fit: cover;
-  display: block;
+  
 }
 
 .coconut-detail-info {
+   display: flex;
+   flex-direction: column;
+   text-align: left;
+   
   max-width: 1000px;
+  margin: 0 auto;
+  width: 40%;
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -200,8 +205,9 @@ p.origin-desc {
   margin-bottom: 0.5rem;
   text-overflow: ellipsis;
   overflow: hidden;
- 
+
 }
+
 span.origin-desc {
   width: 100%;
   font-size: 1.5rem;
@@ -226,12 +232,16 @@ span.origin-desc {
   .coconut-detail-container {
     width: 95%;
   }
+  .coconut-detail-info {
+width: 80%;
+}
 }
 
 @media (max-width: 762px) {
   .row-top {
     display: flex;
-    flex-direction: row; /* left-right layout */
+    flex-direction: column;
+    /* left-right layout */
     align-items: flex-start;
     justify-content: flex-start;
     gap: 2rem;

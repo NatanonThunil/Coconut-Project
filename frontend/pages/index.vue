@@ -5,7 +5,7 @@
 
     <ContentHeader :contexto="$t('News')" />
 
-    <news />
+    <mainnews />
     <SeeAllButton :text="$t('SeeAll_News')" link="announcements/news" />
     <ContentHeader :contexto="$t('Events')" />
     <HomeEvent />

@@ -47,21 +47,21 @@ router.get('/:id', async (req, res) => {
 /////////////////////////////// POST
 router.post('/', async (req, res) => {
     try {
-        const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image, status } = req.body;
+        const { description, origin, origin_en, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, characteristics_en, youngold, image, status } = req.body;
 
         if (!image) {
             return res.status(400).json({ error: 'Image path is required.' });
         }
 
         const [result] = await db.query(
-            `INSERT INTO coconut (image, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [image, description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status]
+            `INSERT INTO coconut (image, description, origin, origin_en, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, characteristics_en, youngold, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [image, description, origin, origin_en, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, characteristics_en, youngold, status]
         );
 
         res.status(201).json({
             id: result.insertId,
-            description,
+            description, origin_en,
             origin,
             name_eng,
             name_th,
@@ -69,6 +69,7 @@ router.post('/', async (req, res) => {
             sci_name_m,
             sci_name_l,
             characteristics,
+            characteristics_en,
             youngold,
             status,
             image
@@ -82,14 +83,14 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, image, status } = req.body;
+        const { description, origin, origin_en, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, characteristics_en, youngold, image, status } = req.body;
 
         // Only update image if a new path is provided
         const [result] = await db.query(
             `UPDATE coconut
-             SET description = ?, origin = ?, name_eng = ?, name_th = ?, sci_name_f = ?, sci_name_m = ?, sci_name_l = ?, characteristics = ?, youngold = ?, status = ?, image = COALESCE(?, image)
+             SET description = ?, origin = ?, origin_en = ?, name_eng = ?, name_th = ?, sci_name_f = ?, sci_name_m = ?, sci_name_l = ?, characteristics = ?, characteristics_en = ?, youngold = ?, status = ?, image = COALESCE(?, image)
              WHERE id = ?`,
-            [description, origin, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, youngold, status, image || null, id]
+            [description, origin, origin_en, name_eng, name_th, sci_name_f, sci_name_m, sci_name_l, characteristics, characteristics_en, youngold, status, image || null, id]
         );
 
         if (result.affectedRows === 0) {

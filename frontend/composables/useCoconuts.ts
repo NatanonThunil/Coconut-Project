@@ -31,6 +31,7 @@ export const useCoconuts = () => {
     const createCoconut = async (
         description: string,
         origin: string,
+        origin_en: string, // เพิ่ม
         status: boolean,
         name_eng: string,
         name_th: string,
@@ -38,24 +39,27 @@ export const useCoconuts = () => {
         sci_name_m: string,
         sci_name_l: string,
         characteristics: string,
+        characteristics_en: string, // เพิ่ม
         youngold: 'Young' | 'Old',
         image: string // base64 string
     ) => {
         const url = `${be_api_url}${apiBase}/coconuts`;
         console.log('Requesting URL:', url);
-    
+
         return await $fetch(url, {
             method: 'POST',
             headers: { 'cocon-key': apiKey },
             body: {
                 description,
                 origin,
+                origin_en, // เพิ่ม
                 name_eng,
                 name_th,
                 sci_name_f,
                 sci_name_m,
                 sci_name_l,
                 characteristics,
+                characteristics_en, // เพิ่ม
                 youngold,
                 status,
                 image,
@@ -69,6 +73,7 @@ export const useCoconuts = () => {
         payload: {
             description?: string;
             origin?: string;
+            origin_en?: string; // เพิ่ม
             status?: boolean;
             name_eng?: string;
             name_th?: string;
@@ -76,6 +81,7 @@ export const useCoconuts = () => {
             sci_name_m?: string;
             sci_name_l?: string;
             characteristics?: string;
+            characteristics_en?: string; // เพิ่ม
             youngold?: 'Young' | 'Old';
             image?: string;
         }
