@@ -160,10 +160,10 @@
                     <label>Characteristics (EN)</label>
                     <textarea class="add-text-input" v-model="currentCoconut.characteristics_en"
                         placeholder="Enter characteristics (EN)"></textarea>
-                    <label>Young/Old</label>
+                    <label>พันธุ์</label>
                     <select v-model="currentCoconut.youngold" class="category-select" required>
-                        <option value="Young">Young</option>
-                        <option value="Old">Old</option>
+                        <option value="Young">มะพร้าวพันธุ์แคระ</option>
+                        <option value="Old">มะพร้าวพันธุ์สูง</option>
                     </select>
 
                 </section>

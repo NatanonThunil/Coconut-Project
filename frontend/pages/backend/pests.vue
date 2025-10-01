@@ -119,8 +119,9 @@
                     <label>Thai Name</label>
                     <input class="add-text-input" v-model="currentPest.name" placeholder="Enter Thai name" required />
                     <label>Scientific Name</label>
-                    <input class="add-text-input" v-model="currentPest.sci_name" placeholder="Enter scientific name"
-                        required />
+                     <TiptapEditor v-model="currentPest.sci_name"
+                        :disable="[, 'heading', 'link', 'image', 'align', 'color']" />
+                   
                 </section>
                 <section>
                     <label>Lifecycle</label>
