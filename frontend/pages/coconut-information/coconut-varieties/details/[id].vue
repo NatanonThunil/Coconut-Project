@@ -25,7 +25,7 @@
   <div v-if="coconut" class="coconut-detail-container">
     <div class="row-top">
       <div class="coconut-detail-img">
-        <img :src="coconut?.image || 'https://via.placeholder.com/1280x720'" alt="Coconut Image" />
+        <img :src="coconut?.image || handlenoimage" alt="Coconut Image" />
       </div>
       <div class="coconut-detail-info">
         <h2>{{ currentLocale === "th"
@@ -84,6 +84,7 @@
 </template>
 
 <script setup>
+import handlenoimage from "/img/no-image-handle.png";
 import { ref, onMounted } from "vue";
 import { useCoconuts } from "~/composables/useCoconuts";
 import { useHead } from "@vueuse/head";

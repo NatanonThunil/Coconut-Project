@@ -27,8 +27,8 @@
       <label class="filter-dropdown">
         <select v-model="filterType" @change="filterCoconuts" class="filter-select">
           <option value="">{{ currentLocale === 'th' ? 'ทั้งหมด' : 'All' }}</option>
-          <option value="Young">{{ currentLocale === 'th' ? 'มะพร้าวอ่อน' : 'Young Coconut' }}</option>
-          <option value="Old">{{ currentLocale === 'th' ? 'มะพร้าวแก่' : 'Old Coconut' }}</option>
+          <option value="Young">{{ currentLocale === 'th' ? 'มะพร้าวพันธ์ุแคระ' : 'Dwarf Coconut' }}</option>
+          <option value="Old">{{ currentLocale === 'th' ? 'มะพร้าวพันธ์ุสูง' : 'Tall Coconut' }}</option>
         </select>
       </label>
     </div>

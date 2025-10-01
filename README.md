@@ -6,7 +6,7 @@
 ### Update List
 - แก้ แปลภาษาในหน้า coconut varieties และ Layout
 - แก้ ``Pest`` sciname ให้ใช้ ``TiptapEditor``
-- แก้ Table ``coconut`` เพิ่ม ``origin_en`` กับ ``characteristics_en``
+- แก้ Table ``coconut`` เพิ่ม ``origin_en``, ``characteristics_en`` และแก้ Handle ``Coconut no image``
 
 ```bash
 use coconutknowledgehub;
