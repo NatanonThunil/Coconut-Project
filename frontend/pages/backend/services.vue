@@ -137,12 +137,13 @@
                     <label > ชื่อบริการ (English)</label>
                     <input class="add-text-input" v-model="currentService.title_en" placeholder="Enter title"
                         required />
-                    <label>รายละเอียด</label>
-                    <TiptapEditor  v-model="currentService.description" />
-                    <label >รายละเอียด (English)</label>
-                    <TiptapEditor  v-model="currentService.description_en" />
+                    
 
                 </section>
+                <section><label>รายละเอียด</label>
+                    <TiptapEditor  v-model="currentService.description" />
+                    <label >รายละเอียด (English)</label>
+                    <TiptapEditor  v-model="currentService.description_en" /></section>
             </div>
             <div class="modal-actions">
                 <button type="button" class="confirme-btn" @click.prevent="submitService(false)">
