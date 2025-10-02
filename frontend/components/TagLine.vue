@@ -15,7 +15,7 @@
     </div>
     <h1 v-else>Loading tagline...</h1>
     <label class="scrollnav">
-      <div>เลื่อนลง</div>
+      <div>{{ $t('scroll_down') }}</div>
       <div class="tar">▲</div>
     </label>
   </div>
