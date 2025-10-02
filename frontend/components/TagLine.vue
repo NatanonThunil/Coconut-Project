@@ -14,7 +14,14 @@
     }" class="tagline-text" v-html="locale === 'th' ? heado.text : heado.text_en">
     </div>
     <h1 v-else>Loading tagline...</h1>
+    <label class="scrollnav">
+      <div>เลื่อนลง</div>
+      <div class="tar">▲</div>
+    </label>
   </div>
+
+
+
 </template>
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from "vue";
@@ -36,6 +43,23 @@ const heado = ref({
   y: 50,
   image: "/img/tl.png",
 });
+
+const hidewhenstartscroll = () => {
+  const scrollnav = document.querySelector('.scrollnav');
+  if (!scrollnav) return;
+
+  if (window.scrollY > 10) {
+  
+    let opacity = Math.max(1 - (window.scrollY - 10) / 100, 0);
+    scrollnav.style.opacity = opacity.toString();
+  } else {
+
+    scrollnav.style.opacity = "0.7";
+  }
+};
+
+window.addEventListener("scroll", hidewhenstartscroll);
+
 
 const updateTextHW = () => {
   if (taglineRef.value) {
@@ -69,11 +93,13 @@ const fetchTagline = async () => {
 watch(locale, async () => {
   await nextTick();
   updateTextHW();
+
 });
 
 onMounted(() => {
   fetchTagline();
   window.addEventListener('resize', updateTextHW);
+  window.addEventListener('scroll', hidewhenstartscroll);
 });
 
 onBeforeUnmount(() => {
@@ -85,6 +111,23 @@ watchEffect(updateTextHW);
 
 
 <style scoped>
+.tar{
+transform: rotate(180deg);
+  
+
+}
+.scrollnav {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: clamp(0.5rem, 1.5vw, 1.5rem);
+  text-align: center;
+  opacity: 0.7;
+  animation: bounce 2s infinite;
+}
+
 .hero-bar {
   position: relative;
   width: 100%;
@@ -132,6 +175,18 @@ watchEffect(updateTextHW);
   white-space: nowrap;
 }
 
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
 @keyframes fadeInText {
   0% {
     opacity: 0;
@@ -147,17 +202,25 @@ watchEffect(updateTextHW);
 @keyframes fadeInBg {
   from {
     filter: brightness(0);
- 
+
   }
 
   to {
-      
-   filter: brightness(1);
+
+    filter: brightness(1);
   }
 }
-.background, .bg-fixed { backface-visibility: hidden; }
+
+.background,
+.bg-fixed {
+  backface-visibility: hidden;
+}
 
 @media (max-width: 1024px) {
+  .scrollnav {
+    display: none;
+  }
+
   .hero-bar {
     height: 30rem;
 
