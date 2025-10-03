@@ -6,10 +6,10 @@
     <ContentHeader :contexto="$t('News')" />
 
     <mainnews />
-    <SeeAllButton :text="$t('SeeAll_News')" link="announcements/news" />
+    <SeeAllButton :text="$t('SeeAll_News')" link="/announcements/news" />
     <ContentHeader :contexto="$t('Events')" />
     <HomeEvent />
-    <SeeAllButton :text="$t('SeeAll_Events')" link="announcements/events" />
+    <SeeAllButton :text="$t('SeeAll_Events')" link="/announcements/events" />
     <ContentHeader :contexto="$t('Other')" />
     <div class="homefootbannercontainer">
 

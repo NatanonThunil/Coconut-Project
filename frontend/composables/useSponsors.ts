@@ -27,17 +27,14 @@ export type UpdateSponsorInput = {
 
 export const useSponsors = () => {
   const config = useRuntimeConfig()
-  // แนะนำให้ตั้งค่าใน nuxt.config:
-  // runtimeConfig.public.apiBase = '/api'
-  // runtimeConfig.public.beUrl = 'https://your-backend'
-  // runtimeConfig.public.apiKey = 'Cocon541986'  // หรือจาก .env
+  
   const base = (config.public.beUrl || '').replace(/\/+$/, '')
   const apiBase = (config.public.apiBase || '').replace(/^\/?/, '/')
   const BASE_URL = `${base}${apiBase}sponsors`
 
   const headers = {
     'Content-Type': 'application/json',
-    'cocon-key': config.public.apiKey as string
+    'cocon-key': 'Cocon541986'
   }
 
   // ===== helpers =====

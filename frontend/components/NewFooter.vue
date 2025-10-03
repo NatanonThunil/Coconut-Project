@@ -12,24 +12,26 @@
             <div style="display: flex; justify-self: center">
                 <h2 class="ft-title">{{ $t('sponsor') }}</h2>
             </div>
+
             <!-- sponsors -->
-            <section class="footers-sponsors" aria-label="Sponsors">
-                <template v-if="loading">
-                    <div v-for="n in 4" :key="'sk-' + n" class="skeleton-logo"></div>
-                </template>
-
-                <template v-else>
-
-                    <a v-for="sp in sponsorsPadded.slice(0, 4)" :key="sp.id" :href="sp.url || '#'"
-                        :target="sp.url ? '_blank' : null" :rel="sp.url ? 'noopener noreferrer' : null"
-                        class="sponsor-item">
-                        <img :src="sp.logo" :alt="sp.alt || 'Sponsor'" loading="lazy" decoding="async"
-                            class="sponsor-logo" sizes="(max-width:640px) 35vw, (max-width:1024px) 22vw, 140px" />
-                        <p>{{ sp.alt }}</p>
-                    </a>
-                </template>
+            <!-- แสดง skeleton ขณะโหลด -->
+            <section v-if="loading" class="footers-sponsors" aria-label="Sponsors">
+                <div v-for="n in 4" :key="'sk-' + n" class="skeleton-logo"></div>
             </section>
+
+            <!-- แสดงรายการเฉพาะเมื่อมี >= 4 -->
+            <section v-else-if="sponsorsPadded.length >= 4" class="footers-sponsors" aria-label="Sponsors">
+                <a v-for="sp in sponsorsPadded" :key="sp.id" :href="sp.url || '#'" :target="sp.url ? '_blank' : null"
+                    :rel="sp.url ? 'noopener noreferrer' : null" class="sponsor-item">
+                    <img :src="sp.logo" :alt="sp.alt || 'Sponsor'" loading="lazy" decoding="async" class="sponsor-logo"
+                        sizes="(max-width:640px) 35vw, (max-width:1024px) 22vw, 140px" />
+                    <p>{{ sp.alt }}</p>
+                </a>
+            </section>
+            <!-- else: ไม่แสดง section ถ้าน้อยกว่า 4 -->
+
             <hr class="footer-divider" />
+
             <!-- contact -->
             <section class="ft-contract-us">
                 <h2 class="ft-title">{{ $t('ContactUs') }}</h2>
@@ -63,8 +65,10 @@ const { getFooterById } = useFooters()
 const footer = ref({
     text: '',
     text_en: '',
-    credit: 'Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง',
-    credit_en: 'Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University',
+    credit:
+        'Copyright © Coconut Knowledge Hub สำนักวิชาเทคโนโลยีสารสนเทศ มหาวิทยาลัยแม่ฟ้าหลวง',
+    credit_en:
+        'Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University'
 })
 
 const { sponsors, loading, fetchSponsorsToState } = useSponsors()
@@ -79,29 +83,33 @@ const links = [
     { to: '/FAQs', label: 'FAQs' }
 ]
 
-const sponsorList = computed(() =>
-    (sponsors.value?.[FOOTER_ID] || []) as Array<{
-        id: number; footer_id: number; logo: string; url?: string; alt?: string | null; position?: number;
-    }>
-)
-
-const sponsorsPadded = computed(() => {
-  const list = (sponsorList.value || [])
-    .filter(s => s && s.id && s.logo)                 
-    .reduce((acc, s) => {                              
-      if (!acc.find(x => x.id === s.id)) acc.push(s)
-      return acc
-    }, [] as typeof sponsorList.value)
-
-  list.sort((a, b) => {
-    const pa = Number.isFinite(a.position as number) ? (a.position as number) : a.id
-    const pb = Number.isFinite(b.position as number) ? (b.position as number) : b.id
-    return pa - pb
-  })
-
-  return list.slice(0, 4)                              
+// กันชนให้เป็น Array เสมอ เพื่อไม่ให้ .filter พัง
+const sponsorList = computed(() => {
+    const raw = sponsors.value?.[FOOTER_ID]
+    return Array.isArray(raw) ? raw : []
 })
 
+const sponsorsPadded = computed(() => {
+    // กรองของเสีย + dedupe ด้วย id
+    const cleaned = []
+    for (const s of sponsorList.value) {
+        if (!s || !s.id || !s.logo) continue
+        if (!cleaned.find(x => x.id === s.id)) cleaned.push(s)
+    }
+
+    // เรียง position > id
+    cleaned.sort((a: any, b: any) => {
+        const pa = Number.isFinite(a.position) ? a.position : a.id
+        const pb = Number.isFinite(b.position) ? b.position : b.id
+        return pa - pb
+    })
+
+    // น้อยกว่า 4 -> ไม่คืนอะไร (ให้ template ซ่อนไป)
+    if (cleaned.length < 4) return []
+
+    // แสดงแค่ 4 ชิ้น
+    return cleaned.slice(0, 4)
+})
 
 const fetchData = async () => {
     try {
@@ -122,6 +130,7 @@ const fetchData = async () => {
 
 onMounted(fetchData)
 </script>
+
 
 <style scoped>
 /* ===== Layout / Theme (no :root) ===== */
@@ -161,7 +170,7 @@ onMounted(fetchData)
     background: rgba(255, 255, 255, .12);
     transform: scale(1.05);
     opacity: 1;
-  
+
 }
 
 .footer-link:focus-visible {
