@@ -21,8 +21,9 @@ router.use((req, res, next) => {
 
 // OPTIONAL: บังคับจำนวนสูงสุดต่อ footer (ใช้ .env)
 // ENFORCE_SPONSOR_MAX=true  และ  SPONSOR_MAX=4 (ค่าเริ่มต้น 4 ถ้าไม่ตั้ง)
-const ENFORCE_MAX = true
-const SPONSOR_MAX = 4
+const ENFORCE_MAX = process.env.ENFORCE_SPONSOR_MAX === 'true';
+const SPONSOR_MAX = parseInt(process.env.SPONSOR_MAX || '4', 10);
+
 
 /////////////////////////////// GET ALL SPONSORS BY FOOTER (ordered)
 router.get('/footer/:footerId', async (req, res) => {

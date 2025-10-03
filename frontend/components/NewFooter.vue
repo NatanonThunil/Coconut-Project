@@ -86,13 +86,22 @@ const sponsorList = computed(() =>
 )
 
 const sponsorsPadded = computed(() => {
-    const list = [...sponsorList.value]
-    return list.sort((a, b) => {
-        const pa = Number.isFinite(a.position as number) ? (a.position as number) : a.id
-        const pb = Number.isFinite(b.position as number) ? (b.position as number) : b.id
-        return pa - pb
-    })
+  const list = (sponsorList.value || [])
+    .filter(s => s && s.id && s.logo)                 
+    .reduce((acc, s) => {                              
+      if (!acc.find(x => x.id === s.id)) acc.push(s)
+      return acc
+    }, [] as typeof sponsorList.value)
+
+  list.sort((a, b) => {
+    const pa = Number.isFinite(a.position as number) ? (a.position as number) : a.id
+    const pb = Number.isFinite(b.position as number) ? (b.position as number) : b.id
+    return pa - pb
+  })
+
+  return list.slice(0, 4)                              
 })
+
 
 const fetchData = async () => {
     try {
