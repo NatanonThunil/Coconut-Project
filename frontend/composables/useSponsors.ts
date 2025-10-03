@@ -1,4 +1,3 @@
-
 export type Sponsor = {
   id: number
   footer_id: number
@@ -6,7 +5,7 @@ export type Sponsor = {
   url: string
   alt?: string | null
   created_at?: string
-  position?: number    
+  position?: number
 }
 
 export type CreateSponsorInput = {
@@ -14,65 +13,56 @@ export type CreateSponsorInput = {
   logo: string
   url: string
   alt?: string | null
-  position?: number     
+  position?: number
 }
 
 export type UpdateSponsorInput = {
   logo?: string
   url?: string
   alt?: string | null
-  position?: number    
+  position?: number
 }
-
 
 export const useSponsors = () => {
   const config = useRuntimeConfig()
-  
-  const base = (config.public.beUrl || '').replace(/\/+$/, '')
-  const apiBase = (config.public.apiBase || '').replace(/^\/?/, '/')
-  const BASE_URL = `${base}${apiBase}sponsors`
+  const apiBase = config.public.apiBase || ''
+  const be_api_url = config.public.beUrl
+  const apiKey = (config.public.apiKey as string) || 'Cocon541986' 
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'cocon-key': 'Cocon541986'
-  }
+  // normalize ให้ชัวร์
+  const be = (be_api_url || '').replace(/\/+$/, '')
+  const api = (apiBase || '').replace(/^\/?/, '/')
+  const baseUrl = `${be}${api}sponsors`
+
+  const headers = { 'cocon-key': apiKey } 
 
   // ===== helpers =====
   const handleFetch = async <T>(promise: Promise<T>): Promise<T> => {
     try {
       return await promise
     } catch (err: any) {
-      // ปรับข้อความ error ให้อ่านง่าย
-      const msg =
-        err?.data?.error ||
-        err?.message ||
-        'Request failed'
+      const msg = err?.data?.error || err?.message || 'Request failed'
       throw new Error(msg)
     }
   }
 
   // ===== queries =====
-
   /** ดึง sponsor ทั้งหมดของ footer */
   const getSponsorsByFooter = async (footerId: number): Promise<Sponsor[]> => {
-    const url = `${BASE_URL}/footer/${footerId}`
-    return handleFetch(
-      $fetch<Sponsor[]>(url, { headers, method: 'GET' })
-    )
+    const url = `${baseUrl}/footer/${footerId}`
+    return handleFetch($fetch<Sponsor[]>(url, { headers, method: 'GET' }))
   }
 
   /** ดึง sponsor ตาม id */
   const getSponsor = async (id: number): Promise<Sponsor> => {
-    const url = `${BASE_URL}/${id}`
-    return handleFetch(
-      $fetch<Sponsor>(url, { headers, method: 'GET' })
-    )
+    const url = `${baseUrl}/${id}`
+    return handleFetch($fetch<Sponsor>(url, { headers, method: 'GET' }))
   }
 
   /** สร้าง sponsor ใหม่ */
   const createSponsor = async (data: CreateSponsorInput): Promise<Sponsor> => {
     return handleFetch(
-      $fetch<Sponsor>(BASE_URL, {
+      $fetch<Sponsor>(baseUrl, {
         headers,
         method: 'POST',
         body: data
@@ -82,7 +72,7 @@ export const useSponsors = () => {
 
   /** แก้ไข sponsor ตาม id */
   const updateSponsor = async (id: number, data: UpdateSponsorInput): Promise<Sponsor> => {
-    const url = `${BASE_URL}/${id}`
+    const url = `${baseUrl}/${id}`
     return handleFetch(
       $fetch<Sponsor>(url, {
         headers,
@@ -111,14 +101,11 @@ export const useSponsors = () => {
       }
     }
 
-    const url = `${BASE_URL}/${id}`
-    return handleFetch(
-      $fetch<{ message: string }>(url, { headers, method: 'DELETE' })
-    )
+    const url = `${baseUrl}/${id}`
+    return handleFetch($fetch<{ message: string }>(url, { headers, method: 'DELETE' }))
   }
 
   // ===== composable state (optional) =====
-  // ใช้ในหน้า/คอมโพเนนท์เพื่อ cache และ reactive ได้ง่าย
   const sponsors = useState<Record<number, Sponsor[]>>('sponsorsByFooter', () => ({}))
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -128,7 +115,7 @@ export const useSponsors = () => {
     error.value = null
     try {
       const rows = await getSponsorsByFooter(footerId)
-      sponsors.value[footerId] = rows
+      sponsors.value[footerId] = Array.isArray(rows) ? rows : []
     } catch (e: any) {
       error.value = e.message || 'โหลดข้อมูลล้มเหลว'
     } finally {
@@ -162,7 +149,7 @@ export const useSponsors = () => {
     updateSponsor,
     deleteSponsor,
 
-    // reactive state helpers
+    // state helpers
     sponsors,
     loading,
     error,
