@@ -20,7 +20,7 @@
 
                 <template v-else>
 
-                    <a v-for="sp in sponsorsPadded" :key="sp.id" :href="sp.url || '#'"
+                    <a v-for="sp in sponsorsPadded.slice(0, 4)" :key="sp.id" :href="sp.url || '#'"
                         :target="sp.url ? '_blank' : null" :rel="sp.url ? 'noopener noreferrer' : null"
                         class="sponsor-item">
                         <img :src="sp.logo" :alt="sp.alt || 'Sponsor'" loading="lazy" decoding="async"
