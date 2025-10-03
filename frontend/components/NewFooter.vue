@@ -1,63 +1,64 @@
 <template>
     <footer class="footer">
-        <!-- nav -->
-        <section class="footer-nav">
-            <NuxtLinkLocale v-for="(item, index) in links" :key="index" :to="item.to">
-                {{ $t(item.label) }}
-            </NuxtLinkLocale>
-        </section>
+        <div class="footer-inner">
+            <!-- nav -->
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <NuxtLinkLocale v-for="(item, index) in links" :key="index" :to="item.to" class="footer-link">
+                    {{ $t(item.label) }}
+                </NuxtLinkLocale>
+            </nav>
 
-        <section style="width: 60%; height: 2px; background-color: white; margin: 1rem;"></section>
+            <hr class="footer-divider" />
+            <div style="display: flex; justify-self: center">
+                <h2 class="ft-title">{{ $t('sponsor') }}</h2>
+            </div>
+            <!-- sponsors -->
+            <section class="footers-sponsors" aria-label="Sponsors">
+                <template v-if="loading">
+                    <div v-for="n in 4" :key="'sk-' + n" class="skeleton-logo"></div>
+                </template>
 
-        <!-- sponsors -->
-        <section class="footers-sponsors"
-            style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap;">
-            <!-- loading skeletons -->
-            <template v-if="loading">
-                <div v-for="n in 4" :key="'sk-' + n"
-                    style="width:120px; height:60px; margin:0 1rem; background:rgba(255,255,255,.2); border-radius:12px; animation:pulse 1.2s infinite;">
+                <template v-else>
+
+                    <a v-for="sp in sponsorsPadded" :key="sp.id" :href="sp.url || '#'"
+                        :target="sp.url ? '_blank' : null" :rel="sp.url ? 'noopener noreferrer' : null"
+                        class="sponsor-item">
+                        <img :src="sp.logo" :alt="sp.alt || 'Sponsor'" loading="lazy" decoding="async"
+                            class="sponsor-logo" sizes="(max-width:640px) 35vw, (max-width:1024px) 22vw, 140px" />
+                        <p>{{ sp.alt }}</p>
+                    </a>
+                </template>
+            </section>
+            <hr class="footer-divider" />
+            <!-- contact -->
+            <section class="ft-contract-us">
+                <h2 class="ft-title">{{ $t('ContactUs') }}</h2>
+                <p class="ft-contract">
+                    {{ (currentLocale === 'th') ? footer.text : footer.text_en }}
+                </p>
+            </section>
+
+            <!-- credit -->
+            <section class="cpr">
+                <div class="cpr-text">
+                    {{ (currentLocale === 'th') ? footer.credit : footer.credit_en }}
                 </div>
-            </template>
-
-            <!-- sponsors (padded to >= 4) -->
-            <template v-else>
-                <a v-for="sp in sponsorsPadded" :key="sp.id" :href="sp.url || '#'" :target="sp.url ? '_blank' : null"
-                    rel="noopener" style="display:inline-flex; align-items:center;">
-                    <img :src="sp.logo" :alt="sp.alt || 'Sponsor'"
-                        style="max-height:60px; margin:0 1rem; object-fit:contain;" />
-                </a>
-            </template>
-        </section>
-
-        <!-- contact -->
-        <section class="ft-contract-us">
-            <h1>{{ $t('ContactUs') }}</h1>
-            <div class="ft-contract">{{ (currentLocale === 'th') ? footer.text : footer.text_en }}</div>
-        </section>
-
-        <!-- credit -->
-        <section class="cpr">
-            <div>{{ (currentLocale === 'th') ? footer.credit : footer.credit_en }}</div>
-        </section>
+            </section>
+        </div>
     </footer>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-// composables
 import { useFooters } from '~/composables/useFooters'
 import { useSponsors } from '~/composables/useSponsors'
 
 const FOOTER_ID = 1
-const MIN_SPONSORS = 4
 
-// i18n
 const { locale } = useI18n()
 const currentLocale = computed(() => locale.value)
 
-// footer text
 const { getFooterById } = useFooters()
 const footer = ref({
     text: '',
@@ -66,13 +67,8 @@ const footer = ref({
     credit_en: 'Copyright © Coconut Knowledge Hub Faculty of Information Technology, Mae Fah Luang University',
 })
 
-// sponsors CRUD/state
-const {
-    sponsors, loading, error,
-    fetchSponsorsToState,
-} = useSponsors()
+const { sponsors, loading, fetchSponsorsToState } = useSponsors()
 
-// links
 const links = [
     { to: '/', label: 'Home' },
     { to: '/AboutUs', label: 'AboutUs' },
@@ -83,24 +79,20 @@ const links = [
     { to: '/FAQs', label: 'FAQs' }
 ]
 
-// computed: list by footer
-const sponsorList = computed(() => (sponsors.value?.[FOOTER_ID] || []))
+const sponsorList = computed(() =>
+    (sponsors.value?.[FOOTER_ID] || []) as Array<{
+        id: number; footer_id: number; logo: string; url?: string; alt?: string | null; position?: number;
+    }>
+)
 
-// ถ้าน้อยกว่า 4 ให้เติม placeholder ให้ครบ 4
 const sponsorsPadded = computed(() => {
-    const list = sponsorList.value
-    if (list.length >= MIN_SPONSORS) return list
-    const missing = MIN_SPONSORS - list.length
-    const placeholders = Array.from({ length: missing }).map((_, i) => ({
-        id: -(i + 1),            // key ไม่ชนกับของจริง
-        footer_id: FOOTER_ID,
-        logo: '/img/placeholder-sponsor.png', // วางไฟล์นี้ใน public/ หรือแก้ path ตามโปรเจกต์
-        url: '',
-        alt: 'Your logo here'
-    }))
-    return [...list, ...placeholders]
+    const list = [...sponsorList.value]
+    return list.sort((a, b) => {
+        const pa = Number.isFinite(a.position as number) ? (a.position as number) : a.id
+        const pb = Number.isFinite(b.position as number) ? (b.position as number) : b.id
+        return pa - pb
+    })
 })
-
 
 const fetchData = async () => {
     try {
@@ -112,7 +104,6 @@ const fetchData = async () => {
     } catch (e) {
         console.error('Error fetching footer:', e)
     }
-
     try {
         await fetchSponsorsToState(FOOTER_ID)
     } catch (e) {
@@ -123,72 +114,212 @@ const fetchData = async () => {
 onMounted(fetchData)
 </script>
 
-
-
-
 <style scoped>
-.ft-contract-us {
-    display: flex;
-    flex-direction: column;
-    color: white;
-    align-items: center;
-}
-
-.ft-contract-us a {
-    color: white;
-}
-
-.ft-contract-us a:hover {
-
-    color: white;
-}
-
+/* ===== Layout / Theme (no :root) ===== */
 .footer {
-    flex-direction: column;
-    height: inherit;
-    background-image: linear-gradient(#4E6D16, #2f3f10);
+    background-color: #4E6D16;
+    color: #ffffff;
+    width: 100%;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 18px) clamp(16px, 4vw, 40px);
+    display: grid;
+    gap: clamp(0.5rem, 0.8vw, 2rem);
+}
+
+/* ===== Nav ===== */
+.footer-nav {
     display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    justify-content: center;
+}
+
+.footer-link {
+    color: #ffffff;
+    opacity: .9;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: all ease-in-out .06s;
+    outline-offset: 2px;
+}
+
+.footer-link:hover {
+    background: rgba(255, 255, 255, .12);
+    transform: scale(1.05);
+    opacity: 1;
+  
+}
+
+.footer-link:focus-visible {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, .7);
+}
+
+/* Divider */
+.footer-divider {
+    width: min(92%, 1260px);
+    height: 3px;
+    border: 0;
+    margin: 0 auto;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 1);
+}
+
+/* ===== Sponsors ===== */
+.footers-sponsors {
+    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: clamp(10px, 2vw, 18px);
+    margin: 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-items: center;
+}
+
+.sponsor-item {
+    display: inline-flex;
+    position: relative;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 6px 8px;
+    border-radius: 12px;
+    transition: all .2s ease-in-out
+}
+
+.sponsor-item p {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -250%);
+    /* keep your Y offset */
+    background-color: #fff;
+    color: #111;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    opacity: 0;
+    z-index: 100;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .15);
+    transition: all .2s ease-in-out;
+
+    white-space: nowrap;
+}
+
+.sponsor-item p::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #fff;
+    z-index: 101;
 
 }
 
-.footer-nav {
-
-    padding-top: 1rem;
-    display: flex;
-    gap: 2rem;
+.sponsor-item:hover p {
+    opacity: 1;
+    transform: translate(-50%, -190%);
+    width: max-content;
 
 }
 
+.sponsor-item:hover {
+    transform: scale(1.05);
 
-
-.footer-nav a {
-    color: white;
-    transition: ease-in-out 0.3s;
 }
 
-.footer-nav a:hover {
-    font-weight: 800;
-    text-decoration-line: underline;
+.sponsor-logo {
+    max-height: clamp(34px, 6vw, 60px);
+    max-width: 180px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .15));
 }
 
+/* Skeletons */
+.skeleton-logo {
+    width: clamp(90px, 22vw, 140px);
+    height: clamp(40px, 8vw, 60px);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .18);
+    animation: pulse 1.2s infinite;
+}
+
+/* ===== Contact ===== */
+.ft-contract-us {
+    text-align: center;
+    display: grid;
+    gap: 8px;
+}
+
+.ft-title {
+    margin: 0;
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.ft-contract {
+    margin: 0 auto;
+    max-width: 900px;
+    color: rgba(255, 255, 255, .85);
+    line-height: 1.7;
+    font-size: clamp(.9rem, 2.2vw, 1rem);
+    padding: 0 6px;
+}
+
+/* ===== Credit ===== */
 .cpr {
-    border-radius: 1px;
-
     width: 100%;
-
-    padding: 0.5rem;
-    color: white;
+    padding: .6rem 0 .2rem;
+    color: #ffffff;
 }
 
-.cpr div {
+.cpr-text {
     display: flex;
     justify-content: center;
+    text-align: center;
+    opacity: .9;
+    font-size: clamp(.8rem, 2vw, .95rem);
 }
+
+/* ===== Anim ===== */
 @keyframes pulse {
-  0% { opacity: .5; }
-  50% { opacity: .9; }
-  100% { opacity: .5; }
+    0% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: .95;
+    }
+
+    100% {
+        opacity: .55;
+    }
+}
+
+/* ===== Responsive tweaks ===== */
+@media (max-width: 640px) {
+    .footer-nav {
+        gap: 8px 14px;
+    }
+
+    .footer-divider {
+        width: 92%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .sponsor-logo {
+        max-height: 64px;
+    }
 }
 </style>

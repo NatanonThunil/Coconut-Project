@@ -1,3 +1,30 @@
+
+# อัพเดต 3 Oct.
+### TO-DO
+ทำ Footer ใหม่
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+- ทำ ``Footer`` ใหม่ พร้อม Responsive
+- เพิ่ม ``API`` ของ ``sponsors``
+
+```bash
+CREATE TABLE `sponsors` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `footer_id` int NOT NULL,
+  `logo` varchar(255) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `alt` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `position` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_footer` (`footer_id`),
+  CONSTRAINT `fk_footer` FOREIGN KEY (`footer_id`) REFERENCES `footer` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+```
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
 # อัพเดต 1 Oct.
 ### TO-DO
 

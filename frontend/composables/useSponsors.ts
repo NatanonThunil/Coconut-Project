@@ -1,25 +1,29 @@
-// ~/composables/useSponsors.ts
-type Sponsor = {
+
+export type Sponsor = {
   id: number
   footer_id: number
   logo: string
   url: string
   alt?: string | null
   created_at?: string
+  position?: number    
 }
 
-type CreateSponsorInput = {
+export type CreateSponsorInput = {
   footer_id: number
   logo: string
   url: string
   alt?: string | null
+  position?: number     
 }
 
-type UpdateSponsorInput = {
+export type UpdateSponsorInput = {
   logo?: string
   url?: string
   alt?: string | null
+  position?: number    
 }
+
 
 export const useSponsors = () => {
   const config = useRuntimeConfig()
