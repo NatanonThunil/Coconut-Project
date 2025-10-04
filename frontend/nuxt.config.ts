@@ -62,7 +62,6 @@ export default defineNuxtConfig({
   modules: [
     'nuxt-charts',
     '@nuxtjs/i18n',
-    '@nuxt/image',
   ],
 
 
