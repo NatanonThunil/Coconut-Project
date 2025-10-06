@@ -39,7 +39,7 @@ export const useSponsors = () => {
   // ---- URL normalize ที่กันทุกเคส ----
   const be = (config.public.beUrl || '').replace(/\/+$/, '')            // ตัดท้าย /
   const apiBaseRaw = (config.public.apiBase || '')                       // เช่น '/coconut-api' หรือ 'coconut-api/'
-  const apiBase = `/${apiBaseRaw.replace(/^\/+/, '').replace(/\/+$/, '')}` // ให้มี / ต้น และ / ท้าย เสมอ
+  const apiBase = `/${apiBaseRaw.replace(/^\/+/, '').replace(/\/+$/, '')}/` // ให้มี / ต้น และ / ท้าย เสมอ
   const baseUrl = `${be}${apiBase}sponsors`                               // ผลลัพธ์: https://host/coconut-api/sponsors
   const apiKey = (config.public.apiKey as string) || 'Cocon541986'
 
