@@ -19,15 +19,17 @@
                 <div v-for="n in 4" :key="'sk-' + n" class="skeleton-logo"></div>
             </section>
 
-            <!-- แสดงรายการเฉพาะเมื่อมี >= 4 -->
-            <section v-else-if="sponsorsPadded.length >= 4" class="footers-sponsors" aria-label="Sponsors">
+            <!-- sponsors -->
+            <section v-else-if="sponsorsPadded.length" class="footers-sponsors" aria-label="Sponsors">
                 <a v-for="sp in sponsorsPadded" :key="sp.id" :href="sp.url || '#'" :target="sp.url ? '_blank' : null"
-                    :rel="sp.url ? 'noopener noreferrer' : null" class="sponsor-item">
+                    :rel="sp.url ? 'noopener noreferrer' : null" class="sponsor-item" :aria-label="sp.alt || 'Sponsor'">
                     <img :src="sp.logo" :alt="sp.alt || 'Sponsor'" loading="lazy" decoding="async" class="sponsor-logo"
-                        sizes="(max-width:640px) 35vw, (max-width:1024px) 22vw, 140px" />
-                    <p>{{ sp.alt }}</p>
+                        @error="(e) => { (e.target as HTMLImageElement).src = '/images/placeholder-sponsor.svg' }" />
+
+                    <p v-if="sp.alt">{{ sp.alt }}</p>
                 </a>
             </section>
+
             <!-- else: ไม่แสดง section ถ้าน้อยกว่า 4 -->
 
             <hr class="footer-divider" />
@@ -90,25 +92,17 @@ const sponsorList = computed(() => {
 })
 
 const sponsorsPadded = computed(() => {
-    // กรองของเสีย + dedupe ด้วย id
-    const cleaned = []
+    const cleaned: any[] = []
     for (const s of sponsorList.value) {
         if (!s || !s.id || !s.logo) continue
         if (!cleaned.find(x => x.id === s.id)) cleaned.push(s)
     }
-
-    // เรียง position > id
     cleaned.sort((a: any, b: any) => {
         const pa = Number.isFinite(a.position) ? a.position : a.id
         const pb = Number.isFinite(b.position) ? b.position : b.id
         return pa - pb
     })
-
-    // น้อยกว่า 4 -> ไม่คืนอะไร (ให้ template ซ่อนไป)
-    if (cleaned.length < 4) return []
-
-    // แสดงแค่ 4 ชิ้น
-    return cleaned.slice(0, 4)
+    return cleaned // ไม่ slice ทิ้ง
 })
 
 const fetchData = async () => {

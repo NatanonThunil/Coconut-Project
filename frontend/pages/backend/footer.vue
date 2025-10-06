@@ -344,24 +344,39 @@ function triggerEditFileInput(id: number) {
 // ===== Helpers: apply positions & persist =====
 function applyPositionsToState(newOrdered: Sponsor[]) {
   const posMap = new Map<number, number>()
-  newOrdered.forEach((s, i) => posMap.set(s.id, s.position ?? i))
-  sponsorList.value.forEach(sp => { sp.position = posMap.get(sp.id) ?? 0 })
+  newOrdered.forEach((s, i) => posMap.set(s.id, i))
+  sponsorList.value.forEach(sp => {
+    const next = posMap.get(sp.id)
+    if (next != null) sp.position = next
+  })
 }
 
-async function persistChangedPositions(arr: Sponsor[]) {
-  // อัปเดตเฉพาะที่ตำแหน่งเปลี่ยนจริง ๆ
-  const jobs: Promise<any>[] = []
-  arr.forEach((s, i) => {
-    if (s.position !== i) {
-      jobs.push(updateSponsor(s.id, { position: i } as any))
-      s.position = i
+
+async function persistChangedPositions(newOrder: Sponsor[]) {
+
+  const newPosById = new Map<number, number>()
+  newOrder.forEach((s, i) => newPosById.set(s.id, i))
+
+  // อ่านค่าปัจจุบันจาก state (ของจริงที่จะแสดงบนจอ)
+  const current = sponsorList.value
+  const updateJobs: Promise<any>[] = []
+
+  for (const s of current) {
+    const curr = Number.isFinite(s.position as number) ? (s.position as number) : current.findIndex(x => x.id === s.id)
+    const next = newPosById.get(s.id)!
+    if (curr !== next) {
+      updateJobs.push(updateSponsor(s.id, { position: next } as any))
     }
-  })
-  if (jobs.length) {
-    await Promise.all(jobs)
-    applyPositionsToState(arr.map(s => ({ ...s })))
   }
+
+  if (updateJobs.length) {
+    await Promise.all(updateJobs)
+  }
+
+  // เขียนค่ากลับเข้า state ให้ตรงกับ newOrder
+  applyPositionsToState(newOrder)
 }
+
 
 // ===== Reorder actions =====
 const onDragStart = (idx: number, ev: DragEvent) => {
@@ -380,29 +395,21 @@ const onDrop = async (idx: number, ev: DragEvent) => {
   dragState.value = { dragIndex: null, overIndex: null }
   if (Number.isNaN(from) || Number.isNaN(to) || from === to) return
 
+  // ทำงานกับสำเนาที่ "เรียงตามที่แสดงจริง"
   const arr = orderedSponsors.value.map(s => ({ ...s }))
 
-  arr.forEach((s, i) => { s.position = Number.isFinite(s.position) ? s.position : i })
-
+  // ห้ามเซ็ต position ตรงนี้ (ยัง!)
   const [moved] = arr.splice(from, 1)
   arr.splice(to, 0, moved)
 
-  arr.forEach((s, i) => { s.position = i })
-  applyPositionsToState(arr)
+  // ส่งรายการใหม่ไป persist (ฟังก์ชันจะคำนวณ index ใหม่เอง)
   await persistChangedPositions(arr)
 }
 
 const moveUp = async (idx: number) => {
   if (idx <= 0) return
   const arr = orderedSponsors.value.map(s => ({ ...s }))
-  arr.forEach((s, i) => { if (!Number.isFinite(s.position)) s.position = i })
-  // swap idx <-> idx-1
-  const tmp = arr[idx - 1].position
-  arr[idx - 1].position = arr[idx].position
-  arr[idx].position = tmp
-  // reindex
-  arr.forEach((s, i) => { s.position = i })
-  applyPositionsToState(arr)
+  ;[arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]]
   await persistChangedPositions(arr)
 }
 
@@ -410,12 +417,7 @@ const moveDown = async (idx: number) => {
   const last = orderedSponsors.value.length - 1
   if (idx >= last) return
   const arr = orderedSponsors.value.map(s => ({ ...s }))
-  arr.forEach((s, i) => { if (!Number.isFinite(s.position)) s.position = i })
-  const tmp = arr[idx + 1].position
-  arr[idx + 1].position = arr[idx].position
-  arr[idx].position = tmp
-  arr.forEach((s, i) => { s.position = i })
-  applyPositionsToState(arr)
+  ;[arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]]
   await persistChangedPositions(arr)
 }
 
