@@ -1,3 +1,4 @@
+// composables/useSponsors.ts
 export type Sponsor = {
   id: number
   footer_id: number
@@ -23,63 +24,103 @@ export type UpdateSponsorInput = {
   position?: number
 }
 
+type FetchErr = {
+  statusCode?: number
+  statusMessage?: string
+  data?: any
+  message?: string
+  response?: { status?: number; statusText?: string; _data?: any; url?: string }
+}
+
 export const useSponsors = () => {
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || ''
-  const be_api_url = config.public.beUrl
-  const apiKey = (config.public.apiKey as string) || 'Cocon541986' 
+  const DEBUG = true // ตั้ง false เมื่องานจริง
 
-  // normalize ให้ชัวร์
-  const be = (be_api_url || '').replace(/\/+$/, '')
-  const api = (apiBase || '').replace(/^\/?/, '/')
-  const baseUrl = `${be}${api}sponsors`
+  // ---- URL normalize ที่กันทุกเคส ----
+  const be = (config.public.beUrl || '').replace(/\/+$/, '')            // ตัดท้าย /
+  const apiBaseRaw = (config.public.apiBase || '')                       // เช่น '/coconut-api' หรือ 'coconut-api/'
+  const apiBase = `/${apiBaseRaw.replace(/^\/+/, '').replace(/\/+$/, '')}` // ให้มี / ต้น และ / ท้าย เสมอ
+  const baseUrl = `${be}${apiBase}sponsors`                               // ผลลัพธ์: https://host/coconut-api/sponsors
+  const apiKey = (config.public.apiKey as string) || 'Cocon541986'
 
-  const headers = { 'cocon-key': apiKey } 
+  const headers = { 'cocon-key': apiKey }
 
-  // ===== helpers =====
-  const handleFetch = async <T>(promise: Promise<T>): Promise<T> => {
+  if (DEBUG) {
+    // log ครั้งเดียวพอ
+    // @ts-ignore
+    window.__SPONSOR_DEBUG__ = { be, apiBase, baseUrl, apiKeyPreview: apiKey?.slice?.(0, 3) + '***' }
+    console.info('[useSponsors] config:', { be, apiBase, baseUrl })
+  }
+
+  // ---- helper: แปลง error ของ $fetch ให้อ่านง่าย ----
+  const toNiceError = (err: any): Error => {
+    const e = err as FetchErr
+    const code = e?.statusCode ?? e?.response?.status
+    const statusText = e?.statusMessage ?? e?.response?.statusText
+    const serverData = e?.data ?? e?.response?._data
+    const serverMsg = (serverData && (serverData.error || serverData.message)) || undefined
+    const msg = serverMsg || e?.message || statusText || 'Request failed'
+    if (DEBUG) {
+      console.error('[useSponsors] fetch error:', {
+        url: e?.response?.url,
+        code,
+        statusText,
+        serverData,
+        raw: err
+      })
+    }
+    return new Error(code ? `[${code}] ${msg}` : msg)
+  }
+
+  // ---- wrapper: เสริม hook for debugging + timeout ----
+  const run = async <T>(url: string, opts: Parameters<typeof $fetch<T>>[1] = {}) => {
+    const controller = new AbortController()
+    const id = setTimeout(() => controller.abort(), 15000) // กันเคสค้าง 15s
     try {
-      return await promise
-    } catch (err: any) {
-      const msg = err?.data?.error || err?.message || 'Request failed'
-      throw new Error(msg)
+      if (DEBUG) console.log('[useSponsors] request ->', url, opts?.method || 'GET', { headers: opts?.headers, body: opts?.body })
+      const res = await $fetch<T>(url, {
+        signal: controller.signal,
+        headers,
+        onRequest({ options }) {
+          if (DEBUG) console.log('[useSponsors] onRequest', { url, options })
+        },
+        onRequestError({ error }) {
+          if (DEBUG) console.warn('[useSponsors] onRequestError', error)
+        },
+        onResponse({ response }) {
+          if (DEBUG) console.log('[useSponsors] onResponse', { status: response.status, url: response.url })
+        },
+        onResponseError({ response }) {
+          if (DEBUG) console.warn('[useSponsors] onResponseError', { status: response.status, data: response._data })
+        },
+        ...opts,
+      })
+      return res
+    } catch (err) {
+      throw toNiceError(err)
+    } finally {
+      clearTimeout(id)
     }
   }
 
   // ===== queries =====
-  /** ดึง sponsor ทั้งหมดของ footer */
   const getSponsorsByFooter = async (footerId: number): Promise<Sponsor[]> => {
     const url = `${baseUrl}/footer/${footerId}`
-    return handleFetch($fetch<Sponsor[]>(url, { headers, method: 'GET' }))
+    return run<Sponsor[]>(url, { method: 'GET' })
   }
 
-  /** ดึง sponsor ตาม id */
   const getSponsor = async (id: number): Promise<Sponsor> => {
     const url = `${baseUrl}/${id}`
-    return handleFetch($fetch<Sponsor>(url, { headers, method: 'GET' }))
+    return run<Sponsor>(url, { method: 'GET' })
   }
 
-  /** สร้าง sponsor ใหม่ */
   const createSponsor = async (data: CreateSponsorInput): Promise<Sponsor> => {
-    return handleFetch(
-      $fetch<Sponsor>(baseUrl, {
-        headers,
-        method: 'POST',
-        body: data
-      })
-    )
+    return run<Sponsor>(baseUrl, { method: 'POST', body: data })
   }
 
-  /** แก้ไข sponsor ตาม id */
   const updateSponsor = async (id: number, data: UpdateSponsorInput): Promise<Sponsor> => {
     const url = `${baseUrl}/${id}`
-    return handleFetch(
-      $fetch<Sponsor>(url, {
-        headers,
-        method: 'PUT',
-        body: data
-      })
-    )
+    return run<Sponsor>(url, { method: 'PUT', body: data })
   }
 
   /**
@@ -97,15 +138,15 @@ export const useSponsors = () => {
     if (enforceMin && opts?.footerId) {
       const list = await getSponsorsByFooter(opts.footerId)
       if (list.length <= minCount) {
-        throw new Error(`ต้องมีสปอนเซอร์อย่างน้อย ${minCount} รายต่อ footer นี้`)
+        throw new Error(`ต้องมีสปอนเซอร์อย่างน้อย ${minCount} รายต่อ footer นี้ (ปัจจุบัน ${list.length})`)
       }
     }
 
     const url = `${baseUrl}/${id}`
-    return handleFetch($fetch<{ message: string }>(url, { headers, method: 'DELETE' }))
+    return run<{ message: string }>(url, { method: 'DELETE' })
   }
 
-  // ===== composable state (optional) =====
+  // ===== state =====
   const sponsors = useState<Record<number, Sponsor[]>>('sponsorsByFooter', () => ({}))
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -117,7 +158,7 @@ export const useSponsors = () => {
       const rows = await getSponsorsByFooter(footerId)
       sponsors.value[footerId] = Array.isArray(rows) ? rows : []
     } catch (e: any) {
-      error.value = e.message || 'โหลดข้อมูลล้มเหลว'
+      error.value = e?.message || 'โหลดข้อมูลล้มเหลว'
     } finally {
       loading.value = false
     }
@@ -141,6 +182,13 @@ export const useSponsors = () => {
     sponsors.value[footerId] = arr.filter(x => x.id !== id)
   }
 
+  // ---- ฟังก์ชันทดสอบดีบักเร็ว ๆ ----
+  const __debugPing = async () => {
+    // เรียก endpoint ที่ง่ายที่สุด เช่น GET /sponsors/footer/1
+    // ปรับ footerId ให้ตรงกับข้อมูลที่มีจริงในฐาน
+    return getSponsorsByFooter(1)
+  }
+
   return {
     // raw CRUD
     getSponsorsByFooter,
@@ -156,6 +204,9 @@ export const useSponsors = () => {
     fetchSponsorsToState,
     addSponsorToState,
     updateSponsorInState,
-    removeSponsorFromState
+    removeSponsorFromState,
+
+    // debug
+    __debugPing
   }
 }
