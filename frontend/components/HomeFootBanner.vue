@@ -117,6 +117,7 @@ export default {
 }
 
 @media screen and (max-width: 1024px) {
+    
     .f-banner .f-banner-image-container {
         width: 60%;
     }

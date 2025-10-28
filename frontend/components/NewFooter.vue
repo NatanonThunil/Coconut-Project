@@ -78,8 +78,8 @@ const { sponsors, loading, fetchSponsorsToState } = useSponsors()
 const links = [
     { to: '/', label: 'Home' },
     { to: '/AboutUs', label: 'AboutUs' },
-    { to: '/News', label: 'News' },
-    { to: '/Events', label: 'Events' },
+    { to: '/announcements/news', label: 'News' },
+    { to: '/announcements/events', label: 'Events' },
     { to: '/coconut-information', label: 'CoconutInfo' },
     { to: '/Experts', label: 'Experts' },
     { to: '/FAQs', label: 'FAQs' }
