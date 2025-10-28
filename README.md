@@ -7,7 +7,7 @@
 
 ### Update List
 
-- แก้ ``Route`` ใน Footer
+- แก้ ``Route``  ใน Footer News กับ Events
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
