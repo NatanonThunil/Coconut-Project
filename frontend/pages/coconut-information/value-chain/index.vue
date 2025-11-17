@@ -15,12 +15,27 @@
 
   <!-- Filters -->
   <div class="all-filter-container">
-    <label class="filter-dropdown" v-for="(filter, key) in filters" :key="key">
-      <select v-model="filter.model" class="filter-select" @change="filterChainvalues">
-        <option value="">{{ filter.label }}</option>
-        <option v-for="option in filter.options" :key="option.value" :value="option.value">
-          {{ option.text }}
-        </option>
+    <label class="filter-dropdown">
+      <select
+        v-model="filters.category"
+        class="filter-select"
+        @change="filterChainvalues"
+      >
+        <option value="">{{ $t("Category") }}</option>
+        <option value="0">{{ $t("Young-coconut") }}</option>
+        <option value="1">{{ $t("Old-coconut") }}</option>
+      </select>
+    </label>
+    <label class="filter-dropdown">
+      <select
+        v-model="filters.type"
+        class="filter-select"
+        @change="filterChainvalues"
+      >
+        <option value="">{{ $t("All") }}</option>
+        <option value="0">{{ $t("Upstream") }}</option>
+        <option value="1">{{ $t("Midstream") }}</option>
+        <option value="2">{{ $t("Downstream") }}</option>
       </select>
     </label>
   </div>
@@ -79,23 +94,8 @@ export default {
       loading: true,
       defaultImage: 'https://placehold.co/600x400',
       filters: {
-        category: {
-          label: this.$t('Category'),
-          model: '',
-          options: [
-            { value: '0', text: this.$t('Young Coconut') },
-            { value: '1', text: this.$t('Mature Coconut') },
-          ],
-        },
-        type: {
-          label: this.$t('Type'),
-          model: '',
-          options: [
-            { value: '0', text: this.$t('Upstream') },
-            { value: '1', text: this.$t('Midstream') },
-            { value: '2', text: this.$t('Downstream') },
-          ],
-        },
+        category: '',
+        type: '',
       },
       currentPage: 1,
       itemsPerPage: 30,
@@ -134,13 +134,14 @@ export default {
         const titleEn = (chainvalue.title_en || '').toLowerCase();
         const matchesQuery = title.includes(query) || titleEn.includes(query);
         const matchesCategory =
-          this.filters.category.model === '' ||
-          chainvalue.category.toString() === this.filters.category.model;
+          this.filters.category === '' ||
+          chainvalue.category?.toString() === this.filters.category;
         const matchesType =
-          this.filters.type.model === '' ||
-          chainvalue.type.toString() === this.filters.type.model;
+          this.filters.type === '' ||
+          chainvalue.type?.toString() === this.filters.type;
         return matchesQuery && matchesCategory && matchesType;
       });
+      this.currentPage = 1;
     },
     changePage(direction) {
       if (direction === 'next' && this.currentPage < this.totalPages)
