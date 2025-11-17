@@ -13,8 +13,11 @@
 - แก้ ``Responsive`` หน้า ``Event``
 - แก้ ``Responsive`` Event card
 - แก้ ``Responsive`` Achievements card
+#### Sujeff
+- แก้ ``Filter`` ให้เปลี่ยนภาษา ปกติ
 
-โดย [Poom](https://github.com/WasitpolKuekkong)
+
+โดย [Poom](https://github.com/WasitpolKuekkong) และ [Sujeff]
 
 
 # อัพเดต 28 Oct.
