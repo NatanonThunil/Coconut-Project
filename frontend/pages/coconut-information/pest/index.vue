@@ -1,12 +1,10 @@
 <template>
 
   <div style="height: 8rem"></div>
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/pests">{{ $t('Pest') }}</NuxtLinkLocale>
-  </div>
+  
+  <Breadcrumb/>
   <h1 class="context-header">{{ $t("Pest") }}</h1>
+     
   <div style="height: 5rem"></div>
 
   <!-- Search Input -->

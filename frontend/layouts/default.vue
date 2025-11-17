@@ -49,17 +49,12 @@
         </div>
       </template>
 
-      
+
       <template #fallback>
         <div class="loading-container">
           <ClientOnly>
-            <DotLottieVue
-              v-if="lottieLoaded"
-              style="height: 300px; width: 300px"
-              autoplay
-              loop
-              :src="loadingAnimation"
-            />
+            <DotLottieVue v-if="lottieLoaded" style="height: 300px; width: 300px" autoplay loop
+              :src="loadingAnimation" />
             <template #fallback>
               <p style="font-size: 2.5rem;">กรุณารอสักครู่...</p>
             </template>
@@ -68,6 +63,8 @@
       </template>
     </Suspense>
   </div>
+
+  
 </template>
 
 <script setup lang="ts">
@@ -75,13 +72,17 @@ let searchToken = 0
 
 import { ref, computed, watch, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { useSearchs, type SearchItem, type SearchType } from '~/composables/useSearchs'
-
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const DotLottieVue = defineAsyncComponent(() =>
   import('@lottiefiles/dotlottie-vue').then(m => m.DotLottieVue)
 )
 
-const lottieLoaded = ref(false)
-const loadingAnimation = ref('@/assets/load/loading.lottie')
+import loadingLottieUrl from '@/assets/load/loading.lottie?url'
+
+const lottieLoaded = ref(true)
+const loadingAnimation = ref(loadingLottieUrl)
+
 
 async function preloadLottie() {
   try {
@@ -105,6 +106,7 @@ const searchError = ref('')
 const isSearching = computed(() => searchQuery.value.trim().length >= 2)
 
 watch(
+
   () => searchQuery.value,
   async (q) => {
     const term = q.trim()
@@ -150,14 +152,24 @@ watch(
         searchLoading.value = false
       }
     }
-  }
-)
+  },
 
+
+
+)
+watch(
+  () => route.fullPath,
+  () => {
+    clearSearch()
+  },
+  { flush: 'post' } 
+)
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && isSearching.value) clearSearch()
 }
 
 function clearSearch() {
+  searchToken++
   searchQuery.value = ''
   results.value = []
   total.value = 0
@@ -205,8 +217,8 @@ function highlight(text: string) {
 
 function isAbortError(e: any) {
   return e?.name === 'AbortError'
-      || e?.message?.toLowerCase?.().includes('aborted')
-      || e?.code === 20
+    || e?.message?.toLowerCase?.().includes('aborted')
+    || e?.code === 20
 }
 
 function typeLabel(t: SearchType) {
@@ -229,6 +241,11 @@ function typeLabel(t: SearchType) {
 
 
 <style scoped>
+main {
+  min-height: 100vh;
+
+}
+
 .search-surface {
   max-width: 1080px;
   margin: 2rem auto;
@@ -319,6 +336,7 @@ function typeLabel(t: SearchType) {
   color: white;
   outline: none;
 }
+
 .result-main {
   min-width: 0;
 }
@@ -360,13 +378,25 @@ function typeLabel(t: SearchType) {
 
 /* Bouncing animation */
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 @keyframes fadein {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 main {

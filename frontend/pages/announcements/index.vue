@@ -3,11 +3,7 @@
     <div class="spacer-xxl"></div>
 
     <!-- Breadcrumb -->
-    <nav class="faqs-path" >
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>
-      <span>/</span>
-      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>
-    </nav>
+        <breadcrumb/>
 
     <h1 class="context-header">{{ $t('News & Events') }}</h1>
     <div class="spacer-xl"></div>

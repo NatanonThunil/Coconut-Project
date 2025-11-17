@@ -2,11 +2,9 @@
 
 
   <div style="height: 8rem"></div>
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus/achievements">{{ $t('Achievements') }}</NuxtLinkLocale>
-  </div>
+  
+
+      <breadcrumb/>
   <div style="height: 1rem"></div>
   <h1 class="context-header">{{ $t("Achievement") }}</h1>
   <div style="height: 5rem"></div>

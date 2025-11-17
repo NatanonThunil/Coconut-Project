@@ -1,10 +1,8 @@
 <template>
  
     <div style="height: 8rem"></div>
-    <div class="faqs-path">
-      <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/faqs">FAQs</NuxtLinkLocale>
-    </div>
+   
+    <Breadcrumb/>
     <div style="height: 1rem"></div>
     <h1 class="context-header">FAQs</h1>
     <div style="height: 5rem"></div>

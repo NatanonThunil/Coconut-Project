@@ -2,12 +2,9 @@
   <div class="announce-wrap">
     <div class="spacer-xxl"></div>
 
-    <!-- Breadcrumb -->
-    <nav class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>
-      <span>/</span>
-      <NuxtLinkLocale to="/coconut-information/">{{ $t('CoconutInfo') }}</NuxtLinkLocale>
-    </nav>
+
+   
+    <Breadcrumb/>
 
     <h1 class="context-header">{{ $t('CoconutInfo') }}</h1>
     <div class="spacer-xl"></div>

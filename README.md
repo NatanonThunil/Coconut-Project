@@ -1,4 +1,22 @@
 
+# อัพเดต 16-17 Nov.
+
+### TO-DO
+
+[สิ่งที่ต้องทำ](https://docs.google.com/spreadsheets/d/1NDhvBJG8o2P7wu1rH3hCp-lxJH54Xx8qc7zIhU5GLtk/edit?fbclid=IwY2xjawMEpXRleHRuA2FlbQIxMABicmlkETFrR05qd2ZpVjFvS1JDZlhvAR4jq867vR4WSRxRRc_JTi9aF1px4QyPiD9OHQQHxVuGbLEcnpR7GPCrvu0RQw_aem_OBtN9dfj11fhyJzG2bZGPA&gid=330990533#gid=330990533)
+
+### Update List
+
+#### Poom
+- เพิ่ม ``BreadCrumb``(link Path) แบบ components ไว้ใช้ทุกหน้า(แก้หมดแล้ว)
+- แก้ ``Responsive`` หน้า ``main``
+- แก้ ``Responsive`` หน้า ``Event``
+- แก้ ``Responsive`` Event card
+
+
+โดย [Poom](https://github.com/WasitpolKuekkong)
+
+
 # อัพเดต 28 Oct.
 
 ### TO-DO

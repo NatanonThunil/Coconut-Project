@@ -1,23 +1,9 @@
 <template>
   <div style="height: 8rem"></div>
 
-  <!-- Breadcrumb -->
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/">{{
-      $t("CoconutInfo")
-    }}</NuxtLinkLocale>
-    /
-    <NuxtLinkLocale to="/coconut-information/value-chain">{{
-      $t("Value Chain")
-    }}</NuxtLinkLocale>
-    /
-    <NuxtLinkLocale
-      :to="'/coconut-information/value-chain/details/' + $route.params.id"
-    >
-      {{(currentLocale==='th')? (chain_values?.title || "ไม่มีหัวข้อ") : (chain_values?.title_en || "No Title")}}
-    </NuxtLinkLocale>
-  </div>
+
+  <Breadcrumb
+    :last-label="currentLocale==='th' ? (chain_values?.title || 'ไม่มีหัวข้อ') : (chain_values?.title_en || 'No Title')"/>
 
   <div class="chainvalue-container">
     <div v-if="loading" class="loading-container">

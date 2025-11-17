@@ -1,11 +1,8 @@
 <template>
 
   <div style="height: 8rem"></div>
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/aboutus/member">{{ $t('All Member') }}</NuxtLinkLocale>
-  </div>
+ 
+  <Breadcrumb />
   <h1 class="context-header">{{ $t("All Member") }}</h1>
   <div style="height: 5rem;"></div>
   <frontesearch :placeholder="(currentLocale === 'th') ? 'ค้นหาด้วยชื่อสมาชิก...' : 'Search by member name...'"

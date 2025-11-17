@@ -42,7 +42,7 @@ export default {
     background-color: transparent;
     color: #4e6d16;
     padding: 10px 20px;
-    font-size: clamp(12px, 2vw ,26px);
+    font-size: clamp(1.2rem, 2vw ,26px);
     font-weight: bold;
     border: none;
     border-radius: 30px;

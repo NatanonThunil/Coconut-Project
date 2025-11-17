@@ -64,8 +64,9 @@ export default {
 }
 
 .card-icon-footer-container {
-  padding: 0 10%;
+ width: 70%;
   display: flex;
+  justify-self: center;
 
   gap: 30px;
 
@@ -86,12 +87,18 @@ export default {
 
 .footer-icon-card h1 {
 
-  font-size: clamp(1rem, 2vw, 2rem);
+  font-size: clamp(1.2rem, 2vw, 2rem);
 }
 
 .footer-icon-card p {
 
-  font-size: clamp(0.5rem, 1.5vw, 1rem);
+  font-size: clamp(0.6rem, 1.5vw, 1rem);
+    display: -webkit-box;
+  -webkit-line-clamp: 2;   
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 .footer-icon-card {
@@ -129,6 +136,8 @@ export default {
 
 @media (max-width: 1130px) {
   .card-icon-footer-container {
+    margin: 0 auto;
+    width: 90%;
     gap: 20px;
   }
 
@@ -159,6 +168,16 @@ export default {
 
 
 }
+
+@media (max-width: 548px) {
+ .card-icon-footer-container {
+    flex-direction: column;
+    width: 90%;
+    gap: 15px;
+  }
+
+}
+
 
 @keyframes fadeIn {
   0% {

@@ -2,14 +2,7 @@
   <div class="employee-details-container">
     <div style="height: 8rem"></div>
 
-    <div class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
-      <!-- คงลิงก์ /employees ไว้เพื่อไม่ให้ route พัง แต่ UI/คลาสเปลี่ยนเป็น employee แล้ว -->
-      <NuxtLinkLocale to="/employees">{{ $t('employee') }}</NuxtLinkLocale> /
-      <NuxtLinkLocale :to="'/employees/details/' + $route.params.id">
-        {{ (currentLocale == 'th') ? (employee?.name || employee?.name_en) : (employee?.name_en || employee?.name) }}
-      </NuxtLinkLocale>
-    </div>
+        <breadcrumb :last-label="(currentLocale == 'th') ? (employee?.name || employee?.name_en) : (employee?.name_en || employee?.name)"/>
 
     <div class="all-container">
       <div style="height: 1rem"></div>

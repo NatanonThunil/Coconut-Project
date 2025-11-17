@@ -1,18 +1,19 @@
 <template>
   <div>
-    <div class="homeevent-container-container"><ul class="homeeventfiltercontainer">
-      <li class="filtli train" :class="{ selecto: selectedFilter === 'educate' }" @click="selectedFilter = 'educate'">
-        {{ $t('Educate') }}
-      </li>
-      <li class="filtli conference" :class="{ selecto: selectedFilter === 'conference' }"
-        @click="selectedFilter = 'conference'">
-        {{ $t('Conference') }}
-      </li>
-      <li class="filtli other" :class="{ selecto: selectedFilter === 'other' }" @click="selectedFilter = 'other'">
-        {{ $t('Other') }}
-      </li>
-    </ul>
-</div>
+    <div class="homeevent-container-container">
+      <ul class="homeeventfiltercontainer">
+        <li class="filtli train" :class="{ selecto: selectedFilter === 'educate' }" @click="selectedFilter = 'educate'">
+          {{ $t('Educate') }}
+        </li>
+        <li class="filtli conference" :class="{ selecto: selectedFilter === 'conference' }"
+          @click="selectedFilter = 'conference'">
+          {{ $t('Conference') }}
+        </li>
+        <li class="filtli other" :class="{ selecto: selectedFilter === 'other' }" @click="selectedFilter = 'other'">
+          {{ $t('Other') }}
+        </li>
+      </ul>
+    </div>
     <div class="event-slider-container"><button @click="goPrev" class="btn-4-swiper"><</button>
           <!-- Loading State -->
           <div class="event-card-section" v-if="isLoading" loading="lazy">
@@ -27,10 +28,10 @@
           <div v-if="!isLoading && filteredEvents.length > 0" class="swiper-container">
             <Swiper :slides-per-view="4" :space-between="10" ref="mySwiper" :slides-per-group="4" :pagination="true"
               :breakpoints="{
-
-                480: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
+                320: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
+                425: { slidesPerView: 1, spaceBetween: 10, slidesPerGroup: 1 },
                 768: { slidesPerView: 2, spaceBetween: 10, slidesPerGroup: 2 },
-                1024: { slidesPerView: 3, spaceBetween: 10, slidesPerGroup: 3 },
+                1024: { slidesPerView: 3, spaceBetween: 1, slidesPerGroup: 3 },
                 1524: { slidesPerView: 4, spaceBetween: 10, slidesPerGroup: 4 },
               }">
               <SwiperSlide v-for="(event, index) in filteredEvents" :key="index">
@@ -149,19 +150,22 @@ export default {
 
 
 <style scoped>
-.homeevent-container-container{
+.homeevent-container-container {
   display: flex;
   justify-content: center;
   width: 100%;
 }
+
 .swiper {
 
-  width:100%;
-  
+  width: 100%;
+
 }
-.swiper-wrapper{
+
+.swiper-wrapper {
   justify-content: center !important;
 }
+
 .btn-4-swiper {
   all: unset;
   cursor: pointer;
@@ -183,8 +187,8 @@ export default {
 .event-slider-container {
 
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+
+  justify-content: space-around;
 }
 
 
@@ -332,7 +336,7 @@ ul.homeeventfiltercontainer li.filtli.selecto {
   all: unset;
   cursor: pointer;
   overflow: hidden;
-  min-width: 16rem;
+  min-width: 12rem;
   flex: 1 1 calc(25% - 1rem);
   max-width: 22rem;
   height: 22rem;
@@ -449,18 +453,29 @@ ul.homeeventfiltercontainer li.filtli.selecto {
     flex: 1 1 calc(50% - 1rem);
   }
 
+  .event-slider-container {
+display: flex;
+justify-self: center;
+    width: 90%;
+    margin: 1 0;
+  }
+
   .event-card-text {
     height: 50%;
   }
 }
 
 @media screen and (max-width: 480px) {
+  .homeeventfiltercontainer {
+    margin: 1rem 0rem;
+  }
+
   .event-card {
     flex: 1 1 100%;
   }
 
   .event-card-text {
-    height: 10%;
+    height: 50%;
   }
 }
 

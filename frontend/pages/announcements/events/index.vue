@@ -1,11 +1,7 @@
 <template>
 
   <div style="height: 8rem"></div>
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>
-  </div>
+      <breadcrumb/>
   <h1 class="context-header">{{ $t('Events') }}</h1>
   <div style="height: 5rem;"></div>
 
@@ -319,13 +315,36 @@ export default {
 
 .all-event-card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
-  max-width: calc(5 * 20rem + 4 * 15px);
   gap: 15px;
   width: 80%;
-  justify-content: center;
   margin: 1rem auto;
+  grid-template-columns: repeat(4, minmax(9rem, 1fr)); /* default 4 columns */
+  justify-content: center;
 }
+
+@media (max-width: 1024px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(3, minmax(9rem, 1fr));
+  }
+}
+/* Tablet / mobile ทั่วไป */
+@media (max-width: 768px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(2, minmax(9rem, 1fr));
+  }
+  
+}
+
+@media (max-width: 425px) {
+  .all-event-card-container {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+
+/* จอเล็กมากจริง ๆ (< 360px) → 1 column */
+
+
+
 
 
 
@@ -383,16 +402,5 @@ label.event-v-input input {
   border-color: #4e6d16;
 }
 
-@media (max-width: 1024px) {
-  .all-event-card-container {
-    grid-template-columns: repeat(2, 20rem);
-  }
-}
 
-/* Mobile View (1-2 Columns) */
-@media (max-width: 691px) {
-  .all-event-card-container {
-    grid-template-columns: repeat(1, 20rem);
-  }
-}
 </style>

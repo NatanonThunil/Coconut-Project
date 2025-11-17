@@ -1,15 +1,8 @@
 <template :key="pageKey">
 
     <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/aboutus">{{ $t("AboutUs") }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/aboutus/achievements">{{ $t("Achievements") }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="'/aboutus/achievements/details/' + $route.params.id">
-            {{ (currentLocale === "th") ? (achievement?.title || 'ไม่มีหัวข้อ') : (achievement?.title_en || 'No title')
-            }}
-        </NuxtLinkLocale>
-    </div>
+  
+        <breadcrumb :last-label="(currentLocale === 'th') ? (achievement?.title || 'ไม่มีหัวข้อ') : (achievement?.title_en || 'No title')"/>
     <div style="height: 2rem"></div>
     <div class="achievement-content-container" v-if="achievement">
         <section class="achievements-pdf-container">

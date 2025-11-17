@@ -2,11 +2,8 @@
   <div class="expert-details-container">
 
     <div style="height: 8rem"></div>
-    <div class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale> /
-      <NuxtLinkLocale :to="'/experts/details/' + this.$route.params.id">{{ (currentLocale == 'th')? (expert?.name || expert?.name_en) :  (expert?.name_en || expert?.name) }}</NuxtLinkLocale>
-    </div>
+   
+    <Breadcrumb :last-label="(currentLocale == 'th')? (expert?.name || expert?.name_en) :  (expert?.name_en || expert?.name) "/>
     <div class="all-container">
 
       <div style="height: 1rem"></div>

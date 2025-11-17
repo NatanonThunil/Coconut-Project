@@ -1,15 +1,9 @@
 <template>
   <div style="height: 8rem"></div>
 
-  <!-- Breadcrumb -->
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale> /
-    <NuxtLinkLocale to="/coconut-information/">{{ $t("CoconutInfo") }}</NuxtLinkLocale> /
-    <NuxtLinkLocale to="/pest">{{ $t("Pest") }}</NuxtLinkLocale> /
-    <NuxtLinkLocale :to="'/pest/details/' + $route.params.id">
-      {{ currentLocale === "th" ? pest?.name || "No Name" : pest?.name_en || "No Name" }}
-    </NuxtLinkLocale>
-  </div>
+
+
+  <Breadcrumb :last-label="currentLocale === 'th' ? pest?.name || 'No Name' : pest?.name_en || 'No Name' "/>
 
   <!-- Container -->
   <div class="pest-container">

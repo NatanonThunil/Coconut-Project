@@ -43,14 +43,19 @@ export default {
 
 <style scoped>
 .all-event-EventCard {
-    height: 25rem;
-    width: 20rem;
+
+    width: 100%;
+    /* ให้เต็ม cell ของ grid */
+    height: max-content;
+    /* จะคงไว้หรือเปลี่ยนเป็น auto ก็ได้ */
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
     transition: 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
 .all-event-EventCard:hover {
@@ -61,26 +66,28 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 15rem;
+    height: max-content;
     width: 100%;
     overflow: hidden;
-
 }
 
 .all-event-EventCard .al-event-image-container img {
-    height: 100%;
-
+    width: 100%;
+    aspect-ratio: 16/9;
 }
 
+/* ด้านล่างเหมือนเดิม */
 .event-card-details-container {
     padding: 0.8rem;
     width: 100%;
     height: 10rem;
 }
 
+/* … ที่เหลือเหมือนเดิมไม่ต้องแก้ … */
+
 .event-card-details-container .event-card-title {
     width: 100%;
-    font-size: 1.2rem;
+    font-size: clamp(0.8rem, 2vw, 1.3rem);
     font-weight: 600;
     color: black;
     overflow: hidden;
@@ -106,6 +113,7 @@ export default {
     display: flex;
     align-items: center;
     width: 48%;
+    font-size: clamp(0.6rem, 1.5vw, 1rem);
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -128,5 +136,23 @@ export default {
     text-overflow: ellipsis;
     line-height: 1.2rem;
     color: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 687px) {
+    .event-card-details-container .event-date-and-local {
+        flex-direction: column;
+        gap: 0.3rem;
+        align-items: flex-start;
+    }
+
+    .event-card-details-container .event-date-and-local div {
+        width: 100%;
+    }
+
+      .event-card-details{
+        display: none;
+      }
+
+
 }
 </style>

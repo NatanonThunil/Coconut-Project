@@ -1,37 +1,33 @@
 <template>
 
     <div style="height: 8rem"></div>
-    <div class="faqs-path">
- <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/news">{{ $t('News') }}</NuxtLinkLocale>/
-        <NuxtLinkLocale :to="'/news/details/'+this.$route.params.id">{{ (currentLocale == 'th')? (news?.title || 'ไม่มีหัวข้อ'): (news?.title_en || 'No Title')}}</NuxtLinkLocale>
-    </div>
     
+    <breadcrumb :last-label="(currentLocale == 'th') ? (news?.title || 'ไม่มีหัวข้อ') : (news?.title_en || 'No Title')" />
+
 
     <div v-if="news" class="container">
         <img class="news-image-banner" :src="news.image || 'https://placehold.co/800x400'" alt="News Image"
             v-if="news.image" />
 
-        <h1>{{ (currentLocale == 'th')? (news?.title || 'No Title'): (news?.title_en || 'No Title') }}</h1>
+        <h1>{{ (currentLocale == 'th') ? (news?.title || 'No Title') : (news?.title_en || 'No Title') }}</h1>
         <p class="news-meta">
-            <span><strong>{{(currentLocale == 'th')? "เผยแพร่เมื่อ :" : "Published :"}}</strong> {{ (currentLocale == 'th')?  formatDate(news.upload_date) : formatDateen(news.upload_date) }}</span>
-            | <span>{{(currentLocale == 'th')? "โดย": "by "}}{{ news.author }}</span>
+            <span><strong>{{ (currentLocale == 'th') ? "เผยแพร่เมื่อ :" : "Published :" }}</strong> {{ (currentLocale == 'th') ? formatDate(news.upload_date) : formatDateen(news.upload_date) }}</span>
+            | <span>{{ (currentLocale == 'th') ? "โดย" : "by " }}{{ news.author }}</span>
         </p>
 
         <!-- Summary Section -->
         <div class="news-summary" v-if="news.summerize">
             <h2>สรุป</h2>
-            <p style=" display: flex; flex-direction: row;"><img class="unyapragard"
-                    src="/icon/double-quotes.png">{{ (currentLocale == 'th')? (news?.summerize || 'ไม่มีสรุปในภาษาไทย'): (news?.summerize_en || 'No summerize in English') }}<img src="/icon/double-quotes.png"
-                    alt="" class="unyapragardl"></p>
+            <p style=" display: flex; flex-direction: row;"><img class="unyapragard" src="/icon/double-quotes.png">{{  (currentLocale == 'th') ? (news?.summerize || 'ไม่มีสรุปในภาษาไทย') : (news?.summerize_en || 'No summerize in English') }}<img src="/icon/double-quotes.png" alt="" class="unyapragardl"></p>
             <!--   -->
         </div>
         <div v-else></div>
         <div style="height: 3px; background-color:#4E6D16 ; margin: 1rem;"></div>
 
         <!-- News Content -->
-        <div class="news-content" v-html="(currentLocale == 'th')? (news?.description || 'ไม่มีข้อมูลในภาษาไทย'): (news?.description_en || 'No description in English') "></div>
+        <div class="news-content"
+            v-html="(currentLocale == 'th') ? (news?.description || 'ไม่มีข้อมูลในภาษาไทย') : (news?.description_en || 'No description in English')">
+        </div>
 
         <!-- Back Button -->
 
@@ -66,7 +62,7 @@ const { getNewsById } = useNews(); // Import the getNewsById function
 export default {
     setup() {
         const { locale } = useI18n();
-        const currentLocale =computed(() => locale.value);
+        const currentLocale = computed(() => locale.value);
         return { currentLocale: locale };
     },
     data() {
@@ -177,7 +173,7 @@ export default {
 
 .news-content {
     font-size: 1.5rem;
-    max-width:100dvw;
+    max-width: 100dvw;
     overflow: visible;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -192,6 +188,13 @@ export default {
     margin: auto;
 
 }
+
+.container h1 {
+  display: block;
+
+  overflow-wrap: break-word; 
+}
+
 
 .news-image-banner {
     width: 100%;

@@ -1,24 +1,10 @@
 <template>
   <div style="height: 8rem"></div>
 
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t("Home") }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/">{{
-      $t("CoconutInfo")
-    }}</NuxtLinkLocale>/
-    <NuxtLinkLocale to="/coconut-information/coconut-varieties">{{
-      $t("Coconut-varieties")
-    }}</NuxtLinkLocale>/
-    <NuxtLinkLocale v-if="coconut" :to="'/coconut-information/coconut-varieties/details/' + route.params.id">
-      <div>
-        {{
-          currentLocale === "th"
-            ? coconut?.name_th || "-"
-            : coconut?.name_eng || "-"
-        }}
-      </div>
-    </NuxtLinkLocale>
-  </div>
+ 
+  <Breadcrumb :last-label="currentLocale === 'th'
+    ? coconut?.name_th || '-'
+    : coconut?.name_eng || '-'" />
 
   <div style="height: 1rem"></div>
 
@@ -59,7 +45,7 @@
         <div class="deta-below">
           <p>
             <strong>{{ $t('characteristics') }} : </strong><span class="origin-desc">{{
-             currentLocale === "th" ? coconut?.characteristics || "-" : coconut?.characteristics_en || "-"
+              currentLocale === "th" ? coconut?.characteristics || "-" : coconut?.characteristics_en || "-"
             }}</span>
           </p>
         </div>
@@ -166,21 +152,21 @@ onMounted(async () => {
 }
 
 .coconut-detail-img img {
-   aspect-ratio: 1/1;
-   border-radius: 12px;  
+  aspect-ratio: 1/1;
+  border-radius: 12px;
   overflow: hidden;
- 
+
   width: 400px;
   max-height: 400px;
   object-fit: cover;
-  
+
 }
 
 .coconut-detail-info {
-   display: flex;
-   flex-direction: column;
-   text-align: left;
-   
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
   max-width: 1000px;
   margin: 0 auto;
   width: 40%;
@@ -233,9 +219,10 @@ span.origin-desc {
   .coconut-detail-container {
     width: 95%;
   }
+
   .coconut-detail-info {
-width: 80%;
-}
+    width: 80%;
+  }
 }
 
 @media (max-width: 762px) {

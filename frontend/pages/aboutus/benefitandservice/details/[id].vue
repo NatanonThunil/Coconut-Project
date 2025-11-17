@@ -2,15 +2,8 @@
   <div style="height: 8rem"></div>
 
   <!-- Breadcrumb -->
-  <div class="faqs-path">
-    <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
-    <NuxtLinkLocale to="/aboutus">{{ $t('AboutUs') }}</NuxtLinkLocale> /
-    <NuxtLinkLocale to="/aboutus/benefitandservice">{{ $t('Benefit and service') }}</NuxtLinkLocale> /
-    <NuxtLinkLocale :to="`/aboutus/benefitandservice/${$route.params.id}`">
-      {{ crumbTitle || '...' }}
-    </NuxtLinkLocale>
-  </div>
-
+ 
+ <breadcrumb :last-label="crumbTitle || '...' "/>
   <div class="benefit-container">
     <!-- Loading -->
     <div v-if="loading" class="loading-container">

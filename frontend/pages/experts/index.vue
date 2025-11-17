@@ -2,10 +2,8 @@
   <div class="expert-page-container">
     <div style="height: 8rem"></div>
 
-    <div class="faqs-path">
-      <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale> /
-      <NuxtLinkLocale to="/experts">{{ $t('Experts') }}</NuxtLinkLocale>
-    </div>
+ 
+    <Breadcrumb />
 
     <h1 class="context-header">{{ $t('Experts') }}</h1>
     <div style="height: 5rem;"></div>

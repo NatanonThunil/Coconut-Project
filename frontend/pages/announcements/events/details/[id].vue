@@ -12,14 +12,10 @@
         <p>No event data available. Please try again later.</p>
     </div>
     <div style="height: 1rem;"></div>
-  <div class="faqs-path">
-            <NuxtLinkLocale to="/">{{ $t('Home') }}</NuxtLinkLocale>/
-      <NuxtLinkLocale to="/announcements">{{ $t('News & Events') }}</NuxtLinkLocale>/
-            <NuxtLinkLocale to="/events">{{ $t('Events') }}</NuxtLinkLocale>/
-             <NuxtLinkLocale :to="'/events/details/'+ this.$route.params.id">{{ (currentLocale === 'th') ? (event?.title || 'No Thai title name') :
+ 
+        <breadcrumb :last-label=" (currentLocale === 'th') ? (event?.title || 'No Thai title name') :
         (event?.title_en
-            || 'No English title name') }}</NuxtLinkLocale>
-        </div>
+            || 'No English title name')"/>
     <!-- Event Date & Location -->
     <div class="date-and-local" v-if="event">
         <div class="dnl">

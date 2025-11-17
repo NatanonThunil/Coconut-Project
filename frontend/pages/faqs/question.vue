@@ -1,11 +1,8 @@
 <template>
 
     <div style="height: 8rem"></div>
-    <div class="faqs-path">
-        <NuxtLinkLocale to="/">Home</NuxtLinkLocale>/
-        <NuxtLinkLocale to="/faqs">FAQs</NuxtLinkLocale>/<NuxtLinkLocale to="/faqs/question">{{$t('seeAllQs') }}
-        </NuxtLinkLocale>
-    </div>
+   
+    <Breadcrumb :last-label="$t('seeAllQs')"/>
     <div style="height: 1rem"></div>
     <h1 class="context-header">{{$t('seeAllQs') }}</h1>
     <div style="height: 5rem"></div>
