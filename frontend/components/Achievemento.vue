@@ -53,6 +53,23 @@
   </script>
   
   <style scoped>
+.f-banner-text-container .f-banner-title {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    font-weight: 700;
+    color: black;
+  }
+  .f-banner-text-container .f-banner-text{
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    color: #5e5e5e;
+  }
+
+  .f-banner-text-container .f-banner-title , .f-banner-text-container .f-banner-text{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+  }
   .f-banner {
     cursor: pointer;
     display: flex;

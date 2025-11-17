@@ -12,7 +12,7 @@
 - แก้ ``Responsive`` หน้า ``main``
 - แก้ ``Responsive`` หน้า ``Event``
 - แก้ ``Responsive`` Event card
-
+- แก้ ``Responsive`` Achievements card
 
 โดย [Poom](https://github.com/WasitpolKuekkong)
 
