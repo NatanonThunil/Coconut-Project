@@ -72,6 +72,7 @@ export default {
 }
 
 .all-event-EventCard .al-event-image-container img {
+    object-fit: none;
     width: 100%;
     aspect-ratio: 16/9;
 }
